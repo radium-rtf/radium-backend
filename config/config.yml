@@ -1,0 +1,12 @@
+http:
+  port: '8080'
+
+postgres:
+  pool_max: 2
+  pg_url: postgres://user:password@postgres:5432/postgres?sslmode=disable
+
+auth:
+  jwt_signing_key: wdkadwadwakpklrbjb
+  password_salt: ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ
+  access_token_ttl: 2h
+  refresh_token_ttl: 720h

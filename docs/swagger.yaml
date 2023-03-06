@@ -1,0 +1,130 @@
+basePath: /v1
+definitions:
+  entity.RefreshToken:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  entity.SignIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.SignUp:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.Tokens:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  entity.UserDto:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: без юлерна
+  version: "1.0"
+paths:
+  /account:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.UserDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - account
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: RefreshToken
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Tokens'
+      tags:
+      - auth
+  /auth/signIn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: SignIn
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Tokens'
+      tags:
+      - auth
+  /auth/signUp:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: SignUp
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SignUp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Tokens'
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
