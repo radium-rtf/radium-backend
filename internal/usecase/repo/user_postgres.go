@@ -3,10 +3,11 @@ package repo
 import (
 	"context"
 	"errors"
+	"time"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
-	"time"
 )
 
 type UserRepo struct {
@@ -96,4 +97,63 @@ func (r UserRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (e
 		return user, errors.New("сессия истекла")
 	}
 	return user, nil
+}
+
+func (r UserRepo) GetByVerificationCode(ctx context.Context, verificationCode string) (entity.User, error) {
+	var user entity.User
+	sql, args, err := r.pg.Builder.
+		Select("id").
+		Where(sq.Eq{"verification_code": verificationCode}).
+		Limit(1).
+		From("users").
+		ToSql()
+	if err != nil {
+		return user, err
+	}
+	rows, err := r.pg.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return user, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return user, errors.New("пользователь не найден")
+	}
+	err = rows.Scan(&user.Id)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (r UserRepo) SetVerificationCode(ctx context.Context, id uint, code string) error {
+	sql, args, err := r.pg.Builder.
+		Update("users").
+		Where(sq.Eq{"id": id}).
+		Set("verification_code", code).
+		ToSql()
+
+	if err != nil {
+		return err
+	}
+	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r UserRepo) VerifyUser(ctx context.Context, id uint) error {
+	sql, args, err := r.pg.Builder.
+		Update("users").
+		Where(sq.Eq{"id": id}).
+		Set("is_verified", true).
+		ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -3,14 +3,17 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
+	"github.com/radium-rtf/radium-backend/pkg/otp"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
-	"strings"
-	"time"
 )
 
 type AuthUseCase struct {
@@ -19,15 +22,18 @@ type AuthUseCase struct {
 	hasher                hash.PasswordHasher
 	tokenManager          auth.TokenManager
 	accessTTL, refreshTTL time.Duration
+	otpGenerator          otp.Generator
 }
 
 func NewAuthUseCase(pg *postgres.Postgres, cfg *config.Config) AuthUseCase {
 	tokenManager, _ := auth.NewManager(cfg.SigningKey)
 	passwordHasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
+	otpGenerator := otp.NewOTPGenerator()
 	return AuthUseCase{
 		userRepo: repo.NewUserRepo(pg), sessionRepo: repo.NewSessionRepo(pg),
 		hasher: passwordHasher, tokenManager: tokenManager,
 		accessTTL: cfg.Auth.AccessTokenTTL, refreshTTL: cfg.Auth.RefreshTokenTTL,
+		otpGenerator: otpGenerator,
 	}
 }
 
@@ -59,6 +65,9 @@ func (uc AuthUseCase) SignUp(ctx context.Context, signIn entity.SignUp) (entity.
 	if err != nil {
 		return tokens, err
 	}
+
+	verificationCode := uc.otpGenerator.RandomSecret(16)
+	uc.userRepo.SetVerificationCode(ctx, user.Id, verificationCode)
 	return uc.createSession(ctx, user.Id)
 }
 
@@ -110,4 +119,25 @@ func (uc AuthUseCase) refreshSession(ctx context.Context, id uint, refreshToken 
 
 	err = uc.sessionRepo.Update(ctx, refreshToken, time.Now().Add(uc.refreshTTL))
 	return tokens, err
+}
+
+func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) (entity.VerificationResult, error) {
+	user, err := uc.userRepo.GetByVerificationCode(ctx, verificationCode)
+	fmt.Printf("user: %v\n", user)
+	fmt.Printf("err: %v\n", err)
+	if err != nil {
+		return entity.VerificationResult{Success: false}, err
+	}
+
+	return uc.verifyUser(ctx, user.Id)
+
+}
+
+func (uc AuthUseCase) verifyUser(ctx context.Context, id uint) (entity.VerificationResult, error) {
+	err := uc.userRepo.VerifyUser(ctx, id)
+	if err != nil {
+		return entity.VerificationResult{Success: false}, err
+	}
+
+	return entity.VerificationResult{Success: true}, nil
 }

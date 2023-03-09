@@ -1,6 +1,8 @@
 package v1
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type handler func(w http.ResponseWriter, r *http.Request) *appError
 

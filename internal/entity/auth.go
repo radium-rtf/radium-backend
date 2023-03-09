@@ -26,6 +26,14 @@ type (
 		RefreshToken string `json:"refresh_token"`
 	}
 
+	VerificationCode struct {
+		VerificationCode string `json:"verification_code"`
+	}
+
+	VerificationResult struct {
+		Success bool `json:"success"`
+	}
+
 	Tokens struct {
 		AccessToken  string    `json:"access_token"`
 		RefreshToken string    `json:"refresh_token"`

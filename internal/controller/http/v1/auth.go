@@ -4,13 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/go-chi/chi/v5"
-	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/usecase"
+	"github.com/radium-rtf/radium-backend/pkg/auth"
 )
 
 type authRoutes struct {
@@ -23,15 +25,21 @@ func authRequired(signingKey string) func(http.Handler) http.Handler {
 		manager, err := auth.NewManager(signingKey)
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			if err != nil {
-				writer.Write([]byte(err.Error()))
 				writer.WriteHeader(http.StatusInternalServerError)
+				writer.Write([]byte(err.Error()))
+				return
+			}
+			tokenHeader := strings.Split(request.Header.Get("Authorization"), " ")
+			if len(tokenHeader) == 1 {
+				writer.WriteHeader(http.StatusUnauthorized)
+				writer.Write([]byte("empty or corrupted Authorization header"))
 				return
 			}
 			token := strings.Split(request.Header.Get("Authorization"), " ")[1]
 			userId, err := manager.Parse(token)
 			if err != nil {
-				writer.Write([]byte(err.Error()))
 				writer.WriteHeader(http.StatusUnauthorized)
+				writer.Write([]byte(err.Error()))
 				return
 			}
 			ctx := context.WithValue(request.Context(), "userId", userId)
@@ -47,6 +55,7 @@ func newAuthRoutes(h chi.Router, useCase usecase.AuthUseCase) {
 		r.Post("/signIn", handler(routes.signIn).HTTP)
 		r.Post("/signUp", handler(routes.signUp).HTTP)
 		r.Post("/refresh", handler(routes.refresh).HTTP)
+		r.Post("/verify", handler(routes.verify).HTTP)
 	})
 }
 
@@ -66,11 +75,8 @@ func (r authRoutes) signIn(w http.ResponseWriter, request *http.Request) *appErr
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	err = json.NewEncoder(w).Encode(in)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	w.WriteHeader(http.StatusOK)
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, in)
 	return nil
 }
 
@@ -93,11 +99,8 @@ func (r authRoutes) signUp(w http.ResponseWriter, request *http.Request) *appErr
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	err = json.NewEncoder(w).Encode(tokens)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	w.WriteHeader(http.StatusCreated)
+	render.Status(request, http.StatusCreated)
+	render.JSON(w, request, tokens)
 	return nil
 }
 
@@ -117,10 +120,22 @@ func (r authRoutes) refresh(w http.ResponseWriter, request *http.Request) *appEr
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	err = json.NewEncoder(w).Encode(token)
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, token)
+	return nil
+}
+
+func (r authRoutes) verify(w http.ResponseWriter, request *http.Request) *appError {
+	var verificationCode entity.VerificationCode
+	err := json.NewDecoder(request.Body).Decode(&verificationCode)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	w.WriteHeader(http.StatusOK)
+	result, err := r.uc.VerifyEmail(request.Context(), verificationCode.VerificationCode)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, result)
 	return nil
 }

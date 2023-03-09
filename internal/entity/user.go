@@ -8,11 +8,13 @@ type (
 		Username string `json:"username"`
 	}
 	User struct {
-		Id       uint
-		Email    string
-		Name     string
-		Username string
-		Password string
+		Id               uint
+		Email            string
+		Name             string
+		Username         string
+		Password         string
+		VerificationCode string
+		IsVerified       bool
 	}
 )
 
