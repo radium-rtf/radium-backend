@@ -16,6 +16,15 @@ type (
 		VerificationCode string
 		IsVerified       bool
 	}
+
+	Name struct {
+		Name string `json:"name"`
+	}
+
+	PasswordUpdate struct {
+		New     string `json:"new"`
+		Current string `json:"current"`
+	}
 )
 
 func NewUserDto(user User) UserDto {

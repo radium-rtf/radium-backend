@@ -1,8 +1,9 @@
 package v1
 
 import (
-	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 	"net/http"
 )
@@ -16,6 +17,8 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 	h.Route("/account", func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Get("/", handler(routes.account).HTTP)
+		r.Put("/name", handler(routes.name).HTTP)
+		r.Put("/password", handler(routes.password).HTTP)
 	})
 }
 
@@ -31,7 +34,48 @@ func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *ap
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	err = json.NewEncoder(w).Encode(user)
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, user)
+	return nil
+}
+
+// @Tags  	    account
+// @Accept      json
+// @Produce     json
+// @Security ApiKeyAuth
+// @Param       request body entity.Name true "Новое имя"
+// @Success     200
+// @Router      /account/name [put]
+func (r accountRoutes) name(w http.ResponseWriter, request *http.Request) *appError {
+	var name entity.Name
+	err := render.DecodeJSON(request.Body, &name)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	userId := request.Context().Value("userId").(string)
+	err = r.uc.UpdateName(request.Context(), userId, name)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	w.WriteHeader(http.StatusOK)
+	return nil
+}
+
+// @Tags  	    account
+// @Accept      json
+// @Produce     json
+// @Security ApiKeyAuth
+// @Param       request body entity.PasswordUpdate true "PasswordUpdate"
+// @Success     200
+// @Router      /account/password [put]
+func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *appError {
+	var passwordUpdate entity.PasswordUpdate
+	err := render.DecodeJSON(request.Body, &passwordUpdate)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	userId := request.Context().Value("userId").(string)
+	err = r.uc.UpdatePassword(request.Context(), userId, passwordUpdate)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}

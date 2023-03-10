@@ -64,8 +64,12 @@ func (r UserRepo) GetByEmail(ctx context.Context, email string) (entity.User, er
 	return r.get(ctx, sq.Eq{"email": email})
 }
 
-func (r UserRepo) GetById(ctx context.Context, userId string) (entity.User, error) {
-	return r.get(ctx, sq.Eq{"id": userId})
+func (r UserRepo) GetById(ctx context.Context, id string) (entity.User, error) {
+	return r.get(ctx, sq.Eq{"id": id})
+}
+
+func (r UserRepo) GetByVerificationCode(ctx context.Context, verificationCode string) (entity.User, error) {
+	return r.get(ctx, sq.Eq{"verification_code": verificationCode})
 }
 
 func (r UserRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (entity.User, error) {
@@ -99,61 +103,31 @@ func (r UserRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (e
 	return user, nil
 }
 
-func (r UserRepo) GetByVerificationCode(ctx context.Context, verificationCode string) (entity.User, error) {
-	var user entity.User
+func (r UserRepo) updateColumn(ctx context.Context, where sq.Eq, column string, value interface{}) error {
 	sql, args, err := r.pg.Builder.
-		Select("id").
-		Where(sq.Eq{"verification_code": verificationCode}).
-		Limit(1).
-		From("users").
+		Update("users").
+		Where(where).
+		Set(column, value).
 		ToSql()
 	if err != nil {
-		return user, err
+		return err
 	}
-	rows, err := r.pg.Pool.Query(ctx, sql, args...)
-	if err != nil {
-		return user, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return user, errors.New("пользователь не найден")
-	}
-	err = rows.Scan(&user.Id)
-	if err != nil {
-		return user, err
-	}
-	return user, nil
+	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	return err
 }
 
 func (r UserRepo) SetVerificationCode(ctx context.Context, id uint, code string) error {
-	sql, args, err := r.pg.Builder.
-		Update("users").
-		Where(sq.Eq{"id": id}).
-		Set("verification_code", code).
-		ToSql()
-
-	if err != nil {
-		return err
-	}
-	_, err = r.pg.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return r.updateColumn(ctx, sq.Eq{"id": id}, "verification_code", code)
 }
 
 func (r UserRepo) VerifyUser(ctx context.Context, id uint) error {
-	sql, args, err := r.pg.Builder.
-		Update("users").
-		Where(sq.Eq{"id": id}).
-		Set("is_verified", true).
-		ToSql()
-	if err != nil {
-		return err
-	}
-	_, err = r.pg.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return r.updateColumn(ctx, sq.Eq{"id": id}, "is_verified", true)
+}
+
+func (r UserRepo) UpdateName(ctx context.Context, id string, name entity.Name) error {
+	return r.updateColumn(ctx, sq.Eq{"id": id}, "name", name.Name)
+}
+
+func (r UserRepo) UpdatePassword(ctx context.Context, id string, password string) error {
+	return r.updateColumn(ctx, sq.Eq{"id": id}, "password", password)
 }

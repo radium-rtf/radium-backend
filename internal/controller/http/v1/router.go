@@ -17,7 +17,7 @@ import (
 // @name Authorization
 func NewRouter(h *chi.Mux, pg *postgres.Postgres, cfg *config.Config) {
 	authUseCase := usecase.NewAuthUseCase(pg, cfg)
-	accountUseCase := usecase.NewAccountUseCase(pg)
+	accountUseCase := usecase.NewAccountUseCase(pg, cfg)
 	h.Route("/v1", func(r chi.Router) {
 		newAuthRoutes(r, authUseCase)
 		newAccountRoutes(r, accountUseCase, cfg.SigningKey)
