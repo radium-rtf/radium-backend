@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
 type (
@@ -12,15 +13,16 @@ type (
 		HTTP `yaml:"http"`
 		PG   `yaml:"postgres"`
 		Auth `yaml:"auth"`
+		Storage
 	}
 
 	HTTP struct {
-		Port string `env-required:"true" yaml:"port" env:"HTTP_PORT"`
+		Port string `env-required:"true" yaml:"port"`
 	}
 
 	PG struct {
-		PoolMax int    `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
-		URL     string `env-required:"true" yaml:"pg_url"    env:"PG_URL"`
+		PoolMax int    `env-required:"true" yaml:"pool_max"`
+		URL     string `env-required:"true" yaml:"pg_url"`
 	}
 
 	Auth struct {
@@ -29,12 +31,28 @@ type (
 		AccessTokenTTL  time.Duration `env-required:"true" yaml:"access_token_ttl"`
 		RefreshTokenTTL time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
 	}
+
+	Storage struct {
+		Id       string `env-required:"true" env:"STORAGE_ID"`
+		Endpoint string `env-required:"true" env:"STORAGE_ENDPOINT"`
+		Secret   string `env-required:"true" env:"STORAGE_SECRET"`
+		Region   string `env-required:"true" env:"STORAGE_REGION"`
+	}
 )
 
 func NewConfig() (*Config, error) {
-	cfg := &Config{}
+	err := godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
 
-	err := cleanenv.ReadConfig("./config/config.yml", cfg)
+	cfg := &Config{}
+	err = cleanenv.ReadEnv(&cfg.Storage)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cleanenv.ReadConfig("./config/config.yml", cfg)
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)
 	}

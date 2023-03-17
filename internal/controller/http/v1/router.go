@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
+	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 )
 
@@ -15,11 +16,13 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func NewRouter(h *chi.Mux, pg *postgres.Postgres, cfg *config.Config) {
+func NewRouter(h *chi.Mux, pg *postgres.Postgres, storage filestorage.Storage, cfg *config.Config) {
 	authUseCase := usecase.NewAuthUseCase(pg, cfg)
 	accountUseCase := usecase.NewAccountUseCase(pg, cfg)
+	courseUseCase := usecase.NewCourseUseCase(pg, storage)
 	h.Route("/v1", func(r chi.Router) {
 		newAuthRoutes(r, authUseCase)
 		newAccountRoutes(r, accountUseCase, cfg.SigningKey)
+		newCourseRoutes(r, courseUseCase)
 	})
 }
