@@ -76,7 +76,7 @@ func (r courseRoutes) postCourse(w http.ResponseWriter, request *http.Request) *
 func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *appError {
 	courses, err := r.uc.GetCourses(request.Context())
 	if err != nil {
-		return newAppError(err, http.StatusInternalServerError)
+		return newAppError(err, http.StatusBadRequest)
 	}
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, courses)

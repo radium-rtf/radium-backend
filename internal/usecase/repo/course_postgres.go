@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"errors"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -35,7 +34,7 @@ func (r CourseRepo) GetByName(ctx context.Context, name string) (entity.Course, 
 		return entity.Course{}, err
 	}
 	if len(courses) == 0 {
-		return entity.Course{}, errors.New("курс не найден")
+		return entity.Course{}, entity.CourseNotFoundErr
 	}
 	return courses[0], nil
 }

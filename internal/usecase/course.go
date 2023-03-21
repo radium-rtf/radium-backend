@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
@@ -26,6 +27,13 @@ func (uc CourseUseCase) CreateCourse(ctx context.Context, courseRequest entity.C
 	}
 	course = entity.NewCourse(0, courseRequest.Name, courseRequest.Description,
 		image.Location, courseRequest.Chat, courseRequest.Type)
+	_, err = uc.courseRepo.GetByName(ctx, course.Name)
+	if err == nil {
+		return course, errors.New("Курс с таким названием уже существует")
+	}
+	if err != entity.CourseNotFoundErr {
+		return course, err
+	}
 	err = uc.courseRepo.Create(ctx, course)
 	if err != nil {
 		return course, err

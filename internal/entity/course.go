@@ -1,7 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"mime/multipart"
+)
+
+var (
+	CourseNotFoundErr = errors.New("курс не найден")
 )
 
 type (
