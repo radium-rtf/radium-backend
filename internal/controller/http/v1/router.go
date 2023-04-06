@@ -20,9 +20,11 @@ func NewRouter(h *chi.Mux, pg *postgres.Postgres, storage filestorage.Storage, c
 	authUseCase := usecase.NewAuthUseCase(pg, cfg)
 	accountUseCase := usecase.NewAccountUseCase(pg, cfg)
 	courseUseCase := usecase.NewCourseUseCase(pg, storage)
+	groupUseCase := usecase.NewGroupUseCase(pg)
 	h.Route("/v1", func(r chi.Router) {
 		newAuthRoutes(r, authUseCase)
 		newAccountRoutes(r, accountUseCase, cfg.SigningKey)
 		newCourseRoutes(r, courseUseCase)
+		newGroupRoutes(r, groupUseCase, cfg.SigningKey)
 	})
 }

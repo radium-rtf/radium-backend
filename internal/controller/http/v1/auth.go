@@ -23,12 +23,10 @@ type authRoutes struct {
 func authRequired(signingKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		manager, err := auth.NewManager(signingKey)
+		if err != nil {
+			panic(err)
+		}
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-			if err != nil {
-				writer.WriteHeader(http.StatusInternalServerError)
-				writer.Write([]byte(err.Error()))
-				return
-			}
 			tokenHeader := strings.Split(request.Header.Get("Authorization"), " ")
 			if len(tokenHeader) == 1 {
 				writer.WriteHeader(http.StatusUnauthorized)

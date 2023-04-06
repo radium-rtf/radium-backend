@@ -1,5 +1,10 @@
 basePath: /v1
 definitions:
+  entity.GroupName:
+    properties:
+      name:
+        type: string
+    type: object
   entity.Name:
     properties:
       name:
@@ -75,7 +80,7 @@ paths:
       tags:
       - account
   /account/name:
-    put:
+    patch:
       consumes:
       - application/json
       parameters:
@@ -95,7 +100,7 @@ paths:
       tags:
       - account
   /account/password:
-    put:
+    patch:
       consumes:
       - application/json
       parameters:
@@ -223,6 +228,63 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
+  /group:
+    post:
+      parameters:
+      - description: GroupName
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.GroupName'
+      responses:
+        "201":
+          description: created
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /group/{groupId}/teacher/{userId}:
+    post:
+      parameters:
+      - description: user id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: group id
+        in: path
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "201":
+          description: created
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /group/join/{groupId}:
+    patch:
+      parameters:
+      - description: group id
+        in: path
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: created
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
 securityDefinitions:
   ApiKeyAuth:
     in: header

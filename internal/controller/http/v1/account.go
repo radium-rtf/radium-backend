@@ -17,8 +17,8 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 	h.Route("/account", func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Get("/", handler(routes.account).HTTP)
-		r.Put("/name", handler(routes.name).HTTP)
-		r.Put("/password", handler(routes.password).HTTP)
+		r.Patch("/name", handler(routes.name).HTTP)
+		r.Patch("/password", handler(routes.password).HTTP)
 	})
 }
 
@@ -45,7 +45,7 @@ func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *ap
 // @Security ApiKeyAuth
 // @Param       request body entity.Name true "Новое имя"
 // @Success     200
-// @Router      /account/name [put]
+// @Router      /account/name [patch]
 func (r accountRoutes) name(w http.ResponseWriter, request *http.Request) *appError {
 	var name entity.Name
 	err := render.DecodeJSON(request.Body, &name)
@@ -67,7 +67,7 @@ func (r accountRoutes) name(w http.ResponseWriter, request *http.Request) *appEr
 // @Security ApiKeyAuth
 // @Param       request body entity.PasswordUpdate true "PasswordUpdate"
 // @Success     200
-// @Router      /account/password [put]
+// @Router      /account/password [patch]
 func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *appError {
 	var passwordUpdate entity.PasswordUpdate
 	err := render.DecodeJSON(request.Body, &passwordUpdate)

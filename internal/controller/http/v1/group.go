@@ -1,0 +1,79 @@
+package v1
+
+import (
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/usecase"
+	"net/http"
+)
+
+type groupRoutes struct {
+	uc usecase.GroupUseCase
+}
+
+func newGroupRoutes(h chi.Router, useCase usecase.GroupUseCase, signingKey string) {
+	routes := groupRoutes{uc: useCase}
+	h.Route("/group", func(r chi.Router) {
+		r.Use(authRequired(signingKey))
+		r.Post("/", handler(routes.create).HTTP)
+		r.Patch("/join/{groupId}", handler(routes.join).HTTP)
+		r.Post("/{groupId}/teacher/{userId}", handler(routes.teacher).HTTP)
+	})
+}
+
+// @Tags group
+// @Security ApiKeyAuth
+// @Success      201   {string}  string        "created"
+// @Param       request body entity.GroupName true "GroupName"
+// @Router       /group [post]
+func (r groupRoutes) create(w http.ResponseWriter, request *http.Request) *appError {
+	var groupName entity.GroupName
+	err := render.DecodeJSON(request.Body, &groupName)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	group, err := r.uc.Create(request.Context(), groupName)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusCreated)
+	render.JSON(w, request, group)
+	return nil
+}
+
+// @Tags group
+// @Security ApiKeyAuth
+// @Param        groupId   path      string  true  "group id"
+// @Success      200   {string}  string        "created"
+// @Router       /group/join/{groupId} [patch]
+func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appError {
+	groupId := chi.URLParam(request, "groupId")
+	userId := request.Context().Value("userId").(string)
+	var joinGroup = entity.GroupJoin{GroupId: groupId, UserId: userId}
+	err := r.uc.Join(request.Context(), joinGroup)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusOK)
+	return nil
+}
+
+// @Tags group
+// @Security ApiKeyAuth
+// @Param        userId   path      string  true  "user id"
+// @Param        groupId   path      string  true  "group id"
+// @Success      201   {string}  string        "created"
+// @Router       /group/{groupId}/teacher/{userId} [post]
+func (r groupRoutes) teacher(_ http.ResponseWriter, request *http.Request) *appError {
+	groupId := chi.URLParam(request, "groupId")
+	teacherId := request.Context().Value("userId").(string)
+	var groupTeacher = entity.GroupTeacher{GroupId: groupId, UserId: teacherId, Id: uuid.NewString()}
+	err := r.uc.CreateTeacher(request.Context(), groupTeacher)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusCreated)
+	return nil
+}
