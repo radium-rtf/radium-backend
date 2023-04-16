@@ -2,13 +2,14 @@ package entity
 
 type (
 	UserDto struct {
-		Id       uint   `json:"id"`
+		Id       string `json:"id"`
 		Email    string `json:"email"`
 		Name     string `json:"name"`
 		Username string `json:"username"`
 	}
+
 	User struct {
-		Id               uint
+		Id               string
 		Email            string
 		Name             string
 		Username         string
@@ -17,7 +18,7 @@ type (
 		IsVerified       bool
 	}
 
-	Name struct {
+	UserName struct {
 		Name string `json:"name"`
 	}
 

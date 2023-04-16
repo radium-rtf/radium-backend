@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -21,8 +22,8 @@ func NewUserRepo(pg *postgres.Postgres) UserRepo {
 func (r UserRepo) Create(ctx context.Context, signUp entity.SignUp, username string) error {
 	sql, args, err := r.pg.Builder.
 		Insert("users").
-		Columns("name", "email", "password", "username").
-		Values(signUp.Name, signUp.Email, signUp.Password, username).
+		Columns("id", "name", "email", "password", "username").
+		Values(uuid.NewString(), signUp.Name, signUp.Email, signUp.Password, username).
 		ToSql()
 	if err != nil {
 		return err
@@ -116,15 +117,15 @@ func (r UserRepo) updateColumn(ctx context.Context, where sq.Eq, column string, 
 	return err
 }
 
-func (r UserRepo) SetVerificationCode(ctx context.Context, id uint, code string) error {
+func (r UserRepo) SetVerificationCode(ctx context.Context, id string, code string) error {
 	return r.updateColumn(ctx, sq.Eq{"id": id}, "verification_code", code)
 }
 
-func (r UserRepo) VerifyUser(ctx context.Context, id uint) error {
+func (r UserRepo) VerifyUser(ctx context.Context, id string) error {
 	return r.updateColumn(ctx, sq.Eq{"id": id}, "is_verified", true)
 }
 
-func (r UserRepo) UpdateName(ctx context.Context, id string, name entity.Name) error {
+func (r UserRepo) UpdateName(ctx context.Context, id string, name entity.UserName) error {
 	return r.updateColumn(ctx, sq.Eq{"id": id}, "name", name.Name)
 }
 

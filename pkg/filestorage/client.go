@@ -55,14 +55,19 @@ func New(cfg config.Storage) Storage {
 	return storage
 }
 
-func (s Storage) makeBucket(ctx context.Context, bucket string, options minio.MakeBucketOptions) error {
-	err := s.client.MakeBucket(ctx, bucket, options)
+func (s Storage) makeBucket(ctx context.Context, bucketName string, options minio.MakeBucketOptions) error {
+	err := s.client.MakeBucket(ctx, bucketName, options)
 	if err == nil {
 		return err
 	}
-	exists, errBucketExists := s.client.BucketExists(ctx, bucket)
-	if errBucketExists == nil && exists {
-		return nil
+	buckets, err := s.client.ListBuckets(ctx)
+	if err != nil {
+		return err
+	}
+	for _, bucket := range buckets {
+		if bucket.Name == bucketName {
+			return nil
+		}
 	}
 	return err
 }

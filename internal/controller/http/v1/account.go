@@ -43,11 +43,11 @@ func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *ap
 // @Accept      json
 // @Produce     json
 // @Security ApiKeyAuth
-// @Param       request body entity.Name true "Новое имя"
+// @Param       request body entity.UserName true "Новое имя"
 // @Success     200
 // @Router      /account/name [patch]
 func (r accountRoutes) name(w http.ResponseWriter, request *http.Request) *appError {
-	var name entity.Name
+	var name entity.UserName
 	err := render.DecodeJSON(request.Body, &name)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)

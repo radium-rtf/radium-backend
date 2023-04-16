@@ -2,9 +2,11 @@ package repo
 
 import (
 	"context"
+	"encoding/json"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"strings"
 )
 
 type CourseRepo struct {
@@ -18,8 +20,8 @@ func NewCourseRepo(pg *postgres.Postgres) CourseRepo {
 func (r CourseRepo) Create(ctx context.Context, course entity.Course) error {
 	sql, args, err := r.pg.Builder.
 		Insert("courses").
-		Columns("name", "description", "chat", "logo", "type").
-		Values(course.Name, course.Description, course.Chat, course.Logo, course.Type).
+		Columns("name", "description", "logo", "type", "author_id").
+		Values(course.Name, course.Description, course.Logo, course.Type, course.AuthorId).
 		ToSql()
 	if err != nil {
 		return err
@@ -46,7 +48,7 @@ func (r CourseRepo) GetCourses(ctx context.Context) ([]entity.Course, error) {
 func (r CourseRepo) get(ctx context.Context, where sq.Eq) ([]entity.Course, error) {
 	courses := make([]entity.Course, 0)
 	sql, args, err := r.pg.Builder.
-		Select("id", "name", "description", "type", "chat", "logo").
+		Select("id", "name", "description", "type", "logo", "author_id").
 		Where(where).
 		From("courses").
 		ToSql()
@@ -60,11 +62,63 @@ func (r CourseRepo) get(ctx context.Context, where sq.Eq) ([]entity.Course, erro
 	defer rows.Close()
 	for rows.Next() {
 		var course entity.Course
-		err = rows.Scan(&course.Id, &course.Name, &course.Description, &course.Type, &course.Chat, &course.Logo)
+		err = rows.Scan(&course.Id, &course.Name, &course.Description, &course.Type, &course.Logo, &course.AuthorId)
 		if err != nil {
 			return nil, err
 		}
 		courses = append(courses, course)
 	}
 	return courses, nil
+}
+
+func (r CourseRepo) GetTitle(ctx context.Context, id int) (entity.CourseTitle, error) {
+	var courseTitle entity.CourseTitle
+	sql, args, err := r.pg.Builder.
+		Select("row_to_json(row)").
+		Where(sq.Eq{"id": id}).
+		Limit(1).From("courses_title_view as row").
+		ToSql()
+	if err != nil {
+		return courseTitle, err
+	}
+	rows, err := r.pg.Pool.Query(ctx, sql, args...)
+	defer rows.Close()
+	if err != nil {
+
+	}
+	if !rows.Next() {
+		return courseTitle, entity.CourseNotFoundErr
+	}
+	courseJson := ""
+	err = rows.Scan(&courseJson)
+	if err != nil {
+		return entity.CourseTitle{}, err
+	}
+	return courseTitle, json.NewDecoder(strings.NewReader(courseJson)).Decode(&courseTitle)
+}
+
+func (r CourseRepo) CreateLink(ctx context.Context, link entity.CourseLink) error {
+	sql, args, err := r.pg.Builder.
+		Insert("course_links").
+		Columns("id", "name", "link", "course_id").
+		Values(link.Id, link.Name, link.Link, link.CourseId).
+		ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	return err
+}
+
+func (r CourseRepo) CreateCollaborator(ctx context.Context, collaborator entity.CourseCollaborator) error {
+	sql, args, err := r.pg.Builder.
+		Insert("course_collaborators").
+		Columns("id", "user_email", "course_id").
+		Values(collaborator.Id, collaborator.UserEmail, collaborator.CourseId).
+		ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	return err
 }

@@ -1,0 +1,1 @@
+drop view if exists course_title_view;

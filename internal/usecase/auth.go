@@ -79,7 +79,7 @@ func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (en
 	return uc.refreshSession(ctx, user.Id, refreshToken)
 }
 
-func (uc AuthUseCase) createSession(ctx context.Context, id uint) (entity.Tokens, error) {
+func (uc AuthUseCase) createSession(ctx context.Context, id string) (entity.Tokens, error) {
 	var (
 		tokens entity.Tokens
 		err    error
@@ -104,7 +104,7 @@ func (uc AuthUseCase) createSession(ctx context.Context, id uint) (entity.Tokens
 	return tokens, err
 }
 
-func (uc AuthUseCase) refreshSession(ctx context.Context, id uint, refreshToken string) (entity.Tokens, error) {
+func (uc AuthUseCase) refreshSession(ctx context.Context, id string, refreshToken string) (entity.Tokens, error) {
 	var (
 		tokens entity.Tokens
 		err    error
@@ -133,7 +133,7 @@ func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) 
 
 }
 
-func (uc AuthUseCase) verifyUser(ctx context.Context, id uint) (entity.VerificationResult, error) {
+func (uc AuthUseCase) verifyUser(ctx context.Context, id string) (entity.VerificationResult, error) {
 	err := uc.userRepo.VerifyUser(ctx, id)
 	if err != nil {
 		return entity.VerificationResult{Success: false}, err

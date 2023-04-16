@@ -19,7 +19,7 @@ type (
 	Session struct {
 		RefreshToken string    `json:"refresh_token"`
 		ExpiresIn    time.Time `json:"expires_in"`
-		UserId       uint      `json:"user_id"`
+		UserId       string    `json:"user_id"`
 	}
 
 	RefreshToken struct {

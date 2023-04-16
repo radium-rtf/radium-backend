@@ -24,7 +24,7 @@ func NewRouter(h *chi.Mux, pg *postgres.Postgres, storage filestorage.Storage, c
 	h.Route("/v1", func(r chi.Router) {
 		newAuthRoutes(r, authUseCase)
 		newAccountRoutes(r, accountUseCase, cfg.SigningKey)
-		newCourseRoutes(r, courseUseCase)
+		newCourseRoutes(r, courseUseCase, cfg.SigningKey)
 		newGroupRoutes(r, groupUseCase, cfg.SigningKey)
 	})
 }

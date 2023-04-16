@@ -1,12 +1,42 @@
 basePath: /v1
 definitions:
+  entity.Collaborator:
+    properties:
+      user_email:
+        type: string
+    type: object
+  entity.CourseTitle:
+    properties:
+      author:
+        $ref: '#/definitions/entity.UserDto'
+      collaborators:
+        items:
+          $ref: '#/definitions/entity.UserDto'
+        type: array
+      description:
+        type: string
+      id:
+        type: integer
+      links:
+        items:
+          $ref: '#/definitions/entity.Link'
+        type: array
+      logo:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
   entity.GroupName:
     properties:
       name:
         type: string
     type: object
-  entity.Name:
+  entity.Link:
     properties:
+      link:
+        type: string
       name:
         type: string
     type: object
@@ -52,10 +82,15 @@ definitions:
       email:
         type: string
       id:
-        type: integer
+        type: string
       name:
         type: string
       username:
+        type: string
+    type: object
+  entity.UserName:
+    properties:
+      name:
         type: string
     type: object
 host: localhost:8080
@@ -89,7 +124,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.Name'
+          $ref: '#/definitions/entity.UserName'
       produces:
       - application/json
       responses:
@@ -199,11 +234,6 @@ paths:
         name: logo
         required: true
         type: file
-      - description: chat
-        in: formData
-        name: chat
-        required: true
-        type: string
       - description: name
         in: formData
         name: name
@@ -226,6 +256,67 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      tags:
+      - course
+  /course/{courseId}/collaborator:
+    post:
+      parameters:
+      - description: SignIn
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Collaborator'
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /course/{courseId}/link:
+    post:
+      parameters:
+      - description: SignIn
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Link'
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /course/{courseId}/title:
+    get:
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.CourseTitle'
       tags:
       - course
   /group:

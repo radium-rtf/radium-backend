@@ -28,7 +28,7 @@ func (uc AccountUseCase) Account(ctx context.Context, userId string) (entity.Use
 	return entity.NewUserDto(user), nil
 }
 
-func (uc AccountUseCase) UpdateName(ctx context.Context, userid string, newName entity.Name) error {
+func (uc AccountUseCase) UpdateName(ctx context.Context, userid string, newName entity.UserName) error {
 	return uc.userRepo.UpdateName(ctx, userid, newName)
 }
 

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
@@ -26,7 +27,7 @@ func (uc CourseUseCase) CreateCourse(ctx context.Context, courseRequest entity.C
 		return course, err
 	}
 	course = entity.NewCourse(0, courseRequest.Name, courseRequest.Description,
-		image.Location, courseRequest.Chat, courseRequest.Type)
+		image.Location, courseRequest.AuthorId, courseRequest.Type)
 	_, err = uc.courseRepo.GetByName(ctx, course.Name)
 	if err == nil {
 		return course, errors.New("Курс с таким названием уже существует")
@@ -43,4 +44,28 @@ func (uc CourseUseCase) CreateCourse(ctx context.Context, courseRequest entity.C
 
 func (uc CourseUseCase) GetCourses(ctx context.Context) ([]entity.Course, error) {
 	return uc.courseRepo.GetCourses(ctx)
+}
+
+func (uc CourseUseCase) CreateLink(ctx context.Context, courseId int, link entity.Link) (entity.Link, error) {
+	courseLink := entity.CourseLink{
+		Id:       uuid.NewString(),
+		Name:     link.Name,
+		Link:     link.Link,
+		CourseId: courseId,
+	}
+
+	return link, uc.courseRepo.CreateLink(ctx, courseLink)
+}
+
+func (uc CourseUseCase) CreateCollaborator(ctx context.Context, courseId int, collaborator entity.Collaborator) (entity.Collaborator, error) {
+	courseCollaborator := entity.CourseCollaborator{
+		CourseId:  courseId,
+		UserEmail: collaborator.UserEmail,
+		Id:        uuid.NewString(),
+	}
+	return collaborator, uc.courseRepo.CreateCollaborator(ctx, courseCollaborator)
+}
+
+func (uc CourseUseCase) GetCourseTitle(ctx context.Context, id int) (entity.CourseTitle, error) {
+	return uc.courseRepo.GetTitle(ctx, id)
 }

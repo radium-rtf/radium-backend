@@ -8,27 +8,29 @@ var (
 	GroupTeacherNotFoundErr = errors.New("данный пользователь не я вляется преподавателем в группе")
 )
 
-type GroupName struct {
-	Name string
-}
+type (
+	GroupName struct {
+		Name string
+	}
 
-type GroupJoin struct {
-	UserId, GroupId string
-}
+	GroupJoin struct {
+		UserId, GroupId string
+	}
 
-type Group struct {
-	Id, Name string
-}
+	Group struct {
+		Id, Name string
+	}
 
-type GroupTeacher struct {
-	Id, UserId, GroupId string
-}
+	GroupTeacher struct {
+		Id, UserId, GroupId string
+	}
 
-type GroupStudent struct {
-	Id, GroupId, UserId string
-}
+	GroupStudent struct {
+		Id, GroupId, UserId string
+	}
 
-type GroupStudents struct {
-	Group    Group
-	Students []UserDto
-}
+	GroupStudents struct {
+		Group    Group
+		Students []UserDto
+	}
+)

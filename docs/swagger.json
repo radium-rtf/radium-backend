@@ -57,7 +57,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Name"
+                            "$ref": "#/definitions/entity.UserName"
                         }
                     }
                 ],
@@ -239,13 +239,6 @@
                     },
                     {
                         "type": "string",
-                        "description": "chat",
-                        "name": "chat",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "name",
                         "name": "name",
                         "in": "formData",
@@ -271,6 +264,106 @@
                         "description": "created",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/{courseId}/collaborator": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "description": "SignIn",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Collaborator"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/{courseId}/link": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "description": "SignIn",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/{courseId}/title": {
+            "get": {
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.CourseTitle"
                         }
                     }
                 }
@@ -374,6 +467,49 @@
         }
     },
     "definitions": {
+        "entity.Collaborator": {
+            "type": "object",
+            "properties": {
+                "user_email": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CourseTitle": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/entity.UserDto"
+                },
+                "collaborators": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.UserDto"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Link"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.GroupName": {
             "type": "object",
             "properties": {
@@ -382,9 +518,12 @@
                 }
             }
         },
-        "entity.Name": {
+        "entity.Link": {
             "type": "object",
             "properties": {
+                "link": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 }
@@ -455,12 +594,20 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.UserName": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }
