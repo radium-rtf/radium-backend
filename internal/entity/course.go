@@ -39,6 +39,14 @@ type (
 		Type          string    `json:"type"`
 	}
 
+	CourseModules struct {
+		Id      uint        `json:"id"`
+		Name    string      `json:"name"`
+		Modules []ModuleDto `json:"modules"`
+		Logo    string      `json:"logo"`
+		Type    string      `json:"type"`
+	}
+
 	CourseLink struct {
 		Id       string `json:"id"`
 		Name     string `json:"name"`

@@ -84,7 +84,7 @@ func (r CourseRepo) GetTitle(ctx context.Context, id int) (entity.CourseTitle, e
 	rows, err := r.pg.Pool.Query(ctx, sql, args...)
 	defer rows.Close()
 	if err != nil {
-
+		return courseTitle, err
 	}
 	if !rows.Next() {
 		return courseTitle, entity.CourseNotFoundErr

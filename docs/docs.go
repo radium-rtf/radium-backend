@@ -220,7 +220,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/entity.Course"
                         }
                     }
                 }
@@ -271,7 +271,72 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/entity.Course"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/{courseId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.CourseModules"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "description": "moduleRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ModuleRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ModuleDto"
                         }
                     }
                 }
@@ -289,7 +354,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SignIn",
+                        "description": "collaborator",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -327,7 +392,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SignIn",
+                        "description": "link",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -483,6 +548,52 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.Course": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CourseModules": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.ModuleDto"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.CourseTitle": {
             "type": "object",
             "properties": {
@@ -532,6 +643,25 @@ const docTemplate = `{
                 "link": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ModuleDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ModuleRequest": {
+            "type": "object",
+            "properties": {
                 "name": {
                     "type": "string"
                 }

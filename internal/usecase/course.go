@@ -30,7 +30,7 @@ func (uc CourseUseCase) CreateCourse(ctx context.Context, courseRequest entity.C
 		image.Location, courseRequest.AuthorId, courseRequest.Type)
 	_, err = uc.courseRepo.GetByName(ctx, course.Name)
 	if err == nil {
-		return course, errors.New("Курс с таким названием уже существует")
+		return course, errors.New("курс с таким названием уже существует")
 	}
 	if err != entity.CourseNotFoundErr {
 		return course, err
@@ -57,7 +57,8 @@ func (uc CourseUseCase) CreateLink(ctx context.Context, courseId int, link entit
 	return link, uc.courseRepo.CreateLink(ctx, courseLink)
 }
 
-func (uc CourseUseCase) CreateCollaborator(ctx context.Context, courseId int, collaborator entity.Collaborator) (entity.Collaborator, error) {
+func (uc CourseUseCase) CreateCollaborator(ctx context.Context, courseId int, collaborator entity.Collaborator) (
+	entity.Collaborator, error) {
 	courseCollaborator := entity.CourseCollaborator{
 		CourseId:  courseId,
 		UserEmail: collaborator.UserEmail,

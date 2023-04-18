@@ -15,18 +15,16 @@ type courseRoutes struct {
 	uc usecase.CourseUseCase
 }
 
-func newCourseRoutes(h chi.Router, useCase usecase.CourseUseCase, signingKey string) {
+func newCourseRoutes(course chi.Router, useCase usecase.CourseUseCase, signingKey string) {
 	routes := courseRoutes{uc: useCase}
 
-	h.Route("/course", func(r chi.Router) {
-		r.Get("/", handler(routes.getCourses).HTTP)
-		r.Get("/{courseId}/title", handler(routes.getCourseTitle).HTTP)
-		r.Group(func(r chi.Router) {
-			r.Use(authRequired(signingKey))
-			r.Post("/", handler(routes.postCourse).HTTP)
-			r.Post("/{courseId}/link", handler(routes.postLink).HTTP)
-			r.Post("/{courseId}/collaborator", handler(routes.postCollaborator).HTTP)
-		})
+	course.Get("/", handler(routes.getCourses).HTTP)
+	course.Get("/{courseId}/title", handler(routes.getCourseTitle).HTTP)
+	course.Group(func(r chi.Router) {
+		r.Use(authRequired(signingKey))
+		r.Post("/", handler(routes.postCourse).HTTP)
+		r.Post("/{courseId}/link", handler(routes.postLink).HTTP)
+		r.Post("/{courseId}/collaborator", handler(routes.postCollaborator).HTTP)
 	})
 }
 
@@ -37,7 +35,7 @@ func newCourseRoutes(h chi.Router, useCase usecase.CourseUseCase, signingKey str
 // @Param        name formData  string         true  "name"
 // @Param        description formData  string  true  "description"
 // @Param        type formData  string        true  "kotlin, math и тд"
-// @Success      201   {string}  string        "created"
+// @Success      201   {object} entity.Course       "created"
 // @Router       /course [post]
 func (r courseRoutes) postCourse(w http.ResponseWriter, request *http.Request) *appError {
 	err := request.ParseMultipartForm(8 * 1024 * 1024 * 8)
@@ -74,7 +72,7 @@ func (r courseRoutes) postCourse(w http.ResponseWriter, request *http.Request) *
 
 // @Tags course
 // @Security ApiKeyAuth
-// @Success      200   {string}  string        "ok"
+// @Success      200   {object} entity.Course        "ok"
 // @Router       /course [get]
 func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *appError {
 	courses, err := r.uc.GetCourses(request.Context())
@@ -104,7 +102,7 @@ func (r courseRoutes) getCourseTitle(w http.ResponseWriter, request *http.Reques
 
 // @Tags course
 // @Security ApiKeyAuth
-// @Param       request body entity.Link true "SignIn"
+// @Param       request body entity.Link true "link"
 // @Param        courseId   path     integer  true  "course id"
 // @Success      201   {object} entity.Link "ok"
 // @Router       /course/{courseId}/link [post]
@@ -130,7 +128,7 @@ func (r courseRoutes) postLink(w http.ResponseWriter, request *http.Request) *ap
 
 // @Tags course
 // @Security ApiKeyAuth
-// @Param       request body entity.Collaborator true "SignIn"
+// @Param       request body entity.Collaborator true "collaborator"
 // @Param        courseId   path      integer  true  "course id"
 // @Success      201   {object} entity.Link "ok"
 // @Router       /course/{courseId}/collaborator [post]

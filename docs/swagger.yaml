@@ -5,6 +5,36 @@ definitions:
       user_email:
         type: string
     type: object
+  entity.Course:
+    properties:
+      author_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      logo:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.CourseModules:
+    properties:
+      id:
+        type: integer
+      logo:
+        type: string
+      modules:
+        items:
+          $ref: '#/definitions/entity.ModuleDto'
+        type: array
+      name:
+        type: string
+      type:
+        type: string
+    type: object
   entity.CourseTitle:
     properties:
       author:
@@ -37,6 +67,18 @@ definitions:
     properties:
       link:
         type: string
+      name:
+        type: string
+    type: object
+  entity.ModuleDto:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.ModuleRequest:
+    properties:
       name:
         type: string
     type: object
@@ -220,7 +262,7 @@ paths:
         "200":
           description: ok
           schema:
-            type: string
+            $ref: '#/definitions/entity.Course'
       security:
       - ApiKeyAuth: []
       tags:
@@ -253,15 +295,54 @@ paths:
         "201":
           description: created
           schema:
-            type: string
+            $ref: '#/definitions/entity.Course'
       security:
       - ApiKeyAuth: []
       tags:
       - course
+  /course/{courseId}:
+    get:
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.CourseModules'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
+    post:
+      parameters:
+      - description: moduleRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ModuleRequest'
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.ModuleDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
   /course/{courseId}/collaborator:
     post:
       parameters:
-      - description: SignIn
+      - description: collaborator
         in: body
         name: request
         required: true
@@ -284,7 +365,7 @@ paths:
   /course/{courseId}/link:
     post:
       parameters:
-      - description: SignIn
+      - description: link
         in: body
         name: request
         required: true
