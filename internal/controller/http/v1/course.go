@@ -15,16 +15,21 @@ type courseRoutes struct {
 	uc usecase.CourseUseCase
 }
 
-func newCourseRoutes(course chi.Router, useCase usecase.CourseUseCase, signingKey string) {
+func newCourseRoutes(course chi.Router, h chi.Router, useCase usecase.CourseUseCase, signingKey string) {
 	routes := courseRoutes{uc: useCase}
 
 	course.Get("/", handler(routes.getCourses).HTTP)
-	course.Get("/{courseId}/title", handler(routes.getCourseTitle).HTTP)
+	course.Get("/title/{courseId}", handler(routes.getCourseTitle).HTTP)
+
 	course.Group(func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Post("/", handler(routes.postCourse).HTTP)
-		r.Post("/{courseId}/link", handler(routes.postLink).HTTP)
-		r.Post("/{courseId}/collaborator", handler(routes.postCollaborator).HTTP)
+	})
+
+	h.Group(func(r chi.Router) {
+		r.Use(authRequired(signingKey))
+		r.Post("/link/course/{courseId}}", handler(routes.postLink).HTTP)
+		r.Post("/collaborator/course/{courseId}", handler(routes.postCollaborator).HTTP)
 	})
 }
 
@@ -87,7 +92,7 @@ func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *
 // @Tags course
 // @Param        courseId   path     integer  true  "course id"
 // @Success      200   {object} entity.CourseTitle  "ok"
-// @Router       /course/{courseId}/title [get]
+// @Router       /course/title/{courseId} [get]
 func (r courseRoutes) getCourseTitle(w http.ResponseWriter, request *http.Request) *appError {
 	courseId := chi.URLParam(request, "courseId")
 	id, err := strconv.Atoi(courseId)
@@ -105,7 +110,7 @@ func (r courseRoutes) getCourseTitle(w http.ResponseWriter, request *http.Reques
 // @Param       request body entity.Link true "link"
 // @Param        courseId   path     integer  true  "course id"
 // @Success      201   {object} entity.Link "ok"
-// @Router       /course/{courseId}/link [post]
+// @Router       /link/course/{courseId}} [post]
 func (r courseRoutes) postLink(w http.ResponseWriter, request *http.Request) *appError {
 	var link entity.Link
 	err := render.DecodeJSON(request.Body, &link)
@@ -131,7 +136,7 @@ func (r courseRoutes) postLink(w http.ResponseWriter, request *http.Request) *ap
 // @Param       request body entity.Collaborator true "collaborator"
 // @Param        courseId   path      integer  true  "course id"
 // @Success      201   {object} entity.Link "ok"
-// @Router       /course/{courseId}/collaborator [post]
+// @Router       /collaborator/course/{courseId} [post]
 func (r courseRoutes) postCollaborator(w http.ResponseWriter, request *http.Request) *appError {
 	var collaborator entity.Collaborator
 	err := render.DecodeJSON(request.Body, &collaborator)

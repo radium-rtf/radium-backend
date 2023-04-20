@@ -256,6 +256,29 @@ paths:
             $ref: '#/definitions/entity.Tokens'
       tags:
       - auth
+  /collaborator/course/{courseId}:
+    post:
+      parameters:
+      - description: collaborator
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Collaborator'
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
   /course:
     get:
       responses:
@@ -339,53 +362,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
-  /course/{courseId}/collaborator:
-    post:
-      parameters:
-      - description: collaborator
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.Collaborator'
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Link'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
-  /course/{courseId}/link:
-    post:
-      parameters:
-      - description: link
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.Link'
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Link'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
-  /course/{courseId}/title:
+  /course/title/{courseId}:
     get:
       parameters:
       - description: course id
@@ -418,7 +395,47 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /group/{groupId}/teacher/{userId}:
+  /join/group/{groupId}:
+    patch:
+      parameters:
+      - description: group id
+        in: path
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: created
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /link/course/{courseId}}:
+    post:
+      parameters:
+      - description: link
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Link'
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /teacher/{userId}/group/{groupId}:
     post:
       parameters:
       - description: user id
@@ -433,23 +450,6 @@ paths:
         type: string
       responses:
         "201":
-          description: created
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - group
-  /group/join/{groupId}:
-    patch:
-      parameters:
-      - description: group id
-        in: path
-        name: groupId
-        required: true
-        type: string
-      responses:
-        "200":
           description: created
           schema:
             type: string

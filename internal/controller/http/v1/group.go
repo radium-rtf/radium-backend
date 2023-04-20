@@ -15,11 +15,15 @@ type groupRoutes struct {
 
 func newGroupRoutes(h chi.Router, useCase usecase.GroupUseCase, signingKey string) {
 	routes := groupRoutes{uc: useCase}
-	h.Route("/group", func(r chi.Router) {
+
+	h.Group(func(r chi.Router) {
 		r.Use(authRequired(signingKey))
+		r.Post("/teacher/{userId}/group/{groupId}", handler(routes.teacher).HTTP)
+		r.Patch("/join/group/{groupId}", handler(routes.join).HTTP)
+	})
+
+	h.Route("/group", func(r chi.Router) {
 		r.Post("/", handler(routes.create).HTTP)
-		r.Patch("/join/{groupId}", handler(routes.join).HTTP)
-		r.Post("/{groupId}/teacher/{userId}", handler(routes.teacher).HTTP)
 	})
 }
 
@@ -47,7 +51,7 @@ func (r groupRoutes) create(w http.ResponseWriter, request *http.Request) *appEr
 // @Security ApiKeyAuth
 // @Param        groupId   path      string  true  "group id"
 // @Success      200   {string}  string        "created"
-// @Router       /group/join/{groupId} [patch]
+// @Router       /join/group/{groupId} [patch]
 func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
 	userId := request.Context().Value("userId").(string)
@@ -65,7 +69,7 @@ func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appErro
 // @Param        userId   path      string  true  "user id"
 // @Param        groupId   path      string  true  "group id"
 // @Success      201   {string}  string        "created"
-// @Router       /group/{groupId}/teacher/{userId} [post]
+// @Router       /teacher/{userId}/group/{groupId} [post]
 func (r groupRoutes) teacher(_ http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
 	teacherId := request.Context().Value("userId").(string)
