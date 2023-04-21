@@ -70,3 +70,15 @@ func (uc CourseUseCase) CreateCollaborator(ctx context.Context, courseId int, co
 func (uc CourseUseCase) GetCourseTitle(ctx context.Context, id int) (entity.CourseTitle, error) {
 	return uc.courseRepo.GetTitle(ctx, id)
 }
+
+func (uc CourseUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
+	return uc.courseRepo.GetByStudent(ctx, studentId)
+}
+
+func (uc CourseUseCase) Join(ctx context.Context, userId string, courseId string) (entity.Course, error) {
+	err := uc.courseRepo.Join(ctx, userId, courseId)
+	if err != nil {
+		return entity.Course{}, err
+	}
+	return uc.courseRepo.GetById(ctx, courseId)
+}

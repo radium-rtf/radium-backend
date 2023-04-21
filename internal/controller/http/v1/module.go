@@ -64,6 +64,7 @@ func (r moduleRoutes) getModules(w http.ResponseWriter, request *http.Request) *
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
+	render.Status(request, http.StatusOK)
 	render.JSON(w, request, courseModules)
 	return nil
 }

@@ -395,6 +395,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
+  /join/course/{courseId}:
+    post:
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.Course'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
   /join/group/{groupId}:
     patch:
       parameters:
@@ -431,6 +448,17 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/entity.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /my/course:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Course'
       security:
       - ApiKeyAuth: []
       tags:

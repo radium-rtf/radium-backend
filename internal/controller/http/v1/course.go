@@ -30,6 +30,8 @@ func newCourseRoutes(course chi.Router, h chi.Router, useCase usecase.CourseUseC
 		r.Use(authRequired(signingKey))
 		r.Post("/link/course/{courseId}}", handler(routes.postLink).HTTP)
 		r.Post("/collaborator/course/{courseId}", handler(routes.postCollaborator).HTTP)
+		r.Post("/join/course/{courseId}", handler(routes.join).HTTP)
+		r.Get("/my/course", handler(routes.myCourses).HTTP)
 	})
 }
 
@@ -154,5 +156,37 @@ func (r courseRoutes) postCollaborator(w http.ResponseWriter, request *http.Requ
 	}
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, collaborator)
+	return nil
+}
+
+// @Tags course
+// @Security ApiKeyAuth
+// @Success      200   {object} entity.Course "ok"
+// @Router       /my/course [get]
+func (r courseRoutes) myCourses(w http.ResponseWriter, request *http.Request) *appError {
+	userId := request.Context().Value("userId").(string)
+	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, courses)
+	return nil
+}
+
+// @Tags course
+// @Security ApiKeyAuth
+// @Param        courseId   path      integer  true  "course id"
+// @Success      201   {object} entity.Course "created"
+// @Router       /join/course/{courseId} [post]
+func (r courseRoutes) join(w http.ResponseWriter, request *http.Request) *appError {
+	userId := request.Context().Value("userId").(string)
+	courseId := chi.URLParam(request, "courseId")
+	courses, err := r.uc.Join(request.Context(), userId, courseId)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusCreated)
+	render.JSON(w, request, courses)
 	return nil
 }

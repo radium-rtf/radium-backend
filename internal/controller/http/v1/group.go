@@ -52,7 +52,7 @@ func (r groupRoutes) create(w http.ResponseWriter, request *http.Request) *appEr
 // @Param        groupId   path      string  true  "group id"
 // @Success      200   {string}  string        "created"
 // @Router       /join/group/{groupId} [patch]
-func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appError {
+func (r groupRoutes) join(w http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
 	userId := request.Context().Value("userId").(string)
 	var joinGroup = entity.GroupJoin{GroupId: groupId, UserId: userId}
@@ -60,7 +60,7 @@ func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appErro
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	render.Status(request, http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 	return nil
 }
 
@@ -70,7 +70,7 @@ func (r groupRoutes) join(_ http.ResponseWriter, request *http.Request) *appErro
 // @Param        groupId   path      string  true  "group id"
 // @Success      201   {string}  string        "created"
 // @Router       /teacher/{userId}/group/{groupId} [post]
-func (r groupRoutes) teacher(_ http.ResponseWriter, request *http.Request) *appError {
+func (r groupRoutes) teacher(w http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
 	teacherId := request.Context().Value("userId").(string)
 	var groupTeacher = entity.GroupTeacher{GroupId: groupId, UserId: teacherId, Id: uuid.NewString()}
@@ -78,6 +78,6 @@ func (r groupRoutes) teacher(_ http.ResponseWriter, request *http.Request) *appE
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	render.Status(request, http.StatusCreated)
+	w.WriteHeader(http.StatusCreated)
 	return nil
 }
