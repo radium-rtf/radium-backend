@@ -17,6 +17,7 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 	h.Route("/account", func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Get("/", handler(routes.account).HTTP)
+		r.Get("/course", handler(routes.course).HTTP)
 		r.Patch("/name", handler(routes.name).HTTP)
 		r.Patch("/password", handler(routes.password).HTTP)
 	})
@@ -80,5 +81,20 @@ func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *a
 		return newAppError(err, http.StatusBadRequest)
 	}
 	w.WriteHeader(http.StatusOK)
+	return nil
+}
+
+// @Tags account
+// @Security ApiKeyAuth
+// @Success      200   {object} entity.Course "ok"
+// @Router       /account/course [get]
+func (r accountRoutes) course(w http.ResponseWriter, request *http.Request) *appError {
+	userId := request.Context().Value("userId").(string)
+	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, courses)
 	return nil
 }

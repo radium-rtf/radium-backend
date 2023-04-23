@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/radium-rtf/radium-backend/config"
@@ -56,8 +55,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, signIn entity.SignUp) (entity.
 		return tokens, err
 	}
 	signIn.Password = password
-	username := strings.Split(signIn.Email, "@")[0]
-	err = uc.userRepo.Create(ctx, signIn, username)
+	err = uc.userRepo.Create(ctx, signIn)
 	if err != nil {
 		return tokens, err
 	}

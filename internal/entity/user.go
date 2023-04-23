@@ -2,17 +2,15 @@ package entity
 
 type (
 	UserDto struct {
-		Id       string `json:"id"`
-		Email    string `json:"email"`
-		Name     string `json:"name"`
-		Username string `json:"username"`
+		Id    string `json:"id"`
+		Email string `json:"email"`
+		Name  string `json:"name"`
 	}
 
 	User struct {
 		Id               string
 		Email            string
 		Name             string
-		Username         string
 		Password         string
 		VerificationCode string
 		IsVerified       bool
@@ -30,9 +28,8 @@ type (
 
 func NewUserDto(user User) UserDto {
 	return UserDto{
-		Id:       user.Id,
-		Email:    user.Email,
-		Name:     user.Name,
-		Username: user.Username,
+		Id:    user.Id,
+		Email: user.Email,
+		Name:  user.Name,
 	}
 }

@@ -46,33 +46,28 @@ func (uc CourseUseCase) GetCourses(ctx context.Context) ([]entity.Course, error)
 	return uc.courseRepo.GetCourses(ctx)
 }
 
-func (uc CourseUseCase) CreateLink(ctx context.Context, courseId int, link entity.Link) (entity.Link, error) {
-	courseLink := entity.CourseLink{
+func (uc CourseUseCase) CreateLink(ctx context.Context, link entity.LinkRequest) (entity.LinkDto, error) {
+	courseLink := entity.Link{
 		Id:       uuid.NewString(),
 		Name:     link.Name,
 		Link:     link.Link,
-		CourseId: courseId,
+		CourseId: link.CourseId,
 	}
-
-	return link, uc.courseRepo.CreateLink(ctx, courseLink)
+	dto := entity.LinkDto{Link: link.Link, Name: link.Name}
+	return dto, uc.courseRepo.CreateLink(ctx, courseLink)
 }
 
-func (uc CourseUseCase) CreateCollaborator(ctx context.Context, courseId int, collaborator entity.Collaborator) (
-	entity.Collaborator, error) {
+func (uc CourseUseCase) CreateCollaborator(ctx context.Context, collaborator entity.Collaborator) (entity.Collaborator, error) {
 	courseCollaborator := entity.CourseCollaborator{
-		CourseId:  courseId,
+		CourseId:  collaborator.CourseId,
 		UserEmail: collaborator.UserEmail,
 		Id:        uuid.NewString(),
 	}
 	return collaborator, uc.courseRepo.CreateCollaborator(ctx, courseCollaborator)
 }
 
-func (uc CourseUseCase) GetCourseTitle(ctx context.Context, id int) (entity.CourseTitle, error) {
-	return uc.courseRepo.GetTitle(ctx, id)
-}
-
-func (uc CourseUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
-	return uc.courseRepo.GetByStudent(ctx, studentId)
+func (uc CourseUseCase) GetCourseById(ctx context.Context, id int) (entity.CourseTitle, error) {
+	return uc.courseRepo.GetFullById(ctx, id)
 }
 
 func (uc CourseUseCase) Join(ctx context.Context, userId string, courseId string) (entity.Course, error) {

@@ -33,7 +33,7 @@ type (
 		Name          string    `json:"name"`
 		Description   string    `json:"description"`
 		Author        UserDto   `json:"author"`
-		Links         []Link    `json:"links"`
+		Links         []LinkDto `json:"links"`
 		Collaborators []UserDto `json:"collaborators"`
 		Logo          string    `json:"logo"`
 		Type          string    `json:"type"`
@@ -45,19 +45,6 @@ type (
 		Modules []ModuleDto `json:"modules"`
 		Logo    string      `json:"logo"`
 		Type    string      `json:"type"`
-	}
-
-	CourseLink struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Link     string `json:"link"`
-		CourseId int    `json:"course_id"`
-	}
-
-	CourseCollaborator struct {
-		Id        string `json:"id"`
-		UserEmail string `json:"user_email"`
-		CourseId  int    `json:"course_id"`
 	}
 )
 

@@ -1,0 +1,1 @@
+alter table if exists users add column username varchar unique;

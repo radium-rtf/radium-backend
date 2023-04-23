@@ -13,11 +13,12 @@ import (
 type AccountUseCase struct {
 	userRepo       repo.UserRepo
 	passwordHasher hash.PasswordHasher
+	courseRepo     repo.CourseRepo
 }
 
 func NewAccountUseCase(pg *postgres.Postgres, cfg *config.Config) AccountUseCase {
 	passwordHasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
-	return AccountUseCase{userRepo: repo.NewUserRepo(pg), passwordHasher: passwordHasher}
+	return AccountUseCase{userRepo: repo.NewUserRepo(pg), courseRepo: repo.NewCourseRepo(pg), passwordHasher: passwordHasher}
 }
 
 func (uc AccountUseCase) Account(ctx context.Context, userId string) (entity.UserDto, error) {
@@ -45,4 +46,8 @@ func (uc AccountUseCase) UpdatePassword(ctx context.Context, userid string, pass
 		return err
 	}
 	return uc.userRepo.UpdatePassword(ctx, userid, hashedPassword)
+}
+
+func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
+	return uc.courseRepo.GetByStudent(ctx, studentId)
 }

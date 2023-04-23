@@ -2,6 +2,8 @@ basePath: /v1
 definitions:
   entity.Collaborator:
     properties:
+      course_id:
+        type: integer
       user_email:
         type: string
     type: object
@@ -49,7 +51,7 @@ definitions:
         type: integer
       links:
         items:
-          $ref: '#/definitions/entity.Link'
+          $ref: '#/definitions/entity.LinkDto'
         type: array
       logo:
         type: string
@@ -63,8 +65,17 @@ definitions:
       name:
         type: string
     type: object
-  entity.Link:
+  entity.LinkDto:
     properties:
+      link:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.LinkRequest:
+    properties:
+      course_id:
+        type: integer
       link:
         type: string
       name:
@@ -72,13 +83,15 @@ definitions:
     type: object
   entity.ModuleDto:
     properties:
-      id:
-        type: string
       name:
+        type: string
+      name_eng:
         type: string
     type: object
   entity.ModuleRequest:
     properties:
+      course_id:
+        type: integer
       name:
         type: string
     type: object
@@ -110,6 +123,26 @@ definitions:
       password:
         type: string
     type: object
+  entity.Slide:
+    properties:
+      id:
+        type: string
+      module:
+        type: integer
+      name:
+        type: string
+      nameEng:
+        type: string
+    type: object
+  entity.SlideRequest:
+    properties:
+      course_id:
+        type: integer
+      module_name_eng:
+        type: string
+      name:
+        type: string
+    type: object
   entity.Tokens:
     properties:
       access_token:
@@ -126,8 +159,6 @@ definitions:
       id:
         type: string
       name:
-        type: string
-      username:
         type: string
     type: object
   entity.UserName:
@@ -152,6 +183,17 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/entity.UserDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - account
+  /account/course:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Course'
       security:
       - ApiKeyAuth: []
       tags:
@@ -256,7 +298,7 @@ paths:
             $ref: '#/definitions/entity.Tokens'
       tags:
       - auth
-  /collaborator/course/{courseId}:
+  /collaborator:
     post:
       parameters:
       - description: collaborator
@@ -265,16 +307,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.Collaborator'
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Link'
+            $ref: '#/definitions/entity.Collaborator'
       security:
       - ApiKeyAuth: []
       tags:
@@ -324,45 +361,6 @@ paths:
       tags:
       - course
   /course/{courseId}:
-    get:
-      parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.CourseModules'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - module
-    post:
-      parameters:
-      - description: moduleRequest
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.ModuleRequest'
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "201":
-          description: created
-          schema:
-            $ref: '#/definitions/entity.ModuleDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - module
-  /course/title/{courseId}:
     get:
       parameters:
       - description: course id
@@ -429,7 +427,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /link/course/{courseId}}:
+  /link/course:
     post:
       parameters:
       - description: link
@@ -437,32 +435,91 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.Link'
+          $ref: '#/definitions/entity.LinkRequest'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.LinkDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /module:
+    post:
+      parameters:
+      - description: moduleRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ModuleRequest'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.ModuleDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
+  /module/{courseId}:
+    get:
+      parameters:
       - description: course id
         in: path
         name: courseId
         required: true
         type: integer
       responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Link'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
-  /my/course:
-    get:
-      responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Course'
+            $ref: '#/definitions/entity.CourseModules'
       security:
       - ApiKeyAuth: []
       tags:
-      - course
+      - module
+  /slide:
+    post:
+      parameters:
+      - description: создание слайда
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SlideRequest'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Slide'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - slide
+  /slide/{courseId}/{moduleNameEng}:
+    get:
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      - description: course id
+        in: path
+        name: moduleNameEng
+        required: true
+        type: string
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Slide'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - slide
   /teacher/{userId}/group/{groupId}:
     post:
       parameters:

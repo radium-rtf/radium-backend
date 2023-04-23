@@ -8,17 +8,25 @@ var (
 
 type (
 	ModuleRequest struct {
-		Name string `json:"name"`
-	}
-
-	Module struct {
-		Id       string `json:"id"`
-		CourseId int    `json:"course_id"`
+		CourseId uint   `json:"course_id"`
 		Name     string `json:"name"`
 	}
 
+	Module struct {
+		NameEng  string `json:"name_eng"`
+		CourseId uint   `json:"course_id"`
+		Name     string `json:"name"`
+	}
+
+	ModuleSlides struct {
+		Id      uint       `json:"id"`
+		Name    string     `json:"name"`
+		NameEng string     `json:"name_eng"`
+		Slides  []SlideDto `json:"slides"`
+	}
+
 	ModuleDto struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		NameEng string `json:"name_eng"`
+		Name    string `json:"name"`
 	}
 )

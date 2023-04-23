@@ -22,16 +22,16 @@ func NewRouter(h *chi.Mux, pg *postgres.Postgres, storage filestorage.Storage, c
 	courseUseCase := usecase.NewCourseUseCase(pg, storage)
 	groupUseCase := usecase.NewGroupUseCase(pg)
 	moduleUseCase := usecase.NewModuleUseCase(pg)
+	slideUseCase := usecase.NewSlideUseCase(pg)
 
 	h.Route("/v1", func(v1 chi.Router) {
 		newAuthRoutes(v1, authUseCase)
 		newAccountRoutes(v1, accountUseCase, cfg.SigningKey)
 
-		v1.Route("/course", func(course chi.Router) {
-			newCourseRoutes(course, v1, courseUseCase, cfg.SigningKey)
-			newModuleRoutes(course, moduleUseCase, cfg.SigningKey)
-		})
+		newCourseRoutes(v1, courseUseCase, cfg.SigningKey)
+		newModuleRoutes(v1, moduleUseCase, cfg.SigningKey)
 
 		newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
+		newSlideRoutes(v1, slideUseCase, cfg.SigningKey)
 	})
 }

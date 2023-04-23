@@ -71,7 +71,7 @@ func (r CourseRepo) get(ctx context.Context, where sq.Eq) ([]entity.Course, erro
 	return courses, nil
 }
 
-func (r CourseRepo) GetTitle(ctx context.Context, id int) (entity.CourseTitle, error) {
+func (r CourseRepo) GetFullById(ctx context.Context, id int) (entity.CourseTitle, error) {
 	var courseTitle entity.CourseTitle
 	sql, args, err := r.pg.Builder.
 		Select("row_to_json(row)").
@@ -82,10 +82,10 @@ func (r CourseRepo) GetTitle(ctx context.Context, id int) (entity.CourseTitle, e
 		return courseTitle, err
 	}
 	rows, err := r.pg.Pool.Query(ctx, sql, args...)
-	defer rows.Close()
 	if err != nil {
 		return courseTitle, err
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		return courseTitle, entity.CourseNotFoundErr
 	}
@@ -97,7 +97,7 @@ func (r CourseRepo) GetTitle(ctx context.Context, id int) (entity.CourseTitle, e
 	return courseTitle, json.NewDecoder(strings.NewReader(courseJson)).Decode(&courseTitle)
 }
 
-func (r CourseRepo) CreateLink(ctx context.Context, link entity.CourseLink) error {
+func (r CourseRepo) CreateLink(ctx context.Context, link entity.Link) error {
 	sql, args, err := r.pg.Builder.
 		Insert("course_links").
 		Columns("id", "name", "link", "course_id").

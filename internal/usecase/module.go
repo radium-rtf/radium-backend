@@ -16,16 +16,16 @@ func NewModuleUseCase(pg *postgres.Postgres) ModuleUseCase {
 	return ModuleUseCase{moduleRepo: repo.NewModuleRepo(pg)}
 }
 
-func (uc ModuleUseCase) CreateModule(ctx context.Context, courseId int, moduleRequest entity.ModuleRequest) (
+func (uc ModuleUseCase) CreateModule(ctx context.Context, moduleRequest entity.ModuleRequest) (
 	entity.ModuleDto, error) {
 	module := entity.Module{
-		CourseId: courseId,
 		Name:     moduleRequest.Name,
-		Id:       translit.RuEn(moduleRequest.Name),
+		NameEng:  translit.RuEn(moduleRequest.Name),
+		CourseId: moduleRequest.CourseId,
 	}
 	moduleDto := entity.ModuleDto{
-		Id:   module.Id,
-		Name: module.Name,
+		NameEng: module.NameEng,
+		Name:    module.Name,
 	}
 	return moduleDto, uc.moduleRepo.Create(ctx, module)
 }

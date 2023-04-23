@@ -15,23 +15,24 @@ type courseRoutes struct {
 	uc usecase.CourseUseCase
 }
 
-func newCourseRoutes(course chi.Router, h chi.Router, useCase usecase.CourseUseCase, signingKey string) {
+func newCourseRoutes(h chi.Router, useCase usecase.CourseUseCase, signingKey string) {
 	routes := courseRoutes{uc: useCase}
 
-	course.Get("/", handler(routes.getCourses).HTTP)
-	course.Get("/title/{courseId}", handler(routes.getCourseTitle).HTTP)
+	h.Route("/course", func(r chi.Router) {
+		r.Get("/", handler(routes.getCourses).HTTP)
+		r.Get("/{courseId}", handler(routes.getCourse).HTTP)
 
-	course.Group(func(r chi.Router) {
-		r.Use(authRequired(signingKey))
-		r.Post("/", handler(routes.postCourse).HTTP)
+		r.Group(func(r chi.Router) {
+			r.Use(authRequired(signingKey))
+			r.Post("/", handler(routes.postCourse).HTTP)
+		})
 	})
 
 	h.Group(func(r chi.Router) {
 		r.Use(authRequired(signingKey))
-		r.Post("/link/course/{courseId}}", handler(routes.postLink).HTTP)
-		r.Post("/collaborator/course/{courseId}", handler(routes.postCollaborator).HTTP)
+		r.Post("/link/course", handler(routes.postLink).HTTP)
+		r.Post("/collaborator", handler(routes.postCollaborator).HTTP)
 		r.Post("/join/course/{courseId}", handler(routes.join).HTTP)
-		r.Get("/my/course", handler(routes.myCourses).HTTP)
 	})
 }
 
@@ -94,11 +95,11 @@ func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *
 // @Tags course
 // @Param        courseId   path     integer  true  "course id"
 // @Success      200   {object} entity.CourseTitle  "ok"
-// @Router       /course/title/{courseId} [get]
-func (r courseRoutes) getCourseTitle(w http.ResponseWriter, request *http.Request) *appError {
+// @Router       /course/{courseId} [get]
+func (r courseRoutes) getCourse(w http.ResponseWriter, request *http.Request) *appError {
 	courseId := chi.URLParam(request, "courseId")
 	id, err := strconv.Atoi(courseId)
-	courses, err := r.uc.GetCourseTitle(request.Context(), id)
+	courses, err := r.uc.GetCourseById(request.Context(), id)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -109,68 +110,41 @@ func (r courseRoutes) getCourseTitle(w http.ResponseWriter, request *http.Reques
 
 // @Tags course
 // @Security ApiKeyAuth
-// @Param       request body entity.Link true "link"
-// @Param        courseId   path     integer  true  "course id"
-// @Success      201   {object} entity.Link "ok"
-// @Router       /link/course/{courseId}} [post]
+// @Param       request body entity.LinkRequest true "link"
+// @Success      201   {object} entity.LinkDto "ok"
+// @Router       /link/course [post]
 func (r courseRoutes) postLink(w http.ResponseWriter, request *http.Request) *appError {
-	var link entity.Link
+	var link entity.LinkRequest
 	err := render.DecodeJSON(request.Body, &link)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	courseId := chi.URLParam(request, "courseId")
-	id, err := strconv.Atoi(courseId)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	link, err = r.uc.CreateLink(request.Context(), id, link)
+	linkDto, err := r.uc.CreateLink(request.Context(), link)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 	render.Status(request, http.StatusCreated)
-	render.JSON(w, request, link)
+	render.JSON(w, request, linkDto)
 	return nil
 }
 
 // @Tags course
 // @Security ApiKeyAuth
 // @Param       request body entity.Collaborator true "collaborator"
-// @Param        courseId   path      integer  true  "course id"
-// @Success      201   {object} entity.Link "ok"
-// @Router       /collaborator/course/{courseId} [post]
+// @Success      201   {object} entity.Collaborator "ok"
+// @Router       /collaborator [post]
 func (r courseRoutes) postCollaborator(w http.ResponseWriter, request *http.Request) *appError {
 	var collaborator entity.Collaborator
 	err := render.DecodeJSON(request.Body, &collaborator)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	courseId := chi.URLParam(request, "courseId")
-	id, err := strconv.Atoi(courseId)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	collaborator, err = r.uc.CreateCollaborator(request.Context(), id, collaborator)
+	collaborator, err = r.uc.CreateCollaborator(request.Context(), collaborator)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, collaborator)
-	return nil
-}
-
-// @Tags course
-// @Security ApiKeyAuth
-// @Success      200   {object} entity.Course "ok"
-// @Router       /my/course [get]
-func (r courseRoutes) myCourses(w http.ResponseWriter, request *http.Request) *appError {
-	userId := request.Context().Value("userId").(string)
-	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	render.Status(request, http.StatusOK)
-	render.JSON(w, request, courses)
 	return nil
 }
 

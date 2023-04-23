@@ -19,9 +19,9 @@ func NewModuleRepo(pg *postgres.Postgres) ModuleRepo {
 
 func (r ModuleRepo) Create(ctx context.Context, module entity.Module) error {
 	sql, args, err := r.pg.Builder.
-		Insert("course_modules").
-		Columns("id", "course_id", "name").
-		Values(module.Id, module.CourseId, module.Name).
+		Insert("modules").
+		Columns("name_eng", "course_id", "name").
+		Values(module.NameEng, module.CourseId, module.Name).
 		ToSql()
 	if err != nil {
 		return err
@@ -39,10 +39,10 @@ func (r ModuleRepo) GetModules(ctx context.Context, id int) (entity.CourseModule
 		return modules, err
 	}
 	rows, err := r.pg.Pool.Query(ctx, sql, args...)
-	defer rows.Close()
 	if err != nil {
 		return modules, err
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		return modules, entity.CourseNotFoundErr
 	}
@@ -52,4 +52,49 @@ func (r ModuleRepo) GetModules(ctx context.Context, id int) (entity.CourseModule
 		return modules, err
 	}
 	return modules, json.NewDecoder(strings.NewReader(modulesJson)).Decode(&modules)
+}
+
+func (r ModuleRepo) GetModuleId(ctx context.Context, courseId uint, nameEng string) (uint, error) {
+	var moduleId uint
+	sql, args, err := r.pg.Builder.
+		Select("id").From("modules").
+		Where(sq.And{sq.Eq{"course_id": courseId}, sq.Eq{"name_eng": nameEng}}).Limit(1).
+		ToSql()
+	if err != nil {
+		return moduleId, err
+	}
+	rows, err := r.pg.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return 0, entity.ModulesNotFoundErr
+	}
+	err = rows.Scan(&moduleId)
+	return moduleId, err
+}
+
+func (r ModuleRepo) Get(ctx context.Context, moduleId entity.SlidesRequest) (entity.ModuleSlides, error) {
+	slides := entity.ModuleSlides{}
+	sql, args, err := r.pg.Builder.
+		Select("row_to_json(row)").
+		From("module_slides_view as row").Where(sq.Eq{"module_id": moduleId}).ToSql()
+	if err != nil {
+		return slides, err
+	}
+	rows, err := r.pg.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return slides, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return slides, entity.CourseNotFoundErr
+	}
+	slidesJson := ""
+	err = rows.Scan(&slidesJson)
+	if err != nil {
+		return slides, err
+	}
+	return slides, json.NewDecoder(strings.NewReader(slidesJson)).Decode(&slides)
 }

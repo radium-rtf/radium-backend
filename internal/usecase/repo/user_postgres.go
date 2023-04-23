@@ -19,11 +19,11 @@ func NewUserRepo(pg *postgres.Postgres) UserRepo {
 	return UserRepo{pg: pg}
 }
 
-func (r UserRepo) Create(ctx context.Context, signUp entity.SignUp, username string) error {
+func (r UserRepo) Create(ctx context.Context, signUp entity.SignUp) error {
 	sql, args, err := r.pg.Builder.
 		Insert("users").
-		Columns("id", "name", "email", "password", "username").
-		Values(uuid.NewString(), signUp.Name, signUp.Email, signUp.Password, username).
+		Columns("id", "name", "email", "password").
+		Values(uuid.NewString(), signUp.Name, signUp.Email, signUp.Password).
 		ToSql()
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (r UserRepo) Create(ctx context.Context, signUp entity.SignUp, username str
 func (r UserRepo) get(ctx context.Context, where sq.Eq) (entity.User, error) {
 	user := entity.User{}
 	sql, args, err := r.pg.Builder.
-		Select("id", "name", "email", "username", "password").
+		Select("id", "name", "email", "password").
 		Where(where).
 		Limit(1).
 		From("users").
@@ -54,7 +54,7 @@ func (r UserRepo) get(ctx context.Context, where sq.Eq) (entity.User, error) {
 	if !rows.Next() {
 		return user, errors.New("пользователь не найден")
 	}
-	err = rows.Scan(&user.Id, &user.Name, &user.Email, &user.Username, &user.Password)
+	err = rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 	if err != nil {
 		return user, err
 	}
@@ -76,7 +76,7 @@ func (r UserRepo) GetByVerificationCode(ctx context.Context, verificationCode st
 func (r UserRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (entity.User, error) {
 	var user entity.User
 	sql, args, err := r.pg.Builder.
-		Select("user_id", "name", "email", "username", "password", "expires_in").
+		Select("user_id", "name", "email", "password", "expires_in").
 		Where(sq.Eq{"refresh_token": refreshToken}).
 		Limit(1).
 		From("sessions").
@@ -94,7 +94,7 @@ func (r UserRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (e
 	if !rows.Next() {
 		return user, errors.New("сессия не найдена")
 	}
-	err = rows.Scan(&user.Id, &user.Name, &user.Email, &user.Username, &user.Password, &expiresIn)
+	err = rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &expiresIn)
 	if err != nil {
 		return user, err
 	}

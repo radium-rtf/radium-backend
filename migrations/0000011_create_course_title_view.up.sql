@@ -12,13 +12,13 @@ select public.courses.id,
               where course_links.course_id = courses.id) as link),
 
        (select array_to_json(array_agg(row_to_json(collaborator.*))) as collaborators
-        from (select users.id, users.email, users.name, users.username
+        from (select users.id, users.email, users.name
               from public.course_collaborators
                        join users on public.users.email = public.course_collaborators.user_email
               where public.course_collaborators.course_id = public.courses.id) as collaborator),
 
        (select row_to_json(author.*) as author
-        from (select users.id, users.email, users.name, users.username
+        from (select users.id, users.email, users.name
               from public.users
               where public.users.id = public.courses.author_id) as author)
 
