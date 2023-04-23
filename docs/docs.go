@@ -583,7 +583,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "course id",
+                        "description": "moduleName",
                         "name": "moduleNameEng",
                         "in": "path",
                         "required": true
@@ -593,7 +593,7 @@ const docTemplate = `{
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Slide"
+                            "$ref": "#/definitions/entity.ModuleSlides"
                         }
                     }
                 }
@@ -784,6 +784,26 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.ModuleSlides": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_eng": {
+                    "type": "string"
+                },
+                "slides": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.SlideDto"
+                    }
+                }
+            }
+        },
         "entity.PasswordUpdate": {
             "type": "object",
             "properties": {
@@ -841,6 +861,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nameEng": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SlideDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_eng": {
                     "type": "string"
                 }
             }

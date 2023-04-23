@@ -47,8 +47,8 @@ func (r slideRoutes) postSlide(w http.ResponseWriter, request *http.Request) *ap
 // @Tags slide
 // @Security ApiKeyAuth
 // @Param        courseId   path      integer  true  "course id"
-// @Param        moduleNameEng   path     string  true  "course id"
-// @Success      201   {object} entity.Slide "ok"
+// @Param        moduleNameEng   path     string  true  "moduleName"
+// @Success      201   {object} entity.ModuleSlides "ok"
 // @Router      /slide/{courseId}/{moduleNameEng} [get]
 func (r slideRoutes) getSlides(w http.ResponseWriter, request *http.Request) *appError {
 	courseId, err := strconv.Atoi(chi.URLParam(request, "courseId"))

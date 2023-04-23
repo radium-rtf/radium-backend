@@ -575,7 +575,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "course id",
+                        "description": "moduleName",
                         "name": "moduleNameEng",
                         "in": "path",
                         "required": true
@@ -585,7 +585,7 @@
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Slide"
+                            "$ref": "#/definitions/entity.ModuleSlides"
                         }
                     }
                 }
@@ -776,6 +776,26 @@
                 }
             }
         },
+        "entity.ModuleSlides": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_eng": {
+                    "type": "string"
+                },
+                "slides": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.SlideDto"
+                    }
+                }
+            }
+        },
         "entity.PasswordUpdate": {
             "type": "object",
             "properties": {
@@ -833,6 +853,20 @@
                     "type": "string"
                 },
                 "nameEng": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SlideDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_eng": {
                     "type": "string"
                 }
             }

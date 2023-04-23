@@ -95,6 +95,19 @@ definitions:
       name:
         type: string
     type: object
+  entity.ModuleSlides:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      name_eng:
+        type: string
+      slides:
+        items:
+          $ref: '#/definitions/entity.SlideDto'
+        type: array
+    type: object
   entity.PasswordUpdate:
     properties:
       current:
@@ -132,6 +145,15 @@ definitions:
       name:
         type: string
       nameEng:
+        type: string
+    type: object
+  entity.SlideDto:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      name_eng:
         type: string
     type: object
   entity.SlideRequest:
@@ -506,7 +528,7 @@ paths:
         name: courseId
         required: true
         type: integer
-      - description: course id
+      - description: moduleName
         in: path
         name: moduleNameEng
         required: true
@@ -515,7 +537,7 @@ paths:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Slide'
+            $ref: '#/definitions/entity.ModuleSlides'
       security:
       - ApiKeyAuth: []
       tags:
