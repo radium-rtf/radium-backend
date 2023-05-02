@@ -14,6 +14,22 @@ const (
 	bucket = "radium-server"
 )
 
+var policy = `{
+    "Version": "2023-05-02",
+    "Id": "akjsdhakshfjlashdf",
+    "Statement": [
+        {
+            "Sid": "kjahsdkajhsdkjasda",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::radium-server/*"
+        }
+    ]
+}`
+
 type Storage struct {
 	client *minio.Client
 }
@@ -32,6 +48,12 @@ func New(cfg config.Storage) Storage {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	err = storage.client.SetBucketPolicy(context.Background(), bucket, policy)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return storage
 }
 

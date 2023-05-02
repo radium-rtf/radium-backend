@@ -29,8 +29,8 @@ services:
     container_name: postgres
     image: postgres:latest
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=user
+      - POSTGRES_DB=radium
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - PGDATA=/data/postgres
     volumes:

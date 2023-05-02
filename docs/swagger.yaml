@@ -120,6 +120,15 @@ definitions:
       refresh_token:
         type: string
     type: object
+  entity.SectionTextPost:
+    properties:
+      markdown:
+        type: string
+      order_by:
+        type: integer
+      slide_id:
+        type: integer
+    type: object
   entity.SignIn:
     properties:
       email:
@@ -502,6 +511,24 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /section/text:
+    post:
+      parameters:
+      - description: создвние текствой секции
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionTextPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Slide'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
   /slide:
     post:
       parameters:

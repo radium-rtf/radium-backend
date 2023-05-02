@@ -524,6 +524,37 @@
                 }
             }
         },
+        "/section/text": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "создвние текствой секции",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionTextPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Slide"
+                        }
+                    }
+                }
+            }
+        },
         "/slide": {
             "post": {
                 "security": [
@@ -812,6 +843,20 @@
             "properties": {
                 "refresh_token": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.SectionTextPost": {
+            "type": "object",
+            "properties": {
+                "markdown": {
+                    "type": "string"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "slide_id": {
+                    "type": "integer"
                 }
             }
         },
