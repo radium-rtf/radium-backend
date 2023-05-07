@@ -1,40 +1,17 @@
 package entity
 
-type (
-	SectionTextPost struct {
-		SlideId  uint   `json:"slide_id"`
-		OrderBy  uint   `json:"order_by"`
-		Markdown string `json:"markdown"`
-	}
+const (
+	SectionAnswerOK = SectionAnswerVerdict("OK")
+	SectionAnswerWA = SectionAnswerVerdict("WA")
+)
 
-	SectionText struct {
-		Id       uint   `json:"id"`
-		SlideId  uint   `json:"slide_id"`
-		OrderBy  uint   `json:"order_by"`
-		Markdown string `json:"markdown"`
-	}
+type (
+	SectionAnswerVerdict string
 
 	SectionMultipleChoice struct {
 		SlideId  uint
 		OrderBy  uint
 		Question string
 		Markdown string
-		Answers  SectionMultiAnswers
 	}
-
-	SectionChoice struct {
-		SlideId  uint
-		OrderBy  uint
-		Question string
-		Markdown string
-	}
-
-	SectionQuestion struct {
-		SlideId  uint
-		OrderBy  uint
-		Question string
-		Answer   string
-	}
-
-	SectionMultiAnswers map[string]bool
 )

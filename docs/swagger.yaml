@@ -120,6 +120,108 @@ definitions:
       refresh_token:
         type: string
     type: object
+  entity.SectionChoiceAnswerDto:
+    properties:
+      answer:
+        type: string
+      id:
+        type: integer
+      section_id:
+        type: integer
+      verdict:
+        type: string
+    type: object
+  entity.SectionChoiceAnswerPost:
+    properties:
+      answer:
+        type: string
+      section_id:
+        type: integer
+    type: object
+  entity.SectionChoiceDto:
+    properties:
+      cost:
+        type: integer
+      id:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      score:
+        type: integer
+      slide_id:
+        type: integer
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.SectionChoicePost:
+    properties:
+      cost:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      slide_id:
+        type: integer
+      variants:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
+  entity.SectionQuestionAnswerDto:
+    properties:
+      answer:
+        type: string
+      id:
+        type: integer
+      section_id:
+        type: integer
+      verdict:
+        type: string
+    type: object
+  entity.SectionQuestionAnswerPost:
+    properties:
+      answer:
+        type: string
+      section_id:
+        type: integer
+    type: object
+  entity.SectionQuestionDto:
+    properties:
+      case_sensitive:
+        type: boolean
+      cost:
+        type: integer
+      id:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      score:
+        type: integer
+      slide_id:
+        type: integer
+    type: object
+  entity.SectionQuestionPost:
+    properties:
+      answer:
+        type: string
+      case_sensitive:
+        type: boolean
+      cost:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      slide_id:
+        type: integer
+    type: object
   entity.SectionTextPost:
     properties:
       markdown:
@@ -511,6 +613,78 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /section/choice:
+    post:
+      parameters:
+      - description: создание секции c вариантом ответа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionChoicePost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionChoiceDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /section/choice/answer:
+    post:
+      parameters:
+      - description: ответ на задание с вариантом ответа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionChoiceAnswerPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionChoiceAnswerDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /section/question:
+    post:
+      parameters:
+      - description: создание вопросительной секции
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionQuestionPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionQuestionDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /section/question/answer:
+    post:
+      parameters:
+      - description: ответ на вопрос
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionQuestionAnswerPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionQuestionAnswerDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
   /section/text:
     post:
       parameters:

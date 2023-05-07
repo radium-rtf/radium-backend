@@ -15,7 +15,7 @@ const (
 )
 
 var policy = `{
-    "Version": "2023-05-02",
+    "Version": "2012-10-17",
     "Id": "akjsdhakshfjlashdf",
     "Statement": [
         {

@@ -524,6 +524,130 @@
                 }
             }
         },
+        "/section/choice": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "создание секции c вариантом ответа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionChoicePost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionChoiceDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/choice/answer": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "ответ на задание с вариантом ответа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionChoiceAnswerPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionChoiceAnswerDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/question": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "создание вопросительной секции",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionQuestionPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionQuestionDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/question/answer": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "ответ на вопрос",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionQuestionAnswerPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionQuestionAnswerDto"
+                        }
+                    }
+                }
+            }
+        },
         "/section/text": {
             "post": {
                 "security": [
@@ -843,6 +967,163 @@
             "properties": {
                 "refresh_token": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.SectionChoiceAnswerDto": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "verdict": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SectionChoiceAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.SectionChoiceDto": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "slide_id": {
+                    "type": "integer"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.SectionChoicePost": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "slide_id": {
+                    "type": "integer"
+                },
+                "variants": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "entity.SectionQuestionAnswerDto": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "verdict": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SectionQuestionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.SectionQuestionDto": {
+            "type": "object",
+            "properties": {
+                "case_sensitive": {
+                    "type": "boolean"
+                },
+                "cost": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "slide_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.SectionQuestionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "case_sensitive": {
+                    "type": "boolean"
+                },
+                "cost": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "slide_id": {
+                    "type": "integer"
                 }
             }
         },
