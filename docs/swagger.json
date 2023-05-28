@@ -586,6 +586,68 @@
                 }
             }
         },
+        "/section/multichoice": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "создание секции c несколькими вариантами ответа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionMultiChoicePost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionMultiChoiceDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/multichoice/answer": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "ответ на задание с несколькими вариантами ответа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionMultiChoiceAnswerPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionMultiChoiceAnswerDto"
+                        }
+                    }
+                }
+            }
+        },
         "/section/question": {
             "post": {
                 "security": [
@@ -741,6 +803,35 @@
                         "description": "ok",
                         "schema": {
                             "$ref": "#/definitions/entity.ModuleSlides"
+                        }
+                    }
+                }
+            }
+        },
+        "/slide/{slideId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "slide id",
+                        "name": "slideId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SlideSections"
                         }
                     }
                 }
@@ -1050,6 +1141,92 @@
                 }
             }
         },
+        "entity.SectionMultiChoiceAnswerDto": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "verdict": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SectionMultiChoiceAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.SectionMultiChoiceDto": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "slide_id": {
+                    "type": "integer"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.SectionMultiChoicePost": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "slide_id": {
+                    "type": "integer"
+                },
+                "variants": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
         "entity.SectionQuestionAnswerDto": {
             "type": "object",
             "properties": {
@@ -1208,6 +1385,24 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.SlideSections": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_eng": {
+                    "type": "string"
+                },
+                "sections": {
+                    "type": "array",
+                    "items": {}
                 }
             }
         },
