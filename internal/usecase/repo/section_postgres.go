@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -130,6 +131,60 @@ func (r SectionRepo) CreateChoiceAnswer(ctx context.Context, answer entity.Secti
 	sql, args, err := r.pg.Builder.Insert("sections_choice_answers").
 		Columns("answer", "verdict", "section_id", "user_id").
 		Values(answer.Answer, answer.Verdict, answer.SectionId, answer.UserId).
+		Suffix("returning id").ToSql()
+
+	if err != nil {
+		return id, err
+	}
+
+	rows := r.pg.Pool.QueryRow(ctx, sql, args...)
+	err = rows.Scan(&id)
+	return id, err
+}
+
+func (r SectionRepo) CreateMultiChoice(ctx context.Context, section entity.SectionMultiChoice) (uint, error) {
+	var id uint
+	sql, args, err := r.pg.Builder.Insert("sections_multi_choice").
+		Columns("slide_id", "order_by", "answer", "question", "variants", "cost").
+		Values(section.SlideId, section.OrderBy, pq.Array(section.Answer), section.Question, pq.Array(section.Variants), section.Cost).
+		Suffix("returning id").ToSql()
+	if err != nil {
+		return id, err
+	}
+
+	rows := r.pg.Pool.QueryRow(ctx, sql, args...)
+	err = rows.Scan(&id)
+	return id, err
+}
+
+func (r SectionRepo) GetMultiChoiceById(ctx context.Context, id uint) (entity.SectionMultiChoice, error) {
+	var choice entity.SectionMultiChoice
+	sql, args, err := r.pg.Builder.Select("id", "cost", "order_by", "variants",
+		"question", "answer", "slide_id").
+		From("sections_multi_choice").
+		Where(sq.Eq{"id": id}).
+		ToSql()
+	if err != nil {
+		return entity.SectionMultiChoice{}, err
+	}
+	rows, err := r.pg.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return entity.SectionMultiChoice{}, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return entity.SectionMultiChoice{}, errors.New("секция не найдена")
+	}
+	err = rows.Scan(&choice.Id, &choice.Cost, &choice.OrderBy, &choice.Variants,
+		&choice.Question, &choice.Answer, &choice.SlideId)
+	return choice, err
+}
+
+func (r SectionRepo) CreateMultiChoiceAnswer(ctx context.Context, answer entity.SectionMultiChoiceAnswer) (uint, error) {
+	var id uint
+	sql, args, err := r.pg.Builder.Insert("sections_multi_choice_answers").
+		Columns("answer", "verdict", "section_id", "user_id").
+		Values(pq.Array(answer.Answer), answer.Verdict, answer.SectionId, answer.UserId).
 		Suffix("returning id").ToSql()
 
 	if err != nil {

@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"net/http"
 )
 
 type sectionRoutes struct {
@@ -25,6 +26,9 @@ func newSectionRoutes(h chi.Router, useCase usecase.SectionUseCase, signingStrin
 
 			r.Post("/choice", handler(routes.postChoice).HTTP)
 			r.Post("/choice/answer", handler(routes.postChoiceAnswer).HTTP)
+
+			r.Post("/multichoice", handler(routes.postMultiChoice).HTTP)
+			r.Post("/multichoice/answer", handler(routes.postMultiChoiceAnswer).HTTP)
 		})
 	})
 }
@@ -127,6 +131,49 @@ func (r sectionRoutes) postChoiceAnswer(w http.ResponseWriter, request *http.Req
 
 	userId := request.Context().Value("userId").(string)
 	section, err := r.uc.CreateChoiceAnswer(request.Context(), sectionPost, userId)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	render.Status(request, http.StatusCreated)
+	render.JSON(w, request, section)
+	return nil
+}
+
+// @Tags section
+// @Security ApiKeyAuth
+// @Param       request body entity.SectionMultiChoicePost true "создание секции c несколькими вариантами ответа"
+// @Success      201   {object} entity.SectionMultiChoiceDto "ok"
+// @Router      /section/multichoice [post]
+func (r sectionRoutes) postMultiChoice(w http.ResponseWriter, request *http.Request) *appError {
+	var sectionPost entity.SectionMultiChoicePost
+	if err := render.DecodeJSON(request.Body, &sectionPost); err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	section, err := r.uc.CreateMultiChoice(request.Context(), sectionPost)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	render.Status(request, http.StatusCreated)
+	render.JSON(w, request, section)
+	return nil
+}
+
+// @Tags section
+// @Security ApiKeyAuth
+// @Param       request body entity.SectionMultiChoiceAnswerPost true "ответ на задание с несколькими вариантами ответа"
+// @Success      201   {object} entity.SectionMultiChoiceAnswerDto "ok"
+// @Router      /section/multichoice/answer [post]
+func (r sectionRoutes) postMultiChoiceAnswer(w http.ResponseWriter, request *http.Request) *appError {
+	var sectionPost entity.SectionMultiChoiceAnswerPost
+	if err := render.DecodeJSON(request.Body, &sectionPost); err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	userId := request.Context().Value("userId").(string)
+	section, err := r.uc.CreateMultiChoiceAnswer(request.Context(), sectionPost, userId)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}

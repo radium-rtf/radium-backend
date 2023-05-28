@@ -2,10 +2,12 @@ package usecase
 
 import (
 	"context"
+	"reflect"
+	"strings"
+
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
-	"strings"
 )
 
 type SectionUseCase struct {
@@ -121,4 +123,47 @@ func (uc SectionUseCase) CreateChoiceAnswer(ctx context.Context, post entity.Sec
 	answer.Id = id
 
 	return entity.NewSectionChoiceAnswerToDto(answer), err
+}
+
+func (uc SectionUseCase) CreateMultiChoice(ctx context.Context, post entity.SectionMultiChoicePost) (
+	entity.SectionMultiChoiceDto, error) {
+	section, err := entity.NewSectionMultiChoicePostToSection(post)
+	if err != nil {
+		return entity.SectionMultiChoiceDto{}, err
+	}
+
+	id, err := uc.sectionRepo.CreateMultiChoice(ctx, section)
+	if err != nil {
+		return entity.SectionMultiChoiceDto{}, err
+	}
+	section.Id = id
+	sectionDto := entity.NewSectionMultiChoiceToDto(section)
+	return sectionDto, nil
+}
+
+func (uc SectionUseCase) CreateMultiChoiceAnswer(ctx context.Context, post entity.SectionMultiChoiceAnswerPost, userId string) (
+	entity.SectionMultiChoiceAnswerDto, error) {
+	choice, err := uc.sectionRepo.GetMultiChoiceById(ctx, post.SectionId)
+	if err != nil {
+		return entity.SectionMultiChoiceAnswerDto{}, err
+	}
+	ok := false
+	if reflect.DeepEqual(post.Answer, choice.Answer) {
+		ok = true
+	}
+	verdict := entity.SectionAnswerWA
+	if ok {
+		verdict = entity.SectionAnswerOK
+	}
+
+	answer := entity.SectionMultiChoiceAnswer{
+		UserId:    userId,
+		SectionId: post.SectionId,
+		Answer:    post.Answer,
+		Verdict:   verdict,
+	}
+	id, err := uc.sectionRepo.CreateMultiChoiceAnswer(ctx, answer)
+	answer.Id = id
+
+	return entity.NewSectionMultiChoiceAnswerToDto(answer), err
 }
