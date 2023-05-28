@@ -2,12 +2,13 @@ package filestorage
 
 import (
 	"context"
+	"io"
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/radium-rtf/radium-backend/config"
-	"io"
-	"log"
 )
 
 const (

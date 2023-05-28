@@ -1,12 +1,13 @@
 package v1
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"net/http"
-	"strconv"
 )
 
 type slideRoutes struct {
@@ -17,6 +18,7 @@ func newSlideRoutes(h chi.Router, useCase usecase.SlideUseCase, signingString st
 	routes := slideRoutes{uc: useCase}
 
 	h.Route("/slide", func(r chi.Router) {
+		r.Get("/{slideId}", handler(routes.getSlideSections).HTTP)
 		r.Get("/{courseId}/{moduleNameEng}", handler(routes.getSlides).HTTP)
 		r.Group(func(r chi.Router) {
 			r.Use(authRequired(signingString))
@@ -58,6 +60,26 @@ func (r slideRoutes) getSlides(w http.ResponseWriter, request *http.Request) *ap
 	moduleNameEng := chi.URLParam(request, "moduleNameEng")
 	slideRequest := entity.SlidesRequest{ModuleNameEng: moduleNameEng, CourseId: uint(courseId)}
 	slide, err := r.uc.GetSlides(request.Context(), slideRequest)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, slide)
+	return nil
+}
+
+// @Tags slide
+// @Security ApiKeyAuth
+// @Param        slideId   path      integer  true  "slide id"
+// @Success      201   {object} entity.SlideSections "ok"
+// @Router      /slide/{slideId} [get]
+func (r slideRoutes) getSlideSections(w http.ResponseWriter, request *http.Request) *appError {
+	slideId, err := strconv.Atoi(chi.URLParam(request, "slideId"))
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	slideSectionsRequest := entity.SlideSectionsRequest{SlideId: uint(slideId)}
+	slide, err := r.uc.GetSlideSections(request.Context(), slideSectionsRequest)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}

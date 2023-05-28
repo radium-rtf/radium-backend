@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -44,4 +45,12 @@ func (uc SlideUseCase) GetSlides(ctx context.Context, slide entity.SlidesRequest
 		return entity.ModuleSlides{}, err
 	}
 	return uc.slideRepo.Get(ctx, moduleId)
+}
+
+func (uc SlideUseCase) GetSlideSections(ctx context.Context, slide entity.SlideSectionsRequest) (entity.SlideSections, error) {
+	sections, err := uc.slideRepo.GetSections(ctx, slide.SlideId)
+	if err != nil {
+		return entity.SlideSections{}, err
+	}
+	return sections, nil
 }

@@ -5,7 +5,7 @@ import "errors"
 var (
 	GroupNotFoundErr        = errors.New("группа не найдена")
 	GroupStudentNotFoundErr = errors.New("студент не найден в группе")
-	GroupTeacherNotFoundErr = errors.New("данный пользователь не я вляется преподавателем в группе")
+	GroupTeacherNotFoundErr = errors.New("данный пользователь не является преподавателем в группе")
 )
 
 type (
