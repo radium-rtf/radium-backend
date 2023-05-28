@@ -172,6 +172,62 @@ definitions:
           type: boolean
         type: object
     type: object
+  entity.SectionMultiChoiceAnswerDto:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      id:
+        type: integer
+      section_id:
+        type: integer
+      verdict:
+        type: string
+    type: object
+  entity.SectionMultiChoiceAnswerPost:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      section_id:
+        type: integer
+    type: object
+  entity.SectionMultiChoiceDto:
+    properties:
+      cost:
+        type: integer
+      id:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      score:
+        type: integer
+      slide_id:
+        type: integer
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.SectionMultiChoicePost:
+    properties:
+      cost:
+        type: integer
+      order_by:
+        type: integer
+      question:
+        type: string
+      slide_id:
+        type: integer
+      variants:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
   entity.SectionQuestionAnswerDto:
     properties:
       answer:
@@ -275,6 +331,18 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  entity.SlideSections:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      name_eng:
+        type: string
+      sections:
+        items: {}
+        type: array
     type: object
   entity.Tokens:
     properties:
@@ -649,6 +717,42 @@ paths:
       - ApiKeyAuth: []
       tags:
       - section
+  /section/multichoice:
+    post:
+      parameters:
+      - description: создание секции c несколькими вариантами ответа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionMultiChoicePost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionMultiChoiceDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /section/multichoice/answer:
+    post:
+      parameters:
+      - description: ответ на задание с несколькими вариантами ответа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionMultiChoiceAnswerPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionMultiChoiceAnswerDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
   /section/question:
     post:
       parameters:
@@ -739,6 +843,23 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/entity.ModuleSlides'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - slide
+  /slide/{slideId}:
+    get:
+      parameters:
+      - description: slide id
+        in: path
+        name: slideId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SlideSections'
       security:
       - ApiKeyAuth: []
       tags:
