@@ -2,15 +2,15 @@ version: '3.9'
 
 services:
 
-  # server:
-  #   container_name: server
-  #   build:
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - minio
-  #     - postgres
+  server:
+    container_name: server
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - minio
+      - postgres
 
   minio:
     container_name: minio
