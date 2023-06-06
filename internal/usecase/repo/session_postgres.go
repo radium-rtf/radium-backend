@@ -2,30 +2,22 @@ package repo
 
 import (
 	"context"
-	sq "github.com/Masterminds/squirrel"
-	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"time"
+
+	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type SessionRepo struct {
-	pg *postgres.Postgres
+	pg *db.Query
 }
 
-func NewSessionRepo(pg *postgres.Postgres) SessionRepo {
+func NewSessionRepo(pg *db.Query) SessionRepo {
 	return SessionRepo{pg: pg}
 }
 
 func (r SessionRepo) Create(ctx context.Context, session entity.Session) error {
-	sql, args, err := r.pg.Builder.
-		Insert("sessions").
-		Columns("refresh_token", "expires_in", "user_id").
-		Values(session.RefreshToken, session.ExpiresIn, session.UserId).
-		ToSql()
-	if err != nil {
-		return err
-	}
-	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	err := r.pg.Session.WithContext(ctx).Create(&session)
 	if err != nil {
 		return err
 	}
@@ -33,15 +25,8 @@ func (r SessionRepo) Create(ctx context.Context, session entity.Session) error {
 }
 
 func (r SessionRepo) Update(ctx context.Context, refreshToken string, expiresIn time.Time) error {
-	sql, args, err := r.pg.Builder.
-		Update("sessions").
-		Where(sq.Eq{"refresh_token": refreshToken}).
-		Set("expires_in", expiresIn).
-		ToSql()
-	if err != nil {
-		return err
-	}
-	_, err = r.pg.Pool.Exec(ctx, sql, args...)
+	s := r.pg.Session
+	_, err := s.WithContext(ctx).Where(s.RefreshToken.Eq(refreshToken)).Update(s.ExpiresIn, expiresIn)
 	if err != nil {
 		return err
 	}

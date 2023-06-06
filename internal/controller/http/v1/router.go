@@ -5,7 +5,7 @@ import (
 	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 // NewRouter
@@ -16,25 +16,28 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func NewRouter(h *chi.Mux, pg *postgres.Postgres, storage filestorage.Storage, cfg *config.Config) {
+func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *config.Config) {
+
 	authUseCase := usecase.NewAuthUseCase(pg, cfg)
 	accountUseCase := usecase.NewAccountUseCase(pg, cfg)
 	courseUseCase := usecase.NewCourseUseCase(pg, storage)
-	groupUseCase := usecase.NewGroupUseCase(pg)
+	fileUseCase := usecase.NewFileUseCase(storage)
+	// _ = usecase.NewGroupUseCase(pg)
 	moduleUseCase := usecase.NewModuleUseCase(pg)
-	slideUseCase := usecase.NewSlideUseCase(pg)
-	sectionUseCase := usecase.NewSectionUseCase(pg)
+	// slideUseCase := usecase.NewSlideUseCase(pg)
+	// sectionUseCase := usecase.NewSectionUseCase(pg)
 
 	h.Route("/v1", func(v1 chi.Router) {
 		newAuthRoutes(v1, authUseCase)
 		newAccountRoutes(v1, accountUseCase, cfg.SigningKey)
 
 		newCourseRoutes(v1, courseUseCase, cfg.SigningKey)
+		newFileRoutes(v1, fileUseCase, cfg.SigningKey)
 		newModuleRoutes(v1, moduleUseCase, cfg.SigningKey)
 
-		newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
+		// 	newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
 
-		newSlideRoutes(v1, slideUseCase, cfg.SigningKey)
-		newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
+		// 	newSlideRoutes(v1, slideUseCase, cfg.SigningKey)
+		// 	newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
 	})
 }

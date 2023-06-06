@@ -1,18 +1,22 @@
+//go:build ignore
+// +build ignore
+
 package usecase
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type GroupUseCase struct {
 	groupRepo repo.GroupRepo
 }
 
-func NewGroupUseCase(pg *postgres.Postgres) GroupUseCase {
+func NewGroupUseCase(pg *db.Query) GroupUseCase {
 	return GroupUseCase{groupRepo: repo.NewGroupRepo(pg)}
 }
 
@@ -25,6 +29,6 @@ func (uc GroupUseCase) Join(ctx context.Context, joinGroup entity.GroupJoin) err
 	return uc.groupRepo.JoinStudent(ctx, joinGroup)
 }
 
-func (uc GroupUseCase) CreateTeacher(ctx context.Context, teacher entity.GroupTeacher) error {
-	return uc.groupRepo.CreateGroupTeacher(ctx, teacher)
-}
+// func (uc GroupUseCase) CreateTeacher(ctx context.Context, teacher entity.GroupTeacher) error {
+// 	return uc.groupRepo.CreateGroupTeacher(ctx, teacher)
+// }

@@ -1,12 +1,16 @@
+//go:build ignore
+// +build ignore
+
 package v1
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"net/http"
 )
 
 type groupRoutes struct {

@@ -1,11 +1,15 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
 
 var (
-	GroupNotFoundErr        = errors.New("группа не найдена")
-	GroupStudentNotFoundErr = errors.New("студент не найден в группе")
-	GroupTeacherNotFoundErr = errors.New("данный пользователь не является преподавателем в группе")
+	ErrGroupNotFound        = errors.New("группа не найдена")
+	ErrGroupStudentNotFound = errors.New("студент не найден в группе")
+	ErrGroupTeacherNotFound = errors.New("данный пользователь не является преподавателем в группе")
 )
 
 type (
@@ -14,11 +18,13 @@ type (
 	}
 
 	GroupJoin struct {
-		UserId, GroupId string
+		UserId, GroupId uuid.UUID
 	}
 
 	Group struct {
-		Id, Name string
+		Id       uuid.UUID `gorm:"default:gen_random_uuid()"`
+		Name     string
+		Students []User `gorm:"many2many:group_student"`
 	}
 
 	GroupTeacher struct {

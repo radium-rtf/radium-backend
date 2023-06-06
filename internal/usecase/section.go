@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package usecase
 
 import (
@@ -7,14 +10,14 @@ import (
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type SectionUseCase struct {
 	sectionRepo repo.SectionRepo
 }
 
-func NewSectionUseCase(pg *postgres.Postgres) SectionUseCase {
+func NewSectionUseCase(pg *db.Query) SectionUseCase {
 	return SectionUseCase{sectionRepo: repo.NewSectionRepo(pg)}
 }
 

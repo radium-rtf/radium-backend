@@ -1,32 +1,32 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
 
 var (
-	ModulesNotFoundErr = errors.New("модули курса не найдены")
+	ErrModulesNotFound = errors.New("модули курса не найдены")
 )
 
 type (
 	ModuleRequest struct {
-		CourseId uint   `json:"course_id"`
-		Name     string `json:"name"`
+		CourseId uuid.UUID `json:"courseId"`
+		Name     string    `json:"name"`
 	}
 
 	Module struct {
-		NameEng  string `json:"name_eng"`
-		CourseId uint   `json:"course_id"`
-		Name     string `json:"name"`
-	}
-
-	ModuleSlides struct {
-		Id      uint       `json:"id"`
-		Name    string     `json:"name"`
-		NameEng string     `json:"name_eng"`
-		Slides  []SlideDto `json:"slides"`
+		Id       uuid.UUID `json:"id" gorm:"default:gen_random_uuid()"`
+		Slug     string    `json:"slug" gorm:"type:string"`
+		Name     string    `json:"name" gorm:"type:string"`
+		CourseId uuid.UUID `json:"courseId"`
+		Pages    []Page
 	}
 
 	ModuleDto struct {
-		NameEng string `json:"name_eng"`
-		Name    string `json:"name"`
+		Slug  string `json:"slug"`
+		Name  string `json:"name"`
+		Pages []Page `json:"pages"`
 	}
 )

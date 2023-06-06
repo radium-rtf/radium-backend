@@ -3,11 +3,14 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type AccountUseCase struct {
@@ -16,25 +19,42 @@ type AccountUseCase struct {
 	courseRepo     repo.CourseRepo
 }
 
-func NewAccountUseCase(pg *postgres.Postgres, cfg *config.Config) AccountUseCase {
+func NewAccountUseCase(pg *db.Query, cfg *config.Config) AccountUseCase {
 	passwordHasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
 	return AccountUseCase{userRepo: repo.NewUserRepo(pg), courseRepo: repo.NewCourseRepo(pg), passwordHasher: passwordHasher}
 }
 
 func (uc AccountUseCase) Account(ctx context.Context, userId string) (entity.UserDto, error) {
-	user, err := uc.userRepo.GetById(ctx, userId)
+	uid, err := uuid.Parse(userId)
+	if err != nil {
+		return entity.UserDto{}, err
+	}
+	fmt.Print(uid)
+	user, err := uc.userRepo.GetById(ctx, uid)
 	if err != nil {
 		return entity.UserDto{}, err
 	}
 	return entity.NewUserDto(user), nil
 }
 
-func (uc AccountUseCase) UpdateName(ctx context.Context, userid string, newName entity.UserName) error {
-	return uc.userRepo.UpdateName(ctx, userid, newName)
+func (uc AccountUseCase) UpdateUser(ctx context.Context, userId string, update entity.UpdateUserRequest) (entity.UserDto, error) {
+	uid, err := uuid.Parse(userId)
+	if err != nil {
+		return entity.UserDto{}, err
+	}
+	result, err := uc.userRepo.UpdateUser(ctx, uid, update)
+	if err != nil {
+		return entity.UserDto{}, err
+	}
+	return entity.NewUserDto(result), nil
 }
 
-func (uc AccountUseCase) UpdatePassword(ctx context.Context, userid string, password entity.PasswordUpdate) error {
-	user, err := uc.userRepo.GetById(ctx, userid)
+func (uc AccountUseCase) UpdatePassword(ctx context.Context, userId string, password entity.PasswordUpdate) error {
+	uid, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+	user, err := uc.userRepo.GetById(ctx, uid)
 	if err != nil {
 		return err
 	}
@@ -45,9 +65,9 @@ func (uc AccountUseCase) UpdatePassword(ctx context.Context, userid string, pass
 	if err != nil {
 		return err
 	}
-	return uc.userRepo.UpdatePassword(ctx, userid, hashedPassword)
+	return uc.userRepo.UpdatePassword(ctx, uid, hashedPassword)
 }
 
-func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
-	return uc.courseRepo.GetByStudent(ctx, studentId)
-}
+// func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
+// 	return uc.courseRepo.GetByStudent(ctx, studentId)
+// }

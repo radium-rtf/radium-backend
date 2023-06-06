@@ -1,21 +1,12 @@
 package entity
 
+import "github.com/google/uuid"
+
 type (
-	LinkRequest struct {
-		CourseId uint   `json:"course_id"`
-		Name     string `json:"name"`
-		Link     string `json:"link"`
-	}
-
 	Link struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Link     string `json:"link"`
-		CourseId uint
-	}
-
-	LinkDto struct {
-		Name string `json:"name"`
-		Link string `json:"link"`
+		Id       uuid.UUID `json:"id" gorm:"default:gen_random_uuid()"`
+		Name     string    `json:"name" gorm:"type:string"`
+		Link     string    `json:"link" gorm:"type:string"`
+		CourseId uuid.UUID `json:"courseId"`
 	}
 )

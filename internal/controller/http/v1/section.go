@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package v1
 
 import (
@@ -36,7 +39,7 @@ func newSectionRoutes(h chi.Router, useCase usecase.SectionUseCase, signingStrin
 // @Tags section
 // @Security ApiKeyAuth
 // @Param       request body entity.SectionTextPost true "создвние текствой секции"
-// @Success      201   {object} entity.Slide "ok"
+// @Success      201   {object} entity.Page "ok"
 // @Router      /section/text [post]
 func (r sectionRoutes) postText(w http.ResponseWriter, request *http.Request) *appError {
 	var sectionPost entity.SectionTextPost

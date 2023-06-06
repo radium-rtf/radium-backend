@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package repo
 
 import (
@@ -7,14 +10,14 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type SectionRepo struct {
-	pg *postgres.Postgres
+	pg *db.Query
 }
 
-func NewSectionRepo(pg *postgres.Postgres) SectionRepo {
+func NewSectionRepo(pg *db.Query) SectionRepo {
 	return SectionRepo{pg: pg}
 }
 

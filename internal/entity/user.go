@@ -1,19 +1,31 @@
 package entity
 
+import (
+	"github.com/google/uuid"
+)
+
 type (
 	UserDto struct {
-		Id    string `json:"id"`
-		Email string `json:"email"`
-		Name  string `json:"name"`
+		Id     uuid.UUID `json:"id"`
+		Email  string    `json:"email"`
+		Name   string    `json:"name"`
+		Avatar string    `json:"avatar"`
 	}
 
 	User struct {
-		Id               string
+		Id               uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
+		Avatar           string
 		Email            string
 		Name             string
 		Password         string
 		VerificationCode string
 		IsVerified       bool
+		Sessions         []Session
+	}
+
+	UpdateUserRequest struct {
+		Name   string `json:"name"`
+		Avatar string `json:"avatar"`
 	}
 
 	UserName struct {
@@ -26,10 +38,11 @@ type (
 	}
 )
 
-func NewUserDto(user User) UserDto {
+func NewUserDto(user *User) UserDto {
 	return UserDto{
-		Id:    user.Id,
-		Email: user.Email,
-		Name:  user.Name,
+		Id:     user.Id,
+		Email:  user.Email,
+		Name:   user.Name,
+		Avatar: user.Avatar,
 	}
 }

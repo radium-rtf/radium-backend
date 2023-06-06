@@ -1,63 +1,88 @@
 basePath: /v1
 definitions:
-  entity.Collaborator:
-    properties:
-      course_id:
-        type: integer
-      user_email:
-        type: string
-    type: object
   entity.Course:
     properties:
-      author_id:
+      authors:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+      banner:
         type: string
       description:
         type: string
       id:
-        type: integer
-      logo:
         type: string
-      name:
-        type: string
-      type:
-        type: string
-    type: object
-  entity.CourseModules:
-    properties:
-      id:
-        type: integer
+      links:
+        items:
+          $ref: '#/definitions/entity.Link'
+        type: array
       logo:
         type: string
       modules:
+        items:
+          $ref: '#/definitions/entity.Module'
+        type: array
+      name:
+        type: string
+      shortDescription:
+        type: string
+      slug:
+        type: string
+    type: object
+  entity.CourseDto:
+    properties:
+      authors:
+        items:
+          $ref: '#/definitions/entity.UserDto'
+        type: array
+      banner:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      links:
+        items:
+          $ref: '#/definitions/entity.Link'
+        type: array
+      logo:
+        type: string
+      modules:
+        description: 'TODO: скрыть для людей, у которых нет доступа к курсу'
         items:
           $ref: '#/definitions/entity.ModuleDto'
         type: array
       name:
         type: string
-      type:
+      shortDescription:
+        type: string
+      slug:
         type: string
     type: object
-  entity.CourseTitle:
+  entity.CourseRequest:
     properties:
-      author:
-        $ref: '#/definitions/entity.UserDto'
-      collaborators:
+      authors:
         items:
-          $ref: '#/definitions/entity.UserDto'
+          type: string
         type: array
+      banner:
+        type: string
       description:
         type: string
-      id:
-        type: integer
       links:
         items:
-          $ref: '#/definitions/entity.LinkDto'
+          $ref: '#/definitions/entity.Link'
         type: array
       logo:
         type: string
       name:
         type: string
-      type:
+      shortDescription:
+        type: string
+    type: object
+  entity.FileDto:
+    properties:
+      location:
         type: string
     type: object
   entity.GroupName:
@@ -65,48 +90,71 @@ definitions:
       name:
         type: string
     type: object
-  entity.LinkDto:
+  entity.Link:
     properties:
+      courseId:
+        type: string
+      id:
+        type: string
       link:
         type: string
       name:
         type: string
     type: object
-  entity.LinkRequest:
+  entity.Module:
     properties:
-      course_id:
-        type: integer
-      link:
+      courseId:
+        type: string
+      id:
         type: string
       name:
+        type: string
+      pages:
+        items:
+          $ref: '#/definitions/entity.Page'
+        type: array
+      slug:
         type: string
     type: object
   entity.ModuleDto:
     properties:
       name:
         type: string
-      name_eng:
+      pages:
+        items:
+          $ref: '#/definitions/entity.Page'
+        type: array
+      slug:
         type: string
     type: object
   entity.ModuleRequest:
     properties:
-      course_id:
-        type: integer
+      courseId:
+        type: string
       name:
         type: string
     type: object
-  entity.ModuleSlides:
+  entity.Page:
     properties:
       id:
-        type: integer
+        type: string
+      moduleId:
+        type: string
       name:
         type: string
-      name_eng:
+      slug:
         type: string
-      slides:
-        items:
-          $ref: '#/definitions/entity.SlideDto'
-        type: array
+    type: object
+  entity.PageRequest:
+    properties:
+      courseId:
+        type: string
+      moduleId:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
     type: object
   entity.PasswordUpdate:
     properties:
@@ -117,9 +165,17 @@ definitions:
     type: object
   entity.RefreshToken:
     properties:
-      refresh_token:
+      refreshToken:
         type: string
     type: object
+  entity.SectionAnswerVerdict:
+    enum:
+    - OK
+    - WA
+    type: string
+    x-enum-varnames:
+    - SectionAnswerOK
+    - SectionAnswerWA
   entity.SectionChoiceAnswerDto:
     properties:
       answer:
@@ -129,7 +185,7 @@ definitions:
       section_id:
         type: integer
       verdict:
-        type: string
+        $ref: '#/definitions/entity.SectionAnswerVerdict'
     type: object
   entity.SectionChoiceAnswerPost:
     properties:
@@ -183,7 +239,7 @@ definitions:
       section_id:
         type: integer
       verdict:
-        type: string
+        $ref: '#/definitions/entity.SectionAnswerVerdict'
     type: object
   entity.SectionMultiChoiceAnswerPost:
     properties:
@@ -237,7 +293,7 @@ definitions:
       section_id:
         type: integer
       verdict:
-        type: string
+        $ref: '#/definitions/entity.SectionAnswerVerdict'
     type: object
   entity.SectionQuestionAnswerPost:
     properties:
@@ -287,6 +343,15 @@ definitions:
       slide_id:
         type: integer
     type: object
+  entity.Session:
+    properties:
+      expiresIn:
+        type: string
+      refreshToken:
+        type: string
+      userId:
+        type: string
+    type: object
   entity.SignIn:
     properties:
       email:
@@ -303,67 +368,51 @@ definitions:
       password:
         type: string
     type: object
-  entity.Slide:
-    properties:
-      id:
-        type: string
-      module:
-        type: integer
-      name:
-        type: string
-      nameEng:
-        type: string
-    type: object
-  entity.SlideDto:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      name_eng:
-        type: string
-    type: object
-  entity.SlideRequest:
-    properties:
-      course_id:
-        type: integer
-      module_name_eng:
-        type: string
-      name:
-        type: string
-    type: object
-  entity.SlideSections:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      name_eng:
-        type: string
-      sections:
-        items: {}
-        type: array
-    type: object
   entity.Tokens:
     properties:
-      access_token:
+      accessToken:
         type: string
-      expires_in:
+      expiresIn:
         type: string
-      refresh_token:
+      refreshToken:
         type: string
     type: object
-  entity.UserDto:
+  entity.UpdateUserRequest:
     properties:
+      avatar:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.User:
+    properties:
+      avatar:
+        type: string
       email:
         type: string
       id:
         type: string
+      isVerified:
+        type: boolean
       name:
         type: string
+      password:
+        type: string
+      sessions:
+        items:
+          $ref: '#/definitions/entity.Session'
+        type: array
+      verificationCode:
+        type: string
     type: object
-  entity.UserName:
+  entity.UserDto:
     properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
       name:
         type: string
     type: object
@@ -388,35 +437,21 @@ paths:
       - ApiKeyAuth: []
       tags:
       - account
-  /account/course:
-    get:
-      responses:
-        "200":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Course'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - account
-  /account/name:
     patch:
       consumes:
       - application/json
       parameters:
-      - description: Новое имя
+      - description: Данные для обновления
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.UserName'
+          $ref: '#/definitions/entity.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
-      security:
-      - ApiKeyAuth: []
       tags:
       - account
   /account/password:
@@ -499,24 +534,6 @@ paths:
             $ref: '#/definitions/entity.Tokens'
       tags:
       - auth
-  /collaborator:
-    post:
-      parameters:
-      - description: collaborator
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.Collaborator'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Collaborator'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
   /course:
     get:
       responses:
@@ -530,33 +547,19 @@ paths:
       - course
     post:
       consumes:
-      - multipart/form-data
+      - application/json
       parameters:
-      - description: logo
-        in: formData
-        name: logo
+      - description: Данные о курсе
+        in: body
+        name: request
         required: true
-        type: file
-      - description: name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: description
-        in: formData
-        name: description
-        required: true
-        type: string
-      - description: kotlin, math и тд
-        in: formData
-        name: type
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/entity.CourseRequest'
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.Course'
+            $ref: '#/definitions/entity.CourseDto'
       security:
       - ApiKeyAuth: []
       tags:
@@ -568,12 +571,12 @@ paths:
         in: path
         name: courseId
         required: true
-        type: integer
+        type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.CourseTitle'
+            $ref: '#/definitions/entity.CourseDto'
       tags:
       - course
   /group:
@@ -594,23 +597,6 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /join/course/{courseId}:
-    post:
-      parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "201":
-          description: created
-          schema:
-            $ref: '#/definitions/entity.Course'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
   /join/group/{groupId}:
     patch:
       parameters:
@@ -628,24 +614,6 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /link/course:
-    post:
-      parameters:
-      - description: link
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.LinkRequest'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.LinkDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
   /module:
     post:
       parameters:
@@ -660,23 +628,6 @@ paths:
           description: created
           schema:
             $ref: '#/definitions/entity.ModuleDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - module
-  /module/{courseId}:
-    get:
-      parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.CourseModules'
       security:
       - ApiKeyAuth: []
       tags:
@@ -802,7 +753,7 @@ paths:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Slide'
+            $ref: '#/definitions/entity.Page'
       security:
       - ApiKeyAuth: []
       tags:
@@ -815,51 +766,12 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.SlideRequest'
+          $ref: '#/definitions/entity.PageRequest'
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Slide'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - slide
-  /slide/{courseId}/{moduleNameEng}:
-    get:
-      parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: integer
-      - description: moduleName
-        in: path
-        name: moduleNameEng
-        required: true
-        type: string
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.ModuleSlides'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - slide
-  /slide/{slideId}:
-    get:
-      parameters:
-      - description: slide id
-        in: path
-        name: slideId
-        required: true
-        type: integer
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SlideSections'
+            $ref: '#/definitions/entity.Page'
       security:
       - ApiKeyAuth: []
       tags:
@@ -886,6 +798,25 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
+  /upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.FileDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - file
 securityDefinitions:
   ApiKeyAuth:
     in: header

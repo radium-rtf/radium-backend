@@ -1,10 +1,11 @@
 package app
 
 import (
+	"log"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"log"
 
 	"github.com/radium-rtf/radium-backend/config"
 	_ "github.com/radium-rtf/radium-backend/docs"
@@ -15,17 +16,16 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	migrator(cfg)
-	pg, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.PoolMax))
+	// migrator(cfg)
+	db, err := postgres.New(cfg.PG.URL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer pg.Close()
 	r := chi.NewRouter()
 	r.Use(cors.AllowAll().Handler)
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 	storage := filestorage.New(cfg.Storage)
-	v1.NewRouter(r, pg, storage, cfg)
+	v1.NewRouter(r, db, storage, cfg)
 
 	httpServer := httpserver.New(r, httpserver.Port(cfg.HTTP.Port))
 	log.Fatal(httpServer.ListenAndServe())

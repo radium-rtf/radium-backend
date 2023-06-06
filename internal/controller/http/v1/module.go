@@ -1,12 +1,12 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"net/http"
-	"strconv"
 )
 
 type moduleRoutes struct {
@@ -16,7 +16,7 @@ type moduleRoutes struct {
 func newModuleRoutes(h chi.Router, useCase usecase.ModuleUseCase, signingKey string) {
 	routes := moduleRoutes{uc: useCase}
 	h.Route("/module", func(r chi.Router) {
-		r.Get("/{courseId}", handler(routes.getModules).HTTP)
+		// r.Get("/{courseId}", handler(routes.getModules).HTTP)
 
 		r.Group(func(r chi.Router) {
 			r.Use(authRequired(signingKey))
@@ -44,23 +44,23 @@ func (r moduleRoutes) postModule(w http.ResponseWriter, request *http.Request) *
 	return nil
 }
 
-// @Tags module
-// @Security ApiKeyAuth
-// @Param        courseId   path      integer  true  "course id"
-// @Success      200   {object} entity.CourseModules "ok"
-// @Router       /module/{courseId} [get]
-func (r moduleRoutes) getModules(w http.ResponseWriter, request *http.Request) *appError {
-	courseId := chi.URLParam(request, "courseId")
-	id, err := strconv.Atoi(courseId)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
+// // @Tags module
+// // @Security ApiKeyAuth
+// // @Param        courseId   path      integer  true  "course id"
+// // @Success      200   {object} entity.Module "ok"
+// // @Router       /module/{courseId} [get]
+// func (r moduleRoutes) getModules(w http.ResponseWriter, request *http.Request) *appError {
+// 	courseId := chi.URLParam(request, "courseId")
+// 	id, err := strconv.Atoi(courseId)
+// 	if err != nil {
+// 		return newAppError(err, http.StatusBadRequest)
+// 	}
 
-	courseModules, err := r.uc.GetCourseModules(request.Context(), id)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	render.Status(request, http.StatusOK)
-	render.JSON(w, request, courseModules)
-	return nil
-}
+// 	courseModules, err := r.uc.GetCourseModules(request.Context(), id)
+// 	if err != nil {
+// 		return newAppError(err, http.StatusBadRequest)
+// 	}
+// 	render.Status(request, http.StatusOK)
+// 	render.JSON(w, request, courseModules)
+// 	return nil
+// }

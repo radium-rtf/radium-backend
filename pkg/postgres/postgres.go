@@ -1,70 +1,45 @@
 package postgres
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"time"
-
-	"github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"gorm.io/driver/postgres"
+	"gorm.io/gen"
+	"gorm.io/gorm"
 )
 
-const (
-	_defaultMaxPoolSize  = 1
-	_defaultConnAttempts = 10
-	_defaultConnTimeout  = time.Second
-)
-
-type Postgres struct {
-	maxPoolSize  int
-	connAttempts int
-	connTimeout  time.Duration
-
-	Builder squirrel.StatementBuilderType
-	Pool    *pgxpool.Pool
-}
-
-func New(url string, opts ...Option) (*Postgres, error) {
-	pg := &Postgres{
-		maxPoolSize:  _defaultMaxPoolSize,
-		connAttempts: _defaultConnAttempts,
-		connTimeout:  _defaultConnTimeout,
-	}
-
-	for _, opt := range opts {
-		opt(pg)
-	}
-
-	pg.Builder = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
-	poolConfig, err := pgxpool.ParseConfig(url)
+func New(url string) (*db.Query, error) {
+	gormDb, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("postgres - NewPostgres - pgxpool.ParseConfig: %w", err)
+		return nil, err
 	}
 
-	poolConfig.MaxConns = int32(pg.maxPoolSize)
+	g := gen.NewGenerator(gen.Config{
+		OutPath: "./pkg/postgres/db",
+		Mode:    gen.WithDefaultQuery,
+	})
+	g.UseDB(gormDb)
+	g.ApplyBasic(
+		entity.User{},
+		entity.Session{},
+		entity.Page{},
+		entity.Course{},
+		entity.Group{},
+		entity.Module{},
+		entity.Link{},
+	) // модельки
 
-	for pg.connAttempts > 0 {
-		pg.Pool, err = pgxpool.ConnectConfig(context.Background(), poolConfig)
-		if err == nil {
-			break
-		}
-		log.Printf("Postgres is trying to connect, attempts left: %d", pg.connAttempts)
+	gormDb.AutoMigrate(
+		entity.User{},
+		entity.Session{},
+		entity.Course{},
+		entity.Link{},
+		entity.Module{},
+		entity.Page{},
+	)
+	g.Execute()
 
-		time.Sleep(pg.connTimeout)
+	Q := db.Use(gormDb)
 
-		pg.connAttempts--
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("postgres - NewPostgres - connAttempts == 0: %w", err)
-	}
-
-	return pg, nil
-}
-
-func (p *Postgres) Close() {
-	if p.Pool != nil {
-		p.Pool.Close()
-	}
+	return Q, nil
 }

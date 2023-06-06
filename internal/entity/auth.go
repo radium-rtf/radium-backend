@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -17,17 +19,17 @@ type (
 	}
 
 	Session struct {
-		RefreshToken string    `json:"refresh_token"`
-		ExpiresIn    time.Time `json:"expires_in"`
-		UserId       string    `json:"user_id"`
+		RefreshToken string    `json:"refreshToken"`
+		ExpiresIn    time.Time `json:"expiresIn"`
+		UserId       uuid.UUID `json:"userId"`
 	}
 
 	RefreshToken struct {
-		RefreshToken string `json:"refresh_token"`
+		RefreshToken string `json:"refreshToken"`
 	}
 
 	VerificationCode struct {
-		VerificationCode string `json:"verification_code"`
+		VerificationCode string `json:"verificationCode"`
 	}
 
 	VerificationResult struct {
@@ -35,8 +37,8 @@ type (
 	}
 
 	Tokens struct {
-		AccessToken  string    `json:"access_token"`
-		RefreshToken string    `json:"refresh_token"`
-		ExpiresIn    time.Time `json:"expires_in"`
+		AccessToken  string    `json:"accessToken"`
+		RefreshToken string    `json:"refreshToken"`
+		ExpiresIn    time.Time `json:"expiresIn"`
 	}
 )

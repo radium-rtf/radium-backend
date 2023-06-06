@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
 	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
 	"github.com/radium-rtf/radium-backend/pkg/otp"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type AuthUseCase struct {
@@ -24,7 +25,7 @@ type AuthUseCase struct {
 	otpGenerator          otp.Generator
 }
 
-func NewAuthUseCase(pg *postgres.Postgres, cfg *config.Config) AuthUseCase {
+func NewAuthUseCase(pg *db.Query, cfg *config.Config) AuthUseCase {
 	tokenManager, _ := auth.NewManager(cfg.SigningKey)
 	passwordHasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
 	otpGenerator := otp.NewOTPGenerator()
@@ -70,6 +71,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, signIn entity.SignUp) (entity.
 }
 
 func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (entity.Tokens, error) {
+	// добавить юзерайди
 	user, err := uc.userRepo.GetByRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return entity.Tokens{}, err
@@ -77,7 +79,7 @@ func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (en
 	return uc.refreshSession(ctx, user.Id, refreshToken)
 }
 
-func (uc AuthUseCase) createSession(ctx context.Context, id string) (entity.Tokens, error) {
+func (uc AuthUseCase) createSession(ctx context.Context, id uuid.UUID) (entity.Tokens, error) {
 	var (
 		tokens entity.Tokens
 		err    error
@@ -102,7 +104,7 @@ func (uc AuthUseCase) createSession(ctx context.Context, id string) (entity.Toke
 	return tokens, err
 }
 
-func (uc AuthUseCase) refreshSession(ctx context.Context, id string, refreshToken string) (entity.Tokens, error) {
+func (uc AuthUseCase) refreshSession(ctx context.Context, id uuid.UUID, refreshToken string) (entity.Tokens, error) {
 	var (
 		tokens entity.Tokens
 		err    error
@@ -131,7 +133,7 @@ func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) 
 
 }
 
-func (uc AuthUseCase) verifyUser(ctx context.Context, id string) (entity.VerificationResult, error) {
+func (uc AuthUseCase) verifyUser(ctx context.Context, id uuid.UUID) (entity.VerificationResult, error) {
 	err := uc.userRepo.VerifyUser(ctx, id)
 	if err != nil {
 		return entity.VerificationResult{Success: false}, err

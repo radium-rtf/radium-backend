@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"net/http"
 )
 
 type accountRoutes struct {
@@ -17,8 +18,8 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 	h.Route("/account", func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Get("/", handler(routes.account).HTTP)
-		r.Get("/course", handler(routes.course).HTTP)
-		r.Patch("/name", handler(routes.name).HTTP)
+		// r.Get("/course", handler(routes.course).HTTP)
+		r.Patch("/", handler(routes.update).HTTP)
 		r.Patch("/password", handler(routes.password).HTTP)
 	})
 }
@@ -31,6 +32,7 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 // @Router      /account [get]
 func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *appError {
 	userId := request.Context().Value("userId")
+	print(userId.(string))
 	user, err := r.uc.Account(request.Context(), userId.(string))
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
@@ -43,22 +45,24 @@ func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *ap
 // @Tags  	    account
 // @Accept      json
 // @Produce     json
-// @Security ApiKeyAuth
-// @Param       request body entity.UserName true "Новое имя"
+// // @Security ApiKeyAuth
+// @Param       request body entity.UpdateUserRequest true "Данные для обновления"
 // @Success     200
-// @Router      /account/name [patch]
-func (r accountRoutes) name(w http.ResponseWriter, request *http.Request) *appError {
-	var name entity.UserName
-	err := render.DecodeJSON(request.Body, &name)
+// @Router      /account [patch]
+func (r accountRoutes) update(w http.ResponseWriter, request *http.Request) *appError {
+	var update entity.UpdateUserRequest
+	err := render.DecodeJSON(request.Body, &update)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 	userId := request.Context().Value("userId").(string)
-	err = r.uc.UpdateName(request.Context(), userId, name)
+	result, err := r.uc.UpdateUser(request.Context(), userId, update)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	w.WriteHeader(http.StatusOK)
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, result)
+
 	return nil
 }
 
@@ -84,17 +88,17 @@ func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *a
 	return nil
 }
 
-// @Tags account
-// @Security ApiKeyAuth
-// @Success      200   {object} entity.Course "ok"
-// @Router       /account/course [get]
-func (r accountRoutes) course(w http.ResponseWriter, request *http.Request) *appError {
-	userId := request.Context().Value("userId").(string)
-	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
-	if err != nil {
-		return newAppError(err, http.StatusBadRequest)
-	}
-	render.Status(request, http.StatusOK)
-	render.JSON(w, request, courses)
-	return nil
-}
+// // @Tags account
+// // @Security ApiKeyAuth
+// // @Success      200   {object} entity.Course "ok"
+// // @Router       /account/course [get]
+// func (r accountRoutes) course(w http.ResponseWriter, request *http.Request) *appError {
+// 	userId := request.Context().Value("userId").(string)
+// 	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
+// 	if err != nil {
+// 		return newAppError(err, http.StatusBadRequest)
+// 	}
+// 	render.Status(request, http.StatusOK)
+// 	render.JSON(w, request, courses)
+// 	return nil
+// }

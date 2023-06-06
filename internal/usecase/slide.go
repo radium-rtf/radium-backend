@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package usecase
 
 import (
@@ -5,7 +8,7 @@ import (
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
@@ -14,19 +17,19 @@ type SlideUseCase struct {
 	moduleRepo repo.ModuleRepo
 }
 
-func NewSlideUseCase(pg *postgres.Postgres) SlideUseCase {
+func NewSlideUseCase(pg *db.Query) SlideUseCase {
 	return SlideUseCase{slideRepo: repo.NewSlideRepo(pg), moduleRepo: repo.NewModuleRepo(pg)}
 }
 
 func (uc SlideUseCase) CreateSlide(ctx context.Context, createSlide entity.SlideRequest) (entity.SlideDto, error) {
-	moduleId, err := uc.moduleRepo.GetModuleId(ctx, createSlide.CourseId, createSlide.ModuleNameEng)
-	if err != nil {
-		return entity.SlideDto{}, err
-	}
+	// moduleId, err := uc.moduleRepo.GetModuleId(ctx, createSlide.CourseId, createSlide.ModuleNameEng)
+	// if err != nil {
+	// 	return entity.SlideDto{}, err
+	// }
 	slide := entity.Slide{
 		NameEng:  translit.RuEn(createSlide.Name),
 		Name:     createSlide.Name,
-		ModuleId: moduleId,
+		ModuleId: createSlide.ModuleId,
 	}
 	slideId, err := uc.slideRepo.Create(ctx, slide)
 	if err != nil {

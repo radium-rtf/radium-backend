@@ -2,58 +2,83 @@ package entity
 
 import (
 	"errors"
-	"mime/multipart"
+
+	"github.com/google/uuid"
 )
 
 var (
-	CourseNotFoundErr = errors.New("курс не найден")
+	ErrCourseNotFound = errors.New("курс не найден")
 )
 
 type (
 	CourseRequest struct {
-		Name        string
-		Description string
-		AuthorId    string
-		Logo        multipart.File
-		Header      *multipart.FileHeader
-		Type        string
+		Name             string      `json:"name"`
+		ShortDescription string      `json:"shortDescription"`
+		Description      string      `json:"description"`
+		Logo             string      `json:"logo"`
+		Banner           string      `json:"banner"`
+		Authors          []uuid.UUID `json:"authors"`
+		Links            []Link      `json:"links"`
 	}
 
 	Course struct {
-		Id          uint   `json:"id"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		AuthorId    string `json:"author_id"`
-		Logo        string `json:"logo"`
-		Type        string `json:"type"`
+		Id               uuid.UUID `gorm:"default:gen_random_uuid()"`
+		Name             string    `gorm:"type:string"`
+		Slug             string    `gorm:"type:string"`
+		ShortDescription string
+		Description      string
+		Logo             string
+		Banner           string `json:"banner"`
+		Authors          []User `gorm:"many2many:course_authors"`
+		Links            []Link
+		Modules          []Module
 	}
 
-	CourseTitle struct {
-		Id            uint      `json:"id"`
-		Name          string    `json:"name"`
-		Description   string    `json:"description"`
-		Author        UserDto   `json:"author"`
-		Links         []LinkDto `json:"links"`
-		Collaborators []UserDto `json:"collaborators"`
-		Logo          string    `json:"logo"`
-		Type          string    `json:"type"`
+	CourseDto struct {
+		Id   uuid.UUID `json:"id" gorm:"default:gen_random_uuid()"`
+		Name string    `json:"name" gorm:"type:string"`
+		Slug string    `json:"slug"`
+
+		ShortDescription string      `json:"shortDescription"`
+		Description      string      `json:"description"`
+		Logo             string      `json:"logo"`
+		Banner           string      `json:"banner"`
+		Authors          []UserDto   `json:"authors"`
+		Links            []Link      `json:"links"`
+		Modules          []ModuleDto `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
 	}
 
-	CourseModules struct {
-		Id      uint        `json:"id"`
-		Name    string      `json:"name"`
-		Modules []ModuleDto `json:"modules"`
-		Logo    string      `json:"logo"`
-		Type    string      `json:"type"`
-	}
+	// CourseTitle struct {
+	// 	Id            uint      `json:"id"`
+	// 	Name          string    `json:"name"`
+	// 	Description   string    `json:"description"`
+	// 	Author        UserDto   `json:"author"`
+	// 	Links         []LinkDto `json:"links"`
+	// 	Collaborators []UserDto `json:"collaborators"`
+	// 	Logo          string    `json:"logo"`
+	// 	Type          string    `json:"type"`
+	// }
+
+	// CourseModules struct {
+	// 	Id      uint        `json:"id"`
+	// 	Name    string      `json:"name"`
+	// 	Modules []ModuleDto `json:"modules"`
+	// 	Logo    string      `json:"logo"`
+	// 	Type    string      `json:"type"`
+	// }
 )
 
-func NewCourseRequest(name, description, courseType, authorId string,
-	logo multipart.File, header *multipart.FileHeader) CourseRequest {
-	return CourseRequest{Name: name, Description: description, Logo: logo, Header: header,
-		Type: courseType, AuthorId: authorId}
-}
-
-func NewCourse(id uint, name, description, logo, authorId, courseType string) Course {
-	return Course{Id: id, Name: name, Description: description, Logo: logo, Type: courseType, AuthorId: authorId}
+func NewCourse(c CourseRequest) *Course {
+	authorsRes := make([]User, 0)
+	for _, v := range c.Authors {
+		authorsRes = append(authorsRes, User{Id: v})
+	}
+	return &Course{
+		Name:             c.Name,
+		ShortDescription: c.ShortDescription,
+		Description:      c.Description,
+		Logo:             c.Logo,
+		Authors:          authorsRes,
+		Links:            c.Links,
+	}
 }

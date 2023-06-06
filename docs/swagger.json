@@ -32,35 +32,8 @@
                         }
                     }
                 }
-            }
-        },
-        "/account/course": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "account"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Course"
-                        }
-                    }
-                }
-            }
-        },
-        "/account/name": {
+            },
             "patch": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -72,12 +45,12 @@
                 ],
                 "parameters": [
                     {
-                        "description": "Новое имя",
+                        "description": "Данные для обновления",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.UserName"
+                            "$ref": "#/definitions/entity.UpdateUserRequest"
                         }
                     }
                 ],
@@ -218,37 +191,6 @@
                 }
             }
         },
-        "/collaborator": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "course"
-                ],
-                "parameters": [
-                    {
-                        "description": "collaborator",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.Collaborator"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Collaborator"
-                        }
-                    }
-                }
-            }
-        },
         "/course": {
             "get": {
                 "security": [
@@ -275,46 +217,27 @@
                     }
                 ],
                 "consumes": [
-                    "multipart/form-data"
+                    "application/json"
                 ],
                 "tags": [
                     "course"
                 ],
                 "parameters": [
                     {
-                        "type": "file",
-                        "description": "logo",
-                        "name": "logo",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "name",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "description",
-                        "name": "description",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "kotlin, math и тд",
-                        "name": "type",
-                        "in": "formData",
-                        "required": true
+                        "description": "Данные о курсе",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.CourseRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.Course"
+                            "$ref": "#/definitions/entity.CourseDto"
                         }
                     }
                 }
@@ -327,7 +250,7 @@
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "course id",
                         "name": "courseId",
                         "in": "path",
@@ -338,7 +261,7 @@
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseTitle"
+                            "$ref": "#/definitions/entity.CourseDto"
                         }
                     }
                 }
@@ -375,35 +298,6 @@
                 }
             }
         },
-        "/join/course/{courseId}": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "course"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "course id",
-                        "name": "courseId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "created",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Course"
-                        }
-                    }
-                }
-            }
-        },
         "/join/group/{groupId}": {
             "patch": {
                 "security": [
@@ -428,37 +322,6 @@
                         "description": "created",
                         "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/link/course": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "course"
-                ],
-                "parameters": [
-                    {
-                        "description": "link",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.LinkRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.LinkDto"
                         }
                     }
                 }
@@ -490,35 +353,6 @@
                         "description": "created",
                         "schema": {
                             "$ref": "#/definitions/entity.ModuleDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/module/{courseId}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "module"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "course id",
-                        "name": "courseId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.CourseModules"
                         }
                     }
                 }
@@ -735,7 +569,7 @@
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Slide"
+                            "$ref": "#/definitions/entity.Page"
                         }
                     }
                 }
@@ -758,7 +592,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SlideRequest"
+                            "$ref": "#/definitions/entity.PageRequest"
                         }
                     }
                 ],
@@ -766,72 +600,7 @@
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Slide"
-                        }
-                    }
-                }
-            }
-        },
-        "/slide/{courseId}/{moduleNameEng}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "slide"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "course id",
-                        "name": "courseId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "moduleName",
-                        "name": "moduleNameEng",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ModuleSlides"
-                        }
-                    }
-                }
-            }
-        },
-        "/slide/{slideId}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "slide"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "slide id",
-                        "name": "slideId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SlideSections"
+                            "$ref": "#/definitions/entity.Page"
                         }
                     }
                 }
@@ -872,53 +641,114 @@
                     }
                 }
             }
+        },
+        "/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "file"
+                ],
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.FileDto"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "entity.Collaborator": {
-            "type": "object",
-            "properties": {
-                "course_id": {
-                    "type": "integer"
-                },
-                "user_email": {
-                    "type": "string"
-                }
-            }
-        },
         "entity.Course": {
             "type": "object",
             "properties": {
-                "author_id": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.User"
+                    }
+                },
+                "banner": {
                     "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "logo": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.CourseModules": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Link"
+                    }
                 },
                 "logo": {
                     "type": "string"
                 },
                 "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Module"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CourseDto": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.UserDto"
+                    }
+                },
+                "banner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Link"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "modules": {
+                    "description": "TODO: скрыть для людей, у которых нет доступа к курсу",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.ModuleDto"
@@ -927,33 +757,33 @@
                 "name": {
                     "type": "string"
                 },
-                "type": {
+                "shortDescription": {
+                    "type": "string"
+                },
+                "slug": {
                     "type": "string"
                 }
             }
         },
-        "entity.CourseTitle": {
+        "entity.CourseRequest": {
             "type": "object",
             "properties": {
-                "author": {
-                    "$ref": "#/definitions/entity.UserDto"
-                },
-                "collaborators": {
+                "authors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.UserDto"
+                        "type": "string"
                     }
+                },
+                "banner": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.LinkDto"
+                        "$ref": "#/definitions/entity.Link"
                     }
                 },
                 "logo": {
@@ -962,7 +792,15 @@
                 "name": {
                     "type": "string"
                 },
-                "type": {
+                "shortDescription": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.FileDto": {
+            "type": "object",
+            "properties": {
+                "location": {
                     "type": "string"
                 }
             }
@@ -975,9 +813,15 @@
                 }
             }
         },
-        "entity.LinkDto": {
+        "entity.Link": {
             "type": "object",
             "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
                 "link": {
                     "type": "string"
                 },
@@ -986,16 +830,25 @@
                 }
             }
         },
-        "entity.LinkRequest": {
+        "entity.Module": {
             "type": "object",
             "properties": {
-                "course_id": {
-                    "type": "integer"
+                "courseId": {
+                    "type": "string"
                 },
-                "link": {
+                "id": {
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Page"
+                    }
+                },
+                "slug": {
                     "type": "string"
                 }
             }
@@ -1006,7 +859,13 @@
                 "name": {
                     "type": "string"
                 },
-                "name_eng": {
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Page"
+                    }
+                },
+                "slug": {
                     "type": "string"
                 }
             }
@@ -1014,31 +873,45 @@
         "entity.ModuleRequest": {
             "type": "object",
             "properties": {
-                "course_id": {
-                    "type": "integer"
+                "courseId": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 }
             }
         },
-        "entity.ModuleSlides": {
+        "entity.Page": {
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "string"
+                },
+                "moduleId": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "name_eng": {
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.PageRequest": {
+            "type": "object",
+            "properties": {
+                "courseId": {
                     "type": "string"
                 },
-                "slides": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.SlideDto"
-                    }
+                "moduleId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
                 }
             }
         },
@@ -1056,10 +929,21 @@
         "entity.RefreshToken": {
             "type": "object",
             "properties": {
-                "refresh_token": {
+                "refreshToken": {
                     "type": "string"
                 }
             }
+        },
+        "entity.SectionAnswerVerdict": {
+            "type": "string",
+            "enum": [
+                "OK",
+                "WA"
+            ],
+            "x-enum-varnames": [
+                "SectionAnswerOK",
+                "SectionAnswerWA"
+            ]
         },
         "entity.SectionChoiceAnswerDto": {
             "type": "object",
@@ -1074,7 +958,7 @@
                     "type": "integer"
                 },
                 "verdict": {
-                    "type": "string"
+                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
                 }
             }
         },
@@ -1157,7 +1041,7 @@
                     "type": "integer"
                 },
                 "verdict": {
-                    "type": "string"
+                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
                 }
             }
         },
@@ -1240,7 +1124,7 @@
                     "type": "integer"
                 },
                 "verdict": {
-                    "type": "string"
+                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
                 }
             }
         },
@@ -1318,6 +1202,20 @@
                 }
             }
         },
+        "entity.Session": {
+            "type": "object",
+            "properties": {
+                "expiresIn": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.SignIn": {
             "type": "object",
             "properties": {
@@ -1343,79 +1241,59 @@
                 }
             }
         },
-        "entity.Slide": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "module": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nameEng": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SlideDto": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "name_eng": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SlideRequest": {
-            "type": "object",
-            "properties": {
-                "course_id": {
-                    "type": "integer"
-                },
-                "module_name_eng": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SlideSections": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "name_eng": {
-                    "type": "string"
-                },
-                "sections": {
-                    "type": "array",
-                    "items": {}
-                }
-            }
-        },
         "entity.Tokens": {
             "type": "object",
             "properties": {
-                "access_token": {
+                "accessToken": {
                     "type": "string"
                 },
-                "expires_in": {
+                "expiresIn": {
                     "type": "string"
                 },
-                "refresh_token": {
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isVerified": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "sessions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Session"
+                    }
+                },
+                "verificationCode": {
                     "type": "string"
                 }
             }
@@ -1423,20 +1301,15 @@
         "entity.UserDto": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.UserName": {
-            "type": "object",
-            "properties": {
                 "name": {
                     "type": "string"
                 }

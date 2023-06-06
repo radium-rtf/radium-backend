@@ -2,9 +2,10 @@ package auth
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"time"
 )
 
 type TokenManager struct {
@@ -15,10 +16,10 @@ func NewManager(signingKey string) (TokenManager, error) {
 	return TokenManager{signingKey: signingKey}, nil
 }
 
-func (m TokenManager) NewJWT(id string, expiresAt time.Time) (string, error) {
+func (m TokenManager) NewJWT(id uuid.UUID, expiresAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(expiresAt),
-		Subject:   id,
+		Subject:   id.String(),
 	})
 
 	return token.SignedString([]byte(m.signingKey))
