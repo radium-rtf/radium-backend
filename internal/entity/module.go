@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
 var (
@@ -25,8 +26,16 @@ type (
 	}
 
 	ModuleDto struct {
-		Slug  string `json:"slug"`
-		Name  string `json:"name"`
-		Pages []Page `json:"pages"`
+		Slug  string    `json:"slug"`
+		Name  string    `json:"name"`
+		Pages []PageDto `json:"pages"`
 	}
 )
+
+func NewModuleRequestToModule(module ModuleRequest) Module {
+	return Module{
+		Name:     module.Name,
+		CourseId: module.CourseId,
+		Slug:     translit.RuEn(module.Name),
+	}
+}

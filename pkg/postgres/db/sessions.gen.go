@@ -68,7 +68,7 @@ func (s *session) updateTableName(table string) *session {
 	return s
 }
 
-func (s *session) WithContext(ctx context.Context) *sessionDo { return s.sessionDo.WithContext(ctx) }
+func (s *session) WithContext(ctx context.Context) ISessionDo { return s.sessionDo.WithContext(ctx) }
 
 func (s session) TableName() string { return s.sessionDo.TableName() }
 
@@ -102,99 +102,160 @@ func (s session) replaceDB(db *gorm.DB) session {
 
 type sessionDo struct{ gen.DO }
 
-func (s sessionDo) Debug() *sessionDo {
+type ISessionDo interface {
+	gen.SubQuery
+	Debug() ISessionDo
+	WithContext(ctx context.Context) ISessionDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() ISessionDo
+	WriteDB() ISessionDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) ISessionDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) ISessionDo
+	Not(conds ...gen.Condition) ISessionDo
+	Or(conds ...gen.Condition) ISessionDo
+	Select(conds ...field.Expr) ISessionDo
+	Where(conds ...gen.Condition) ISessionDo
+	Order(conds ...field.Expr) ISessionDo
+	Distinct(cols ...field.Expr) ISessionDo
+	Omit(cols ...field.Expr) ISessionDo
+	Join(table schema.Tabler, on ...field.Expr) ISessionDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) ISessionDo
+	RightJoin(table schema.Tabler, on ...field.Expr) ISessionDo
+	Group(cols ...field.Expr) ISessionDo
+	Having(conds ...gen.Condition) ISessionDo
+	Limit(limit int) ISessionDo
+	Offset(offset int) ISessionDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) ISessionDo
+	Unscoped() ISessionDo
+	Create(values ...*entity.Session) error
+	CreateInBatches(values []*entity.Session, batchSize int) error
+	Save(values ...*entity.Session) error
+	First() (*entity.Session, error)
+	Take() (*entity.Session, error)
+	Last() (*entity.Session, error)
+	Find() ([]*entity.Session, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*entity.Session, err error)
+	FindInBatches(result *[]*entity.Session, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*entity.Session) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) ISessionDo
+	Assign(attrs ...field.AssignExpr) ISessionDo
+	Joins(fields ...field.RelationField) ISessionDo
+	Preload(fields ...field.RelationField) ISessionDo
+	FirstOrInit() (*entity.Session, error)
+	FirstOrCreate() (*entity.Session, error)
+	FindByPage(offset int, limit int) (result []*entity.Session, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) ISessionDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (s sessionDo) Debug() ISessionDo {
 	return s.withDO(s.DO.Debug())
 }
 
-func (s sessionDo) WithContext(ctx context.Context) *sessionDo {
+func (s sessionDo) WithContext(ctx context.Context) ISessionDo {
 	return s.withDO(s.DO.WithContext(ctx))
 }
 
-func (s sessionDo) ReadDB() *sessionDo {
+func (s sessionDo) ReadDB() ISessionDo {
 	return s.Clauses(dbresolver.Read)
 }
 
-func (s sessionDo) WriteDB() *sessionDo {
+func (s sessionDo) WriteDB() ISessionDo {
 	return s.Clauses(dbresolver.Write)
 }
 
-func (s sessionDo) Session(config *gorm.Session) *sessionDo {
+func (s sessionDo) Session(config *gorm.Session) ISessionDo {
 	return s.withDO(s.DO.Session(config))
 }
 
-func (s sessionDo) Clauses(conds ...clause.Expression) *sessionDo {
+func (s sessionDo) Clauses(conds ...clause.Expression) ISessionDo {
 	return s.withDO(s.DO.Clauses(conds...))
 }
 
-func (s sessionDo) Returning(value interface{}, columns ...string) *sessionDo {
+func (s sessionDo) Returning(value interface{}, columns ...string) ISessionDo {
 	return s.withDO(s.DO.Returning(value, columns...))
 }
 
-func (s sessionDo) Not(conds ...gen.Condition) *sessionDo {
+func (s sessionDo) Not(conds ...gen.Condition) ISessionDo {
 	return s.withDO(s.DO.Not(conds...))
 }
 
-func (s sessionDo) Or(conds ...gen.Condition) *sessionDo {
+func (s sessionDo) Or(conds ...gen.Condition) ISessionDo {
 	return s.withDO(s.DO.Or(conds...))
 }
 
-func (s sessionDo) Select(conds ...field.Expr) *sessionDo {
+func (s sessionDo) Select(conds ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Select(conds...))
 }
 
-func (s sessionDo) Where(conds ...gen.Condition) *sessionDo {
+func (s sessionDo) Where(conds ...gen.Condition) ISessionDo {
 	return s.withDO(s.DO.Where(conds...))
 }
 
-func (s sessionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *sessionDo {
+func (s sessionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ISessionDo {
 	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (s sessionDo) Order(conds ...field.Expr) *sessionDo {
+func (s sessionDo) Order(conds ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Order(conds...))
 }
 
-func (s sessionDo) Distinct(cols ...field.Expr) *sessionDo {
+func (s sessionDo) Distinct(cols ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Distinct(cols...))
 }
 
-func (s sessionDo) Omit(cols ...field.Expr) *sessionDo {
+func (s sessionDo) Omit(cols ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Omit(cols...))
 }
 
-func (s sessionDo) Join(table schema.Tabler, on ...field.Expr) *sessionDo {
+func (s sessionDo) Join(table schema.Tabler, on ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Join(table, on...))
 }
 
-func (s sessionDo) LeftJoin(table schema.Tabler, on ...field.Expr) *sessionDo {
+func (s sessionDo) LeftJoin(table schema.Tabler, on ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.LeftJoin(table, on...))
 }
 
-func (s sessionDo) RightJoin(table schema.Tabler, on ...field.Expr) *sessionDo {
+func (s sessionDo) RightJoin(table schema.Tabler, on ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.RightJoin(table, on...))
 }
 
-func (s sessionDo) Group(cols ...field.Expr) *sessionDo {
+func (s sessionDo) Group(cols ...field.Expr) ISessionDo {
 	return s.withDO(s.DO.Group(cols...))
 }
 
-func (s sessionDo) Having(conds ...gen.Condition) *sessionDo {
+func (s sessionDo) Having(conds ...gen.Condition) ISessionDo {
 	return s.withDO(s.DO.Having(conds...))
 }
 
-func (s sessionDo) Limit(limit int) *sessionDo {
+func (s sessionDo) Limit(limit int) ISessionDo {
 	return s.withDO(s.DO.Limit(limit))
 }
 
-func (s sessionDo) Offset(offset int) *sessionDo {
+func (s sessionDo) Offset(offset int) ISessionDo {
 	return s.withDO(s.DO.Offset(offset))
 }
 
-func (s sessionDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *sessionDo {
+func (s sessionDo) Scopes(funcs ...func(gen.Dao) gen.Dao) ISessionDo {
 	return s.withDO(s.DO.Scopes(funcs...))
 }
 
-func (s sessionDo) Unscoped() *sessionDo {
+func (s sessionDo) Unscoped() ISessionDo {
 	return s.withDO(s.DO.Unscoped())
 }
 
@@ -260,22 +321,22 @@ func (s sessionDo) FindInBatches(result *[]*entity.Session, batchSize int, fc fu
 	return s.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (s sessionDo) Attrs(attrs ...field.AssignExpr) *sessionDo {
+func (s sessionDo) Attrs(attrs ...field.AssignExpr) ISessionDo {
 	return s.withDO(s.DO.Attrs(attrs...))
 }
 
-func (s sessionDo) Assign(attrs ...field.AssignExpr) *sessionDo {
+func (s sessionDo) Assign(attrs ...field.AssignExpr) ISessionDo {
 	return s.withDO(s.DO.Assign(attrs...))
 }
 
-func (s sessionDo) Joins(fields ...field.RelationField) *sessionDo {
+func (s sessionDo) Joins(fields ...field.RelationField) ISessionDo {
 	for _, _f := range fields {
 		s = *s.withDO(s.DO.Joins(_f))
 	}
 	return &s
 }
 
-func (s sessionDo) Preload(fields ...field.RelationField) *sessionDo {
+func (s sessionDo) Preload(fields ...field.RelationField) ISessionDo {
 	for _, _f := range fields {
 		s = *s.withDO(s.DO.Preload(_f))
 	}

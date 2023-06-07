@@ -69,6 +69,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/account/courses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "account"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Course"
+                        }
+                    }
+                }
+            }
+        },
         "/account/password": {
             "patch": {
                 "security": [
@@ -213,7 +233,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Course"
+                            "$ref": "#/definitions/entity.CourseDto"
                         }
                     }
                 }
@@ -244,6 +264,59 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.CourseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/join/{courseId}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "course id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.CourseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/slug/{slug}": {
+            "get": {
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "course slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
                         "schema": {
                             "$ref": "#/definitions/entity.CourseDto"
                         }
@@ -366,7 +439,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/section/choice": {
+        "/page": {
             "post": {
                 "security": [
                     {
@@ -374,224 +447,7 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "создание секции c вариантом ответа",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionChoicePost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionChoiceDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/choice/answer": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "ответ на задание с вариантом ответа",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionChoiceAnswerPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionChoiceAnswerDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/multichoice": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "создание секции c несколькими вариантами ответа",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionMultiChoicePost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionMultiChoiceDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/multichoice/answer": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "ответ на задание с несколькими вариантами ответа",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionMultiChoiceAnswerPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionMultiChoiceAnswerDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/question": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "создание вопросительной секции",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionQuestionPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionQuestionDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/question/answer": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "ответ на вопрос",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionQuestionAnswerPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionQuestionAnswerDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/section/text": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "section"
-                ],
-                "parameters": [
-                    {
-                        "description": "создвние текствой секции",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.SectionTextPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Page"
-                        }
-                    }
-                }
-            }
-        },
-        "/slide": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "slide"
+                    "page"
                 ],
                 "parameters": [
                     {
@@ -608,7 +464,70 @@ const docTemplate = `{
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.Page"
+                            "$ref": "#/definitions/entity.PageDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/page/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "page"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "page id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.PageDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/section": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": "Информация для раздела",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionDto"
                         }
                     }
                 }
@@ -684,6 +603,55 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.ChoiceSection": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "ownerID": {
+                    "type": "string"
+                },
+                "ownerType": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.ChoiceSectionDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "entity.Course": {
             "type": "object",
             "properties": {
@@ -725,6 +693,12 @@ const docTemplate = `{
                 },
                 "slug": {
                     "type": "string"
+                },
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.User"
+                    }
                 }
             }
         },
@@ -870,7 +844,7 @@ const docTemplate = `{
                 "pages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Page"
+                        "$ref": "#/definitions/entity.PageDto"
                     }
                 },
                 "slug": {
@@ -889,6 +863,58 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.MultiChoiceSection": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "ownerID": {
+                    "type": "string"
+                },
+                "ownerType": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.MultiChoiceSectionDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "entity.Page": {
             "type": "object",
             "properties": {
@@ -901,6 +927,32 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "sections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Section"
+                    }
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.PageDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.SectionDto"
+                    }
+                },
                 "slug": {
                     "type": "string"
                 }
@@ -909,16 +961,10 @@ const docTemplate = `{
         "entity.PageRequest": {
             "type": "object",
             "properties": {
-                "courseId": {
-                    "type": "string"
-                },
                 "moduleId": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "slug": {
                     "type": "string"
                 }
             }
@@ -942,271 +988,78 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.SectionAnswerVerdict": {
-            "type": "string",
-            "enum": [
-                "OK",
-                "WA"
-            ],
-            "x-enum-varnames": [
-                "SectionAnswerOK",
-                "SectionAnswerWA"
-            ]
-        },
-        "entity.SectionChoiceAnswerDto": {
+        "entity.Section": {
             "type": "object",
             "properties": {
-                "answer": {
-                    "type": "string"
+                "choice": {
+                    "$ref": "#/definitions/entity.ChoiceSection"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "section_id": {
-                    "type": "integer"
-                },
-                "verdict": {
-                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
-                }
-            }
-        },
-        "entity.SectionChoiceAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
                     "type": "string"
                 },
-                "section_id": {
+                "multichoice": {
+                    "$ref": "#/definitions/entity.MultiChoiceSection"
+                },
+                "order": {
                     "type": "integer"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "shortanswer": {
+                    "$ref": "#/definitions/entity.ShortAnswerSection"
+                },
+                "text": {
+                    "$ref": "#/definitions/entity.TextSection"
                 }
             }
         },
-        "entity.SectionChoiceDto": {
+        "entity.SectionDto": {
             "type": "object",
             "properties": {
-                "cost": {
-                    "type": "integer"
+                "choice": {
+                    "$ref": "#/definitions/entity.ChoiceSectionDto"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
                     "type": "string"
                 },
-                "score": {
+                "multichoice": {
+                    "$ref": "#/definitions/entity.MultiChoiceSectionDto"
+                },
+                "order": {
                     "type": "integer"
                 },
-                "slide_id": {
-                    "type": "integer"
+                "pageId": {
+                    "type": "string"
                 },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "shortanswer": {
+                    "$ref": "#/definitions/entity.ShortAnswerSectionDto"
+                },
+                "text": {
+                    "$ref": "#/definitions/entity.TextSectionDto"
                 }
             }
         },
-        "entity.SectionChoicePost": {
+        "entity.SectionPost": {
             "type": "object",
             "properties": {
-                "cost": {
+                "choice": {
+                    "$ref": "#/definitions/entity.ChoiceSection"
+                },
+                "multichoice": {
+                    "$ref": "#/definitions/entity.MultiChoiceSection"
+                },
+                "order": {
                     "type": "integer"
                 },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
+                "pageId": {
                     "type": "string"
                 },
-                "slide_id": {
-                    "type": "integer"
+                "shortanswer": {
+                    "$ref": "#/definitions/entity.ShortAnswerSection"
                 },
-                "variants": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "boolean"
-                    }
-                }
-            }
-        },
-        "entity.SectionMultiChoiceAnswerDto": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "section_id": {
-                    "type": "integer"
-                },
-                "verdict": {
-                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
-                }
-            }
-        },
-        "entity.SectionMultiChoiceAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "section_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.SectionMultiChoiceDto": {
-            "type": "object",
-            "properties": {
-                "cost": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "integer"
-                },
-                "slide_id": {
-                    "type": "integer"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "entity.SectionMultiChoicePost": {
-            "type": "object",
-            "properties": {
-                "cost": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "slide_id": {
-                    "type": "integer"
-                },
-                "variants": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "boolean"
-                    }
-                }
-            }
-        },
-        "entity.SectionQuestionAnswerDto": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "section_id": {
-                    "type": "integer"
-                },
-                "verdict": {
-                    "$ref": "#/definitions/entity.SectionAnswerVerdict"
-                }
-            }
-        },
-        "entity.SectionQuestionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "section_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.SectionQuestionDto": {
-            "type": "object",
-            "properties": {
-                "case_sensitive": {
-                    "type": "boolean"
-                },
-                "cost": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "integer"
-                },
-                "slide_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.SectionQuestionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "case_sensitive": {
-                    "type": "boolean"
-                },
-                "cost": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "slide_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.SectionTextPost": {
-            "type": "object",
-            "properties": {
-                "markdown": {
-                    "type": "string"
-                },
-                "order_by": {
-                    "type": "integer"
-                },
-                "slide_id": {
-                    "type": "integer"
+                "text": {
+                    "$ref": "#/definitions/entity.TextSection"
                 }
             }
         },
@@ -1220,6 +1073,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ShortAnswerSection": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "ownerID": {
+                    "type": "string"
+                },
+                "ownerType": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ShortAnswerSectionDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
                     "type": "string"
                 }
             }
@@ -1245,6 +1135,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.TextSection": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ownerID": {
+                    "type": "string"
+                },
+                "ownerType": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.TextSectionDto": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 }
             }
@@ -1279,6 +1197,12 @@ const docTemplate = `{
             "properties": {
                 "avatar": {
                     "type": "string"
+                },
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Course"
+                    }
                 },
                 "email": {
                     "type": "string"

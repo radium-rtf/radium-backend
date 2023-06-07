@@ -68,6 +68,11 @@ func (uc AccountUseCase) UpdatePassword(ctx context.Context, userId string, pass
 	return uc.userRepo.UpdatePassword(ctx, uid, hashedPassword)
 }
 
-// func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]entity.Course, error) {
-// 	return uc.courseRepo.GetByStudent(ctx, studentId)
-// }
+func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId string) ([]*entity.Course, error) {
+	uid, err := uuid.Parse(studentId)
+	if err != nil {
+		return nil, err
+	}
+
+	return uc.courseRepo.GetByStudent(ctx, uid)
+}

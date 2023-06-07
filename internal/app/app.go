@@ -16,7 +16,6 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	// migrator(cfg)
 	db, err := postgres.New(cfg.PG.URL)
 	if err != nil {
 		log.Fatal(err)

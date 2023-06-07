@@ -31,6 +31,31 @@ func newPage(db *gorm.DB, opts ...gen.DOOption) page {
 	_page.Name = field.NewString(tableName, "name")
 	_page.Slug = field.NewString(tableName, "slug")
 	_page.ModuleId = field.NewField(tableName, "module_id")
+	_page.Sections = pageHasManySections{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Sections", "entity.Section"),
+		TextSection: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Sections.TextSection", "entity.TextSection"),
+		},
+		ChoiceSection: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Sections.ChoiceSection", "entity.ChoiceSection"),
+		},
+		MultiChoiceSection: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Sections.MultiChoiceSection", "entity.MultiChoiceSection"),
+		},
+		ShortAnswerSection: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+		},
+	}
 
 	_page.fillFieldMap()
 
@@ -45,6 +70,7 @@ type page struct {
 	Name     field.String
 	Slug     field.String
 	ModuleId field.Field
+	Sections pageHasManySections
 
 	fieldMap map[string]field.Expr
 }
@@ -71,7 +97,7 @@ func (p *page) updateTableName(table string) *page {
 	return p
 }
 
-func (p *page) WithContext(ctx context.Context) *pageDo { return p.pageDo.WithContext(ctx) }
+func (p *page) WithContext(ctx context.Context) IPageDo { return p.pageDo.WithContext(ctx) }
 
 func (p page) TableName() string { return p.pageDo.TableName() }
 
@@ -87,11 +113,12 @@ func (p *page) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *page) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 4)
+	p.fieldMap = make(map[string]field.Expr, 5)
 	p.fieldMap["id"] = p.Id
 	p.fieldMap["name"] = p.Name
 	p.fieldMap["slug"] = p.Slug
 	p.fieldMap["module_id"] = p.ModuleId
+
 }
 
 func (p page) clone(db *gorm.DB) page {
@@ -104,101 +131,246 @@ func (p page) replaceDB(db *gorm.DB) page {
 	return p
 }
 
+type pageHasManySections struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	TextSection struct {
+		field.RelationField
+	}
+	ChoiceSection struct {
+		field.RelationField
+	}
+	MultiChoiceSection struct {
+		field.RelationField
+	}
+	ShortAnswerSection struct {
+		field.RelationField
+	}
+}
+
+func (a pageHasManySections) Where(conds ...field.Expr) *pageHasManySections {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a pageHasManySections) WithContext(ctx context.Context) *pageHasManySections {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a pageHasManySections) Session(session *gorm.Session) *pageHasManySections {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a pageHasManySections) Model(m *entity.Page) *pageHasManySectionsTx {
+	return &pageHasManySectionsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type pageHasManySectionsTx struct{ tx *gorm.Association }
+
+func (a pageHasManySectionsTx) Find() (result []*entity.Section, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a pageHasManySectionsTx) Append(values ...*entity.Section) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a pageHasManySectionsTx) Replace(values ...*entity.Section) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a pageHasManySectionsTx) Delete(values ...*entity.Section) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a pageHasManySectionsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a pageHasManySectionsTx) Count() int64 {
+	return a.tx.Count()
+}
+
 type pageDo struct{ gen.DO }
 
-func (p pageDo) Debug() *pageDo {
+type IPageDo interface {
+	gen.SubQuery
+	Debug() IPageDo
+	WithContext(ctx context.Context) IPageDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() IPageDo
+	WriteDB() IPageDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) IPageDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) IPageDo
+	Not(conds ...gen.Condition) IPageDo
+	Or(conds ...gen.Condition) IPageDo
+	Select(conds ...field.Expr) IPageDo
+	Where(conds ...gen.Condition) IPageDo
+	Order(conds ...field.Expr) IPageDo
+	Distinct(cols ...field.Expr) IPageDo
+	Omit(cols ...field.Expr) IPageDo
+	Join(table schema.Tabler, on ...field.Expr) IPageDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IPageDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IPageDo
+	Group(cols ...field.Expr) IPageDo
+	Having(conds ...gen.Condition) IPageDo
+	Limit(limit int) IPageDo
+	Offset(offset int) IPageDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IPageDo
+	Unscoped() IPageDo
+	Create(values ...*entity.Page) error
+	CreateInBatches(values []*entity.Page, batchSize int) error
+	Save(values ...*entity.Page) error
+	First() (*entity.Page, error)
+	Take() (*entity.Page, error)
+	Last() (*entity.Page, error)
+	Find() ([]*entity.Page, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*entity.Page, err error)
+	FindInBatches(result *[]*entity.Page, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*entity.Page) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) IPageDo
+	Assign(attrs ...field.AssignExpr) IPageDo
+	Joins(fields ...field.RelationField) IPageDo
+	Preload(fields ...field.RelationField) IPageDo
+	FirstOrInit() (*entity.Page, error)
+	FirstOrCreate() (*entity.Page, error)
+	FindByPage(offset int, limit int) (result []*entity.Page, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) IPageDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (p pageDo) Debug() IPageDo {
 	return p.withDO(p.DO.Debug())
 }
 
-func (p pageDo) WithContext(ctx context.Context) *pageDo {
+func (p pageDo) WithContext(ctx context.Context) IPageDo {
 	return p.withDO(p.DO.WithContext(ctx))
 }
 
-func (p pageDo) ReadDB() *pageDo {
+func (p pageDo) ReadDB() IPageDo {
 	return p.Clauses(dbresolver.Read)
 }
 
-func (p pageDo) WriteDB() *pageDo {
+func (p pageDo) WriteDB() IPageDo {
 	return p.Clauses(dbresolver.Write)
 }
 
-func (p pageDo) Session(config *gorm.Session) *pageDo {
+func (p pageDo) Session(config *gorm.Session) IPageDo {
 	return p.withDO(p.DO.Session(config))
 }
 
-func (p pageDo) Clauses(conds ...clause.Expression) *pageDo {
+func (p pageDo) Clauses(conds ...clause.Expression) IPageDo {
 	return p.withDO(p.DO.Clauses(conds...))
 }
 
-func (p pageDo) Returning(value interface{}, columns ...string) *pageDo {
+func (p pageDo) Returning(value interface{}, columns ...string) IPageDo {
 	return p.withDO(p.DO.Returning(value, columns...))
 }
 
-func (p pageDo) Not(conds ...gen.Condition) *pageDo {
+func (p pageDo) Not(conds ...gen.Condition) IPageDo {
 	return p.withDO(p.DO.Not(conds...))
 }
 
-func (p pageDo) Or(conds ...gen.Condition) *pageDo {
+func (p pageDo) Or(conds ...gen.Condition) IPageDo {
 	return p.withDO(p.DO.Or(conds...))
 }
 
-func (p pageDo) Select(conds ...field.Expr) *pageDo {
+func (p pageDo) Select(conds ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Select(conds...))
 }
 
-func (p pageDo) Where(conds ...gen.Condition) *pageDo {
+func (p pageDo) Where(conds ...gen.Condition) IPageDo {
 	return p.withDO(p.DO.Where(conds...))
 }
 
-func (p pageDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *pageDo {
+func (p pageDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IPageDo {
 	return p.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (p pageDo) Order(conds ...field.Expr) *pageDo {
+func (p pageDo) Order(conds ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Order(conds...))
 }
 
-func (p pageDo) Distinct(cols ...field.Expr) *pageDo {
+func (p pageDo) Distinct(cols ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Distinct(cols...))
 }
 
-func (p pageDo) Omit(cols ...field.Expr) *pageDo {
+func (p pageDo) Omit(cols ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Omit(cols...))
 }
 
-func (p pageDo) Join(table schema.Tabler, on ...field.Expr) *pageDo {
+func (p pageDo) Join(table schema.Tabler, on ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Join(table, on...))
 }
 
-func (p pageDo) LeftJoin(table schema.Tabler, on ...field.Expr) *pageDo {
+func (p pageDo) LeftJoin(table schema.Tabler, on ...field.Expr) IPageDo {
 	return p.withDO(p.DO.LeftJoin(table, on...))
 }
 
-func (p pageDo) RightJoin(table schema.Tabler, on ...field.Expr) *pageDo {
+func (p pageDo) RightJoin(table schema.Tabler, on ...field.Expr) IPageDo {
 	return p.withDO(p.DO.RightJoin(table, on...))
 }
 
-func (p pageDo) Group(cols ...field.Expr) *pageDo {
+func (p pageDo) Group(cols ...field.Expr) IPageDo {
 	return p.withDO(p.DO.Group(cols...))
 }
 
-func (p pageDo) Having(conds ...gen.Condition) *pageDo {
+func (p pageDo) Having(conds ...gen.Condition) IPageDo {
 	return p.withDO(p.DO.Having(conds...))
 }
 
-func (p pageDo) Limit(limit int) *pageDo {
+func (p pageDo) Limit(limit int) IPageDo {
 	return p.withDO(p.DO.Limit(limit))
 }
 
-func (p pageDo) Offset(offset int) *pageDo {
+func (p pageDo) Offset(offset int) IPageDo {
 	return p.withDO(p.DO.Offset(offset))
 }
 
-func (p pageDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *pageDo {
+func (p pageDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IPageDo {
 	return p.withDO(p.DO.Scopes(funcs...))
 }
 
-func (p pageDo) Unscoped() *pageDo {
+func (p pageDo) Unscoped() IPageDo {
 	return p.withDO(p.DO.Unscoped())
 }
 
@@ -264,22 +436,22 @@ func (p pageDo) FindInBatches(result *[]*entity.Page, batchSize int, fc func(tx 
 	return p.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (p pageDo) Attrs(attrs ...field.AssignExpr) *pageDo {
+func (p pageDo) Attrs(attrs ...field.AssignExpr) IPageDo {
 	return p.withDO(p.DO.Attrs(attrs...))
 }
 
-func (p pageDo) Assign(attrs ...field.AssignExpr) *pageDo {
+func (p pageDo) Assign(attrs ...field.AssignExpr) IPageDo {
 	return p.withDO(p.DO.Assign(attrs...))
 }
 
-func (p pageDo) Joins(fields ...field.RelationField) *pageDo {
+func (p pageDo) Joins(fields ...field.RelationField) IPageDo {
 	for _, _f := range fields {
 		p = *p.withDO(p.DO.Joins(_f))
 	}
 	return &p
 }
 
-func (p pageDo) Preload(fields ...field.RelationField) *pageDo {
+func (p pageDo) Preload(fields ...field.RelationField) IPageDo {
 	for _, _f := range fields {
 		p = *p.withDO(p.DO.Preload(_f))
 	}

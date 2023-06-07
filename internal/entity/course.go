@@ -28,8 +28,9 @@ type (
 		ShortDescription string
 		Description      string
 		Logo             string
-		Banner           string `json:"banner"`
-		Authors          []User `gorm:"many2many:course_authors"`
+		Banner           string  `json:"banner"`
+		Authors          []User  `gorm:"many2many:course_authors"`
+		Students         []*User `gorm:"many2many:course_students"`
 		Links            []Link
 		Modules          []Module
 	}

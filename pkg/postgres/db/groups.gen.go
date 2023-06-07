@@ -38,6 +38,136 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 		}{
 			RelationField: field.NewRelation("Students.Sessions", "entity.Session"),
 		},
+		Courses: struct {
+			field.RelationField
+			Links struct {
+				field.RelationField
+			}
+			Modules struct {
+				field.RelationField
+				Pages struct {
+					field.RelationField
+					Sections struct {
+						field.RelationField
+						TextSection struct {
+							field.RelationField
+						}
+						ChoiceSection struct {
+							field.RelationField
+						}
+						MultiChoiceSection struct {
+							field.RelationField
+						}
+						ShortAnswerSection struct {
+							field.RelationField
+						}
+					}
+				}
+			}
+			Authors struct {
+				field.RelationField
+			}
+			Students struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Students.Courses", "entity.Course"),
+			Links: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Students.Courses.Links", "entity.Link"),
+			},
+			Modules: struct {
+				field.RelationField
+				Pages struct {
+					field.RelationField
+					Sections struct {
+						field.RelationField
+						TextSection struct {
+							field.RelationField
+						}
+						ChoiceSection struct {
+							field.RelationField
+						}
+						MultiChoiceSection struct {
+							field.RelationField
+						}
+						ShortAnswerSection struct {
+							field.RelationField
+						}
+					}
+				}
+			}{
+				RelationField: field.NewRelation("Students.Courses.Modules", "entity.Module"),
+				Pages: struct {
+					field.RelationField
+					Sections struct {
+						field.RelationField
+						TextSection struct {
+							field.RelationField
+						}
+						ChoiceSection struct {
+							field.RelationField
+						}
+						MultiChoiceSection struct {
+							field.RelationField
+						}
+						ShortAnswerSection struct {
+							field.RelationField
+						}
+					}
+				}{
+					RelationField: field.NewRelation("Students.Courses.Modules.Pages", "entity.Page"),
+					Sections: struct {
+						field.RelationField
+						TextSection struct {
+							field.RelationField
+						}
+						ChoiceSection struct {
+							field.RelationField
+						}
+						MultiChoiceSection struct {
+							field.RelationField
+						}
+						ShortAnswerSection struct {
+							field.RelationField
+						}
+					}{
+						RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections", "entity.Section"),
+						TextSection: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.TextSection", "entity.TextSection"),
+						},
+						ChoiceSection: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.ChoiceSection", "entity.ChoiceSection"),
+						},
+						MultiChoiceSection: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.MultiChoiceSection", "entity.MultiChoiceSection"),
+						},
+						ShortAnswerSection: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+						},
+					},
+				},
+			},
+			Authors: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Students.Courses.Authors", "entity.User"),
+			},
+			Students: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Students.Courses.Students", "entity.User"),
+			},
+		},
 	}
 
 	_group.fillFieldMap()
@@ -76,7 +206,7 @@ func (g *group) updateTableName(table string) *group {
 	return g
 }
 
-func (g *group) WithContext(ctx context.Context) *groupDo { return g.groupDo.WithContext(ctx) }
+func (g *group) WithContext(ctx context.Context) IGroupDo { return g.groupDo.WithContext(ctx) }
 
 func (g group) TableName() string { return g.groupDo.TableName() }
 
@@ -115,6 +245,39 @@ type groupManyToManyStudents struct {
 
 	Sessions struct {
 		field.RelationField
+	}
+	Courses struct {
+		field.RelationField
+		Links struct {
+			field.RelationField
+		}
+		Modules struct {
+			field.RelationField
+			Pages struct {
+				field.RelationField
+				Sections struct {
+					field.RelationField
+					TextSection struct {
+						field.RelationField
+					}
+					ChoiceSection struct {
+						field.RelationField
+					}
+					MultiChoiceSection struct {
+						field.RelationField
+					}
+					ShortAnswerSection struct {
+						field.RelationField
+					}
+				}
+			}
+		}
+		Authors struct {
+			field.RelationField
+		}
+		Students struct {
+			field.RelationField
+		}
 	}
 }
 
@@ -185,99 +348,160 @@ func (a groupManyToManyStudentsTx) Count() int64 {
 
 type groupDo struct{ gen.DO }
 
-func (g groupDo) Debug() *groupDo {
+type IGroupDo interface {
+	gen.SubQuery
+	Debug() IGroupDo
+	WithContext(ctx context.Context) IGroupDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() IGroupDo
+	WriteDB() IGroupDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) IGroupDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) IGroupDo
+	Not(conds ...gen.Condition) IGroupDo
+	Or(conds ...gen.Condition) IGroupDo
+	Select(conds ...field.Expr) IGroupDo
+	Where(conds ...gen.Condition) IGroupDo
+	Order(conds ...field.Expr) IGroupDo
+	Distinct(cols ...field.Expr) IGroupDo
+	Omit(cols ...field.Expr) IGroupDo
+	Join(table schema.Tabler, on ...field.Expr) IGroupDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IGroupDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IGroupDo
+	Group(cols ...field.Expr) IGroupDo
+	Having(conds ...gen.Condition) IGroupDo
+	Limit(limit int) IGroupDo
+	Offset(offset int) IGroupDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IGroupDo
+	Unscoped() IGroupDo
+	Create(values ...*entity.Group) error
+	CreateInBatches(values []*entity.Group, batchSize int) error
+	Save(values ...*entity.Group) error
+	First() (*entity.Group, error)
+	Take() (*entity.Group, error)
+	Last() (*entity.Group, error)
+	Find() ([]*entity.Group, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*entity.Group, err error)
+	FindInBatches(result *[]*entity.Group, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*entity.Group) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) IGroupDo
+	Assign(attrs ...field.AssignExpr) IGroupDo
+	Joins(fields ...field.RelationField) IGroupDo
+	Preload(fields ...field.RelationField) IGroupDo
+	FirstOrInit() (*entity.Group, error)
+	FirstOrCreate() (*entity.Group, error)
+	FindByPage(offset int, limit int) (result []*entity.Group, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) IGroupDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (g groupDo) Debug() IGroupDo {
 	return g.withDO(g.DO.Debug())
 }
 
-func (g groupDo) WithContext(ctx context.Context) *groupDo {
+func (g groupDo) WithContext(ctx context.Context) IGroupDo {
 	return g.withDO(g.DO.WithContext(ctx))
 }
 
-func (g groupDo) ReadDB() *groupDo {
+func (g groupDo) ReadDB() IGroupDo {
 	return g.Clauses(dbresolver.Read)
 }
 
-func (g groupDo) WriteDB() *groupDo {
+func (g groupDo) WriteDB() IGroupDo {
 	return g.Clauses(dbresolver.Write)
 }
 
-func (g groupDo) Session(config *gorm.Session) *groupDo {
+func (g groupDo) Session(config *gorm.Session) IGroupDo {
 	return g.withDO(g.DO.Session(config))
 }
 
-func (g groupDo) Clauses(conds ...clause.Expression) *groupDo {
+func (g groupDo) Clauses(conds ...clause.Expression) IGroupDo {
 	return g.withDO(g.DO.Clauses(conds...))
 }
 
-func (g groupDo) Returning(value interface{}, columns ...string) *groupDo {
+func (g groupDo) Returning(value interface{}, columns ...string) IGroupDo {
 	return g.withDO(g.DO.Returning(value, columns...))
 }
 
-func (g groupDo) Not(conds ...gen.Condition) *groupDo {
+func (g groupDo) Not(conds ...gen.Condition) IGroupDo {
 	return g.withDO(g.DO.Not(conds...))
 }
 
-func (g groupDo) Or(conds ...gen.Condition) *groupDo {
+func (g groupDo) Or(conds ...gen.Condition) IGroupDo {
 	return g.withDO(g.DO.Or(conds...))
 }
 
-func (g groupDo) Select(conds ...field.Expr) *groupDo {
+func (g groupDo) Select(conds ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Select(conds...))
 }
 
-func (g groupDo) Where(conds ...gen.Condition) *groupDo {
+func (g groupDo) Where(conds ...gen.Condition) IGroupDo {
 	return g.withDO(g.DO.Where(conds...))
 }
 
-func (g groupDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *groupDo {
+func (g groupDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IGroupDo {
 	return g.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (g groupDo) Order(conds ...field.Expr) *groupDo {
+func (g groupDo) Order(conds ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Order(conds...))
 }
 
-func (g groupDo) Distinct(cols ...field.Expr) *groupDo {
+func (g groupDo) Distinct(cols ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Distinct(cols...))
 }
 
-func (g groupDo) Omit(cols ...field.Expr) *groupDo {
+func (g groupDo) Omit(cols ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Omit(cols...))
 }
 
-func (g groupDo) Join(table schema.Tabler, on ...field.Expr) *groupDo {
+func (g groupDo) Join(table schema.Tabler, on ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Join(table, on...))
 }
 
-func (g groupDo) LeftJoin(table schema.Tabler, on ...field.Expr) *groupDo {
+func (g groupDo) LeftJoin(table schema.Tabler, on ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.LeftJoin(table, on...))
 }
 
-func (g groupDo) RightJoin(table schema.Tabler, on ...field.Expr) *groupDo {
+func (g groupDo) RightJoin(table schema.Tabler, on ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.RightJoin(table, on...))
 }
 
-func (g groupDo) Group(cols ...field.Expr) *groupDo {
+func (g groupDo) Group(cols ...field.Expr) IGroupDo {
 	return g.withDO(g.DO.Group(cols...))
 }
 
-func (g groupDo) Having(conds ...gen.Condition) *groupDo {
+func (g groupDo) Having(conds ...gen.Condition) IGroupDo {
 	return g.withDO(g.DO.Having(conds...))
 }
 
-func (g groupDo) Limit(limit int) *groupDo {
+func (g groupDo) Limit(limit int) IGroupDo {
 	return g.withDO(g.DO.Limit(limit))
 }
 
-func (g groupDo) Offset(offset int) *groupDo {
+func (g groupDo) Offset(offset int) IGroupDo {
 	return g.withDO(g.DO.Offset(offset))
 }
 
-func (g groupDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *groupDo {
+func (g groupDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IGroupDo {
 	return g.withDO(g.DO.Scopes(funcs...))
 }
 
-func (g groupDo) Unscoped() *groupDo {
+func (g groupDo) Unscoped() IGroupDo {
 	return g.withDO(g.DO.Unscoped())
 }
 
@@ -343,22 +567,22 @@ func (g groupDo) FindInBatches(result *[]*entity.Group, batchSize int, fc func(t
 	return g.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (g groupDo) Attrs(attrs ...field.AssignExpr) *groupDo {
+func (g groupDo) Attrs(attrs ...field.AssignExpr) IGroupDo {
 	return g.withDO(g.DO.Attrs(attrs...))
 }
 
-func (g groupDo) Assign(attrs ...field.AssignExpr) *groupDo {
+func (g groupDo) Assign(attrs ...field.AssignExpr) IGroupDo {
 	return g.withDO(g.DO.Assign(attrs...))
 }
 
-func (g groupDo) Joins(fields ...field.RelationField) *groupDo {
+func (g groupDo) Joins(fields ...field.RelationField) IGroupDo {
 	for _, _f := range fields {
 		g = *g.withDO(g.DO.Joins(_f))
 	}
 	return &g
 }
 
-func (g groupDo) Preload(fields ...field.RelationField) *groupDo {
+func (g groupDo) Preload(fields ...field.RelationField) IGroupDo {
 	for _, _f := range fields {
 		g = *g.withDO(g.DO.Preload(_f))
 	}

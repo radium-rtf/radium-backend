@@ -20,6 +20,7 @@ type (
 		Password         string
 		VerificationCode string
 		IsVerified       bool
+		Courses          []*Course `gorm:"many2many:course_students"`
 		Sessions         []Session
 	}
 

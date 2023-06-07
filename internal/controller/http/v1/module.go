@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/dranikpg/dto-mapper"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -31,16 +32,19 @@ func newModuleRoutes(h chi.Router, useCase usecase.ModuleUseCase, signingKey str
 // @Success      201   {object} entity.ModuleDto       "created"
 // @Router       /module [post]
 func (r moduleRoutes) postModule(w http.ResponseWriter, request *http.Request) *appError {
-	var module entity.ModuleRequest
-	if err := render.DecodeJSON(request.Body, &module); err != nil {
+	var moduleRequest entity.ModuleRequest
+	if err := render.DecodeJSON(request.Body, &moduleRequest); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	moduleDto, err := r.uc.CreateModule(request.Context(), module)
+	module, err := r.uc.CreateModule(request.Context(), moduleRequest)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
+	m := entity.ModuleDto{}
+	dto.Map(&m, module)
+
 	render.Status(request, http.StatusCreated)
-	render.JSON(w, request, moduleDto)
+	render.JSON(w, request, m)
 	return nil
 }
 

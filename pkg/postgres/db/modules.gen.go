@@ -35,6 +35,43 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Pages", "entity.Page"),
+		Sections: struct {
+			field.RelationField
+			TextSection struct {
+				field.RelationField
+			}
+			ChoiceSection struct {
+				field.RelationField
+			}
+			MultiChoiceSection struct {
+				field.RelationField
+			}
+			ShortAnswerSection struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Pages.Sections", "entity.Section"),
+			TextSection: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Pages.Sections.TextSection", "entity.TextSection"),
+			},
+			ChoiceSection: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Pages.Sections.ChoiceSection", "entity.ChoiceSection"),
+			},
+			MultiChoiceSection: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Pages.Sections.MultiChoiceSection", "entity.MultiChoiceSection"),
+			},
+			ShortAnswerSection: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+			},
+		},
 	}
 
 	_module.fillFieldMap()
@@ -77,7 +114,7 @@ func (m *module) updateTableName(table string) *module {
 	return m
 }
 
-func (m *module) WithContext(ctx context.Context) *moduleDo { return m.moduleDo.WithContext(ctx) }
+func (m *module) WithContext(ctx context.Context) IModuleDo { return m.moduleDo.WithContext(ctx) }
 
 func (m module) TableName() string { return m.moduleDo.TableName() }
 
@@ -115,6 +152,22 @@ type moduleHasManyPages struct {
 	db *gorm.DB
 
 	field.RelationField
+
+	Sections struct {
+		field.RelationField
+		TextSection struct {
+			field.RelationField
+		}
+		ChoiceSection struct {
+			field.RelationField
+		}
+		MultiChoiceSection struct {
+			field.RelationField
+		}
+		ShortAnswerSection struct {
+			field.RelationField
+		}
+	}
 }
 
 func (a moduleHasManyPages) Where(conds ...field.Expr) *moduleHasManyPages {
@@ -184,99 +237,160 @@ func (a moduleHasManyPagesTx) Count() int64 {
 
 type moduleDo struct{ gen.DO }
 
-func (m moduleDo) Debug() *moduleDo {
+type IModuleDo interface {
+	gen.SubQuery
+	Debug() IModuleDo
+	WithContext(ctx context.Context) IModuleDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() IModuleDo
+	WriteDB() IModuleDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) IModuleDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) IModuleDo
+	Not(conds ...gen.Condition) IModuleDo
+	Or(conds ...gen.Condition) IModuleDo
+	Select(conds ...field.Expr) IModuleDo
+	Where(conds ...gen.Condition) IModuleDo
+	Order(conds ...field.Expr) IModuleDo
+	Distinct(cols ...field.Expr) IModuleDo
+	Omit(cols ...field.Expr) IModuleDo
+	Join(table schema.Tabler, on ...field.Expr) IModuleDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IModuleDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IModuleDo
+	Group(cols ...field.Expr) IModuleDo
+	Having(conds ...gen.Condition) IModuleDo
+	Limit(limit int) IModuleDo
+	Offset(offset int) IModuleDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IModuleDo
+	Unscoped() IModuleDo
+	Create(values ...*entity.Module) error
+	CreateInBatches(values []*entity.Module, batchSize int) error
+	Save(values ...*entity.Module) error
+	First() (*entity.Module, error)
+	Take() (*entity.Module, error)
+	Last() (*entity.Module, error)
+	Find() ([]*entity.Module, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*entity.Module, err error)
+	FindInBatches(result *[]*entity.Module, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*entity.Module) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) IModuleDo
+	Assign(attrs ...field.AssignExpr) IModuleDo
+	Joins(fields ...field.RelationField) IModuleDo
+	Preload(fields ...field.RelationField) IModuleDo
+	FirstOrInit() (*entity.Module, error)
+	FirstOrCreate() (*entity.Module, error)
+	FindByPage(offset int, limit int) (result []*entity.Module, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) IModuleDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (m moduleDo) Debug() IModuleDo {
 	return m.withDO(m.DO.Debug())
 }
 
-func (m moduleDo) WithContext(ctx context.Context) *moduleDo {
+func (m moduleDo) WithContext(ctx context.Context) IModuleDo {
 	return m.withDO(m.DO.WithContext(ctx))
 }
 
-func (m moduleDo) ReadDB() *moduleDo {
+func (m moduleDo) ReadDB() IModuleDo {
 	return m.Clauses(dbresolver.Read)
 }
 
-func (m moduleDo) WriteDB() *moduleDo {
+func (m moduleDo) WriteDB() IModuleDo {
 	return m.Clauses(dbresolver.Write)
 }
 
-func (m moduleDo) Session(config *gorm.Session) *moduleDo {
+func (m moduleDo) Session(config *gorm.Session) IModuleDo {
 	return m.withDO(m.DO.Session(config))
 }
 
-func (m moduleDo) Clauses(conds ...clause.Expression) *moduleDo {
+func (m moduleDo) Clauses(conds ...clause.Expression) IModuleDo {
 	return m.withDO(m.DO.Clauses(conds...))
 }
 
-func (m moduleDo) Returning(value interface{}, columns ...string) *moduleDo {
+func (m moduleDo) Returning(value interface{}, columns ...string) IModuleDo {
 	return m.withDO(m.DO.Returning(value, columns...))
 }
 
-func (m moduleDo) Not(conds ...gen.Condition) *moduleDo {
+func (m moduleDo) Not(conds ...gen.Condition) IModuleDo {
 	return m.withDO(m.DO.Not(conds...))
 }
 
-func (m moduleDo) Or(conds ...gen.Condition) *moduleDo {
+func (m moduleDo) Or(conds ...gen.Condition) IModuleDo {
 	return m.withDO(m.DO.Or(conds...))
 }
 
-func (m moduleDo) Select(conds ...field.Expr) *moduleDo {
+func (m moduleDo) Select(conds ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Select(conds...))
 }
 
-func (m moduleDo) Where(conds ...gen.Condition) *moduleDo {
+func (m moduleDo) Where(conds ...gen.Condition) IModuleDo {
 	return m.withDO(m.DO.Where(conds...))
 }
 
-func (m moduleDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *moduleDo {
+func (m moduleDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IModuleDo {
 	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (m moduleDo) Order(conds ...field.Expr) *moduleDo {
+func (m moduleDo) Order(conds ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Order(conds...))
 }
 
-func (m moduleDo) Distinct(cols ...field.Expr) *moduleDo {
+func (m moduleDo) Distinct(cols ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Distinct(cols...))
 }
 
-func (m moduleDo) Omit(cols ...field.Expr) *moduleDo {
+func (m moduleDo) Omit(cols ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Omit(cols...))
 }
 
-func (m moduleDo) Join(table schema.Tabler, on ...field.Expr) *moduleDo {
+func (m moduleDo) Join(table schema.Tabler, on ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Join(table, on...))
 }
 
-func (m moduleDo) LeftJoin(table schema.Tabler, on ...field.Expr) *moduleDo {
+func (m moduleDo) LeftJoin(table schema.Tabler, on ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.LeftJoin(table, on...))
 }
 
-func (m moduleDo) RightJoin(table schema.Tabler, on ...field.Expr) *moduleDo {
+func (m moduleDo) RightJoin(table schema.Tabler, on ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.RightJoin(table, on...))
 }
 
-func (m moduleDo) Group(cols ...field.Expr) *moduleDo {
+func (m moduleDo) Group(cols ...field.Expr) IModuleDo {
 	return m.withDO(m.DO.Group(cols...))
 }
 
-func (m moduleDo) Having(conds ...gen.Condition) *moduleDo {
+func (m moduleDo) Having(conds ...gen.Condition) IModuleDo {
 	return m.withDO(m.DO.Having(conds...))
 }
 
-func (m moduleDo) Limit(limit int) *moduleDo {
+func (m moduleDo) Limit(limit int) IModuleDo {
 	return m.withDO(m.DO.Limit(limit))
 }
 
-func (m moduleDo) Offset(offset int) *moduleDo {
+func (m moduleDo) Offset(offset int) IModuleDo {
 	return m.withDO(m.DO.Offset(offset))
 }
 
-func (m moduleDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *moduleDo {
+func (m moduleDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IModuleDo {
 	return m.withDO(m.DO.Scopes(funcs...))
 }
 
-func (m moduleDo) Unscoped() *moduleDo {
+func (m moduleDo) Unscoped() IModuleDo {
 	return m.withDO(m.DO.Unscoped())
 }
 
@@ -342,22 +456,22 @@ func (m moduleDo) FindInBatches(result *[]*entity.Module, batchSize int, fc func
 	return m.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (m moduleDo) Attrs(attrs ...field.AssignExpr) *moduleDo {
+func (m moduleDo) Attrs(attrs ...field.AssignExpr) IModuleDo {
 	return m.withDO(m.DO.Attrs(attrs...))
 }
 
-func (m moduleDo) Assign(attrs ...field.AssignExpr) *moduleDo {
+func (m moduleDo) Assign(attrs ...field.AssignExpr) IModuleDo {
 	return m.withDO(m.DO.Assign(attrs...))
 }
 
-func (m moduleDo) Joins(fields ...field.RelationField) *moduleDo {
+func (m moduleDo) Joins(fields ...field.RelationField) IModuleDo {
 	for _, _f := range fields {
 		m = *m.withDO(m.DO.Joins(_f))
 	}
 	return &m
 }
 
-func (m moduleDo) Preload(fields ...field.RelationField) *moduleDo {
+func (m moduleDo) Preload(fields ...field.RelationField) IModuleDo {
 	for _, _f := range fields {
 		m = *m.withDO(m.DO.Preload(_f))
 	}

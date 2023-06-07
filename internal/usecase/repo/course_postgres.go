@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -49,14 +50,54 @@ func (r CourseRepo) GetCourses(ctx context.Context) ([]*entity.Course, error) {
 
 func (r CourseRepo) get(ctx context.Context, where ...gen.Condition) ([]*entity.Course, error) {
 	c := r.pg.Course
-	courses, err := c.WithContext(ctx).Debug().Preload(c.Links, c.Authors, c.Modules.Pages).Where(where...).Find()
+	courses, err := c.WithContext(ctx).Debug().Preload(c.Links, c.Authors, c.Modules.Pages.Sections).Where(where...).Find()
 	return courses, err
+}
+
+func (r CourseRepo) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	c := r.pg.Course
+	course, err := c.WithContext(ctx).Debug().
+		Preload(c.Links, c.Authors, c.Modules).
+		Where(c.Id.Eq(id)).Take()
+	return course, err
 }
 
 func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
 	c := r.pg.Course
-	course, err := c.WithContext(ctx).Debug().Preload(c.Links, c.Authors, c.Modules).Where(c.Id.Eq(id)).Take()
+	s := c.Modules.Pages.Sections
+	course, err := c.WithContext(ctx).Debug().
+		Preload(c.Links, c.Authors, c.Modules.Pages.Sections).
+		Preload(s.TextSection).
+		Preload(s.ChoiceSection).
+		Preload(s.MultiChoiceSection).
+		Preload(s.ShortAnswerSection).
+		Where(c.Id.Eq(id)).Take()
 	return course, err
+}
+
+func (r CourseRepo) GetFullBySlug(ctx context.Context, slug string) (*entity.Course, error) {
+	c := r.pg.Course
+	// s := c.Modules.Pages.Sections
+	course, err := c.WithContext(ctx).Debug().
+		Preload(c.Links, c.Authors, c.Modules.Pages).
+		// Preload(s.TextSection).
+		// Preload(s.ChoiceSection).
+		// Preload(s.MultiChoiceSection).
+		// Preload(s.ShortAnswerSection).
+		Where(c.Slug.Eq(slug)).Take()
+	return course, err
+}
+
+func (r CourseRepo) Join(ctx context.Context, userId, courseId uuid.UUID) error {
+	course := entity.Course{Id: courseId}
+	err := r.pg.Course.Students.Model(&course).Append(&entity.User{Id: userId})
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v", course)
+
+	return nil
 }
 
 // func (r CourseRepo) CreateLink(ctx context.Context, link entity.Link) error {
@@ -85,38 +126,16 @@ func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Cour
 // 	return err
 // }
 
-// func (r CourseRepo) GetByStudent(ctx context.Context, userId string) ([]entity.Course, error) {
-// 	courses := make([]entity.Course, 0)
-// 	sql, args := r.pg.Builder.
-// 		Select("courses.id", "name", "description", "type", "logo", "author_id").
-// 		From("course_student").
-// 		Where(sq.Eq{"user_id": userId}).
-// 		Join("courses on courses.id = course_student.course_id").MustSql()
+func (r CourseRepo) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.Course, error) {
+	c := r.pg.Course
+	u := r.pg.User
+	courses, err := c.WithContext(ctx).Preload(c.Students.On(u.Id.Eq(userId))).Find()
+	if err != nil {
+		return []*entity.Course{}, err
+	}
 
-// 	rows, err := r.pg.Pool.Query(ctx, sql, args...)
-// 	if err != nil {
-// 		return courses, err
-// 	}
-// 	defer rows.Close()
-// 	for rows.Next() {
-// 		var course entity.Course
-// 		err = rows.Scan(&course.Id, &course.Name, &course.Description, &course.Type, &course.Logo, &course.AuthorId)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		courses = append(courses, course)
-// 	}
-// 	return courses, rows.Err()
-// }
-
-// func (r CourseRepo) Join(ctx context.Context, userId, courseId string) error {
-// 	sql, args := r.pg.Builder.Insert("course_student").
-// 		Columns("user_id", "course_id").
-// 		Values(userId, courseId).MustSql()
-
-// 	_, err := r.pg.Pool.Exec(ctx, sql, args...)
-// 	return err
-// }
+	return courses, nil
+}
 
 // func (r CourseRepo) GetById(ctx context.Context, id string) (entity.Course, error) {
 // 	courses, err := r.get(ctx, sq.Eq{"id": id})

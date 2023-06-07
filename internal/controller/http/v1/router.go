@@ -24,8 +24,8 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 	fileUseCase := usecase.NewFileUseCase(storage)
 	// _ = usecase.NewGroupUseCase(pg)
 	moduleUseCase := usecase.NewModuleUseCase(pg)
-	// slideUseCase := usecase.NewSlideUseCase(pg)
-	// sectionUseCase := usecase.NewSectionUseCase(pg)
+	pageUseCase := usecase.NewPageUseCase(pg)
+	sectionUseCase := usecase.NewSectionUseCase(pg)
 
 	h.Route("/v1", func(v1 chi.Router) {
 		newAuthRoutes(v1, authUseCase)
@@ -37,7 +37,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 
 		// 	newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
 
-		// 	newSlideRoutes(v1, slideUseCase, cfg.SigningKey)
-		// 	newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
+		newPageRoutes(v1, pageUseCase, cfg.SigningKey)
+		newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
 	})
 }

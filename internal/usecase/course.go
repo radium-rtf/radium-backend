@@ -39,10 +39,22 @@ func (uc CourseUseCase) GetCourseById(ctx context.Context, id string) (*entity.C
 	return uc.courseRepo.GetFullById(ctx, uid)
 }
 
-// func (uc CourseUseCase) Join(ctx context.Context, userId string, courseId string) (entity.Course, error) {
-// 	err := uc.courseRepo.Join(ctx, userId, courseId)
-// 	if err != nil {
-// 		return entity.Course{}, err
-// 	}
-// 	return uc.courseRepo.GetById(ctx, courseId)
-// }
+func (uc CourseUseCase) GetCourseBySlug(ctx context.Context, slug string) (*entity.Course, error) {
+	return uc.courseRepo.GetFullBySlug(ctx, slug)
+}
+
+func (uc CourseUseCase) Join(ctx context.Context, userId string, courseId string) (*entity.Course, error) {
+	userUuid, err := uuid.Parse(userId)
+	if err != nil {
+		return &entity.Course{}, err
+	}
+	courseUuid, err := uuid.Parse(courseId)
+	if err != nil {
+		return &entity.Course{}, err
+	}
+	err = uc.courseRepo.Join(ctx, userUuid, courseUuid)
+	if err != nil {
+		return &entity.Course{}, err
+	}
+	return uc.courseRepo.GetById(ctx, courseUuid)
+}

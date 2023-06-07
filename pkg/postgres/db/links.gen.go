@@ -71,7 +71,7 @@ func (l *link) updateTableName(table string) *link {
 	return l
 }
 
-func (l *link) WithContext(ctx context.Context) *linkDo { return l.linkDo.WithContext(ctx) }
+func (l *link) WithContext(ctx context.Context) ILinkDo { return l.linkDo.WithContext(ctx) }
 
 func (l link) TableName() string { return l.linkDo.TableName() }
 
@@ -106,99 +106,160 @@ func (l link) replaceDB(db *gorm.DB) link {
 
 type linkDo struct{ gen.DO }
 
-func (l linkDo) Debug() *linkDo {
+type ILinkDo interface {
+	gen.SubQuery
+	Debug() ILinkDo
+	WithContext(ctx context.Context) ILinkDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() ILinkDo
+	WriteDB() ILinkDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) ILinkDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) ILinkDo
+	Not(conds ...gen.Condition) ILinkDo
+	Or(conds ...gen.Condition) ILinkDo
+	Select(conds ...field.Expr) ILinkDo
+	Where(conds ...gen.Condition) ILinkDo
+	Order(conds ...field.Expr) ILinkDo
+	Distinct(cols ...field.Expr) ILinkDo
+	Omit(cols ...field.Expr) ILinkDo
+	Join(table schema.Tabler, on ...field.Expr) ILinkDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) ILinkDo
+	RightJoin(table schema.Tabler, on ...field.Expr) ILinkDo
+	Group(cols ...field.Expr) ILinkDo
+	Having(conds ...gen.Condition) ILinkDo
+	Limit(limit int) ILinkDo
+	Offset(offset int) ILinkDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) ILinkDo
+	Unscoped() ILinkDo
+	Create(values ...*entity.Link) error
+	CreateInBatches(values []*entity.Link, batchSize int) error
+	Save(values ...*entity.Link) error
+	First() (*entity.Link, error)
+	Take() (*entity.Link, error)
+	Last() (*entity.Link, error)
+	Find() ([]*entity.Link, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*entity.Link, err error)
+	FindInBatches(result *[]*entity.Link, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*entity.Link) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) ILinkDo
+	Assign(attrs ...field.AssignExpr) ILinkDo
+	Joins(fields ...field.RelationField) ILinkDo
+	Preload(fields ...field.RelationField) ILinkDo
+	FirstOrInit() (*entity.Link, error)
+	FirstOrCreate() (*entity.Link, error)
+	FindByPage(offset int, limit int) (result []*entity.Link, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) ILinkDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (l linkDo) Debug() ILinkDo {
 	return l.withDO(l.DO.Debug())
 }
 
-func (l linkDo) WithContext(ctx context.Context) *linkDo {
+func (l linkDo) WithContext(ctx context.Context) ILinkDo {
 	return l.withDO(l.DO.WithContext(ctx))
 }
 
-func (l linkDo) ReadDB() *linkDo {
+func (l linkDo) ReadDB() ILinkDo {
 	return l.Clauses(dbresolver.Read)
 }
 
-func (l linkDo) WriteDB() *linkDo {
+func (l linkDo) WriteDB() ILinkDo {
 	return l.Clauses(dbresolver.Write)
 }
 
-func (l linkDo) Session(config *gorm.Session) *linkDo {
+func (l linkDo) Session(config *gorm.Session) ILinkDo {
 	return l.withDO(l.DO.Session(config))
 }
 
-func (l linkDo) Clauses(conds ...clause.Expression) *linkDo {
+func (l linkDo) Clauses(conds ...clause.Expression) ILinkDo {
 	return l.withDO(l.DO.Clauses(conds...))
 }
 
-func (l linkDo) Returning(value interface{}, columns ...string) *linkDo {
+func (l linkDo) Returning(value interface{}, columns ...string) ILinkDo {
 	return l.withDO(l.DO.Returning(value, columns...))
 }
 
-func (l linkDo) Not(conds ...gen.Condition) *linkDo {
+func (l linkDo) Not(conds ...gen.Condition) ILinkDo {
 	return l.withDO(l.DO.Not(conds...))
 }
 
-func (l linkDo) Or(conds ...gen.Condition) *linkDo {
+func (l linkDo) Or(conds ...gen.Condition) ILinkDo {
 	return l.withDO(l.DO.Or(conds...))
 }
 
-func (l linkDo) Select(conds ...field.Expr) *linkDo {
+func (l linkDo) Select(conds ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Select(conds...))
 }
 
-func (l linkDo) Where(conds ...gen.Condition) *linkDo {
+func (l linkDo) Where(conds ...gen.Condition) ILinkDo {
 	return l.withDO(l.DO.Where(conds...))
 }
 
-func (l linkDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *linkDo {
+func (l linkDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ILinkDo {
 	return l.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (l linkDo) Order(conds ...field.Expr) *linkDo {
+func (l linkDo) Order(conds ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Order(conds...))
 }
 
-func (l linkDo) Distinct(cols ...field.Expr) *linkDo {
+func (l linkDo) Distinct(cols ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Distinct(cols...))
 }
 
-func (l linkDo) Omit(cols ...field.Expr) *linkDo {
+func (l linkDo) Omit(cols ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Omit(cols...))
 }
 
-func (l linkDo) Join(table schema.Tabler, on ...field.Expr) *linkDo {
+func (l linkDo) Join(table schema.Tabler, on ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Join(table, on...))
 }
 
-func (l linkDo) LeftJoin(table schema.Tabler, on ...field.Expr) *linkDo {
+func (l linkDo) LeftJoin(table schema.Tabler, on ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.LeftJoin(table, on...))
 }
 
-func (l linkDo) RightJoin(table schema.Tabler, on ...field.Expr) *linkDo {
+func (l linkDo) RightJoin(table schema.Tabler, on ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.RightJoin(table, on...))
 }
 
-func (l linkDo) Group(cols ...field.Expr) *linkDo {
+func (l linkDo) Group(cols ...field.Expr) ILinkDo {
 	return l.withDO(l.DO.Group(cols...))
 }
 
-func (l linkDo) Having(conds ...gen.Condition) *linkDo {
+func (l linkDo) Having(conds ...gen.Condition) ILinkDo {
 	return l.withDO(l.DO.Having(conds...))
 }
 
-func (l linkDo) Limit(limit int) *linkDo {
+func (l linkDo) Limit(limit int) ILinkDo {
 	return l.withDO(l.DO.Limit(limit))
 }
 
-func (l linkDo) Offset(offset int) *linkDo {
+func (l linkDo) Offset(offset int) ILinkDo {
 	return l.withDO(l.DO.Offset(offset))
 }
 
-func (l linkDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *linkDo {
+func (l linkDo) Scopes(funcs ...func(gen.Dao) gen.Dao) ILinkDo {
 	return l.withDO(l.DO.Scopes(funcs...))
 }
 
-func (l linkDo) Unscoped() *linkDo {
+func (l linkDo) Unscoped() ILinkDo {
 	return l.withDO(l.DO.Unscoped())
 }
 
@@ -264,22 +325,22 @@ func (l linkDo) FindInBatches(result *[]*entity.Link, batchSize int, fc func(tx 
 	return l.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (l linkDo) Attrs(attrs ...field.AssignExpr) *linkDo {
+func (l linkDo) Attrs(attrs ...field.AssignExpr) ILinkDo {
 	return l.withDO(l.DO.Attrs(attrs...))
 }
 
-func (l linkDo) Assign(attrs ...field.AssignExpr) *linkDo {
+func (l linkDo) Assign(attrs ...field.AssignExpr) ILinkDo {
 	return l.withDO(l.DO.Assign(attrs...))
 }
 
-func (l linkDo) Joins(fields ...field.RelationField) *linkDo {
+func (l linkDo) Joins(fields ...field.RelationField) ILinkDo {
 	for _, _f := range fields {
 		l = *l.withDO(l.DO.Joins(_f))
 	}
 	return &l
 }
 
-func (l linkDo) Preload(fields ...field.RelationField) *linkDo {
+func (l linkDo) Preload(fields ...field.RelationField) ILinkDo {
 	for _, _f := range fields {
 		l = *l.withDO(l.DO.Preload(_f))
 	}

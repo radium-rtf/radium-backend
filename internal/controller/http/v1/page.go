@@ -1,51 +1,75 @@
-//go:build ignore
-// +build ignore
-
 package v1
 
 import (
 	"net/http"
-	"strconv"
 
+	"github.com/dranikpg/dto-mapper"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
-type slideRoutes struct {
-	uc usecase.SlideUseCase
+type pageRoutes struct {
+	uc usecase.PageUseCase
 }
 
-func newSlideRoutes(h chi.Router, useCase usecase.SlideUseCase, signingString string) {
-	routes := slideRoutes{uc: useCase}
+func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString string) {
+	routes := pageRoutes{uc: useCase}
 
-	h.Route("/slide", func(r chi.Router) {
-		r.Get("/{slideId}", handler(routes.getSlideSections).HTTP)
-		r.Get("/{courseId}/{moduleNameEng}", handler(routes.getSlides).HTTP)
+	h.Route("/page", func(r chi.Router) {
+		// r.Get("/{slideId}", handler(routes.getSlideSections).HTTP)
+		// r.Get/("/{courseId}/{moduleNameEng}", handler(routes.getSlides).HTTP)
 		r.Group(func(r chi.Router) {
 			r.Use(authRequired(signingString))
 			r.Post("/", handler(routes.postSlide).HTTP)
+			r.Get("/{id}", handler(routes.getById).HTTP)
+
+			// 	r.Post("/", handler(routes.postSlide).HTTP)
 		})
 	})
 }
 
-// @Tags slide
+// @Tags page
 // @Security ApiKeyAuth
 // @Param       request body entity.PageRequest true "создание слайда"
-// @Success      201   {object} entity.Page "ok"
-// @Router      /slide [post]
-func (r slideRoutes) postSlide(w http.ResponseWriter, request *http.Request) *appError {
-	var slidePost entity.SlideRequest
-	if err := render.DecodeJSON(request.Body, &slidePost); err != nil {
+// @Success      201   {object} entity.PageDto "ok"
+// @Router      /page [post]
+func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *appError {
+	var pageRequest entity.PageRequest
+	if err := render.DecodeJSON(request.Body, &pageRequest); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	slide, err := r.uc.CreateSlide(request.Context(), slidePost)
+	page, err := r.uc.CreatePage(request.Context(), pageRequest)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
+
+	p := entity.PageDto{}
+	dto.Map(&p, page)
 	render.Status(request, http.StatusCreated)
-	render.JSON(w, request, slide)
+	render.JSON(w, request, p)
+	return nil
+}
+
+// @Tags page
+// @Security ApiKeyAuth
+// @Param        id   path     string  true  "page id"
+// @Success 200 {object} entity.PageDto "ok"
+// @Router /page/{id} [get]
+func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appError {
+	id := chi.URLParam(request, "id")
+	page, err := r.uc.GetByID(request.Context(), id)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	p := entity.PageDto{}
+	dto.Map(&p, page)
+
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, p)
+
 	return nil
 }
 

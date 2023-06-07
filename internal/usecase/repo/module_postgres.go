@@ -15,9 +15,10 @@ func NewModuleRepo(pg *db.Query) ModuleRepo {
 	return ModuleRepo{pg: pg}
 }
 
-func (r ModuleRepo) Create(ctx context.Context, module entity.Module) error {
-	err := r.pg.Module.WithContext(ctx).Create(&module)
-	return err
+func (r ModuleRepo) Create(ctx context.Context, module entity.ModuleRequest) (entity.Module, error) {
+	m := entity.NewModuleRequestToModule(module)
+	err := r.pg.Module.WithContext(ctx).Create(&m)
+	return m, err
 }
 
 // func (r ModuleRepo) GetModules(ctx context.Context, id int) (entity.CourseModules, error) {

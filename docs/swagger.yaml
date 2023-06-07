@@ -1,5 +1,37 @@
 basePath: /v1
 definitions:
+  entity.ChoiceSection:
+    properties:
+      answer:
+        type: string
+      id:
+        type: string
+      maxScore:
+        type: integer
+      ownerID:
+        type: string
+      ownerType:
+        type: string
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.ChoiceSectionDto:
+    properties:
+      id:
+        type: string
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
   entity.Course:
     properties:
       authors:
@@ -28,6 +60,10 @@ definitions:
         type: string
       slug:
         type: string
+      students:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
     type: object
   entity.CourseDto:
     properties:
@@ -122,7 +158,7 @@ definitions:
         type: string
       pages:
         items:
-          $ref: '#/definitions/entity.Page'
+          $ref: '#/definitions/entity.PageDto'
         type: array
       slug:
         type: string
@@ -134,6 +170,40 @@ definitions:
       name:
         type: string
     type: object
+  entity.MultiChoiceSection:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      maxScore:
+        type: integer
+      ownerID:
+        type: string
+      ownerType:
+        type: string
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.MultiChoiceSectionDto:
+    properties:
+      id:
+        type: string
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
   entity.Page:
     properties:
       id:
@@ -142,18 +212,31 @@ definitions:
         type: string
       name:
         type: string
+      sections:
+        items:
+          $ref: '#/definitions/entity.Section'
+        type: array
+      slug:
+        type: string
+    type: object
+  entity.PageDto:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      sections:
+        items:
+          $ref: '#/definitions/entity.SectionDto'
+        type: array
       slug:
         type: string
     type: object
   entity.PageRequest:
     properties:
-      courseId:
-        type: string
       moduleId:
         type: string
       name:
-        type: string
-      slug:
         type: string
     type: object
   entity.PasswordUpdate:
@@ -168,180 +251,54 @@ definitions:
       refreshToken:
         type: string
     type: object
-  entity.SectionAnswerVerdict:
-    enum:
-    - OK
-    - WA
-    type: string
-    x-enum-varnames:
-    - SectionAnswerOK
-    - SectionAnswerWA
-  entity.SectionChoiceAnswerDto:
+  entity.Section:
     properties:
-      answer:
-        type: string
+      choice:
+        $ref: '#/definitions/entity.ChoiceSection'
       id:
-        type: integer
-      section_id:
-        type: integer
-      verdict:
-        $ref: '#/definitions/entity.SectionAnswerVerdict'
-    type: object
-  entity.SectionChoiceAnswerPost:
-    properties:
-      answer:
         type: string
-      section_id:
+      multichoice:
+        $ref: '#/definitions/entity.MultiChoiceSection'
+      order:
         type: integer
+      pageId:
+        type: string
+      shortanswer:
+        $ref: '#/definitions/entity.ShortAnswerSection'
+      text:
+        $ref: '#/definitions/entity.TextSection'
     type: object
-  entity.SectionChoiceDto:
+  entity.SectionDto:
     properties:
-      cost:
-        type: integer
+      choice:
+        $ref: '#/definitions/entity.ChoiceSectionDto'
       id:
-        type: integer
-      order_by:
-        type: integer
-      question:
         type: string
-      score:
+      multichoice:
+        $ref: '#/definitions/entity.MultiChoiceSectionDto'
+      order:
         type: integer
-      slide_id:
-        type: integer
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.SectionChoicePost:
-    properties:
-      cost:
-        type: integer
-      order_by:
-        type: integer
-      question:
+      pageId:
         type: string
-      slide_id:
-        type: integer
-      variants:
-        additionalProperties:
-          type: boolean
-        type: object
+      shortanswer:
+        $ref: '#/definitions/entity.ShortAnswerSectionDto'
+      text:
+        $ref: '#/definitions/entity.TextSectionDto'
     type: object
-  entity.SectionMultiChoiceAnswerDto:
+  entity.SectionPost:
     properties:
-      answer:
-        items:
-          type: string
-        type: array
-      id:
+      choice:
+        $ref: '#/definitions/entity.ChoiceSection'
+      multichoice:
+        $ref: '#/definitions/entity.MultiChoiceSection'
+      order:
         type: integer
-      section_id:
-        type: integer
-      verdict:
-        $ref: '#/definitions/entity.SectionAnswerVerdict'
-    type: object
-  entity.SectionMultiChoiceAnswerPost:
-    properties:
-      answer:
-        items:
-          type: string
-        type: array
-      section_id:
-        type: integer
-    type: object
-  entity.SectionMultiChoiceDto:
-    properties:
-      cost:
-        type: integer
-      id:
-        type: integer
-      order_by:
-        type: integer
-      question:
+      pageId:
         type: string
-      score:
-        type: integer
-      slide_id:
-        type: integer
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.SectionMultiChoicePost:
-    properties:
-      cost:
-        type: integer
-      order_by:
-        type: integer
-      question:
-        type: string
-      slide_id:
-        type: integer
-      variants:
-        additionalProperties:
-          type: boolean
-        type: object
-    type: object
-  entity.SectionQuestionAnswerDto:
-    properties:
-      answer:
-        type: string
-      id:
-        type: integer
-      section_id:
-        type: integer
-      verdict:
-        $ref: '#/definitions/entity.SectionAnswerVerdict'
-    type: object
-  entity.SectionQuestionAnswerPost:
-    properties:
-      answer:
-        type: string
-      section_id:
-        type: integer
-    type: object
-  entity.SectionQuestionDto:
-    properties:
-      case_sensitive:
-        type: boolean
-      cost:
-        type: integer
-      id:
-        type: integer
-      order_by:
-        type: integer
-      question:
-        type: string
-      score:
-        type: integer
-      slide_id:
-        type: integer
-    type: object
-  entity.SectionQuestionPost:
-    properties:
-      answer:
-        type: string
-      case_sensitive:
-        type: boolean
-      cost:
-        type: integer
-      order_by:
-        type: integer
-      question:
-        type: string
-      slide_id:
-        type: integer
-    type: object
-  entity.SectionTextPost:
-    properties:
-      markdown:
-        type: string
-      order_by:
-        type: integer
-      slide_id:
-        type: integer
+      shortanswer:
+        $ref: '#/definitions/entity.ShortAnswerSection'
+      text:
+        $ref: '#/definitions/entity.TextSection'
     type: object
   entity.Session:
     properties:
@@ -350,6 +307,30 @@ definitions:
       refreshToken:
         type: string
       userId:
+        type: string
+    type: object
+  entity.ShortAnswerSection:
+    properties:
+      answer:
+        type: string
+      id:
+        type: string
+      maxScore:
+        type: integer
+      ownerID:
+        type: string
+      ownerType:
+        type: string
+      question:
+        type: string
+    type: object
+  entity.ShortAnswerSectionDto:
+    properties:
+      id:
+        type: string
+      maxScore:
+        type: integer
+      question:
         type: string
     type: object
   entity.SignIn:
@@ -366,6 +347,24 @@ definitions:
       name:
         type: string
       password:
+        type: string
+    type: object
+  entity.TextSection:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      ownerID:
+        type: string
+      ownerType:
+        type: string
+    type: object
+  entity.TextSectionDto:
+    properties:
+      content:
+        type: string
+      id:
         type: string
     type: object
   entity.Tokens:
@@ -388,6 +387,10 @@ definitions:
     properties:
       avatar:
         type: string
+      courses:
+        items:
+          $ref: '#/definitions/entity.Course'
+        type: array
       email:
         type: string
       id:
@@ -452,6 +455,17 @@ paths:
       responses:
         "200":
           description: OK
+      tags:
+      - account
+  /account/courses:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.Course'
+      security:
+      - ApiKeyAuth: []
       tags:
       - account
   /account/password:
@@ -540,7 +554,7 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Course'
+            $ref: '#/definitions/entity.CourseDto'
       security:
       - ApiKeyAuth: []
       tags:
@@ -570,6 +584,38 @@ paths:
       - description: course id
         in: path
         name: courseId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.CourseDto'
+      tags:
+      - course
+  /course/join/{courseId}:
+    patch:
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: string
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.CourseDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /course/slug/{slug}:
+    get:
+      parameters:
+      - description: course slug
+        in: path
+        name: slug
         required: true
         type: string
       responses:
@@ -632,133 +678,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
-  /section/choice:
-    post:
-      parameters:
-      - description: создание секции c вариантом ответа
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionChoicePost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionChoiceDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/choice/answer:
-    post:
-      parameters:
-      - description: ответ на задание с вариантом ответа
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionChoiceAnswerPost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionChoiceAnswerDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/multichoice:
-    post:
-      parameters:
-      - description: создание секции c несколькими вариантами ответа
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionMultiChoicePost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionMultiChoiceDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/multichoice/answer:
-    post:
-      parameters:
-      - description: ответ на задание с несколькими вариантами ответа
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionMultiChoiceAnswerPost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionMultiChoiceAnswerDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/question:
-    post:
-      parameters:
-      - description: создание вопросительной секции
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionQuestionPost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionQuestionDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/question/answer:
-    post:
-      parameters:
-      - description: ответ на вопрос
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionQuestionAnswerPost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.SectionQuestionAnswerDto'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /section/text:
-    post:
-      parameters:
-      - description: создвние текствой секции
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.SectionTextPost'
-      responses:
-        "201":
-          description: ok
-          schema:
-            $ref: '#/definitions/entity.Page'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - section
-  /slide:
+  /page:
     post:
       parameters:
       - description: создание слайда
@@ -771,11 +691,48 @@ paths:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Page'
+            $ref: '#/definitions/entity.PageDto'
       security:
       - ApiKeyAuth: []
       tags:
-      - slide
+      - page
+  /page/{id}:
+    get:
+      parameters:
+      - description: page id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.PageDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - page
+  /section:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Информация для раздела
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SectionPost'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.SectionDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
   /teacher/{userId}/group/{groupId}:
     post:
       parameters:

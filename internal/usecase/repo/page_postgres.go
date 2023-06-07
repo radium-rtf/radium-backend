@@ -3,24 +3,43 @@ package repo
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-type SlideRepo struct {
+type PageRepo struct {
 	pg *db.Query
 }
 
-func NewSlideRepo(pg *db.Query) SlideRepo {
-	return SlideRepo{pg: pg}
+func NewPageRepo(pg *db.Query) PageRepo {
+	return PageRepo{pg: pg}
 }
 
-func (r SlideRepo) Create(ctx context.Context, page entity.Page) (*entity.Page, error) {
-	err := r.pg.Page.WithContext(ctx).Create(&page)
+func (r PageRepo) Create(ctx context.Context, page entity.PageRequest) (*entity.Page, error) {
+	p := entity.NewPageRequestToPage(page)
+	err := r.pg.Page.WithContext(ctx).Create(&p)
 	if err != nil {
 		return &entity.Page{}, err
 	}
-	return &page, err
+	return &p, err
+}
+
+func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
+	s := r.pg.Page.Sections
+	page, err := r.pg.Page.WithContext(ctx).
+		Preload(r.pg.Page.Sections).
+		Preload(s.TextSection).
+		Preload(s.ChoiceSection).
+		Preload(s.MultiChoiceSection).
+		Preload(s.ShortAnswerSection).
+		Where(r.pg.Page.Id.Eq(id)).
+		Take()
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
 }
 
 // TODO: перенос в module

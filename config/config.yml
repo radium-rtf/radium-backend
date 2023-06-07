@@ -3,7 +3,7 @@ http:
 
 postgres:
   pool_max: 2
-  pg_url: postgres://user:password@postgres:5432/postgres?sslmode=disable
+  pg_url: postgres://user:password@localhost:5432/postgres?sslmode=disable
 
 auth:
   jwt_signing_key: wdkadwadwakpklrbjb

@@ -16,7 +16,7 @@ func New(url string) (*db.Query, error) {
 
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./pkg/postgres/db",
-		Mode:    gen.WithDefaultQuery,
+		Mode:    gen.WithQueryInterface,
 	})
 	g.UseDB(gormDb)
 	g.ApplyBasic(
@@ -27,6 +27,11 @@ func New(url string) (*db.Query, error) {
 		entity.Group{},
 		entity.Module{},
 		entity.Link{},
+		entity.Section{},
+		entity.TextSection{},
+		entity.ChoiceSection{},
+		entity.MultiChoiceSection{},
+		entity.ShortAnswerSection{},
 	) // модельки
 
 	gormDb.AutoMigrate(
@@ -36,10 +41,23 @@ func New(url string) (*db.Query, error) {
 		entity.Link{},
 		entity.Module{},
 		entity.Page{},
+		entity.Section{},
+		entity.TextSection{},
+		entity.ChoiceSection{},
+		entity.MultiChoiceSection{},
+		entity.ShortAnswerSection{},
 	)
 	g.Execute()
 
 	Q := db.Use(gormDb)
 
+	// m := Q.Section
+	// w, _ := uuid.Parse("3d1e8a0b-ecee-4270-90f0-bdc41e5ba2df")
+	// t, _ := m.WithContext(context.Background()).Debug().Where(m.ID.Eq(w)).Preload(m.ChoiceSection).Preload(m.TextSection).Preload(m.MultiChoiceSection).Take()
+
+	// // fmt.Printf("%+v", t[0])
+	// b, _ := json.Marshal(t)
+
+	// print(string(b))
 	return Q, nil
 }
