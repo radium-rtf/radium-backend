@@ -154,6 +154,8 @@ definitions:
     type: object
   entity.ModuleDto:
     properties:
+      id:
+        type: string
       name:
         type: string
       pages:
