@@ -3,6 +3,7 @@ package v1
 import (
 	"encoding/json"
 	"errors"
+	"github.com/radium-rtf/radium-backend/pkg/mapper"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -12,7 +13,8 @@ import (
 )
 
 type sectionRoutes struct {
-	uc usecase.SectionUseCase
+	uc     usecase.SectionUseCase
+	mapper mapper.Section
 }
 
 func newSectionRoutes(h chi.Router, useCase usecase.SectionUseCase, signingString string) {
@@ -47,10 +49,9 @@ func (r sectionRoutes) createSection(w http.ResponseWriter, request *http.Reques
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
 
-	// TODO: рендер в ДТО
-
+	dto := r.mapper.Section(*section, entity.VerdictWA, 0)
 	render.Status(request, http.StatusCreated)
-	render.JSON(w, request, section)
+	render.JSON(w, request, dto)
 
 	return nil
 }

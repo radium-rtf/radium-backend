@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	SectionAnswerOK = SectionAnswerVerdict("OK")
-	SectionAnswerWA = SectionAnswerVerdict("WA")
+	VerdictOK = Verdict("OK")
+	VerdictWA = Verdict("WA")
 )
 
 type (
-	SectionAnswerVerdict string
+	Verdict string
 
 	SectionPost struct {
 		PageId uuid.UUID
@@ -51,8 +51,7 @@ type (
 	}
 
 	TextSectionDto struct {
-		ID      uuid.UUID `json:"id"`
-		Content string    `json:"content"`
+		Content string `json:"content"`
 	}
 
 	ChoiceSection struct {
@@ -66,10 +65,11 @@ type (
 	}
 
 	ChoiceSectionDto struct {
-		ID       uuid.UUID `json:"id"`
-		MaxScore uint      `json:"maxScore"`
-		Question string    `json:"question"`
-		Variants []string  `json:"variants"`
+		MaxScore uint     `json:"maxScore"`
+		Question string   `json:"question"`
+		Variants []string `json:"variants"`
+		Score    uint     `json:"score"`
+		Verdict  Verdict  `json:"verdict"`
 	}
 
 	MultiChoiceSection struct {
@@ -83,10 +83,11 @@ type (
 	}
 
 	MultiChoiceSectionDto struct {
-		ID       uuid.UUID `json:"id"`
-		MaxScore uint      `json:"maxScore"`
-		Question string    `json:"question"`
-		Variants []string  `json:"variants"`
+		MaxScore uint     `json:"maxScore"`
+		Question string   `json:"question"`
+		Variants []string `json:"variants"`
+		Score    uint     `json:"score"`
+		Verdict  Verdict  `json:"verdict"`
 	}
 
 	ShortAnswerSection struct {
@@ -99,9 +100,10 @@ type (
 	}
 
 	ShortAnswerSectionDto struct {
-		ID       uuid.UUID `json:"id"`
-		MaxScore uint      `json:"maxScore"`
-		Question string    `json:"question"`
+		MaxScore uint    `json:"maxScore"`
+		Question string  `json:"question"`
+		Score    uint    `json:"score"`
+		Verdict  Verdict `json:"verdict"`
 	}
 )
 

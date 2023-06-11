@@ -33,9 +33,9 @@ func (uc SectionUseCase) CreateSection(ctx context.Context, post entity.SectionP
 // 	} else {
 // 		ok = strings.ToLower(question.Answer) == strings.ToLower(post.Answer)
 // 	}
-// 	verdict := entity.SectionAnswerWA
+// 	verdict := entity.VerdictWA
 // 	if ok {
-// 		verdict = entity.SectionAnswerOK
+// 		verdict = entity.VerdictOK
 // 	}
 
 // 	answer = entity.SectionQuestionAnswer{
@@ -76,9 +76,9 @@ func (uc SectionUseCase) CreateSection(ctx context.Context, post entity.SectionP
 // 	if post.Answer == choice.Answer {
 // 		ok = true
 // 	}
-// 	verdict := entity.SectionAnswerWA
+// 	verdict := entity.VerdictWA
 // 	if ok {
-// 		verdict = entity.SectionAnswerOK
+// 		verdict = entity.VerdictOK
 // 	}
 
 // 	answer := entity.SectionChoiceAnswer{
@@ -119,9 +119,9 @@ func (uc SectionUseCase) CreateSection(ctx context.Context, post entity.SectionP
 // 	if reflect.DeepEqual(post.Answer, choice.Answer) {
 // 		ok = true
 // 	}
-// 	verdict := entity.SectionAnswerWA
+// 	verdict := entity.VerdictWA
 // 	if ok {
-// 		verdict = entity.SectionAnswerOK
+// 		verdict = entity.VerdictOK
 // 	}
 
 // 	answer := entity.SectionMultiChoiceAnswer{

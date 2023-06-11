@@ -1,0 +1,49 @@
+package v1
+
+import (
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/usecase"
+	"github.com/radium-rtf/radium-backend/pkg/mapper"
+	"net/http"
+)
+
+type answerRoutes struct {
+	uc     usecase.AnswerUseCase
+	mapper mapper.Answer
+}
+
+func newAnswerRoutes(h chi.Router, useCase usecase.AnswerUseCase, signingString string) {
+	routes := answerRoutes{uc: useCase}
+
+	h.Route("/answer", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Use(authRequired(signingString))
+			r.Post("/", handler(routes.createAnswer).HTTP)
+		})
+	})
+}
+
+// @Tags answer
+// @Security ApiKeyAuth
+// @Param       request body entity.AnswerPost true "ответ"
+// @Success      201   {object} entity.SectionDto "ok"
+// @Router      /answer [post]
+func (r answerRoutes) createAnswer(w http.ResponseWriter, request *http.Request) *appError {
+	post := &entity.AnswerPost{}
+	if err := render.DecodeJSON(request.Body, post); err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	_ = request.Context().Value("userId").(string)
+
+	answer, err := r.uc.Answer(request.Context(), post)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+	dto := r.mapper.Answer(answer)
+
+	render.Status(request, http.StatusOK)
+	render.JSON(w, request, dto)
+	return nil
+}

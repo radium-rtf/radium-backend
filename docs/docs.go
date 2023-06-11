@@ -123,6 +123,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/answer": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "answer"
+                ],
+                "parameters": [
+                    {
+                        "description": "ответ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AnswerPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/entity.SectionDto"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/refresh": {
             "post": {
                 "consumes": [
@@ -603,6 +634,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.AnswerPost": {
+            "type": "object",
+            "properties": {
+                "choice": {
+                    "$ref": "#/definitions/entity.ChoiceSectionAnswer"
+                },
+                "multiChoice": {
+                    "$ref": "#/definitions/entity.MultichoiceSectionAnswer"
+                },
+                "shortAnswer": {
+                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswer"
+                }
+            }
+        },
         "entity.ChoiceSection": {
             "type": "object",
             "properties": {
@@ -632,23 +677,37 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.ChoiceSectionAnswer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.ChoiceSectionDto": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "maxScore": {
                     "type": "integer"
                 },
                 "question": {
                     "type": "string"
                 },
+                "score": {
+                    "type": "integer"
+                },
                 "variants": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "verdict": {
+                    "type": "string"
                 }
             }
         },
@@ -901,20 +960,37 @@ const docTemplate = `{
         "entity.MultiChoiceSectionDto": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "maxScore": {
                     "type": "integer"
                 },
                 "question": {
                     "type": "string"
                 },
+                "score": {
+                    "type": "integer"
+                },
                 "variants": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "verdict": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.MultichoiceSectionAnswer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -1103,16 +1179,30 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.ShortAnswerSectionAnswer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.ShortAnswerSectionDto": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "maxScore": {
                     "type": "integer"
                 },
                 "question": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "verdict": {
                     "type": "string"
                 }
             }
@@ -1163,9 +1253,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 }
             }

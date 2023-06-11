@@ -1,9 +1,9 @@
 package v1
 
 import (
+	"github.com/radium-rtf/radium-backend/pkg/mapper"
 	"net/http"
 
-	"github.com/dranikpg/dto-mapper"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -11,7 +11,8 @@ import (
 )
 
 type pageRoutes struct {
-	uc usecase.PageUseCase
+	uc     usecase.PageUseCase
+	mapper mapper.Page
 }
 
 func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString string) {
@@ -45,8 +46,7 @@ func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *app
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := entity.PageDto{}
-	dto.Map(&p, page)
+	p := r.mapper.Page(page)
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, p)
 	return nil
@@ -64,8 +64,7 @@ func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appEr
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := entity.PageDto{}
-	dto.Map(&p, page)
+	p := r.mapper.Page(page)
 
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, p)

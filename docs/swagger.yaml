@@ -1,5 +1,14 @@
 basePath: /v1
 definitions:
+  entity.AnswerPost:
+    properties:
+      choice:
+        $ref: '#/definitions/entity.ChoiceSectionAnswer'
+      multiChoice:
+        $ref: '#/definitions/entity.MultichoiceSectionAnswer'
+      shortAnswer:
+        $ref: '#/definitions/entity.ShortAnswerSectionAnswer'
+    type: object
   entity.ChoiceSection:
     properties:
       answer:
@@ -19,18 +28,27 @@ definitions:
           type: string
         type: array
     type: object
-  entity.ChoiceSectionDto:
+  entity.ChoiceSectionAnswer:
     properties:
+      answer:
+        type: string
       id:
         type: string
+    type: object
+  entity.ChoiceSectionDto:
+    properties:
       maxScore:
         type: integer
       question:
         type: string
+      score:
+        type: integer
       variants:
         items:
           type: string
         type: array
+      verdict:
+        type: string
     type: object
   entity.Course:
     properties:
@@ -195,16 +213,27 @@ definitions:
     type: object
   entity.MultiChoiceSectionDto:
     properties:
-      id:
-        type: string
       maxScore:
         type: integer
       question:
         type: string
+      score:
+        type: integer
       variants:
         items:
           type: string
         type: array
+      verdict:
+        type: string
+    type: object
+  entity.MultichoiceSectionAnswer:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
     type: object
   entity.Page:
     properties:
@@ -326,13 +355,22 @@ definitions:
       question:
         type: string
     type: object
-  entity.ShortAnswerSectionDto:
+  entity.ShortAnswerSectionAnswer:
     properties:
+      answer:
+        type: string
       id:
         type: string
+    type: object
+  entity.ShortAnswerSectionDto:
+    properties:
       maxScore:
         type: integer
       question:
+        type: string
+      score:
+        type: integer
+      verdict:
         type: string
     type: object
   entity.SignIn:
@@ -365,8 +403,6 @@ definitions:
   entity.TextSectionDto:
     properties:
       content:
-        type: string
-      id:
         type: string
     type: object
   entity.Tokens:
@@ -490,6 +526,24 @@ paths:
       - ApiKeyAuth: []
       tags:
       - account
+  /answer:
+    post:
+      parameters:
+      - description: ответ
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AnswerPost'
+      responses:
+        "201":
+          description: ok
+          schema:
+            $ref: '#/definitions/entity.SectionDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - answer
   /auth/refresh:
     post:
       consumes:

@@ -23,6 +23,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 	courseUseCase := usecase.NewCourseUseCase(pg, storage)
 	fileUseCase := usecase.NewFileUseCase(storage)
 	// _ = usecase.NewGroupUseCase(pg)
+	answerUseCase := usecase.NewAnswerUseCase(pg)
 	moduleUseCase := usecase.NewModuleUseCase(pg)
 	pageUseCase := usecase.NewPageUseCase(pg)
 	sectionUseCase := usecase.NewSectionUseCase(pg)
@@ -37,6 +38,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 
 		// 	newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
 
+		newAnswerRoutes(v1, answerUseCase, cfg.SigningKey)
 		newPageRoutes(v1, pageUseCase, cfg.SigningKey)
 		newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
 	})

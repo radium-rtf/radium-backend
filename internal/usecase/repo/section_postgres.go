@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/google/uuid"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -30,6 +31,17 @@ func (r SectionRepo) CreateSection(ctx context.Context, post entity.SectionPost)
 	}
 
 	return &section, nil
+}
+
+func (r SectionRepo) GetSectionById(ctx context.Context, id uuid.UUID) (*entity.Section, error) {
+	return r.pg.Section.
+		WithContext(ctx).
+		Preload(r.pg.Section.TextSection).
+		Preload(r.pg.Section.ChoiceSection).
+		Preload(r.pg.Section.MultiChoiceSection).
+		Preload(r.pg.Section.ShortAnswerSection).
+		Where(r.pg.Section.ID.Eq(id)).
+		First()
 }
 
 // func (r SectionRepo) GetQuestionById(ctx context.Context, id uint) (entity.SectionQuestion, error) {
