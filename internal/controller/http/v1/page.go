@@ -25,8 +25,6 @@ func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString stri
 			r.Use(authRequired(signingString))
 			r.Post("/", handler(routes.postSlide).HTTP)
 			r.Get("/{id}", handler(routes.getById).HTTP)
-
-			// 	r.Post("/", handler(routes.postSlide).HTTP)
 		})
 	})
 }
@@ -38,6 +36,7 @@ func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString stri
 // @Router      /page [post]
 func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *appError {
 	var pageRequest entity.PageRequest
+	userId := request.Context().Value("userId").(string)
 	if err := render.DecodeJSON(request.Body, &pageRequest); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -46,7 +45,7 @@ func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *app
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := r.mapper.Page(page)
+	p := r.mapper.Page(page, userId, Verdicts)
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, p)
 	return nil
@@ -59,12 +58,13 @@ func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *app
 // @Router /page/{id} [get]
 func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appError {
 	id := chi.URLParam(request, "id")
+	userId := request.Context().Value("userId").(string)
 	page, err := r.uc.GetByID(request.Context(), id)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := r.mapper.Page(page)
+	p := r.mapper.Page(page, userId, Verdicts)
 
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, p)

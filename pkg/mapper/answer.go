@@ -1,6 +1,8 @@
 package mapper
 
-import "github.com/radium-rtf/radium-backend/internal/entity"
+import (
+	"github.com/radium-rtf/radium-backend/internal/entity"
+)
 
 type Answer struct {
 }

@@ -1,6 +1,9 @@
 package mapper
 
-import "github.com/radium-rtf/radium-backend/internal/entity"
+import (
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/entity"
+)
 
 type Section struct {
 }
@@ -52,10 +55,28 @@ func (Section) Text(section *entity.TextSection) *entity.TextSectionDto {
 	}
 }
 
-func (p Section) Sections(sections []entity.Section) []entity.SectionDto {
+func (p Section) Sections(sections []entity.Section, studentId string, verdicts map[string]map[uuid.UUID]entity.Verdict) []entity.SectionDto {
 	dtos := make([]entity.SectionDto, 0, len(sections))
 	for _, section := range sections {
-		dto := p.Section(section, entity.VerdictWA, 0)
+		var score uint
+		var verdict = entity.VerdictWA
+		if userVerdicts, ok := verdicts[studentId]; ok {
+			verdict, ok = userVerdicts[section.ID]
+			if !ok {
+				verdict = entity.VerdictWA
+			} else if verdict == entity.VerdictOK {
+				if section.ChoiceSection != nil {
+					score = section.ChoiceSection.MaxScore
+				} else if section.MultiChoiceSection != nil {
+					score = section.MultiChoiceSection.MaxScore
+				} else {
+					score = section.ShortAnswerSection.MaxScore
+				}
+			} else {
+				verdict = entity.VerdictWA
+			}
+		}
+		dto := p.Section(section, verdict, score)
 		dtos = append(dtos, dto)
 	}
 	return dtos

@@ -3,11 +3,14 @@ package v1
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 	"github.com/radium-rtf/radium-backend/pkg/mapper"
 	"net/http"
 )
+
+var Verdicts = make(map[string]map[uuid.UUID]entity.Verdict)
 
 type answerRoutes struct {
 	uc     usecase.AnswerUseCase
@@ -35,12 +38,25 @@ func (r answerRoutes) createAnswer(w http.ResponseWriter, request *http.Request)
 	if err := render.DecodeJSON(request.Body, post); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	_ = request.Context().Value("userId").(string)
+	userId := request.Context().Value("userId").(string)
 
 	answer, err := r.uc.Answer(request.Context(), post)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
+
+	if _, ok := Verdicts[userId]; !ok {
+		Verdicts[userId] = make(map[uuid.UUID]entity.Verdict)
+	}
+	var id uuid.UUID
+	if post.ShortAnswer != nil {
+		id = post.ShortAnswer.ID
+	} else if post.MultiChoice != nil {
+		id = post.MultiChoice.ID
+	} else {
+		id = post.Choice.ID
+	}
+	Verdicts[userId][id] = answer.Verdict
 	dto := r.mapper.Answer(answer)
 
 	render.Status(request, http.StatusOK)
