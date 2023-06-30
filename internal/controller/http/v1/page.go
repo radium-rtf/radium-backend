@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/pkg/mapper"
 	"net/http"
 
@@ -21,10 +22,15 @@ func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString stri
 	h.Route("/page", func(r chi.Router) {
 		// r.Get("/{slideId}", handler(routes.getSlideSections).HTTP)
 		// r.Get/("/{courseId}/{moduleNameEng}", handler(routes.getSlides).HTTP)
+		r.Get("/{id}", handler(routes.getById).HTTP)
+		r.Group(func(r chi.Router) {
+			r.Use(authToken(signingString))
+			r.Get("/{id}", handler(routes.getById).HTTP)
+		})
+
 		r.Group(func(r chi.Router) {
 			r.Use(authRequired(signingString))
 			r.Post("/", handler(routes.postSlide).HTTP)
-			r.Get("/{id}", handler(routes.getById).HTTP)
 		})
 	})
 }
@@ -36,18 +42,16 @@ func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString stri
 // @Router      /page [post]
 func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *appError {
 	var pageRequest entity.PageRequest
-	userId := request.Context().Value("userId").(string)
 	if err := render.DecodeJSON(request.Body, &pageRequest); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	page, err := r.uc.CreatePage(request.Context(), pageRequest)
+	pageDto, err := r.uc.CreatePage(request.Context(), pageRequest)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := r.mapper.Page(page, userId, Verdicts)
 	render.Status(request, http.StatusCreated)
-	render.JSON(w, request, p)
+	render.JSON(w, request, pageDto)
 	return nil
 }
 
@@ -58,16 +62,25 @@ func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *app
 // @Router /page/{id} [get]
 func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appError {
 	id := chi.URLParam(request, "id")
-	userId := request.Context().Value("userId").(string)
-	page, err := r.uc.GetByID(request.Context(), id)
+	uid, err := uuid.Parse(id)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	p := r.mapper.Page(page, userId, Verdicts)
+	userId, ok := request.Context().Value("userId").(uuid.UUID)
+	var pageDto *entity.PageDto
+	if !ok {
+		pageDto, err = r.uc.GetByID(request.Context(), uid, nil)
+	} else {
+		pageDto, err = r.uc.GetByID(request.Context(), uid, &userId)
+	}
+
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
 
 	render.Status(request, http.StatusOK)
-	render.JSON(w, request, p)
+	render.JSON(w, request, pageDto)
 
 	return nil
 }

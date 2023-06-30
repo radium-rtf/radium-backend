@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -51,4 +52,16 @@ func (m TokenManager) NewRefreshToken() (string, error) {
 		return "", err
 	}
 	return UUID.String(), nil
+}
+
+func (m TokenManager) ExtractUserId(tokenHeader []string) (uuid.UUID, error) {
+	if len(tokenHeader) == 1 {
+		return uuid.UUID{}, errors.New("empty or corrupted Authorization header")
+	}
+	token := tokenHeader[1]
+	userId, err := m.Parse(token)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+	return uuid.MustParse(userId), nil
 }

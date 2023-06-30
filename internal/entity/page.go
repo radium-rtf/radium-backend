@@ -21,10 +21,10 @@ type (
 	}
 
 	PageDto struct {
-		Id       uuid.UUID    `json:"id"`
-		Slug     string       `json:"slug"`
-		Name     string       `json:"name"`
-		Sections []SectionDto `json:"sections"`
+		Id       uuid.UUID     `json:"id"`
+		Slug     string        `json:"slug"`
+		Name     string        `json:"name"`
+		Sections []*SectionDto `json:"sections"`
 	}
 
 	PageRequest struct {

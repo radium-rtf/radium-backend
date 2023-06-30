@@ -1,1 +1,0 @@
-drop view if exists slide_sections_view;

@@ -10,8 +10,6 @@ import (
 	"net/http"
 )
 
-var Verdicts = make(map[string]map[uuid.UUID]entity.Verdict)
-
 type answerRoutes struct {
 	uc     usecase.AnswerUseCase
 	mapper mapper.Answer
@@ -38,25 +36,13 @@ func (r answerRoutes) createAnswer(w http.ResponseWriter, request *http.Request)
 	if err := render.DecodeJSON(request.Body, post); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	userId := request.Context().Value("userId").(string)
-
-	answer, err := r.uc.Answer(request.Context(), post)
+	userId := request.Context().Value("userId").(uuid.UUID)
+	answer := entity.NewPostToAnswer(post, userId)
+	answer, err := r.uc.Answer(request.Context(), answer)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	if _, ok := Verdicts[userId]; !ok {
-		Verdicts[userId] = make(map[uuid.UUID]entity.Verdict)
-	}
-	var id uuid.UUID
-	if post.ShortAnswer != nil {
-		id = post.ShortAnswer.ID
-	} else if post.MultiChoice != nil {
-		id = post.MultiChoice.ID
-	} else {
-		id = post.Choice.ID
-	}
-	Verdicts[userId][id] = answer.Verdict
 	dto := r.mapper.Answer(answer)
 
 	render.Status(request, http.StatusOK)

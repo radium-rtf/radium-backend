@@ -13,7 +13,6 @@ func New(url string) (*db.Query, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./pkg/postgres/db",
 		Mode:    gen.WithQueryInterface,
@@ -32,7 +31,11 @@ func New(url string) (*db.Query, error) {
 		entity.ChoiceSection{},
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
-	) // модельки
+		entity.Answer{},
+		entity.ChoiceSectionAnswer{},
+		entity.ShortAnswerSectionAnswer{},
+		entity.MultichoiceSectionAnswer{},
+	)
 
 	gormDb.AutoMigrate(
 		entity.User{},
@@ -46,6 +49,10 @@ func New(url string) (*db.Query, error) {
 		entity.ChoiceSection{},
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
+		entity.Answer{},
+		entity.ChoiceSectionAnswer{},
+		entity.ShortAnswerSectionAnswer{},
+		entity.MultichoiceSectionAnswer{},
 	)
 	g.Execute()
 
@@ -53,7 +60,7 @@ func New(url string) (*db.Query, error) {
 
 	// m := Q.Section
 	// w, _ := uuid.Parse("3d1e8a0b-ecee-4270-90f0-bdc41e5ba2df")
-	// t, _ := m.WithContext(context.Background()).Debug().Where(m.ID.Eq(w)).Preload(m.ChoiceSection).Preload(m.TextSection).Preload(m.MultiChoiceSection).Take()
+	// t, _ := m.WithContext(context.Background()).Debug().Where(m.Id.Eq(w)).Preload(m.ChoiceSection).Preload(m.TextSection).Preload(m.MultiChoiceSection).Take()
 
 	// // fmt.Printf("%+v", t[0])
 	// b, _ := json.Marshal(t)

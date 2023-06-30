@@ -8,20 +8,19 @@ import (
 type Section struct {
 }
 
-func (Section) MultiChoice(section *entity.MultiChoiceSection, verdict entity.Verdict, score uint) *entity.MultiChoiceSectionDto {
+func (Section) MultiChoice(section *entity.MultiChoiceSection, verdict entity.Verdict) *entity.MultiChoiceSectionDto {
 	if section == nil {
 		return nil
 	}
 	return &entity.MultiChoiceSectionDto{
 		MaxScore: section.MaxScore,
 		Verdict:  verdict,
-		Score:    score,
 		Question: section.Question,
 		Variants: section.Variants,
 	}
 }
 
-func (Section) Choice(section *entity.ChoiceSection, verdict entity.Verdict, score uint) *entity.ChoiceSectionDto {
+func (Section) Choice(section *entity.ChoiceSection, verdict entity.Verdict) *entity.ChoiceSectionDto {
 	if section == nil {
 		return nil
 	}
@@ -29,19 +28,17 @@ func (Section) Choice(section *entity.ChoiceSection, verdict entity.Verdict, sco
 		MaxScore: section.MaxScore,
 		Question: section.Question,
 		Variants: section.Variants,
-		Score:    score,
 		Verdict:  verdict,
 	}
 }
 
-func (Section) ShortAnswer(section *entity.ShortAnswerSection, verdict entity.Verdict, score uint) *entity.ShortAnswerSectionDto {
+func (Section) ShortAnswer(section *entity.ShortAnswerSection, verdict entity.Verdict) *entity.ShortAnswerSectionDto {
 	if section == nil {
 		return nil
 	}
 	return &entity.ShortAnswerSectionDto{
 		MaxScore: section.MaxScore,
 		Question: section.Question,
-		Score:    score,
 		Verdict:  verdict,
 	}
 }
@@ -55,41 +52,27 @@ func (Section) Text(section *entity.TextSection) *entity.TextSectionDto {
 	}
 }
 
-func (p Section) Sections(sections []entity.Section, studentId string, verdicts map[string]map[uuid.UUID]entity.Verdict) []entity.SectionDto {
-	dtos := make([]entity.SectionDto, 0, len(sections))
+func (p Section) Sections(sections []entity.Section, answers map[uuid.UUID]*entity.Answer) []*entity.SectionDto {
+	dtos := make([]*entity.SectionDto, 0, len(sections))
 	for _, section := range sections {
-		var score uint
-		var verdict = entity.VerdictWA
-		if userVerdicts, ok := verdicts[studentId]; ok {
-			verdict, ok = userVerdicts[section.ID]
-			if !ok {
-				verdict = entity.VerdictWA
-			} else if verdict == entity.VerdictOK {
-				if section.ChoiceSection != nil {
-					score = section.ChoiceSection.MaxScore
-				} else if section.MultiChoiceSection != nil {
-					score = section.MultiChoiceSection.MaxScore
-				} else {
-					score = section.ShortAnswerSection.MaxScore
-				}
-			} else {
-				verdict = entity.VerdictWA
-			}
+		var verdict = entity.VerdictEMPTY
+		if answer, ok := answers[section.ID]; ok {
+			verdict = answer.Verdict
 		}
-		dto := p.Section(section, verdict, score)
+		dto := p.Section(section, verdict)
 		dtos = append(dtos, dto)
 	}
 	return dtos
 }
 
-func (p Section) Section(section entity.Section, verdict entity.Verdict, score uint) entity.SectionDto {
-	return entity.SectionDto{
+func (p Section) Section(section entity.Section, verdict entity.Verdict) *entity.SectionDto {
+	return &entity.SectionDto{
 		ID:                 section.ID,
 		PageId:             section.PageId,
 		Order:              section.Order,
 		TextSection:        p.Text(section.TextSection),
-		ChoiceSection:      p.Choice(section.ChoiceSection, verdict, score),
-		ShortAnswerSection: p.ShortAnswer(section.ShortAnswerSection, verdict, score),
-		MultiChoiceSection: p.MultiChoice(section.MultiChoiceSection, verdict, score),
+		ChoiceSection:      p.Choice(section.ChoiceSection, verdict),
+		ShortAnswerSection: p.ShortAnswer(section.ShortAnswerSection, verdict),
+		MultiChoiceSection: p.MultiChoice(section.MultiChoiceSection, verdict),
 	}
 }

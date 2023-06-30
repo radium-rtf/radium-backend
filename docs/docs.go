@@ -638,13 +638,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "choice": {
-                    "$ref": "#/definitions/entity.ChoiceSectionAnswer"
+                    "$ref": "#/definitions/entity.ChoiceSectionAnswerPost"
+                },
+                "id": {
+                    "type": "string"
                 },
                 "multiChoice": {
-                    "$ref": "#/definitions/entity.MultichoiceSectionAnswer"
+                    "$ref": "#/definitions/entity.MultichoiceSectionAnswerPost"
                 },
                 "shortAnswer": {
-                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswer"
+                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswerPost"
                 }
             }
         },
@@ -677,13 +680,10 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ChoiceSectionAnswer": {
+        "entity.ChoiceSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 }
             }
@@ -696,9 +696,6 @@ const docTemplate = `{
                 },
                 "question": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "integer"
                 },
                 "variants": {
                     "type": "array",
@@ -980,7 +977,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.MultichoiceSectionAnswer": {
+        "entity.MultichoiceSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -988,9 +985,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "id": {
-                    "type": "string"
                 }
             }
         },
@@ -1179,13 +1173,10 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ShortAnswerSectionAnswer": {
+        "entity.ShortAnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 }
             }
@@ -1198,9 +1189,6 @@ const docTemplate = `{
                 },
                 "question": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "integer"
                 },
                 "verdict": {
                     "type": "string"

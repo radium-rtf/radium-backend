@@ -1,1 +1,0 @@
-drop table if exists sections_multi_choice;

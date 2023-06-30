@@ -1,1 +1,0 @@
-drop table if exists sections_question_answers;

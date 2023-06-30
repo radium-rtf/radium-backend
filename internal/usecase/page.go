@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/pkg/mapper"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -12,22 +13,33 @@ import (
 type PageUseCase struct {
 	pageRepo   repo.PageRepo
 	moduleRepo repo.ModuleRepo
+	answerRepo repo.AnswerRepo
+	mapper     mapper.Page
 }
 
 func NewPageUseCase(pg *db.Query) PageUseCase {
-	return PageUseCase{pageRepo: repo.NewPageRepo(pg), moduleRepo: repo.NewModuleRepo(pg)}
+	return PageUseCase{pageRepo: repo.NewPageRepo(pg), moduleRepo: repo.NewModuleRepo(pg), answerRepo: repo.NewAnswerRepo(pg)}
 }
 
 func (uc PageUseCase) CreatePage(ctx context.Context, page entity.PageRequest) (*entity.Page, error) {
 	return uc.pageRepo.Create(ctx, page)
 }
 
-func (uc PageUseCase) GetByID(ctx context.Context, id string) (*entity.Page, error) {
-	uid, err := uuid.Parse(id)
+func (uc PageUseCase) GetByID(ctx context.Context, id uuid.UUID, userId *uuid.UUID) (*entity.PageDto, error) {
+	page, err := uc.pageRepo.GetByID(ctx, id)
+	if userId == nil || err != nil {
+		return uc.mapper.Page(page, map[uuid.UUID]*entity.Answer{}), err
+	}
+	sectionsIds := make([]uuid.UUID, 0, len(page.Sections))
+	for _, section := range page.Sections {
+		sectionsIds = append(sectionsIds, section.ID)
+	}
+	answers, err := uc.answerRepo.Get(ctx, *userId, sectionsIds)
 	if err != nil {
 		return nil, err
 	}
-	return uc.pageRepo.GetByID(ctx, uid)
+	p := uc.mapper.Page(page, answers)
+	return p, err
 }
 
 // func (uc SlideUseCase) GetSlides(ctx context.Context, slide entity.SlidesRequest) (entity.ModuleSlides, error) {

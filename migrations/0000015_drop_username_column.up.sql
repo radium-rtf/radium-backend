@@ -1,1 +1,0 @@
-alter table if exists users drop column username

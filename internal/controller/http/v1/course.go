@@ -76,7 +76,7 @@ func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	c := []entity.CourseDto{}
+	c := make([]entity.CourseDto, 0, len(courses))
 	dto.Map(&c, courses)
 
 	render.Status(request, http.StatusOK)

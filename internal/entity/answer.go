@@ -7,36 +7,83 @@ import (
 
 type (
 	Answer struct {
-		Verdict     Verdict
-		Score       uint
-		Choice      *ChoiceSectionAnswer
-		MultiChoice *MultichoiceSectionAnswer
-		ShortAnswer *ShortAnswerSectionAnswer
-	}
+		Id        uuid.UUID
+		Verdict   Verdict
+		UserId    uuid.UUID `gorm:"index:,unique,composite:answer"`
+		SectionId uuid.UUID `gorm:"index:,unique,composite:answer"`
 
-	AnswerDto struct {
-		Verdict Verdict `json:"verdict"`
-		Score   uint    `json:"score"`
+		Choice      *ChoiceSectionAnswer      `gorm:"polymorphic:Owner"`
+		MultiChoice *MultichoiceSectionAnswer `gorm:"polymorphic:Owner"`
+		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
 	}
 
 	AnswerPost struct {
-		Choice      *ChoiceSectionAnswer      `json:"choice,omitempty"`
-		MultiChoice *MultichoiceSectionAnswer `json:"multiChoice,omitempty"`
-		ShortAnswer *ShortAnswerSectionAnswer `json:"shortAnswer,omitempty"`
+		SectionId   uuid.UUID                     `json:"id"`
+		Choice      *ChoiceSectionAnswerPost      `json:"choice,omitempty"`
+		MultiChoice *MultichoiceSectionAnswerPost `json:"multiChoice,omitempty"`
+		ShortAnswer *ShortAnswerSectionAnswerPost `json:"shortAnswer,omitempty"`
+	}
+
+	MultichoiceSectionAnswerPost struct {
+		Answer pq.StringArray `json:"answer" swaggertype:"array,string"  gorm:"type:text[]"`
+	}
+
+	ChoiceSectionAnswerPost struct {
+		Answer string `json:"answer"`
+	}
+
+	ShortAnswerSectionAnswerPost struct {
+		Answer string `json:"answer"`
 	}
 
 	ChoiceSectionAnswer struct {
-		ID     uuid.UUID `json:"id"`
-		Answer string    `json:"answer"`
+		Id        uuid.UUID `gorm:"default:gen_random_uuid()"`
+		OwnerID   uuid.UUID `json:"ownerID"`
+		OwnerType string    `json:"ownerType" gorm:"default:main_section_test"`
+		Answer    string    `json:"answer"`
 	}
 
 	MultichoiceSectionAnswer struct {
-		ID     uuid.UUID      `json:"id"`
-		Answer pq.StringArray `json:"answer" swaggertype:"array,string"`
+		Id        uuid.UUID      `gorm:"default:gen_random_uuid()"`
+		OwnerID   uuid.UUID      `json:"ownerID"`
+		OwnerType string         `json:"ownerType" gorm:"default:main_section_test"`
+		Answer    pq.StringArray `json:"answer" swaggertype:"array,string"  gorm:"type:text[]"`
 	}
 
 	ShortAnswerSectionAnswer struct {
-		ID     uuid.UUID `json:"id"`
-		Answer string    `json:"answer"`
+		Id        uuid.UUID `gorm:"default:gen_random_uuid()"`
+		OwnerID   uuid.UUID `json:"ownerID"`
+		OwnerType string    `json:"ownerType" gorm:"default:main_section_test"`
+		Answer    string    `json:"answer"`
 	}
 )
+
+func NewPostToAnswer(post *AnswerPost, userId uuid.UUID) *Answer {
+	var (
+		choice      *ChoiceSectionAnswer
+		multichoice *MultichoiceSectionAnswer
+		shortAnswer *ShortAnswerSectionAnswer
+	)
+
+	if post.Choice != nil {
+		choice = &ChoiceSectionAnswer{Answer: post.Choice.Answer}
+	}
+
+	if post.MultiChoice != nil {
+		multichoice = &MultichoiceSectionAnswer{Answer: post.MultiChoice.Answer}
+	}
+
+	if post.ShortAnswer != nil {
+		choice = &ChoiceSectionAnswer{Answer: post.ShortAnswer.Answer}
+	}
+
+	return &Answer{
+		Id:          uuid.New(),
+		Verdict:     VerdictEMPTY,
+		SectionId:   post.SectionId,
+		UserId:      userId,
+		Choice:      choice,
+		MultiChoice: multichoice,
+		ShortAnswer: shortAnswer,
+	}
+}

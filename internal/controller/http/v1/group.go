@@ -58,7 +58,7 @@ func (r groupRoutes) create(w http.ResponseWriter, request *http.Request) *appEr
 // @Router       /join/group/{groupId} [patch]
 func (r groupRoutes) join(w http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
-	userId := request.Context().Value("userId").(string)
+	userId := request.Context().Value("userId").(uuid.UUID)
 	var joinGroup = entity.GroupJoin{GroupId: groupId, UserId: userId}
 	err := r.uc.Join(request.Context(), joinGroup)
 	if err != nil {
@@ -76,7 +76,7 @@ func (r groupRoutes) join(w http.ResponseWriter, request *http.Request) *appErro
 // @Router       /teacher/{userId}/group/{groupId} [post]
 func (r groupRoutes) teacher(w http.ResponseWriter, request *http.Request) *appError {
 	groupId := chi.URLParam(request, "groupId")
-	teacherId := request.Context().Value("userId").(string)
+	teacherId := request.Context().Value("userId").(uuid.UUID)
 	var groupTeacher = entity.GroupTeacher{GroupId: groupId, UserId: teacherId, Id: uuid.NewString()}
 	err := r.uc.CreateTeacher(request.Context(), groupTeacher)
 	if err != nil {

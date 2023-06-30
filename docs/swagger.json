@@ -630,13 +630,16 @@
             "type": "object",
             "properties": {
                 "choice": {
-                    "$ref": "#/definitions/entity.ChoiceSectionAnswer"
+                    "$ref": "#/definitions/entity.ChoiceSectionAnswerPost"
+                },
+                "id": {
+                    "type": "string"
                 },
                 "multiChoice": {
-                    "$ref": "#/definitions/entity.MultichoiceSectionAnswer"
+                    "$ref": "#/definitions/entity.MultichoiceSectionAnswerPost"
                 },
                 "shortAnswer": {
-                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswer"
+                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswerPost"
                 }
             }
         },
@@ -669,13 +672,10 @@
                 }
             }
         },
-        "entity.ChoiceSectionAnswer": {
+        "entity.ChoiceSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 }
             }
@@ -688,9 +688,6 @@
                 },
                 "question": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "integer"
                 },
                 "variants": {
                     "type": "array",
@@ -972,7 +969,7 @@
                 }
             }
         },
-        "entity.MultichoiceSectionAnswer": {
+        "entity.MultichoiceSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -980,9 +977,6 @@
                     "items": {
                         "type": "string"
                     }
-                },
-                "id": {
-                    "type": "string"
                 }
             }
         },
@@ -1171,13 +1165,10 @@
                 }
             }
         },
-        "entity.ShortAnswerSectionAnswer": {
+        "entity.ShortAnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 }
             }
@@ -1190,9 +1181,6 @@
                 },
                 "question": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "integer"
                 },
                 "verdict": {
                     "type": "string"

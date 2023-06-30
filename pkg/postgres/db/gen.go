@@ -17,56 +17,68 @@ import (
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:                 db,
-		ChoiceSection:      newChoiceSection(db, opts...),
-		Course:             newCourse(db, opts...),
-		Group:              newGroup(db, opts...),
-		Link:               newLink(db, opts...),
-		Module:             newModule(db, opts...),
-		MultiChoiceSection: newMultiChoiceSection(db, opts...),
-		Page:               newPage(db, opts...),
-		Section:            newSection(db, opts...),
-		Session:            newSession(db, opts...),
-		ShortAnswerSection: newShortAnswerSection(db, opts...),
-		TextSection:        newTextSection(db, opts...),
-		User:               newUser(db, opts...),
+		db:                       db,
+		Answer:                   newAnswer(db, opts...),
+		ChoiceSection:            newChoiceSection(db, opts...),
+		ChoiceSectionAnswer:      newChoiceSectionAnswer(db, opts...),
+		Course:                   newCourse(db, opts...),
+		Group:                    newGroup(db, opts...),
+		Link:                     newLink(db, opts...),
+		Module:                   newModule(db, opts...),
+		MultiChoiceSection:       newMultiChoiceSection(db, opts...),
+		MultichoiceSectionAnswer: newMultichoiceSectionAnswer(db, opts...),
+		Page:                     newPage(db, opts...),
+		Section:                  newSection(db, opts...),
+		Session:                  newSession(db, opts...),
+		ShortAnswerSection:       newShortAnswerSection(db, opts...),
+		ShortAnswerSectionAnswer: newShortAnswerSectionAnswer(db, opts...),
+		TextSection:              newTextSection(db, opts...),
+		User:                     newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	ChoiceSection      choiceSection
-	Course             course
-	Group              group
-	Link               link
-	Module             module
-	MultiChoiceSection multiChoiceSection
-	Page               page
-	Section            section
-	Session            session
-	ShortAnswerSection shortAnswerSection
-	TextSection        textSection
-	User               user
+	Answer                   answer
+	ChoiceSection            choiceSection
+	ChoiceSectionAnswer      choiceSectionAnswer
+	Course                   course
+	Group                    group
+	Link                     link
+	Module                   module
+	MultiChoiceSection       multiChoiceSection
+	MultichoiceSectionAnswer multichoiceSectionAnswer
+	Page                     page
+	Section                  section
+	Session                  session
+	ShortAnswerSection       shortAnswerSection
+	ShortAnswerSectionAnswer shortAnswerSectionAnswer
+	TextSection              textSection
+	User                     user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		ChoiceSection:      q.ChoiceSection.clone(db),
-		Course:             q.Course.clone(db),
-		Group:              q.Group.clone(db),
-		Link:               q.Link.clone(db),
-		Module:             q.Module.clone(db),
-		MultiChoiceSection: q.MultiChoiceSection.clone(db),
-		Page:               q.Page.clone(db),
-		Section:            q.Section.clone(db),
-		Session:            q.Session.clone(db),
-		ShortAnswerSection: q.ShortAnswerSection.clone(db),
-		TextSection:        q.TextSection.clone(db),
-		User:               q.User.clone(db),
+		db:                       db,
+		Answer:                   q.Answer.clone(db),
+		ChoiceSection:            q.ChoiceSection.clone(db),
+		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.clone(db),
+		Course:                   q.Course.clone(db),
+		Group:                    q.Group.clone(db),
+		Link:                     q.Link.clone(db),
+		Module:                   q.Module.clone(db),
+		MultiChoiceSection:       q.MultiChoiceSection.clone(db),
+		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.clone(db),
+		Page:                     q.Page.clone(db),
+		Section:                  q.Section.clone(db),
+		Session:                  q.Session.clone(db),
+		ShortAnswerSection:       q.ShortAnswerSection.clone(db),
+		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.clone(db),
+		TextSection:              q.TextSection.clone(db),
+		User:                     q.User.clone(db),
 	}
 }
 
@@ -80,51 +92,63 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		ChoiceSection:      q.ChoiceSection.replaceDB(db),
-		Course:             q.Course.replaceDB(db),
-		Group:              q.Group.replaceDB(db),
-		Link:               q.Link.replaceDB(db),
-		Module:             q.Module.replaceDB(db),
-		MultiChoiceSection: q.MultiChoiceSection.replaceDB(db),
-		Page:               q.Page.replaceDB(db),
-		Section:            q.Section.replaceDB(db),
-		Session:            q.Session.replaceDB(db),
-		ShortAnswerSection: q.ShortAnswerSection.replaceDB(db),
-		TextSection:        q.TextSection.replaceDB(db),
-		User:               q.User.replaceDB(db),
+		db:                       db,
+		Answer:                   q.Answer.replaceDB(db),
+		ChoiceSection:            q.ChoiceSection.replaceDB(db),
+		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.replaceDB(db),
+		Course:                   q.Course.replaceDB(db),
+		Group:                    q.Group.replaceDB(db),
+		Link:                     q.Link.replaceDB(db),
+		Module:                   q.Module.replaceDB(db),
+		MultiChoiceSection:       q.MultiChoiceSection.replaceDB(db),
+		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.replaceDB(db),
+		Page:                     q.Page.replaceDB(db),
+		Section:                  q.Section.replaceDB(db),
+		Session:                  q.Session.replaceDB(db),
+		ShortAnswerSection:       q.ShortAnswerSection.replaceDB(db),
+		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.replaceDB(db),
+		TextSection:              q.TextSection.replaceDB(db),
+		User:                     q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	ChoiceSection      IChoiceSectionDo
-	Course             ICourseDo
-	Group              IGroupDo
-	Link               ILinkDo
-	Module             IModuleDo
-	MultiChoiceSection IMultiChoiceSectionDo
-	Page               IPageDo
-	Section            ISectionDo
-	Session            ISessionDo
-	ShortAnswerSection IShortAnswerSectionDo
-	TextSection        ITextSectionDo
-	User               IUserDo
+	Answer                   IAnswerDo
+	ChoiceSection            IChoiceSectionDo
+	ChoiceSectionAnswer      IChoiceSectionAnswerDo
+	Course                   ICourseDo
+	Group                    IGroupDo
+	Link                     ILinkDo
+	Module                   IModuleDo
+	MultiChoiceSection       IMultiChoiceSectionDo
+	MultichoiceSectionAnswer IMultichoiceSectionAnswerDo
+	Page                     IPageDo
+	Section                  ISectionDo
+	Session                  ISessionDo
+	ShortAnswerSection       IShortAnswerSectionDo
+	ShortAnswerSectionAnswer IShortAnswerSectionAnswerDo
+	TextSection              ITextSectionDo
+	User                     IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		ChoiceSection:      q.ChoiceSection.WithContext(ctx),
-		Course:             q.Course.WithContext(ctx),
-		Group:              q.Group.WithContext(ctx),
-		Link:               q.Link.WithContext(ctx),
-		Module:             q.Module.WithContext(ctx),
-		MultiChoiceSection: q.MultiChoiceSection.WithContext(ctx),
-		Page:               q.Page.WithContext(ctx),
-		Section:            q.Section.WithContext(ctx),
-		Session:            q.Session.WithContext(ctx),
-		ShortAnswerSection: q.ShortAnswerSection.WithContext(ctx),
-		TextSection:        q.TextSection.WithContext(ctx),
-		User:               q.User.WithContext(ctx),
+		Answer:                   q.Answer.WithContext(ctx),
+		ChoiceSection:            q.ChoiceSection.WithContext(ctx),
+		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.WithContext(ctx),
+		Course:                   q.Course.WithContext(ctx),
+		Group:                    q.Group.WithContext(ctx),
+		Link:                     q.Link.WithContext(ctx),
+		Module:                   q.Module.WithContext(ctx),
+		MultiChoiceSection:       q.MultiChoiceSection.WithContext(ctx),
+		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.WithContext(ctx),
+		Page:                     q.Page.WithContext(ctx),
+		Section:                  q.Section.WithContext(ctx),
+		Session:                  q.Session.WithContext(ctx),
+		ShortAnswerSection:       q.ShortAnswerSection.WithContext(ctx),
+		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.WithContext(ctx),
+		TextSection:              q.TextSection.WithContext(ctx),
+		User:                     q.User.WithContext(ctx),
 	}
 }
 

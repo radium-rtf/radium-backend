@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"gorm.io/gen/field"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -64,33 +65,23 @@ func (r CourseRepo) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, 
 
 func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
 	c := r.pg.Course
-	s := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
-		Preload(c.Links, c.Authors, c.Modules.Pages.Sections).
-		Preload(s.TextSection).
-		Preload(s.ChoiceSection).
-		Preload(s.MultiChoiceSection).
-		Preload(s.ShortAnswerSection).
+		Preload(field.Associations).
 		Where(c.Id.Eq(id)).Take()
 	return course, err
 }
 
 func (r CourseRepo) GetFullBySlug(ctx context.Context, slug string) (*entity.Course, error) {
 	c := r.pg.Course
-	// s := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors, c.Modules.Pages).
-		// Preload(s.TextSection).
-		// Preload(s.ChoiceSection).
-		// Preload(s.MultiChoiceSection).
-		// Preload(s.ShortAnswerSection).
 		Where(c.Slug.Eq(slug)).Take()
 	return course, err
 }
 
 func (r CourseRepo) Join(ctx context.Context, userId, courseId uuid.UUID) error {
 	course := entity.Course{Id: courseId}
-	err := r.pg.Course.Students.Model(&course).Append(&entity.User{Id: userId})
+	err := r.pg.Course.Students.WithContext(ctx).Model(&course).Append(&entity.User{Id: userId})
 	if err != nil {
 		return err
 	}

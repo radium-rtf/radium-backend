@@ -49,7 +49,7 @@ func (r sectionRoutes) createSection(w http.ResponseWriter, request *http.Reques
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
 
-	dto := r.mapper.Section(*section, entity.VerdictWA, 0)
+	dto := r.mapper.Section(*section, entity.VerdictEMPTY)
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, dto)
 

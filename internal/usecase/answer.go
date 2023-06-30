@@ -12,77 +12,62 @@ import (
 
 type AnswerUseCase struct {
 	sectionRepo repo.SectionRepo
+	answerRepo  repo.AnswerRepo
 	mapper      mapper.Answer
 }
 
 func NewAnswerUseCase(pg *db.Query) AnswerUseCase {
-	return AnswerUseCase{sectionRepo: repo.NewSectionRepo(pg)}
+	return AnswerUseCase{sectionRepo: repo.NewSectionRepo(pg), answerRepo: repo.NewAnswerRepo(pg)}
 }
 
-func (uc AnswerUseCase) Answer(ctx context.Context, post *entity.AnswerPost) (*entity.Answer, error) {
-	section, err := uc.getSection(ctx, post)
+func (uc AnswerUseCase) Answer(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
+	section, err := uc.sectionRepo.GetSectionById(ctx, answer.SectionId)
 	if err != nil {
 		return nil, err
 	}
 	var verdict entity.Verdict
-	var score uint
 
 	switch {
-	case post.MultiChoice != nil:
-		verdict, score = uc.multiChoice(post.MultiChoice, section.MultiChoiceSection)
-	case post.Choice != nil:
-		verdict, score = uc.choice(post.Choice, section.ChoiceSection)
-	case post.ShortAnswer != nil:
-		verdict, score = uc.shortAnswer(post.ShortAnswer, section.ShortAnswerSection)
+	case answer.MultiChoice != nil:
+		verdict = uc.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
+	case answer.Choice != nil:
+		verdict = uc.choice(answer.Choice, section.ChoiceSection)
+	case answer.ShortAnswer != nil:
+		verdict = uc.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
 	default:
 		return nil, errors.New("ответы должны быть")
 	}
-	return uc.mapper.PostToAnswer(post, verdict, score), nil
+
+	answer.Verdict = verdict
+
+	return answer, uc.answerRepo.CreateOrUpdate(ctx, answer)
 }
 
-func (uc AnswerUseCase) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) (entity.Verdict, uint) {
+func (uc AnswerUseCase) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) entity.Verdict {
 	answerArr := []string(answer.Answer)
 	solutionArr := []string(section.Answer)
 	verdict := entity.VerdictOK
-	score := section.MaxScore
 	ok := reflect.DeepEqual(answerArr, solutionArr)
 	if !ok {
 		verdict = entity.VerdictWA
-		score = 0
 	}
-	return verdict, score
+	return verdict
 }
 
-func (uc AnswerUseCase) choice(answer *entity.ChoiceSectionAnswer, section *entity.ChoiceSection) (entity.Verdict, uint) {
+func (uc AnswerUseCase) choice(answer *entity.ChoiceSectionAnswer, section *entity.ChoiceSection) entity.Verdict {
 	verdict := entity.VerdictOK
-	score := section.MaxScore
 	ok := answer.Answer == section.Answer
 	if !ok {
 		verdict = entity.VerdictWA
-		score = 0
 	}
-	return verdict, score
+	return verdict
 }
 
-func (uc AnswerUseCase) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) (entity.Verdict, uint) {
+func (uc AnswerUseCase) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) entity.Verdict {
 	verdict := entity.VerdictOK
-	score := section.MaxScore
 	ok := answer.Answer == section.Answer
 	if !ok {
 		verdict = entity.VerdictWA
-		score = 0
 	}
-	return verdict, score
-}
-
-func (uc AnswerUseCase) getSection(ctx context.Context, post *entity.AnswerPost) (*entity.Section, error) {
-	switch {
-	case post.MultiChoice != nil:
-		return uc.sectionRepo.GetSectionById(ctx, post.MultiChoice.ID)
-	case post.ShortAnswer != nil:
-		return uc.sectionRepo.GetSectionById(ctx, post.ShortAnswer.ID)
-	case post.Choice != nil:
-		return uc.sectionRepo.GetSectionById(ctx, post.Choice.ID)
-	}
-	return nil, errors.New("ответы должны быть")
+	return verdict
 }

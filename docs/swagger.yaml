@@ -3,11 +3,13 @@ definitions:
   entity.AnswerPost:
     properties:
       choice:
-        $ref: '#/definitions/entity.ChoiceSectionAnswer'
+        $ref: '#/definitions/entity.ChoiceSectionAnswerPost'
+      id:
+        type: string
       multiChoice:
-        $ref: '#/definitions/entity.MultichoiceSectionAnswer'
+        $ref: '#/definitions/entity.MultichoiceSectionAnswerPost'
       shortAnswer:
-        $ref: '#/definitions/entity.ShortAnswerSectionAnswer'
+        $ref: '#/definitions/entity.ShortAnswerSectionAnswerPost'
     type: object
   entity.ChoiceSection:
     properties:
@@ -28,11 +30,9 @@ definitions:
           type: string
         type: array
     type: object
-  entity.ChoiceSectionAnswer:
+  entity.ChoiceSectionAnswerPost:
     properties:
       answer:
-        type: string
-      id:
         type: string
     type: object
   entity.ChoiceSectionDto:
@@ -41,8 +41,6 @@ definitions:
         type: integer
       question:
         type: string
-      score:
-        type: integer
       variants:
         items:
           type: string
@@ -226,14 +224,12 @@ definitions:
       verdict:
         type: string
     type: object
-  entity.MultichoiceSectionAnswer:
+  entity.MultichoiceSectionAnswerPost:
     properties:
       answer:
         items:
           type: string
         type: array
-      id:
-        type: string
     type: object
   entity.Page:
     properties:
@@ -355,11 +351,9 @@ definitions:
       question:
         type: string
     type: object
-  entity.ShortAnswerSectionAnswer:
+  entity.ShortAnswerSectionAnswerPost:
     properties:
       answer:
-        type: string
-      id:
         type: string
     type: object
   entity.ShortAnswerSectionDto:
@@ -368,8 +362,6 @@ definitions:
         type: integer
       question:
         type: string
-      score:
-        type: integer
       verdict:
         type: string
     type: object

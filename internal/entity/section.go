@@ -5,14 +5,7 @@ import (
 	"github.com/lib/pq"
 )
 
-const (
-	VerdictOK = Verdict("OK")
-	VerdictWA = Verdict("WA")
-)
-
 type (
-	Verdict string
-
 	SectionPost struct {
 		PageId uuid.UUID
 		Order  uint
@@ -68,7 +61,6 @@ type (
 		MaxScore uint     `json:"maxScore"`
 		Question string   `json:"question"`
 		Variants []string `json:"variants"`
-		Score    uint     `json:"score"`
 		Verdict  Verdict  `json:"verdict"`
 	}
 
@@ -102,7 +94,6 @@ type (
 	ShortAnswerSectionDto struct {
 		MaxScore uint    `json:"maxScore"`
 		Question string  `json:"question"`
-		Score    uint    `json:"score"`
 		Verdict  Verdict `json:"verdict"`
 	}
 )

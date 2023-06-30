@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"github.com/google/uuid"
+	"gorm.io/gen/field"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -19,15 +20,11 @@ func NewSectionRepo(pg *db.Query) SectionRepo {
 func (r SectionRepo) CreateSection(ctx context.Context, post entity.SectionPost) (*entity.Section, error) {
 	section := entity.NewSectionPostToSection(post)
 	err := r.pg.Section.
-		WithContext(ctx).
-		Preload(r.pg.Section.TextSection).
-		Preload(r.pg.Section.ChoiceSection).
-		Preload(r.pg.Section.MultiChoiceSection).
-		Preload(r.pg.Section.ShortAnswerSection).
+		WithContext(ctx).Preload(field.Associations).
 		Create(&section)
 
 	if err != nil {
-		return &entity.Section{}, nil
+		return nil, err
 	}
 
 	return &section, nil
@@ -36,10 +33,7 @@ func (r SectionRepo) CreateSection(ctx context.Context, post entity.SectionPost)
 func (r SectionRepo) GetSectionById(ctx context.Context, id uuid.UUID) (*entity.Section, error) {
 	return r.pg.Section.
 		WithContext(ctx).
-		Preload(r.pg.Section.TextSection).
-		Preload(r.pg.Section.ChoiceSection).
-		Preload(r.pg.Section.MultiChoiceSection).
-		Preload(r.pg.Section.ShortAnswerSection).
+		Preload(field.Associations).
 		Where(r.pg.Section.ID.Eq(id)).
 		First()
 }

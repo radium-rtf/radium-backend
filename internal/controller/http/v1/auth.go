@@ -28,18 +28,26 @@ func authRequired(signingKey string) func(http.Handler) http.Handler {
 		}
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			tokenHeader := strings.Split(request.Header.Get("Authorization"), " ")
-			if len(tokenHeader) == 1 {
-				writer.WriteHeader(http.StatusUnauthorized)
-				writer.Write([]byte("empty or corrupted Authorization header"))
-				return
-			}
-			token := strings.Split(request.Header.Get("Authorization"), " ")[1]
-			userId, err := manager.Parse(token)
+			userId, err := manager.ExtractUserId(tokenHeader)
 			if err != nil {
 				writer.WriteHeader(http.StatusUnauthorized)
 				writer.Write([]byte(err.Error()))
-				return
 			}
+			ctx := context.WithValue(request.Context(), "userId", userId)
+			next.ServeHTTP(writer, request.WithContext(ctx))
+		})
+	}
+}
+
+func authToken(signingKey string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		manager, err := auth.NewManager(signingKey)
+		if err != nil {
+			panic(err)
+		}
+		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			tokenHeader := strings.Split(request.Header.Get("Authorization"), " ")
+			userId, _ := manager.ExtractUserId(tokenHeader)
 			ctx := context.WithValue(request.Context(), "userId", userId)
 			next.ServeHTTP(writer, request.WithContext(ctx))
 		})
