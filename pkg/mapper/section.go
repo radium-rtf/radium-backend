@@ -52,27 +52,82 @@ func (Section) Text(section *entity.TextSection) *entity.TextSectionDto {
 	}
 }
 
-func (p Section) Sections(sections []entity.Section, answers map[uuid.UUID]*entity.Answer) []*entity.SectionDto {
+func (s Section) Sections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) []*entity.SectionDto {
 	dtos := make([]*entity.SectionDto, 0, len(sections))
 	for _, section := range sections {
 		var verdict = entity.VerdictEMPTY
-		if answer, ok := answers[section.ID]; ok {
+		if answer, ok := answers[section.Id]; ok {
 			verdict = answer.Verdict
 		}
-		dto := p.Section(section, verdict)
+		dto := s.Section(section, verdict)
 		dtos = append(dtos, dto)
 	}
 	return dtos
 }
 
-func (p Section) Section(section entity.Section, verdict entity.Verdict) *entity.SectionDto {
+func (s Section) Section(section *entity.Section, verdict entity.Verdict) *entity.SectionDto {
 	return &entity.SectionDto{
-		ID:                 section.ID,
+		Id:                 section.Id,
 		PageId:             section.PageId,
 		Order:              section.Order,
-		TextSection:        p.Text(section.TextSection),
-		ChoiceSection:      p.Choice(section.ChoiceSection, verdict),
-		ShortAnswerSection: p.ShortAnswer(section.ShortAnswerSection, verdict),
-		MultiChoiceSection: p.MultiChoice(section.MultiChoiceSection, verdict),
+		TextSection:        s.Text(section.TextSection),
+		ChoiceSection:      s.Choice(section.ChoiceSection, verdict),
+		ShortAnswerSection: s.ShortAnswer(section.ShortAnswerSection, verdict),
+		MultiChoiceSection: s.MultiChoice(section.MultiChoiceSection, verdict),
+	}
+}
+
+func (s Section) PostToSection(post *entity.SectionPost) *entity.Section {
+	return &entity.Section{
+		PageId:             post.PageId,
+		Order:              post.Order,
+		TextSection:        s.postToText(post.TextSection),
+		ChoiceSection:      s.postToChoice(post.ChoiceSection),
+		MultiChoiceSection: s.postToMultiChoice(post.MultiChoiceSection),
+		ShortAnswerSection: s.postToShortAnswer(post.ShortAnswerSection),
+	}
+}
+
+func (s Section) postToText(post *entity.TextSectionPost) *entity.TextSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.TextSection{
+		Content: post.Content,
+	}
+}
+
+func (s Section) postToChoice(post *entity.ChoiceSectionPost) *entity.ChoiceSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.ChoiceSection{
+		MaxScore: post.MaxScore,
+		Answer:   post.Answer,
+		Variants: post.Variants,
+		Question: post.Question,
+	}
+}
+
+func (s Section) postToMultiChoice(post *entity.MultiChoiceSectionPost) *entity.MultiChoiceSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.MultiChoiceSection{
+		MaxScore: post.MaxScore,
+		Answer:   post.Answer,
+		Variants: post.Variants,
+		Question: post.Question,
+	}
+}
+
+func (s Section) postToShortAnswer(post *entity.ShortAnswerSectionPost) *entity.ShortAnswerSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.ShortAnswerSection{
+		MaxScore: post.MaxScore,
+		Answer:   post.Answer,
+		Question: post.Question,
 	}
 }

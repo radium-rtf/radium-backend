@@ -11,25 +11,6 @@ definitions:
       shortAnswer:
         $ref: '#/definitions/entity.ShortAnswerSectionAnswerPost'
     type: object
-  entity.ChoiceSection:
-    properties:
-      answer:
-        type: string
-      id:
-        type: string
-      maxScore:
-        type: integer
-      ownerID:
-        type: string
-      ownerType:
-        type: string
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
   entity.ChoiceSectionAnswerPost:
     properties:
       answer:
@@ -48,37 +29,17 @@ definitions:
       verdict:
         type: string
     type: object
-  entity.Course:
+  entity.ChoiceSectionPost:
     properties:
-      authors:
+      answer:
+        type: string
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
         items:
-          $ref: '#/definitions/entity.User'
-        type: array
-      banner:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      links:
-        items:
-          $ref: '#/definitions/entity.Link'
-        type: array
-      logo:
-        type: string
-      modules:
-        items:
-          $ref: '#/definitions/entity.Module'
-        type: array
-      name:
-        type: string
-      shortDescription:
-        type: string
-      slug:
-        type: string
-      students:
-        items:
-          $ref: '#/definitions/entity.User'
+          type: string
         type: array
     type: object
   entity.CourseDto:
@@ -95,7 +56,7 @@ definitions:
         type: string
       links:
         items:
-          $ref: '#/definitions/entity.Link'
+          $ref: '#/definitions/entity.LinkDto'
         type: array
       logo:
         type: string
@@ -137,14 +98,13 @@ definitions:
       location:
         type: string
     type: object
-  entity.GroupName:
-    properties:
-      name:
-        type: string
-    type: object
   entity.Link:
     properties:
       courseId:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
         type: string
       id:
         type: string
@@ -152,20 +112,14 @@ definitions:
         type: string
       name:
         type: string
-    type: object
-  entity.Module:
-    properties:
-      courseId:
+      updatedAt:
         type: string
-      id:
+    type: object
+  entity.LinkDto:
+    properties:
+      link:
         type: string
       name:
-        type: string
-      pages:
-        items:
-          $ref: '#/definitions/entity.Page'
-        type: array
-      slug:
         type: string
     type: object
   entity.ModuleDto:
@@ -188,27 +142,6 @@ definitions:
       name:
         type: string
     type: object
-  entity.MultiChoiceSection:
-    properties:
-      answer:
-        items:
-          type: string
-        type: array
-      id:
-        type: string
-      maxScore:
-        type: integer
-      ownerID:
-        type: string
-      ownerType:
-        type: string
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
   entity.MultiChoiceSectionDto:
     properties:
       maxScore:
@@ -224,27 +157,27 @@ definitions:
       verdict:
         type: string
     type: object
+  entity.MultiChoiceSectionPost:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
   entity.MultichoiceSectionAnswerPost:
     properties:
       answer:
         items:
           type: string
         type: array
-    type: object
-  entity.Page:
-    properties:
-      id:
-        type: string
-      moduleId:
-        type: string
-      name:
-        type: string
-      sections:
-        items:
-          $ref: '#/definitions/entity.Section'
-        type: array
-      slug:
-        type: string
     type: object
   entity.PageDto:
     properties:
@@ -278,23 +211,6 @@ definitions:
       refreshToken:
         type: string
     type: object
-  entity.Section:
-    properties:
-      choice:
-        $ref: '#/definitions/entity.ChoiceSection'
-      id:
-        type: string
-      multichoice:
-        $ref: '#/definitions/entity.MultiChoiceSection'
-      order:
-        type: integer
-      pageId:
-        type: string
-      shortanswer:
-        $ref: '#/definitions/entity.ShortAnswerSection'
-      text:
-        $ref: '#/definitions/entity.TextSection'
-    type: object
   entity.SectionDto:
     properties:
       choice:
@@ -315,41 +231,17 @@ definitions:
   entity.SectionPost:
     properties:
       choice:
-        $ref: '#/definitions/entity.ChoiceSection'
+        $ref: '#/definitions/entity.ChoiceSectionPost'
       multichoice:
-        $ref: '#/definitions/entity.MultiChoiceSection'
+        $ref: '#/definitions/entity.MultiChoiceSectionPost'
       order:
         type: integer
       pageId:
         type: string
       shortanswer:
-        $ref: '#/definitions/entity.ShortAnswerSection'
+        $ref: '#/definitions/entity.ShortAnswerSectionPost'
       text:
-        $ref: '#/definitions/entity.TextSection'
-    type: object
-  entity.Session:
-    properties:
-      expiresIn:
-        type: string
-      refreshToken:
-        type: string
-      userId:
-        type: string
-    type: object
-  entity.ShortAnswerSection:
-    properties:
-      answer:
-        type: string
-      id:
-        type: string
-      maxScore:
-        type: integer
-      ownerID:
-        type: string
-      ownerType:
-        type: string
-      question:
-        type: string
+        $ref: '#/definitions/entity.TextSectionPost'
     type: object
   entity.ShortAnswerSectionAnswerPost:
     properties:
@@ -363,6 +255,15 @@ definitions:
       question:
         type: string
       verdict:
+        type: string
+    type: object
+  entity.ShortAnswerSectionPost:
+    properties:
+      answer:
+        type: string
+      maxScore:
+        type: integer
+      question:
         type: string
     type: object
   entity.SignIn:
@@ -381,18 +282,12 @@ definitions:
       password:
         type: string
     type: object
-  entity.TextSection:
+  entity.TextSectionDto:
     properties:
       content:
         type: string
-      id:
-        type: string
-      ownerID:
-        type: string
-      ownerType:
-        type: string
     type: object
-  entity.TextSectionDto:
+  entity.TextSectionPost:
     properties:
       content:
         type: string
@@ -411,31 +306,6 @@ definitions:
       avatar:
         type: string
       name:
-        type: string
-    type: object
-  entity.User:
-    properties:
-      avatar:
-        type: string
-      courses:
-        items:
-          $ref: '#/definitions/entity.Course'
-        type: array
-      email:
-        type: string
-      id:
-        type: string
-      isVerified:
-        type: boolean
-      name:
-        type: string
-      password:
-        type: string
-      sessions:
-        items:
-          $ref: '#/definitions/entity.Session'
-        type: array
-      verificationCode:
         type: string
     type: object
   entity.UserDto:
@@ -485,6 +355,8 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - ApiKeyAuth: []
       tags:
       - account
   /account/courses:
@@ -493,7 +365,7 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.Course'
+            $ref: '#/definitions/entity.CourseDto'
       security:
       - ApiKeyAuth: []
       tags:
@@ -673,24 +545,6 @@ paths:
             $ref: '#/definitions/entity.CourseDto'
       tags:
       - course
-  /group:
-    post:
-      parameters:
-      - description: GroupName
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.GroupName'
-      responses:
-        "201":
-          description: created
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - group
   /join/group/{groupId}:
     patch:
       parameters:

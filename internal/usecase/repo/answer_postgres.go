@@ -7,7 +7,6 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"gorm.io/gen/field"
-	"gorm.io/gorm/clause"
 )
 
 type AnswerRepo struct {
@@ -18,13 +17,8 @@ func NewAnswerRepo(pg *db.Query) AnswerRepo {
 	return AnswerRepo{pg: pg}
 }
 
-func (r AnswerRepo) CreateOrUpdate(ctx context.Context, answer *entity.Answer) error {
-	q := r.pg.Answer
-
-	columns := []clause.Column{{Name: q.UserId.ColumnName().String()}, {Name: q.SectionId.ColumnName().String()}}
-	return q.WithContext(ctx).
-		Preload(field.Associations).
-		Clauses(clause.OnConflict{UpdateAll: true, Columns: columns}).Create(answer)
+func (r AnswerRepo) Create(ctx context.Context, answer *entity.Answer) error {
+	return r.pg.Answer.WithContext(ctx).Create(answer)
 }
 
 func (r AnswerRepo) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UUID) (map[uuid.UUID]*entity.Answer, error) {
@@ -34,12 +28,11 @@ func (r AnswerRepo) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uui
 	}
 
 	q := r.pg.Answer
-
+	// TODO: хз как написать норм запрос на этом, потом ещё раз попробую.....
 	answers, err := q.WithContext(ctx).
 		Preload(field.Associations).
 		Where(q.UserId.Eq(userId)).
-		Where(q.SectionId.In(values...)).
-		Find()
+		Where(q.SectionId.In(values...)).Find()
 
 	if err != nil {
 		return nil, err
@@ -47,7 +40,10 @@ func (r AnswerRepo) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uui
 
 	result := make(map[uuid.UUID]*entity.Answer)
 	for _, answer := range answers {
-		result[answer.SectionId] = answer
+		prev, ok := result[answer.SectionId]
+		if !ok || prev.CreatedAt.Before(answer.CreatedAt) {
+			result[answer.SectionId] = answer
+		}
 	}
 
 	return result, nil

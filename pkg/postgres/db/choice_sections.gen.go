@@ -27,7 +27,10 @@ func newChoiceSection(db *gorm.DB, opts ...gen.DOOption) choiceSection {
 
 	tableName := _choiceSection.choiceSectionDo.TableName()
 	_choiceSection.ALL = field.NewAsterisk(tableName)
-	_choiceSection.ID = field.NewField(tableName, "id")
+	_choiceSection.Id = field.NewField(tableName, "id")
+	_choiceSection.CreatedAt = field.NewTime(tableName, "created_at")
+	_choiceSection.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_choiceSection.DeletedAt = field.NewField(tableName, "deleted_at")
 	_choiceSection.MaxScore = field.NewUint(tableName, "max_score")
 	_choiceSection.Question = field.NewString(tableName, "question")
 	_choiceSection.Answer = field.NewString(tableName, "answer")
@@ -44,7 +47,10 @@ type choiceSection struct {
 	choiceSectionDo choiceSectionDo
 
 	ALL       field.Asterisk
-	ID        field.Field
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	MaxScore  field.Uint
 	Question  field.String
 	Answer    field.String
@@ -67,7 +73,10 @@ func (c choiceSection) As(alias string) *choiceSection {
 
 func (c *choiceSection) updateTableName(table string) *choiceSection {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewField(table, "id")
+	c.Id = field.NewField(table, "id")
+	c.CreatedAt = field.NewTime(table, "created_at")
+	c.UpdatedAt = field.NewTime(table, "updated_at")
+	c.DeletedAt = field.NewField(table, "deleted_at")
 	c.MaxScore = field.NewUint(table, "max_score")
 	c.Question = field.NewString(table, "question")
 	c.Answer = field.NewString(table, "answer")
@@ -98,8 +107,11 @@ func (c *choiceSection) GetFieldByName(fieldName string) (field.OrderExpr, bool)
 }
 
 func (c *choiceSection) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 7)
-	c.fieldMap["id"] = c.ID
+	c.fieldMap = make(map[string]field.Expr, 10)
+	c.fieldMap["id"] = c.Id
+	c.fieldMap["created_at"] = c.CreatedAt
+	c.fieldMap["updated_at"] = c.UpdatedAt
+	c.fieldMap["deleted_at"] = c.DeletedAt
 	c.fieldMap["max_score"] = c.MaxScore
 	c.fieldMap["question"] = c.Question
 	c.fieldMap["answer"] = c.Answer

@@ -19,9 +19,9 @@ type (
 	}
 
 	Session struct {
-		RefreshToken string    `json:"refreshToken"`
-		ExpiresIn    time.Time `json:"expiresIn"`
-		UserId       uuid.UUID `json:"userId"`
+		RefreshToken string    `json:"refreshToken; not null"`
+		ExpiresIn    time.Time `json:"expiresIn; not null"`
+		UserId       uuid.UUID `json:"userId" gorm:"type:uuid; not null"`
 	}
 
 	RefreshToken struct {

@@ -94,6 +94,12 @@ func (r UserRepo) UpdateUser(ctx context.Context, id uuid.UUID, update entity.Up
 	m := structs.Map(update)
 	utils.RemoveEmptyMapFields(m)
 
-	r.pg.User.WithContext(ctx).Debug().Select(r.pg.User.Name, r.pg.User.Avatar).Where(r.pg.User.Id.Eq(id)).Updates(m)
+	info, err := r.pg.User.WithContext(ctx).Debug().Where(r.pg.User.Id.Eq(id)).Updates(m)
+	if err != nil {
+		return nil, err
+	}
+	if info.RowsAffected == 0 {
+		return nil, errors.New("not found")
+	}
 	return r.GetById(ctx, id)
 }

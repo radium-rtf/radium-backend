@@ -7,18 +7,43 @@ import (
 
 type (
 	SectionPost struct {
-		PageId uuid.UUID
-		Order  uint
+		PageId uuid.UUID `gorm:"type:uuid; not null"`
+		Order  uint      `gorm:"not null"`
 
-		TextSection        *TextSection        `gorm:"polymorphic:Owner" json:"text,omitempty"`
-		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
-		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
-		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
+		TextSection        *TextSectionPost        `gorm:"polymorphic:Owner" json:"text,omitempty"`
+		ChoiceSection      *ChoiceSectionPost      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
+		MultiChoiceSection *MultiChoiceSectionPost `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
+		ShortAnswerSection *ShortAnswerSectionPost `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
 	}
+
+	TextSectionPost struct {
+		Content string
+	}
+
+	ChoiceSectionPost struct {
+		MaxScore uint
+		Question string
+		Answer   string
+		Variants []string `swaggertype:"array,string"`
+	}
+
+	MultiChoiceSectionPost struct {
+		MaxScore uint
+		Question string
+		Answer   []string `swaggertype:"array,string"`
+		Variants []string `swaggertype:"array,string"`
+	}
+
+	ShortAnswerSectionPost struct {
+		MaxScore uint
+		Question string
+		Answer   string
+	}
+
 	Section struct {
-		ID     uuid.UUID `gorm:"default:gen_random_uuid()"`
-		PageId uuid.UUID
-		Order  uint
+		DBModel
+		PageId uuid.UUID `gorm:"type:uuid; not null"`
+		Order  uint      `gorm:"not null"`
 
 		TextSection        *TextSection        `gorm:"polymorphic:Owner" json:"text,omitempty"`
 		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
@@ -27,7 +52,7 @@ type (
 	}
 
 	SectionDto struct {
-		ID                 uuid.UUID              `json:"id"`
+		Id                 uuid.UUID              `json:"id"`
 		PageId             uuid.UUID              `json:"pageId"`
 		Order              uint                   `json:"order"`
 		TextSection        *TextSectionDto        `json:"text,omitempty"`
@@ -37,10 +62,10 @@ type (
 	}
 
 	TextSection struct {
-		ID        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		Content   string
-		OwnerID   uuid.UUID
-		OwnerType string `gorm:"default:main_section_test"`
+		DBModel
+		Content   string    `gorm:"type:text; not null"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
 	}
 
 	TextSectionDto struct {
@@ -48,13 +73,13 @@ type (
 	}
 
 	ChoiceSection struct {
-		ID        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		MaxScore  uint
-		Question  string
-		Answer    string
-		Variants  pq.StringArray `gorm:"type:text[]" swaggertype:"array,string"`
-		OwnerID   uuid.UUID
-		OwnerType string `gorm:"default:main_section_test"`
+		DBModel
+		MaxScore  uint           `gorm:"not null"`
+		Question  string         `gorm:"not null"`
+		Answer    string         `gorm:"not null"`
+		Variants  pq.StringArray `gorm:"type:text[]; not null"`
+		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
+		OwnerType string         `gorm:"not null"`
 	}
 
 	ChoiceSectionDto struct {
@@ -65,13 +90,13 @@ type (
 	}
 
 	MultiChoiceSection struct {
-		ID        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		MaxScore  uint
-		Question  string
-		Answer    pq.StringArray `gorm:"type:text[]" swaggertype:"array,string"`
-		Variants  pq.StringArray `gorm:"type:text[]" swaggertype:"array,string"`
-		OwnerID   uuid.UUID
-		OwnerType string `gorm:"default:main_section_test"`
+		DBModel
+		MaxScore  uint           `gorm:"not null"`
+		Question  string         `gorm:"not null"`
+		Answer    pq.StringArray `gorm:"type:text[]; not null" swaggertype:"array,string"`
+		Variants  pq.StringArray `gorm:"type:text[]; not null" swaggertype:"array,string"`
+		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
+		OwnerType string         `gorm:"not null"`
 	}
 
 	MultiChoiceSectionDto struct {
@@ -83,12 +108,12 @@ type (
 	}
 
 	ShortAnswerSection struct {
-		ID        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		MaxScore  uint
-		Question  string
-		Answer    string
-		OwnerID   uuid.UUID
-		OwnerType string `gorm:"default:main_section_test"`
+		DBModel
+		MaxScore  uint      `gorm:"not null"`
+		Question  string    `gorm:"not null"`
+		Answer    string    `gorm:"not null"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
 	}
 
 	ShortAnswerSectionDto struct {
@@ -97,19 +122,3 @@ type (
 		Verdict  Verdict `json:"verdict"`
 	}
 )
-
-func NewSectionPostToSection(post SectionPost) Section {
-	if post.ChoiceSection != nil {
-		variants := make([]string, 0, len(post.ChoiceSection.Variants))
-		variants = append(variants, post.ChoiceSection.Variants...)
-		post.ChoiceSection.Variants = variants
-	}
-	return Section{
-		PageId:             post.PageId,
-		Order:              post.Order,
-		TextSection:        post.TextSection,
-		ChoiceSection:      post.ChoiceSection,
-		MultiChoiceSection: post.MultiChoiceSection,
-		ShortAnswerSection: post.ShortAnswerSection,
-	}
-}

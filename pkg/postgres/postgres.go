@@ -37,7 +37,7 @@ func New(url string) (*db.Query, error) {
 		entity.MultichoiceSectionAnswer{},
 	)
 
-	gormDb.AutoMigrate(
+	err = gormDb.AutoMigrate(
 		entity.User{},
 		entity.Session{},
 		entity.Course{},
@@ -54,17 +54,12 @@ func New(url string) (*db.Query, error) {
 		entity.ShortAnswerSectionAnswer{},
 		entity.MultichoiceSectionAnswer{},
 	)
+	if err != nil {
+		return nil, err
+	}
 	g.Execute()
 
 	Q := db.Use(gormDb)
 
-	// m := Q.Section
-	// w, _ := uuid.Parse("3d1e8a0b-ecee-4270-90f0-bdc41e5ba2df")
-	// t, _ := m.WithContext(context.Background()).Debug().Where(m.Id.Eq(w)).Preload(m.ChoiceSection).Preload(m.TextSection).Preload(m.MultiChoiceSection).Take()
-
-	// // fmt.Printf("%+v", t[0])
-	// b, _ := json.Marshal(t)
-
-	// print(string(b))
-	return Q, nil
+	return Q, err
 }

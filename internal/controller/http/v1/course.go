@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/dranikpg/dto-mapper"
@@ -89,7 +90,10 @@ func (r courseRoutes) getCourses(w http.ResponseWriter, request *http.Request) *
 // @Success      200   {object} entity.CourseDto  "ok"
 // @Router       /course/{courseId} [get]
 func (r courseRoutes) getCourse(w http.ResponseWriter, request *http.Request) *appError {
-	courseId := chi.URLParam(request, "courseId")
+	courseId, err := uuid.Parse(chi.URLParam(request, "courseId"))
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
 	course, err := r.uc.GetCourseById(request.Context(), courseId)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
@@ -126,8 +130,11 @@ func (r courseRoutes) getCourseBySlug(w http.ResponseWriter, request *http.Reque
 // @Success      201   {object} entity.CourseDto "created"
 // @Router       /course/join/{courseId} [patch]
 func (r courseRoutes) join(w http.ResponseWriter, request *http.Request) *appError {
-	userId := request.Context().Value("userId").(string)
-	courseId := chi.URLParam(request, "courseId")
+	userId := request.Context().Value("userId").(uuid.UUID)
+	courseId, err := uuid.Parse(chi.URLParam(request, "courseId"))
+	if err != nil {
+		return newAppError(err, http.StatusCreated)
+	}
 	courses, err := r.uc.Join(request.Context(), userId, courseId)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)

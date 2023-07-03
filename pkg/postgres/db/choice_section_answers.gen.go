@@ -28,6 +28,9 @@ func newChoiceSectionAnswer(db *gorm.DB, opts ...gen.DOOption) choiceSectionAnsw
 	tableName := _choiceSectionAnswer.choiceSectionAnswerDo.TableName()
 	_choiceSectionAnswer.ALL = field.NewAsterisk(tableName)
 	_choiceSectionAnswer.Id = field.NewField(tableName, "id")
+	_choiceSectionAnswer.CreatedAt = field.NewTime(tableName, "created_at")
+	_choiceSectionAnswer.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_choiceSectionAnswer.DeletedAt = field.NewField(tableName, "deleted_at")
 	_choiceSectionAnswer.OwnerID = field.NewField(tableName, "owner_id")
 	_choiceSectionAnswer.OwnerType = field.NewString(tableName, "owner_type")
 	_choiceSectionAnswer.Answer = field.NewString(tableName, "answer")
@@ -42,6 +45,9 @@ type choiceSectionAnswer struct {
 
 	ALL       field.Asterisk
 	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	OwnerID   field.Field
 	OwnerType field.String
 	Answer    field.String
@@ -62,6 +68,9 @@ func (c choiceSectionAnswer) As(alias string) *choiceSectionAnswer {
 func (c *choiceSectionAnswer) updateTableName(table string) *choiceSectionAnswer {
 	c.ALL = field.NewAsterisk(table)
 	c.Id = field.NewField(table, "id")
+	c.CreatedAt = field.NewTime(table, "created_at")
+	c.UpdatedAt = field.NewTime(table, "updated_at")
+	c.DeletedAt = field.NewField(table, "deleted_at")
 	c.OwnerID = field.NewField(table, "owner_id")
 	c.OwnerType = field.NewString(table, "owner_type")
 	c.Answer = field.NewString(table, "answer")
@@ -89,8 +98,11 @@ func (c *choiceSectionAnswer) GetFieldByName(fieldName string) (field.OrderExpr,
 }
 
 func (c *choiceSectionAnswer) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 4)
+	c.fieldMap = make(map[string]field.Expr, 7)
 	c.fieldMap["id"] = c.Id
+	c.fieldMap["created_at"] = c.CreatedAt
+	c.fieldMap["updated_at"] = c.UpdatedAt
+	c.fieldMap["deleted_at"] = c.DeletedAt
 	c.fieldMap["owner_id"] = c.OwnerID
 	c.fieldMap["owner_type"] = c.OwnerType
 	c.fieldMap["answer"] = c.Answer

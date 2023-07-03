@@ -18,11 +18,11 @@ type (
 	}
 
 	Module struct {
-		Id       uuid.UUID `json:"id" gorm:"default:gen_random_uuid()"`
-		Slug     string    `json:"slug" gorm:"type:string"`
-		Name     string    `json:"name" gorm:"type:string"`
-		CourseId uuid.UUID `json:"courseId"`
-		Pages    []Page
+		DBModel
+		Slug     string    `json:"slug" gorm:"type:string; not null"`
+		Name     string    `json:"name" gorm:"type:string; not null"`
+		CourseId uuid.UUID `json:"courseId" gorm:"type:uuid; not null"`
+		Pages    []*Page
 	}
 
 	ModuleDto struct {

@@ -28,6 +28,9 @@ func newShortAnswerSectionAnswer(db *gorm.DB, opts ...gen.DOOption) shortAnswerS
 	tableName := _shortAnswerSectionAnswer.shortAnswerSectionAnswerDo.TableName()
 	_shortAnswerSectionAnswer.ALL = field.NewAsterisk(tableName)
 	_shortAnswerSectionAnswer.Id = field.NewField(tableName, "id")
+	_shortAnswerSectionAnswer.CreatedAt = field.NewTime(tableName, "created_at")
+	_shortAnswerSectionAnswer.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_shortAnswerSectionAnswer.DeletedAt = field.NewField(tableName, "deleted_at")
 	_shortAnswerSectionAnswer.OwnerID = field.NewField(tableName, "owner_id")
 	_shortAnswerSectionAnswer.OwnerType = field.NewString(tableName, "owner_type")
 	_shortAnswerSectionAnswer.Answer = field.NewString(tableName, "answer")
@@ -42,6 +45,9 @@ type shortAnswerSectionAnswer struct {
 
 	ALL       field.Asterisk
 	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	OwnerID   field.Field
 	OwnerType field.String
 	Answer    field.String
@@ -62,6 +68,9 @@ func (s shortAnswerSectionAnswer) As(alias string) *shortAnswerSectionAnswer {
 func (s *shortAnswerSectionAnswer) updateTableName(table string) *shortAnswerSectionAnswer {
 	s.ALL = field.NewAsterisk(table)
 	s.Id = field.NewField(table, "id")
+	s.CreatedAt = field.NewTime(table, "created_at")
+	s.UpdatedAt = field.NewTime(table, "updated_at")
+	s.DeletedAt = field.NewField(table, "deleted_at")
 	s.OwnerID = field.NewField(table, "owner_id")
 	s.OwnerType = field.NewString(table, "owner_type")
 	s.Answer = field.NewString(table, "answer")
@@ -89,8 +98,11 @@ func (s *shortAnswerSectionAnswer) GetFieldByName(fieldName string) (field.Order
 }
 
 func (s *shortAnswerSectionAnswer) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 4)
+	s.fieldMap = make(map[string]field.Expr, 7)
 	s.fieldMap["id"] = s.Id
+	s.fieldMap["created_at"] = s.CreatedAt
+	s.fieldMap["updated_at"] = s.UpdatedAt
+	s.fieldMap["deleted_at"] = s.DeletedAt
 	s.fieldMap["owner_id"] = s.OwnerID
 	s.fieldMap["owner_type"] = s.OwnerType
 	s.fieldMap["answer"] = s.Answer

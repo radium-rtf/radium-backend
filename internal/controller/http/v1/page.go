@@ -61,8 +61,7 @@ func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *app
 // @Success 200 {object} entity.PageDto "ok"
 // @Router /page/{id} [get]
 func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appError {
-	id := chi.URLParam(request, "id")
-	uid, err := uuid.Parse(id)
+	id, err := uuid.Parse(chi.URLParam(request, "id"))
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -70,9 +69,9 @@ func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appEr
 	userId, ok := request.Context().Value("userId").(uuid.UUID)
 	var pageDto *entity.PageDto
 	if !ok {
-		pageDto, err = r.uc.GetByID(request.Context(), uid, nil)
+		pageDto, err = r.uc.GetByID(request.Context(), id, nil)
 	} else {
-		pageDto, err = r.uc.GetByID(request.Context(), uid, &userId)
+		pageDto, err = r.uc.GetByID(request.Context(), id, &userId)
 	}
 
 	if err != nil {

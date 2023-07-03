@@ -7,10 +7,10 @@ import (
 
 type (
 	Answer struct {
-		Id        uuid.UUID
-		Verdict   Verdict
-		UserId    uuid.UUID `gorm:"index:,unique,composite:answer"`
-		SectionId uuid.UUID `gorm:"index:,unique,composite:answer"`
+		DBModel
+		Verdict   Verdict   `gorm:"not null"`
+		UserId    uuid.UUID `gorm:"index:idx_userId_sectionId; type:uuid; not null"`
+		SectionId uuid.UUID `gorm:"index:idx_userId_sectionId; type:uuid; not null"`
 
 		Choice      *ChoiceSectionAnswer      `gorm:"polymorphic:Owner"`
 		MultiChoice *MultichoiceSectionAnswer `gorm:"polymorphic:Owner"`
@@ -25,7 +25,7 @@ type (
 	}
 
 	MultichoiceSectionAnswerPost struct {
-		Answer pq.StringArray `json:"answer" swaggertype:"array,string"  gorm:"type:text[]"`
+		Answer []string `json:"answer" swaggertype:"array,string"`
 	}
 
 	ChoiceSectionAnswerPost struct {
@@ -37,24 +37,24 @@ type (
 	}
 
 	ChoiceSectionAnswer struct {
-		Id        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		OwnerID   uuid.UUID `json:"ownerID"`
-		OwnerType string    `json:"ownerType" gorm:"default:main_section_test"`
-		Answer    string    `json:"answer"`
+		DBModel
+		OwnerID   uuid.UUID `json:"ownerID" gorm:"type:uuid; not null"`
+		OwnerType string    `json:"ownerType" gorm:"not null"`
+		Answer    string    `json:"answer" gorm:"not null"`
 	}
 
 	MultichoiceSectionAnswer struct {
-		Id        uuid.UUID      `gorm:"default:gen_random_uuid()"`
-		OwnerID   uuid.UUID      `json:"ownerID"`
-		OwnerType string         `json:"ownerType" gorm:"default:main_section_test"`
-		Answer    pq.StringArray `json:"answer" swaggertype:"array,string"  gorm:"type:text[]"`
+		DBModel
+		OwnerID   uuid.UUID      `json:"ownerID" gorm:"type:uuid; not null"`
+		OwnerType string         `json:"ownerType" gorm:"not null"`
+		Answer    pq.StringArray `json:"answer" swaggertype:"array,string"  gorm:"type:text[]; not null"`
 	}
 
 	ShortAnswerSectionAnswer struct {
-		Id        uuid.UUID `gorm:"default:gen_random_uuid()"`
-		OwnerID   uuid.UUID `json:"ownerID"`
-		OwnerType string    `json:"ownerType" gorm:"default:main_section_test"`
-		Answer    string    `json:"answer"`
+		DBModel
+		OwnerID   uuid.UUID `json:"ownerID" gorm:"type:uuid; not null"`
+		OwnerType string    `json:"ownerType" gorm:"not null"`
+		Answer    string    `json:"answer" gorm:"not null"`
 	}
 )
 
@@ -78,7 +78,6 @@ func NewPostToAnswer(post *AnswerPost, userId uuid.UUID) *Answer {
 	}
 
 	return &Answer{
-		Id:          uuid.New(),
 		Verdict:     VerdictEMPTY,
 		SectionId:   post.SectionId,
 		UserId:      userId,

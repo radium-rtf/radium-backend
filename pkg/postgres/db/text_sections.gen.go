@@ -27,7 +27,10 @@ func newTextSection(db *gorm.DB, opts ...gen.DOOption) textSection {
 
 	tableName := _textSection.textSectionDo.TableName()
 	_textSection.ALL = field.NewAsterisk(tableName)
-	_textSection.ID = field.NewField(tableName, "id")
+	_textSection.Id = field.NewField(tableName, "id")
+	_textSection.CreatedAt = field.NewTime(tableName, "created_at")
+	_textSection.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_textSection.DeletedAt = field.NewField(tableName, "deleted_at")
 	_textSection.Content = field.NewString(tableName, "content")
 	_textSection.OwnerID = field.NewField(tableName, "owner_id")
 	_textSection.OwnerType = field.NewString(tableName, "owner_type")
@@ -41,7 +44,10 @@ type textSection struct {
 	textSectionDo textSectionDo
 
 	ALL       field.Asterisk
-	ID        field.Field
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	Content   field.String
 	OwnerID   field.Field
 	OwnerType field.String
@@ -61,7 +67,10 @@ func (t textSection) As(alias string) *textSection {
 
 func (t *textSection) updateTableName(table string) *textSection {
 	t.ALL = field.NewAsterisk(table)
-	t.ID = field.NewField(table, "id")
+	t.Id = field.NewField(table, "id")
+	t.CreatedAt = field.NewTime(table, "created_at")
+	t.UpdatedAt = field.NewTime(table, "updated_at")
+	t.DeletedAt = field.NewField(table, "deleted_at")
 	t.Content = field.NewString(table, "content")
 	t.OwnerID = field.NewField(table, "owner_id")
 	t.OwnerType = field.NewString(table, "owner_type")
@@ -89,8 +98,11 @@ func (t *textSection) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (t *textSection) fillFieldMap() {
-	t.fieldMap = make(map[string]field.Expr, 4)
-	t.fieldMap["id"] = t.ID
+	t.fieldMap = make(map[string]field.Expr, 7)
+	t.fieldMap["id"] = t.Id
+	t.fieldMap["created_at"] = t.CreatedAt
+	t.fieldMap["updated_at"] = t.UpdatedAt
+	t.fieldMap["deleted_at"] = t.DeletedAt
 	t.fieldMap["content"] = t.Content
 	t.fieldMap["owner_id"] = t.OwnerID
 	t.fieldMap["owner_type"] = t.OwnerType

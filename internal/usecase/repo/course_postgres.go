@@ -3,8 +3,6 @@ package repo
 import (
 	"context"
 	"fmt"
-	"gorm.io/gen/field"
-
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -51,8 +49,10 @@ func (r CourseRepo) GetCourses(ctx context.Context) ([]*entity.Course, error) {
 
 func (r CourseRepo) get(ctx context.Context, where ...gen.Condition) ([]*entity.Course, error) {
 	c := r.pg.Course
-	courses, err := c.WithContext(ctx).Debug().Preload(c.Links, c.Authors, c.Modules.Pages.Sections).Where(where...).Find()
-	return courses, err
+	return c.WithContext(ctx).Debug().
+		Preload(c.Links, c.Authors, c.Modules.Pages.Sections).
+		Where(where...).
+		Find()
 }
 
 func (r CourseRepo) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
@@ -65,8 +65,10 @@ func (r CourseRepo) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, 
 
 func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
 	c := r.pg.Course
+	s := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
-		Preload(field.Associations).
+		Preload(c.Links, c.Authors, c.Modules.Pages).
+		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.MultiChoiceSection).
 		Where(c.Id.Eq(id)).Take()
 	return course, err
 }
@@ -80,8 +82,9 @@ func (r CourseRepo) GetFullBySlug(ctx context.Context, slug string) (*entity.Cou
 }
 
 func (r CourseRepo) Join(ctx context.Context, userId, courseId uuid.UUID) error {
-	course := entity.Course{Id: courseId}
-	err := r.pg.Course.Students.WithContext(ctx).Model(&course).Append(&entity.User{Id: userId})
+	course := entity.Course{DBModel: entity.DBModel{Id: courseId}}
+	user := &entity.User{DBModel: entity.DBModel{Id: userId}}
+	err := r.pg.Course.Students.WithContext(ctx).Model(&course).Append(user)
 	if err != nil {
 		return err
 	}
@@ -127,14 +130,3 @@ func (r CourseRepo) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*enti
 
 	return courses, nil
 }
-
-// func (r CourseRepo) GetById(ctx context.Context, id string) (entity.Course, error) {
-// 	courses, err := r.get(ctx, sq.Eq{"id": id})
-// 	if err != nil {
-// 		return entity.Course{}, err
-// 	}
-// 	if len(courses) == 0 {
-// 		return entity.Course{}, entity.CourseNotFoundErr
-// 	}
-// 	return courses[0], nil
-// }

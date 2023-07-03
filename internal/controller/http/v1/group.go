@@ -32,10 +32,10 @@ func newGroupRoutes(h chi.Router, useCase usecase.GroupUseCase, signingKey strin
 }
 
 // @Tags group
-// @Security ApiKeyAuth
-// @Success      201   {string}  string        "created"
-// @Param       request body entity.GroupName true "GroupName"
-// @Router       /group [post]
+// // @Security ApiKeyAuth
+// // @Success      201   {string}  string        "created"
+// // @Param       request body entity.GroupName true "GroupName"
+// // @Router       /group [post]
 func (r groupRoutes) create(w http.ResponseWriter, request *http.Request) *appError {
 	var groupName entity.GroupName
 	err := render.DecodeJSON(request.Body, &groupName)

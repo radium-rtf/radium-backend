@@ -13,11 +13,11 @@ type (
 	}
 
 	User struct {
-		Id               uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
+		DBModel
 		Avatar           string
-		Email            string
-		Name             string
-		Password         string
+		Email            string `gorm:"unique; not null"`
+		Name             string `gorm:"not null"`
+		Password         string `gorm:"not null"`
 		VerificationCode string
 		IsVerified       bool
 		Courses          []*Course `gorm:"many2many:course_students"`

@@ -27,7 +27,7 @@ func (r PageRepo) Create(ctx context.Context, page entity.PageRequest) (*entity.
 
 func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	s := r.pg.Page.Sections
-	page, err := r.pg.Page.WithContext(ctx).
+	return r.pg.Page.WithContext(ctx).
 		Preload(r.pg.Page.Sections).
 		Preload(s.TextSection).
 		Preload(s.ChoiceSection).
@@ -35,11 +35,6 @@ func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, erro
 		Preload(s.ShortAnswerSection).
 		Where(r.pg.Page.Id.Eq(id)).
 		Take()
-	if err != nil {
-		return nil, err
-	}
-
-	return page, nil
 }
 
 // TODO: перенос в module

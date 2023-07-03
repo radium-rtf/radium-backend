@@ -31,30 +31,18 @@ func (uc CourseUseCase) GetCourses(ctx context.Context) ([]*entity.Course, error
 	return uc.courseRepo.GetCourses(ctx)
 }
 
-func (uc CourseUseCase) GetCourseById(ctx context.Context, id string) (*entity.Course, error) {
-	uid, err := uuid.Parse(id)
-	if err != nil {
-		return &entity.Course{}, err
-	}
-	return uc.courseRepo.GetFullById(ctx, uid)
+func (uc CourseUseCase) GetCourseById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	return uc.courseRepo.GetFullById(ctx, id)
 }
 
 func (uc CourseUseCase) GetCourseBySlug(ctx context.Context, slug string) (*entity.Course, error) {
 	return uc.courseRepo.GetFullBySlug(ctx, slug)
 }
 
-func (uc CourseUseCase) Join(ctx context.Context, userId string, courseId string) (*entity.Course, error) {
-	userUuid, err := uuid.Parse(userId)
+func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uuid.UUID) (*entity.Course, error) {
+	err := uc.courseRepo.Join(ctx, userId, courseId)
 	if err != nil {
 		return &entity.Course{}, err
 	}
-	courseUuid, err := uuid.Parse(courseId)
-	if err != nil {
-		return &entity.Course{}, err
-	}
-	err = uc.courseRepo.Join(ctx, userUuid, courseUuid)
-	if err != nil {
-		return &entity.Course{}, err
-	}
-	return uc.courseRepo.GetById(ctx, courseUuid)
+	return uc.courseRepo.GetById(ctx, courseId)
 }

@@ -40,7 +40,7 @@ func (uc AnswerUseCase) Answer(ctx context.Context, answer *entity.Answer) (*ent
 
 	answer.Verdict = verdict
 
-	return answer, uc.answerRepo.CreateOrUpdate(ctx, answer)
+	return answer, uc.answerRepo.Create(ctx, answer)
 }
 
 func (uc AnswerUseCase) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) entity.Verdict {

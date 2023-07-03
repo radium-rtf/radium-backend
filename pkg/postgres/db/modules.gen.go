@@ -28,6 +28,9 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 	tableName := _module.moduleDo.TableName()
 	_module.ALL = field.NewAsterisk(tableName)
 	_module.Id = field.NewField(tableName, "id")
+	_module.CreatedAt = field.NewTime(tableName, "created_at")
+	_module.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_module.DeletedAt = field.NewField(tableName, "deleted_at")
 	_module.Slug = field.NewString(tableName, "slug")
 	_module.Name = field.NewString(tableName, "name")
 	_module.CourseId = field.NewField(tableName, "course_id")
@@ -82,12 +85,15 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 type module struct {
 	moduleDo moduleDo
 
-	ALL      field.Asterisk
-	Id       field.Field
-	Slug     field.String
-	Name     field.String
-	CourseId field.Field
-	Pages    moduleHasManyPages
+	ALL       field.Asterisk
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
+	Slug      field.String
+	Name      field.String
+	CourseId  field.Field
+	Pages     moduleHasManyPages
 
 	fieldMap map[string]field.Expr
 }
@@ -105,6 +111,9 @@ func (m module) As(alias string) *module {
 func (m *module) updateTableName(table string) *module {
 	m.ALL = field.NewAsterisk(table)
 	m.Id = field.NewField(table, "id")
+	m.CreatedAt = field.NewTime(table, "created_at")
+	m.UpdatedAt = field.NewTime(table, "updated_at")
+	m.DeletedAt = field.NewField(table, "deleted_at")
 	m.Slug = field.NewString(table, "slug")
 	m.Name = field.NewString(table, "name")
 	m.CourseId = field.NewField(table, "course_id")
@@ -130,8 +139,11 @@ func (m *module) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *module) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 5)
+	m.fieldMap = make(map[string]field.Expr, 8)
 	m.fieldMap["id"] = m.Id
+	m.fieldMap["created_at"] = m.CreatedAt
+	m.fieldMap["updated_at"] = m.UpdatedAt
+	m.fieldMap["deleted_at"] = m.DeletedAt
 	m.fieldMap["slug"] = m.Slug
 	m.fieldMap["name"] = m.Name
 	m.fieldMap["course_id"] = m.CourseId

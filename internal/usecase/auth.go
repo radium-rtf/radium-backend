@@ -130,7 +130,6 @@ func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) 
 	}
 
 	return uc.verifyUser(ctx, user.Id)
-
 }
 
 func (uc AuthUseCase) verifyUser(ctx context.Context, id uuid.UUID) (entity.VerificationResult, error) {

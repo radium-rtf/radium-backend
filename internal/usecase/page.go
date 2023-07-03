@@ -27,12 +27,15 @@ func (uc PageUseCase) CreatePage(ctx context.Context, page entity.PageRequest) (
 
 func (uc PageUseCase) GetByID(ctx context.Context, id uuid.UUID, userId *uuid.UUID) (*entity.PageDto, error) {
 	page, err := uc.pageRepo.GetByID(ctx, id)
-	if userId == nil || err != nil {
+	if err != nil {
+		return nil, err
+	}
+	if userId == nil {
 		return uc.mapper.Page(page, map[uuid.UUID]*entity.Answer{}), err
 	}
 	sectionsIds := make([]uuid.UUID, 0, len(page.Sections))
 	for _, section := range page.Sections {
-		sectionsIds = append(sectionsIds, section.ID)
+		sectionsIds = append(sectionsIds, section.Id)
 	}
 	answers, err := uc.answerRepo.Get(ctx, *userId, sectionsIds)
 	if err != nil {

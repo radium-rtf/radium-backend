@@ -27,7 +27,10 @@ func newMultiChoiceSection(db *gorm.DB, opts ...gen.DOOption) multiChoiceSection
 
 	tableName := _multiChoiceSection.multiChoiceSectionDo.TableName()
 	_multiChoiceSection.ALL = field.NewAsterisk(tableName)
-	_multiChoiceSection.ID = field.NewField(tableName, "id")
+	_multiChoiceSection.Id = field.NewField(tableName, "id")
+	_multiChoiceSection.CreatedAt = field.NewTime(tableName, "created_at")
+	_multiChoiceSection.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_multiChoiceSection.DeletedAt = field.NewField(tableName, "deleted_at")
 	_multiChoiceSection.MaxScore = field.NewUint(tableName, "max_score")
 	_multiChoiceSection.Question = field.NewString(tableName, "question")
 	_multiChoiceSection.Answer = field.NewField(tableName, "answer")
@@ -44,7 +47,10 @@ type multiChoiceSection struct {
 	multiChoiceSectionDo multiChoiceSectionDo
 
 	ALL       field.Asterisk
-	ID        field.Field
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	MaxScore  field.Uint
 	Question  field.String
 	Answer    field.Field
@@ -67,7 +73,10 @@ func (m multiChoiceSection) As(alias string) *multiChoiceSection {
 
 func (m *multiChoiceSection) updateTableName(table string) *multiChoiceSection {
 	m.ALL = field.NewAsterisk(table)
-	m.ID = field.NewField(table, "id")
+	m.Id = field.NewField(table, "id")
+	m.CreatedAt = field.NewTime(table, "created_at")
+	m.UpdatedAt = field.NewTime(table, "updated_at")
+	m.DeletedAt = field.NewField(table, "deleted_at")
 	m.MaxScore = field.NewUint(table, "max_score")
 	m.Question = field.NewString(table, "question")
 	m.Answer = field.NewField(table, "answer")
@@ -98,8 +107,11 @@ func (m *multiChoiceSection) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (m *multiChoiceSection) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 7)
-	m.fieldMap["id"] = m.ID
+	m.fieldMap = make(map[string]field.Expr, 10)
+	m.fieldMap["id"] = m.Id
+	m.fieldMap["created_at"] = m.CreatedAt
+	m.fieldMap["updated_at"] = m.UpdatedAt
+	m.fieldMap["deleted_at"] = m.DeletedAt
 	m.fieldMap["max_score"] = m.MaxScore
 	m.fieldMap["question"] = m.Question
 	m.fieldMap["answer"] = m.Answer

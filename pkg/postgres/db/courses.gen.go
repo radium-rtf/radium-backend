@@ -28,6 +28,9 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 	tableName := _course.courseDo.TableName()
 	_course.ALL = field.NewAsterisk(tableName)
 	_course.Id = field.NewField(tableName, "id")
+	_course.CreatedAt = field.NewTime(tableName, "created_at")
+	_course.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_course.DeletedAt = field.NewField(tableName, "deleted_at")
 	_course.Name = field.NewString(tableName, "name")
 	_course.Slug = field.NewString(tableName, "slug")
 	_course.ShortDescription = field.NewString(tableName, "short_description")
@@ -167,6 +170,9 @@ type course struct {
 
 	ALL              field.Asterisk
 	Id               field.Field
+	CreatedAt        field.Time
+	UpdatedAt        field.Time
+	DeletedAt        field.Field
 	Name             field.String
 	Slug             field.String
 	ShortDescription field.String
@@ -197,6 +203,9 @@ func (c course) As(alias string) *course {
 func (c *course) updateTableName(table string) *course {
 	c.ALL = field.NewAsterisk(table)
 	c.Id = field.NewField(table, "id")
+	c.CreatedAt = field.NewTime(table, "created_at")
+	c.UpdatedAt = field.NewTime(table, "updated_at")
+	c.DeletedAt = field.NewField(table, "deleted_at")
 	c.Name = field.NewString(table, "name")
 	c.Slug = field.NewString(table, "slug")
 	c.ShortDescription = field.NewString(table, "short_description")
@@ -225,8 +234,11 @@ func (c *course) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *course) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 11)
+	c.fieldMap = make(map[string]field.Expr, 14)
 	c.fieldMap["id"] = c.Id
+	c.fieldMap["created_at"] = c.CreatedAt
+	c.fieldMap["updated_at"] = c.UpdatedAt
+	c.fieldMap["deleted_at"] = c.DeletedAt
 	c.fieldMap["name"] = c.Name
 	c.fieldMap["slug"] = c.Slug
 	c.fieldMap["short_description"] = c.ShortDescription

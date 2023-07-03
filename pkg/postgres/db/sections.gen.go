@@ -27,7 +27,10 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 
 	tableName := _section.sectionDo.TableName()
 	_section.ALL = field.NewAsterisk(tableName)
-	_section.ID = field.NewField(tableName, "id")
+	_section.Id = field.NewField(tableName, "id")
+	_section.CreatedAt = field.NewTime(tableName, "created_at")
+	_section.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_section.DeletedAt = field.NewField(tableName, "deleted_at")
 	_section.PageId = field.NewField(tableName, "page_id")
 	_section.Order = field.NewUint(tableName, "order")
 	_section.TextSection = sectionHasOneTextSection{
@@ -63,7 +66,10 @@ type section struct {
 	sectionDo sectionDo
 
 	ALL         field.Asterisk
-	ID          field.Field
+	Id          field.Field
+	CreatedAt   field.Time
+	UpdatedAt   field.Time
+	DeletedAt   field.Field
 	PageId      field.Field
 	Order       field.Uint
 	TextSection sectionHasOneTextSection
@@ -89,7 +95,10 @@ func (s section) As(alias string) *section {
 
 func (s *section) updateTableName(table string) *section {
 	s.ALL = field.NewAsterisk(table)
-	s.ID = field.NewField(table, "id")
+	s.Id = field.NewField(table, "id")
+	s.CreatedAt = field.NewTime(table, "created_at")
+	s.UpdatedAt = field.NewTime(table, "updated_at")
+	s.DeletedAt = field.NewField(table, "deleted_at")
 	s.PageId = field.NewField(table, "page_id")
 	s.Order = field.NewUint(table, "order")
 
@@ -114,8 +123,11 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
-	s.fieldMap["id"] = s.ID
+	s.fieldMap = make(map[string]field.Expr, 10)
+	s.fieldMap["id"] = s.Id
+	s.fieldMap["created_at"] = s.CreatedAt
+	s.fieldMap["updated_at"] = s.UpdatedAt
+	s.fieldMap["deleted_at"] = s.DeletedAt
 	s.fieldMap["page_id"] = s.PageId
 	s.fieldMap["order"] = s.Order
 

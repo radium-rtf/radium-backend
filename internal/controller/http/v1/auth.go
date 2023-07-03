@@ -47,7 +47,11 @@ func authToken(signingKey string) func(http.Handler) http.Handler {
 		}
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			tokenHeader := strings.Split(request.Header.Get("Authorization"), " ")
-			userId, _ := manager.ExtractUserId(tokenHeader)
+			var userId any
+			userId, err = manager.ExtractUserId(tokenHeader)
+			if err != nil {
+				userId = ""
+			}
 			ctx := context.WithValue(request.Context(), "userId", userId)
 			next.ServeHTTP(writer, request.WithContext(ctx))
 		})

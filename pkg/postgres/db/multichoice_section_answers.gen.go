@@ -28,6 +28,9 @@ func newMultichoiceSectionAnswer(db *gorm.DB, opts ...gen.DOOption) multichoiceS
 	tableName := _multichoiceSectionAnswer.multichoiceSectionAnswerDo.TableName()
 	_multichoiceSectionAnswer.ALL = field.NewAsterisk(tableName)
 	_multichoiceSectionAnswer.Id = field.NewField(tableName, "id")
+	_multichoiceSectionAnswer.CreatedAt = field.NewTime(tableName, "created_at")
+	_multichoiceSectionAnswer.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_multichoiceSectionAnswer.DeletedAt = field.NewField(tableName, "deleted_at")
 	_multichoiceSectionAnswer.OwnerID = field.NewField(tableName, "owner_id")
 	_multichoiceSectionAnswer.OwnerType = field.NewString(tableName, "owner_type")
 	_multichoiceSectionAnswer.Answer = field.NewField(tableName, "answer")
@@ -42,6 +45,9 @@ type multichoiceSectionAnswer struct {
 
 	ALL       field.Asterisk
 	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	OwnerID   field.Field
 	OwnerType field.String
 	Answer    field.Field
@@ -62,6 +68,9 @@ func (m multichoiceSectionAnswer) As(alias string) *multichoiceSectionAnswer {
 func (m *multichoiceSectionAnswer) updateTableName(table string) *multichoiceSectionAnswer {
 	m.ALL = field.NewAsterisk(table)
 	m.Id = field.NewField(table, "id")
+	m.CreatedAt = field.NewTime(table, "created_at")
+	m.UpdatedAt = field.NewTime(table, "updated_at")
+	m.DeletedAt = field.NewField(table, "deleted_at")
 	m.OwnerID = field.NewField(table, "owner_id")
 	m.OwnerType = field.NewString(table, "owner_type")
 	m.Answer = field.NewField(table, "answer")
@@ -89,8 +98,11 @@ func (m *multichoiceSectionAnswer) GetFieldByName(fieldName string) (field.Order
 }
 
 func (m *multichoiceSectionAnswer) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 4)
+	m.fieldMap = make(map[string]field.Expr, 7)
 	m.fieldMap["id"] = m.Id
+	m.fieldMap["created_at"] = m.CreatedAt
+	m.fieldMap["updated_at"] = m.UpdatedAt
+	m.fieldMap["deleted_at"] = m.DeletedAt
 	m.fieldMap["owner_id"] = m.OwnerID
 	m.fieldMap["owner_type"] = m.OwnerType
 	m.fieldMap["answer"] = m.Answer

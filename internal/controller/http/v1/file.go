@@ -17,6 +17,7 @@ func newFileRoutes(h chi.Router, useCase usecase.FileUseCase, signingKey string)
 	routes := fileRoutes{uc: useCase}
 
 	h.Route("/upload", func(r chi.Router) {
+		r.Use(authRequired(signingKey))
 		r.Post("/", handler(routes.uploadFile).HTTP)
 	})
 }

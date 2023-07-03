@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/dranikpg/dto-mapper"
@@ -32,9 +33,8 @@ func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey s
 // @Success     200 {object} entity.UserDto
 // @Router      /account [get]
 func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *appError {
-	userId := request.Context().Value("userId")
-	print(userId.(string))
-	user, err := r.uc.Account(request.Context(), userId.(string))
+	userId := request.Context().Value("userId").(uuid.UUID)
+	user, err := r.uc.Account(request.Context(), userId)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -46,7 +46,7 @@ func (r accountRoutes) account(w http.ResponseWriter, request *http.Request) *ap
 // @Tags  	    account
 // @Accept      json
 // @Produce     json
-// // @Security ApiKeyAuth
+// @Security ApiKeyAuth
 // @Param       request body entity.UpdateUserRequest true "Данные для обновления"
 // @Success     200
 // @Router      /account [patch]
@@ -56,7 +56,7 @@ func (r accountRoutes) update(w http.ResponseWriter, request *http.Request) *app
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	userId := request.Context().Value("userId").(string)
+	userId := request.Context().Value("userId").(uuid.UUID)
 	result, err := r.uc.UpdateUser(request.Context(), userId, update)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
@@ -80,7 +80,7 @@ func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *a
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	userId := request.Context().Value("userId").(string)
+	userId := request.Context().Value("userId").(uuid.UUID)
 	err = r.uc.UpdatePassword(request.Context(), userId, passwordUpdate)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
@@ -91,16 +91,16 @@ func (r accountRoutes) password(w http.ResponseWriter, request *http.Request) *a
 
 // @Tags account
 // @Security ApiKeyAuth
-// @Success      200   {object} entity.Course "ok"
+// @Success      200   {object} entity.CourseDto "ok"
 // @Router       /account/courses [get]
 func (r accountRoutes) getStudentCourses(w http.ResponseWriter, request *http.Request) *appError {
-	userId := request.Context().Value("userId").(string)
+	userId := request.Context().Value("userId").(uuid.UUID)
 	courses, err := r.uc.GetStudentCourses(request.Context(), userId)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	c := []entity.CourseDto{}
+	c := make([]entity.CourseDto, 0, len(courses))
 	dto.Map(&c, courses)
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, c)

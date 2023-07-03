@@ -28,6 +28,9 @@ func newAnswer(db *gorm.DB, opts ...gen.DOOption) answer {
 	tableName := _answer.answerDo.TableName()
 	_answer.ALL = field.NewAsterisk(tableName)
 	_answer.Id = field.NewField(tableName, "id")
+	_answer.CreatedAt = field.NewTime(tableName, "created_at")
+	_answer.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_answer.DeletedAt = field.NewField(tableName, "deleted_at")
 	_answer.Verdict = field.NewString(tableName, "verdict")
 	_answer.UserId = field.NewField(tableName, "user_id")
 	_answer.SectionId = field.NewField(tableName, "section_id")
@@ -59,6 +62,9 @@ type answer struct {
 
 	ALL       field.Asterisk
 	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
 	Verdict   field.String
 	UserId    field.Field
 	SectionId field.Field
@@ -84,6 +90,9 @@ func (a answer) As(alias string) *answer {
 func (a *answer) updateTableName(table string) *answer {
 	a.ALL = field.NewAsterisk(table)
 	a.Id = field.NewField(table, "id")
+	a.CreatedAt = field.NewTime(table, "created_at")
+	a.UpdatedAt = field.NewTime(table, "updated_at")
+	a.DeletedAt = field.NewField(table, "deleted_at")
 	a.Verdict = field.NewString(table, "verdict")
 	a.UserId = field.NewField(table, "user_id")
 	a.SectionId = field.NewField(table, "section_id")
@@ -109,8 +118,11 @@ func (a *answer) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *answer) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 7)
+	a.fieldMap = make(map[string]field.Expr, 10)
 	a.fieldMap["id"] = a.Id
+	a.fieldMap["created_at"] = a.CreatedAt
+	a.fieldMap["updated_at"] = a.UpdatedAt
+	a.fieldMap["deleted_at"] = a.DeletedAt
 	a.fieldMap["verdict"] = a.Verdict
 	a.fieldMap["user_id"] = a.UserId
 	a.fieldMap["section_id"] = a.SectionId

@@ -25,7 +25,7 @@ func (r GroupRepo) Create(ctx context.Context, group entity.Group) error {
 
 // TODO: проверить жестко
 func (r GroupRepo) JoinStudent(ctx context.Context, group entity.GroupJoin) error {
-	g, err := r.pg.Group.WithContext(ctx).Where(r.pg.Group.Id.Eq(group.GroupId.String())).Take()
+	g, err := r.pg.Group.WithContext(ctx).Where(r.pg.Group.Id.Eq(group.GroupId)).Take()
 	if err != nil {
 		return err
 	}

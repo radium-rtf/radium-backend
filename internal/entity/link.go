@@ -4,9 +4,14 @@ import "github.com/google/uuid"
 
 type (
 	Link struct {
-		Id       uuid.UUID `json:"id" gorm:"default:gen_random_uuid()"`
-		Name     string    `json:"name" gorm:"type:string"`
-		Link     string    `json:"link" gorm:"type:string"`
-		CourseId uuid.UUID `json:"courseId"`
+		DBModel
+		Name     string    `json:"name" gorm:"type:string; not null"`
+		Link     string    `json:"link" gorm:"type:string; not null"`
+		CourseId uuid.UUID `json:"courseId" gorm:"type:uuid; not null"`
+	}
+
+	LinkDto struct {
+		Name string `json:"name"`
+		Link string `json:"link"`
 	}
 )

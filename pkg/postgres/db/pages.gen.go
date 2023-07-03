@@ -28,6 +28,9 @@ func newPage(db *gorm.DB, opts ...gen.DOOption) page {
 	tableName := _page.pageDo.TableName()
 	_page.ALL = field.NewAsterisk(tableName)
 	_page.Id = field.NewField(tableName, "id")
+	_page.CreatedAt = field.NewTime(tableName, "created_at")
+	_page.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_page.DeletedAt = field.NewField(tableName, "deleted_at")
 	_page.Name = field.NewString(tableName, "name")
 	_page.Slug = field.NewString(tableName, "slug")
 	_page.ModuleId = field.NewField(tableName, "module_id")
@@ -65,12 +68,15 @@ func newPage(db *gorm.DB, opts ...gen.DOOption) page {
 type page struct {
 	pageDo pageDo
 
-	ALL      field.Asterisk
-	Id       field.Field
-	Name     field.String
-	Slug     field.String
-	ModuleId field.Field
-	Sections pageHasManySections
+	ALL       field.Asterisk
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
+	Name      field.String
+	Slug      field.String
+	ModuleId  field.Field
+	Sections  pageHasManySections
 
 	fieldMap map[string]field.Expr
 }
@@ -88,6 +94,9 @@ func (p page) As(alias string) *page {
 func (p *page) updateTableName(table string) *page {
 	p.ALL = field.NewAsterisk(table)
 	p.Id = field.NewField(table, "id")
+	p.CreatedAt = field.NewTime(table, "created_at")
+	p.UpdatedAt = field.NewTime(table, "updated_at")
+	p.DeletedAt = field.NewField(table, "deleted_at")
 	p.Name = field.NewString(table, "name")
 	p.Slug = field.NewString(table, "slug")
 	p.ModuleId = field.NewField(table, "module_id")
@@ -113,8 +122,11 @@ func (p *page) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *page) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 5)
+	p.fieldMap = make(map[string]field.Expr, 8)
 	p.fieldMap["id"] = p.Id
+	p.fieldMap["created_at"] = p.CreatedAt
+	p.fieldMap["updated_at"] = p.UpdatedAt
+	p.fieldMap["deleted_at"] = p.DeletedAt
 	p.fieldMap["name"] = p.Name
 	p.fieldMap["slug"] = p.Slug
 	p.fieldMap["module_id"] = p.ModuleId

@@ -18,12 +18,12 @@ type (
 	}
 
 	GroupJoin struct {
-		UserId, GroupId uuid.UUID
+		UserId, GroupId uuid.UUID `gorm:"type:uuid"`
 	}
 
 	Group struct {
-		Id       uuid.UUID `gorm:"default:gen_random_uuid()"`
-		Name     string
+		DBModel
+		Name     string `gorm:"not null"`
 		Students []User `gorm:"many2many:group_student"`
 	}
 

@@ -28,6 +28,9 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 	tableName := _group.groupDo.TableName()
 	_group.ALL = field.NewAsterisk(tableName)
 	_group.Id = field.NewField(tableName, "id")
+	_group.CreatedAt = field.NewTime(tableName, "created_at")
+	_group.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_group.DeletedAt = field.NewField(tableName, "deleted_at")
 	_group.Name = field.NewString(tableName, "name")
 	_group.Students = groupManyToManyStudents{
 		db: db.Session(&gorm.Session{}),
@@ -178,10 +181,13 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 type group struct {
 	groupDo groupDo
 
-	ALL      field.Asterisk
-	Id       field.Field
-	Name     field.String
-	Students groupManyToManyStudents
+	ALL       field.Asterisk
+	Id        field.Field
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	DeletedAt field.Field
+	Name      field.String
+	Students  groupManyToManyStudents
 
 	fieldMap map[string]field.Expr
 }
@@ -199,6 +205,9 @@ func (g group) As(alias string) *group {
 func (g *group) updateTableName(table string) *group {
 	g.ALL = field.NewAsterisk(table)
 	g.Id = field.NewField(table, "id")
+	g.CreatedAt = field.NewTime(table, "created_at")
+	g.UpdatedAt = field.NewTime(table, "updated_at")
+	g.DeletedAt = field.NewField(table, "deleted_at")
 	g.Name = field.NewString(table, "name")
 
 	g.fillFieldMap()
@@ -222,8 +231,11 @@ func (g *group) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (g *group) fillFieldMap() {
-	g.fieldMap = make(map[string]field.Expr, 3)
+	g.fieldMap = make(map[string]field.Expr, 6)
 	g.fieldMap["id"] = g.Id
+	g.fieldMap["created_at"] = g.CreatedAt
+	g.fieldMap["updated_at"] = g.UpdatedAt
+	g.fieldMap["deleted_at"] = g.DeletedAt
 	g.fieldMap["name"] = g.Name
 
 }

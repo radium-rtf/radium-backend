@@ -43,13 +43,13 @@ func (r sectionRoutes) createSection(w http.ResponseWriter, request *http.Reques
 	if err != nil {
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
-
-	section, err := r.uc.CreateSection(request.Context(), *sectionRequest)
+	section := r.mapper.PostToSection(sectionRequest)
+	section, err = r.uc.CreateSection(request.Context(), section)
 	if err != nil {
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
 
-	dto := r.mapper.Section(*section, entity.VerdictEMPTY)
+	dto := r.mapper.Section(section, entity.VerdictEMPTY)
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, dto)
 
