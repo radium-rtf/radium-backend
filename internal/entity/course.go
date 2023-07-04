@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"github.com/radium-rtf/radium-backend/pkg/translit"
 
 	"github.com/google/uuid"
 )
@@ -11,14 +12,14 @@ var (
 )
 
 type (
-	CourseRequest struct {
+	CoursePost struct {
 		Name             string      `json:"name"`
 		ShortDescription string      `json:"shortDescription"`
 		Description      string      `json:"description"`
 		Logo             string      `json:"logo"`
 		Banner           string      `json:"banner"`
 		Authors          []uuid.UUID `json:"authors"`
-		Links            []Link      `json:"links"`
+		Links            []LinkDto   `json:"links"`
 	}
 
 	Course struct {
@@ -29,8 +30,8 @@ type (
 		Description      string  `gorm:"not null"`
 		Logo             string  `gorm:"not null"`
 		Banner           string  `json:"banner"`
-		Authors          []User  `gorm:"many2many:course_authors"`
-		Students         []*User `gorm:"many2many:course_students"`
+		Authors          []User  `gorm:"many2many:course_authors;"`
+		Students         []*User `gorm:"many2many:course_students;"`
 		Links            []Link
 		Modules          []*Module
 	}
@@ -50,17 +51,22 @@ type (
 	}
 )
 
-func NewCourse(c CourseRequest) *Course {
+func NewCourse(c CoursePost) *Course {
 	authorsRes := make([]User, 0)
 	for _, v := range c.Authors {
 		authorsRes = append(authorsRes, User{DBModel: DBModel{Id: v}})
 	}
+	linksRes := make([]Link, 0)
+	for _, v := range c.Links {
+		linksRes = append(linksRes, Link{Name: v.Link, Link: v.Link})
+	}
 	return &Course{
 		Name:             c.Name,
+		Slug:             translit.RuEn(c.Name),
 		ShortDescription: c.ShortDescription,
 		Description:      c.Description,
 		Logo:             c.Logo,
 		Authors:          authorsRes,
-		Links:            c.Links,
+		Links:            linksRes,
 	}
 }

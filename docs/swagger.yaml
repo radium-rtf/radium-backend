@@ -72,7 +72,7 @@ definitions:
       slug:
         type: string
     type: object
-  entity.CourseRequest:
+  entity.CoursePost:
     properties:
       authors:
         items:
@@ -84,7 +84,7 @@ definitions:
         type: string
       links:
         items:
-          $ref: '#/definitions/entity.Link'
+          $ref: '#/definitions/entity.LinkDto'
         type: array
       logo:
         type: string
@@ -96,23 +96,6 @@ definitions:
   entity.FileDto:
     properties:
       location:
-        type: string
-    type: object
-  entity.Link:
-    properties:
-      courseId:
-        type: string
-      createdAt:
-        type: string
-      deletedAt:
-        type: string
-      id:
-        type: string
-      link:
-        type: string
-      name:
-        type: string
-      updatedAt:
         type: string
     type: object
   entity.LinkDto:
@@ -135,7 +118,7 @@ definitions:
       slug:
         type: string
     type: object
-  entity.ModuleRequest:
+  entity.ModulePost:
     properties:
       courseId:
         type: string
@@ -192,7 +175,7 @@ definitions:
       slug:
         type: string
     type: object
-  entity.PageRequest:
+  entity.PagePost:
     properties:
       moduleId:
         type: string
@@ -488,7 +471,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.CourseRequest'
+          $ref: '#/definitions/entity.CoursePost'
       responses:
         "201":
           description: created
@@ -511,6 +494,27 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/entity.CourseDto'
+      tags:
+      - course
+  /course/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: по умолчанию soft
+        in: query
+        name: is_soft
+        type: boolean
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
       tags:
       - course
   /course/join/{courseId}:
@@ -570,7 +574,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.ModuleRequest'
+          $ref: '#/definitions/entity.ModulePost'
       responses:
         "201":
           description: created
@@ -580,15 +584,36 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /module/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: по умолчанию soft
+        in: query
+        name: is_soft
+        type: boolean
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
   /page:
     post:
       parameters:
-      - description: создание слайда
+      - description: создание
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.PageRequest'
+          $ref: '#/definitions/entity.PagePost'
       responses:
         "201":
           description: ok
@@ -599,6 +624,26 @@ paths:
       tags:
       - page
   /page/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: по умолчанию soft
+        in: query
+        name: is_soft
+        type: boolean
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - page
     get:
       parameters:
       - description: page id
@@ -631,6 +676,27 @@ paths:
           description: created
           schema:
             $ref: '#/definitions/entity.SectionDto'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /section/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: по умолчанию soft
+        in: query
+        name: is_soft
+        type: boolean
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
       tags:

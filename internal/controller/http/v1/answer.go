@@ -15,15 +15,14 @@ type answerRoutes struct {
 	mapper mapper.Answer
 }
 
-func newAnswerRoutes(h chi.Router, useCase usecase.AnswerUseCase, signingString string) {
+func newAnswerRoutes(useCase usecase.AnswerUseCase, signingString string) *chi.Mux {
 	routes := answerRoutes{uc: useCase}
-
-	h.Route("/answer", func(r chi.Router) {
-		r.Group(func(r chi.Router) {
-			r.Use(authRequired(signingString))
-			r.Post("/", handler(routes.createAnswer).HTTP)
-		})
+	r := chi.NewRouter()
+	r.Group(func(r chi.Router) {
+		r.Use(authRequired(signingString))
+		r.Post("/", handler(routes.createAnswer).HTTP)
 	})
+	return r
 }
 
 // @Tags answer
@@ -45,7 +44,7 @@ func (r answerRoutes) createAnswer(w http.ResponseWriter, request *http.Request)
 
 	dto := r.mapper.Answer(answer)
 
-	render.Status(request, http.StatusOK)
+	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, dto)
 	return nil
 }

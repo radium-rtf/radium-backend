@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	"gorm.io/gen/field"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -36,4 +37,16 @@ func (r SectionRepo) GetSectionById(ctx context.Context, id uuid.UUID) (*entity.
 		Preload(field.Associations).
 		Where(r.pg.Section.Id.Eq(id)).
 		First()
+}
+
+func (r SectionRepo) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	s := r.pg.Section.WithContext(ctx)
+	if !destroy.IsSoft {
+		s = s.Unscoped()
+	}
+	info, err := s.Where(r.pg.Section.Id.Eq(destroy.Id)).Delete()
+	if err == nil && info.RowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }

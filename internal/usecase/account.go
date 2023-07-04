@@ -31,7 +31,7 @@ func (uc AccountUseCase) Account(ctx context.Context, userId uuid.UUID) (entity.
 }
 
 func (uc AccountUseCase) UpdateUser(ctx context.Context, userId uuid.UUID, update entity.UpdateUserRequest) (entity.UserDto, error) {
-	result, err := uc.userRepo.UpdateUser(ctx, userId, update)
+	result, err := uc.userRepo.Update(ctx, userId, update)
 	if err != nil {
 		return entity.UserDto{}, err
 	}

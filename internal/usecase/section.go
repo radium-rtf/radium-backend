@@ -19,3 +19,7 @@ func NewSectionUseCase(pg *db.Query) SectionUseCase {
 func (uc SectionUseCase) CreateSection(ctx context.Context, section *entity.Section) (*entity.Section, error) {
 	return uc.sectionRepo.CreateSection(ctx, section)
 }
+
+func (uc SectionUseCase) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	return uc.sectionRepo.Delete(ctx, destroy)
+}

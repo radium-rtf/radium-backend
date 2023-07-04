@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
 var (
@@ -27,16 +26,8 @@ type (
 		Sections []*SectionDto `json:"sections"`
 	}
 
-	PageRequest struct {
+	PagePost struct {
 		ModuleId uuid.UUID `json:"moduleId"`
 		Name     string    `json:"name"`
 	}
 )
-
-func NewPageRequestToPage(page PageRequest) Page {
-	return Page{
-		Name:     page.Name,
-		ModuleId: page.ModuleId,
-		Slug:     translit.RuEn(page.Name),
-	}
-}

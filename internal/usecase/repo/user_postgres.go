@@ -82,7 +82,7 @@ func (r UserRepo) SetVerificationCode(ctx context.Context, id uuid.UUID, code st
 	return r.updateColumn(ctx, r.pg.User.Id.Eq(id), r.pg.User.VerificationCode, code)
 }
 
-func (r UserRepo) VerifyUser(ctx context.Context, id uuid.UUID) error {
+func (r UserRepo) Verify(ctx context.Context, id uuid.UUID) error {
 	return r.updateColumn(ctx, r.pg.User.Id.Eq(id), r.pg.User.IsVerified, true)
 }
 
@@ -90,7 +90,7 @@ func (r UserRepo) UpdatePassword(ctx context.Context, id uuid.UUID, password str
 	return r.updateColumn(ctx, r.pg.User.Id.Eq(id), r.pg.User.Password, password)
 }
 
-func (r UserRepo) UpdateUser(ctx context.Context, id uuid.UUID, update entity.UpdateUserRequest) (*entity.User, error) {
+func (r UserRepo) Update(ctx context.Context, id uuid.UUID, update entity.UpdateUserRequest) (*entity.User, error) {
 	m := structs.Map(update)
 	utils.RemoveEmptyMapFields(m)
 
@@ -102,4 +102,16 @@ func (r UserRepo) UpdateUser(ctx context.Context, id uuid.UUID, update entity.Up
 		return nil, errors.New("not found")
 	}
 	return r.GetById(ctx, id)
+}
+
+func (r UserRepo) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	s := r.pg.User.WithContext(ctx)
+	if !destroy.IsSoft {
+		s = s.Unscoped()
+	}
+	info, err := s.Where(r.pg.User.Id.Eq(destroy.Id)).Delete()
+	if err == nil && info.RowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }

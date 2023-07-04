@@ -20,7 +20,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 
 	authUseCase := usecase.NewAuthUseCase(pg, cfg)
 	accountUseCase := usecase.NewAccountUseCase(pg, cfg)
-	courseUseCase := usecase.NewCourseUseCase(pg, storage)
+	courseUseCase := usecase.NewCourseUseCase(pg)
 	fileUseCase := usecase.NewFileUseCase(storage)
 	// _ = usecase.NewGroupUseCase(pg)
 	answerUseCase := usecase.NewAnswerUseCase(pg)
@@ -29,17 +29,17 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 	sectionUseCase := usecase.NewSectionUseCase(pg)
 
 	h.Route("/v1", func(v1 chi.Router) {
-		newAuthRoutes(v1, authUseCase)
-		newAccountRoutes(v1, accountUseCase, cfg.SigningKey)
+		v1.Mount("/auth", newAuthRoutes(authUseCase))
+		v1.Mount("/account", newAccountRoutes(accountUseCase, cfg.SigningKey))
 
-		newCourseRoutes(v1, courseUseCase, cfg.SigningKey)
-		newFileRoutes(v1, fileUseCase, cfg.SigningKey)
-		newModuleRoutes(v1, moduleUseCase, cfg.SigningKey)
+		v1.Mount("/course", newCourseRoutes(courseUseCase, cfg.SigningKey))
+
+		v1.Mount("/upload", newFileRoutes(fileUseCase, cfg.SigningKey))
+		v1.Mount("/module", newModuleRoutes(moduleUseCase, cfg.SigningKey))
 
 		// 	newGroupRoutes(v1, groupUseCase, cfg.SigningKey)
-
-		newAnswerRoutes(v1, answerUseCase, cfg.SigningKey)
-		newPageRoutes(v1, pageUseCase, cfg.SigningKey)
-		newSectionRoutes(v1, sectionUseCase, cfg.SigningKey)
+		v1.Mount("/answer", newAnswerRoutes(answerUseCase, cfg.SigningKey))
+		v1.Mount("/page", newPageRoutes(pageUseCase, cfg.SigningKey))
+		v1.Mount("/section", newSectionRoutes(sectionUseCase, cfg.SigningKey))
 	})
 }

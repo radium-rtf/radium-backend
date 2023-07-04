@@ -16,36 +16,37 @@ type pageRoutes struct {
 	mapper mapper.Page
 }
 
-func newPageRoutes(h chi.Router, useCase usecase.PageUseCase, signingString string) {
+func newPageRoutes(useCase usecase.PageUseCase, signingString string) *chi.Mux {
 	routes := pageRoutes{uc: useCase}
 
-	h.Route("/page", func(r chi.Router) {
-		// r.Get("/{slideId}", handler(routes.getSlideSections).HTTP)
-		// r.Get/("/{courseId}/{moduleNameEng}", handler(routes.getSlides).HTTP)
-		r.Get("/{id}", handler(routes.getById).HTTP)
-		r.Group(func(r chi.Router) {
-			r.Use(authToken(signingString))
-			r.Get("/{id}", handler(routes.getById).HTTP)
-		})
+	r := chi.NewRouter()
 
-		r.Group(func(r chi.Router) {
-			r.Use(authRequired(signingString))
-			r.Post("/", handler(routes.postSlide).HTTP)
-		})
+	r.Group(func(r chi.Router) {
+		r.Use(authToken(signingString))
+		r.Get("/{id}", handler(routes.getById).HTTP)
 	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(authRequired(signingString))
+		r.Post("/", handler(routes.post).HTTP)
+		r.Delete("/{id}", handler(routes.delete).HTTP)
+	})
+
+	return r
 }
 
 // @Tags page
 // @Security ApiKeyAuth
-// @Param       request body entity.PageRequest true "создание слайда"
+// @Param       request body entity.PagePost true "создание"
 // @Success      201   {object} entity.PageDto "ok"
 // @Router      /page [post]
-func (r pageRoutes) postSlide(w http.ResponseWriter, request *http.Request) *appError {
-	var pageRequest entity.PageRequest
-	if err := render.DecodeJSON(request.Body, &pageRequest); err != nil {
+func (r pageRoutes) post(w http.ResponseWriter, request *http.Request) *appError {
+	var post entity.PagePost
+	if err := render.DecodeJSON(request.Body, &post); err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
-	pageDto, err := r.uc.CreatePage(request.Context(), pageRequest)
+	page := r.mapper.NewPostToPage(&post)
+	pageDto, err := r.uc.CreatePage(request.Context(), page)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -106,22 +107,24 @@ func (r pageRoutes) getById(w http.ResponseWriter, request *http.Request) *appEr
 // 	return nil
 // }
 
-// // @Tags slide
-// // @Security ApiKeyAuth
-// // @Param        slideId   path      integer  true  "slide id"
-// // @Success      201   {object} entity.SlideSections "ok"
-// // @Router      /slide/{slideId} [get]
-// func (r slideRoutes) getSlideSections(w http.ResponseWriter, request *http.Request) *appError {
-// 	slideId, err := strconv.Atoi(chi.URLParam(request, "slideId"))
-// 	if err != nil {
-// 		return newAppError(err, http.StatusBadRequest)
-// 	}
-// 	slideSectionsRequest := entity.SlideSectionsRequest{SlideId: uint(slideId)}
-// 	slide, err := r.uc.GetSlideSections(request.Context(), slideSectionsRequest)
-// 	if err != nil {
-// 		return newAppError(err, http.StatusBadRequest)
-// 	}
-// 	render.Status(request, http.StatusOK)
-// 	render.JSON(w, request, slide)
-// 	return nil
-// }
+// @Tags page
+// @Security ApiKeyAuth
+// @Accept json
+// @Param        id   path      string  true  "id"
+// @Param   is_soft     query     boolean    false  "по умолчанию soft"
+// @Success 200
+// @Router /page/{id} [delete]
+func (r pageRoutes) delete(w http.ResponseWriter, request *http.Request) *appError {
+	destroy, err := newDestroy(request)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	err = r.uc.Delete(request.Context(), destroy)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return nil
+}

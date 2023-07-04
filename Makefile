@@ -1,5 +1,5 @@
 swag:
-	swag init -g internal/controller/http/v1/router.go
+	swag init -g ./internal/controller/http/v1/router.go
 .PHONY: swag
 
 migrate-create:

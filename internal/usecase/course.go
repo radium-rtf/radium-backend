@@ -6,21 +6,19 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type CourseUseCase struct {
-	storage    filestorage.Storage
 	courseRepo repo.CourseRepo
 }
 
-func NewCourseUseCase(pg *db.Query, storage filestorage.Storage) CourseUseCase {
-	return CourseUseCase{storage: storage, courseRepo: repo.NewCourseRepo(pg)}
+func NewCourseUseCase(pg *db.Query) CourseUseCase {
+	return CourseUseCase{courseRepo: repo.NewCourseRepo(pg)}
 }
 
-func (uc CourseUseCase) CreateCourse(ctx context.Context, courseRequest entity.CourseRequest) (*entity.Course, error) {
-	course, err := uc.courseRepo.Create(ctx, courseRequest)
+func (uc CourseUseCase) CreateCourse(ctx context.Context, course *entity.Course) (*entity.Course, error) {
+	course, err := uc.courseRepo.Create(ctx, course)
 	if err != nil {
 		return &entity.Course{}, err
 	}
@@ -45,4 +43,8 @@ func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uui
 		return &entity.Course{}, err
 	}
 	return uc.courseRepo.GetById(ctx, courseId)
+}
+
+func (uc CourseUseCase) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	return uc.courseRepo.Delete(ctx, destroy)
 }

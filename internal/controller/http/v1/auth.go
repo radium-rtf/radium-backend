@@ -58,15 +58,17 @@ func authToken(signingKey string) func(http.Handler) http.Handler {
 	}
 }
 
-func newAuthRoutes(h chi.Router, useCase usecase.AuthUseCase) {
+func newAuthRoutes(useCase usecase.AuthUseCase) *chi.Mux {
+	r := chi.NewRouter()
 	emailPattern, _ := regexp.Compile("[a-zA-Z.]@urfu.(me|ru)")
 	routes := authRoutes{uc: useCase, emailPattern: emailPattern}
-	h.Route("/auth", func(r chi.Router) {
-		r.Post("/signIn", handler(routes.signIn).HTTP)
-		r.Post("/signUp", handler(routes.signUp).HTTP)
-		r.Post("/refresh", handler(routes.refresh).HTTP)
-		r.Post("/verify", handler(routes.verify).HTTP)
-	})
+
+	r.Post("/signIn", handler(routes.signIn).HTTP)
+	r.Post("/signUp", handler(routes.signUp).HTTP)
+	r.Post("/refresh", handler(routes.refresh).HTTP)
+	r.Post("/verify", handler(routes.verify).HTTP)
+
+	return r
 }
 
 // @Tags  	    auth

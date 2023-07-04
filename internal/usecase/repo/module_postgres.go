@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -15,10 +16,21 @@ func NewModuleRepo(pg *db.Query) ModuleRepo {
 	return ModuleRepo{pg: pg}
 }
 
-func (r ModuleRepo) Create(ctx context.Context, module entity.ModuleRequest) (entity.Module, error) {
-	m := entity.NewModuleRequestToModule(module)
-	err := r.pg.Module.WithContext(ctx).Create(&m)
-	return m, err
+func (r ModuleRepo) Create(ctx context.Context, module *entity.Module) (*entity.Module, error) {
+	err := r.pg.Module.WithContext(ctx).Create(module)
+	return module, err
+}
+
+func (r ModuleRepo) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	m := r.pg.Module.WithContext(ctx)
+	if !destroy.IsSoft {
+		m = m.Unscoped()
+	}
+	info, err := m.Where(r.pg.Module.Id.Eq(destroy.Id)).Delete()
+	if err == nil && info.RowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }
 
 // func (r ModuleRepo) GetModules(ctx context.Context, id int) (entity.CourseModules, error) {
@@ -43,27 +55,6 @@ func (r ModuleRepo) Create(ctx context.Context, module entity.ModuleRequest) (en
 // 	// 	return modules, err
 // 	// }
 // 	// return modules, json.NewDecoder(strings.NewReader(modulesJson)).Decode(&modules)
-// }
-
-// func (r ModuleRepo) GetModuleId(ctx context.Context, courseId uint, nameEng string) (uint, error) {
-// 	var moduleId uint
-// 	sql, args, err := r.pg.Builder.
-// 		Select("id").From("modules").
-// 		Where(sq.And{sq.Eq{"course_id": courseId}, sq.Eq{"name_eng": nameEng}}).Limit(1).
-// 		ToSql()
-// 	if err != nil {
-// 		return moduleId, err
-// 	}
-// 	rows, err := r.pg.Pool.Query(ctx, sql, args...)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	defer rows.Close()
-// 	if !rows.Next() {
-// 		return 0, entity.ModulesNotFoundErr
-// 	}
-// 	err = rows.Scan(&moduleId)
-// 	return moduleId, err
 // }
 
 // func (r ModuleRepo) Get(ctx context.Context, moduleId entity.SlidesRequest) (entity.ModuleSlides, error) {

@@ -15,15 +15,17 @@ type accountRoutes struct {
 	uc usecase.AccountUseCase
 }
 
-func newAccountRoutes(h chi.Router, useCase usecase.AccountUseCase, signingKey string) {
+func newAccountRoutes(useCase usecase.AccountUseCase, signingKey string) *chi.Mux {
+	r := chi.NewRouter()
 	routes := accountRoutes{uc: useCase}
-	h.Route("/account", func(r chi.Router) {
-		r.Use(authRequired(signingKey))
-		r.Get("/", handler(routes.account).HTTP)
-		r.Get("/courses", handler(routes.getStudentCourses).HTTP)
-		r.Patch("/", handler(routes.update).HTTP)
-		r.Patch("/password", handler(routes.password).HTTP)
-	})
+
+	r.Use(authRequired(signingKey))
+	r.Get("/", handler(routes.account).HTTP)
+	r.Get("/courses", handler(routes.getStudentCourses).HTTP)
+	r.Patch("/", handler(routes.update).HTTP)
+	r.Patch("/password", handler(routes.password).HTTP)
+
+	return r
 }
 
 // @Tags  	    account

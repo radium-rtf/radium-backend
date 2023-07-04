@@ -21,8 +21,13 @@ func NewPageUseCase(pg *db.Query) PageUseCase {
 	return PageUseCase{pageRepo: repo.NewPageRepo(pg), moduleRepo: repo.NewModuleRepo(pg), answerRepo: repo.NewAnswerRepo(pg)}
 }
 
-func (uc PageUseCase) CreatePage(ctx context.Context, page entity.PageRequest) (*entity.Page, error) {
-	return uc.pageRepo.Create(ctx, page)
+func (uc PageUseCase) CreatePage(ctx context.Context, page *entity.Page) (*entity.PageDto, error) {
+	page, err := uc.pageRepo.Create(ctx, page)
+	if err != nil {
+		return nil, err
+	}
+	p := uc.mapper.Page(page, map[uuid.UUID]*entity.Answer{})
+	return p, nil
 }
 
 func (uc PageUseCase) GetByID(ctx context.Context, id uuid.UUID, userId *uuid.UUID) (*entity.PageDto, error) {
@@ -43,6 +48,10 @@ func (uc PageUseCase) GetByID(ctx context.Context, id uuid.UUID, userId *uuid.UU
 	}
 	p := uc.mapper.Page(page, answers)
 	return p, err
+}
+
+func (uc PageUseCase) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	return uc.pageRepo.Delete(ctx, destroy)
 }
 
 // func (uc SlideUseCase) GetSlides(ctx context.Context, slide entity.SlidesRequest) (entity.ModuleSlides, error) {

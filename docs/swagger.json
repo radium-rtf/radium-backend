@@ -285,7 +285,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseRequest"
+                            "$ref": "#/definitions/entity.CoursePost"
                         }
                     }
                 ],
@@ -376,6 +376,41 @@
                 }
             }
         },
+        "/course/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/join/group/{groupId}": {
             "patch": {
                 "security": [
@@ -422,7 +457,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.ModuleRequest"
+                            "$ref": "#/definitions/entity.ModulePost"
                         }
                     }
                 ],
@@ -432,6 +467,41 @@
                         "schema": {
                             "$ref": "#/definitions/entity.ModuleDto"
                         }
+                    }
+                }
+            }
+        },
+        "/module/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -448,12 +518,12 @@
                 ],
                 "parameters": [
                     {
-                        "description": "создание слайда",
+                        "description": "создание",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.PageRequest"
+                            "$ref": "#/definitions/entity.PagePost"
                         }
                     }
                 ],
@@ -494,6 +564,39 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             }
         },
         "/section": {
@@ -526,6 +629,41 @@
                         "schema": {
                             "$ref": "#/definitions/entity.SectionDto"
                         }
+                    }
+                }
+            }
+        },
+        "/section/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -710,7 +848,7 @@
                 }
             }
         },
-        "entity.CourseRequest": {
+        "entity.CoursePost": {
             "type": "object",
             "properties": {
                 "authors": {
@@ -728,7 +866,7 @@
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Link"
+                        "$ref": "#/definitions/entity.LinkDto"
                     }
                 },
                 "logo": {
@@ -746,32 +884,6 @@
             "type": "object",
             "properties": {
                 "location": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Link": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -807,7 +919,7 @@
                 }
             }
         },
-        "entity.ModuleRequest": {
+        "entity.ModulePost": {
             "type": "object",
             "properties": {
                 "courseId": {
@@ -895,7 +1007,7 @@
                 }
             }
         },
-        "entity.PageRequest": {
+        "entity.PagePost": {
             "type": "object",
             "properties": {
                 "moduleId": {

@@ -13,13 +13,13 @@ type fileRoutes struct {
 	uc usecase.FileUseCase
 }
 
-func newFileRoutes(h chi.Router, useCase usecase.FileUseCase, signingKey string) {
+func newFileRoutes(useCase usecase.FileUseCase, signingKey string) *chi.Mux {
 	routes := fileRoutes{uc: useCase}
 
-	h.Route("/upload", func(r chi.Router) {
-		r.Use(authRequired(signingKey))
-		r.Post("/", handler(routes.uploadFile).HTTP)
-	})
+	r := chi.NewRouter()
+	r.Use(authRequired(signingKey))
+	r.Post("/", handler(routes.uploadFile).HTTP)
+	return r
 }
 
 // @Tags file

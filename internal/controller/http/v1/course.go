@@ -18,42 +18,45 @@ type courseRoutes struct {
 	uc usecase.CourseUseCase
 }
 
-func newCourseRoutes(h chi.Router, useCase usecase.CourseUseCase, signingKey string) {
+func newCourseRoutes(useCase usecase.CourseUseCase, signingKey string) *chi.Mux {
 	routes := courseRoutes{uc: useCase}
+	r := chi.NewRouter()
 
-	h.Route("/course", func(r chi.Router) {
-		r.Get("/", handler(routes.getCourses).HTTP)
-		r.Get("/{courseId}", handler(routes.getCourse).HTTP)
-		r.Get("/slug/{slug}", handler(routes.getCourseBySlug).HTTP)
+	r.Get("/", handler(routes.getCourses).HTTP)
+	r.Get("/{courseId}", handler(routes.getCourse).HTTP)
+	r.Get("/slug/{slug}", handler(routes.getCourseBySlug).HTTP)
 
-		r.Group(func(r chi.Router) {
-			r.Use(authRequired(signingKey))
-			r.Post("/", handler(routes.postCourse).HTTP)
-			r.Patch("/join/{courseId}", handler(routes.join).HTTP)
-		})
+	r.Group(func(r chi.Router) {
+		r.Use(authRequired(signingKey))
+		r.Post("/", handler(routes.postCourse).HTTP)
+		r.Patch("/join/{courseId}", handler(routes.join).HTTP)
+		r.Delete("/{id}", handler(routes.delete).HTTP)
 	})
 
-	h.Group(func(r chi.Router) {
+	r.Group(func(r chi.Router) {
 		// r.Use(authRequired(signingKey))
 		// r.Post("/link/course", handler(routes.postLink).HTTP)
 		// r.Post("/join/course/{courseId}", handler(routes.join).HTTP)
 	})
+
+	return r
 }
 
 // @Tags course
 // @Security ApiKeyAuth
 // @Accept       json
-// @Param request body entity.CourseRequest true "Данные о курсе"
+// @Param request body entity.CoursePost true "Данные о курсе"
 // @Success      201   {object} entity.CourseDto       "created"
 // @Router       /course [post]
 func (r courseRoutes) postCourse(w http.ResponseWriter, request *http.Request) *appError {
-	courseRequest := &entity.CourseRequest{}
+	courseRequest := &entity.CoursePost{}
 	err := json.NewDecoder(request.Body).Decode(&courseRequest)
 	if err != nil {
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
 
-	course, err := r.uc.CreateCourse(request.Context(), *courseRequest)
+	course := entity.NewCourse(*courseRequest)
+	course, err = r.uc.CreateCourse(request.Context(), course)
 	if err != nil {
 		return newAppError(err, http.StatusBadRequest)
 	}
@@ -141,5 +144,27 @@ func (r courseRoutes) join(w http.ResponseWriter, request *http.Request) *appErr
 	}
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, courses)
+	return nil
+}
+
+// @Tags course
+// @Security ApiKeyAuth
+// @Accept json
+// @Param        id   path      string  true  "id"
+// @Param   is_soft     query     boolean    false  "по умолчанию soft"
+// @Success 200
+// @Router /course/{id} [delete]
+func (r courseRoutes) delete(w http.ResponseWriter, request *http.Request) *appError {
+	destroy, err := newDestroy(request)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	err = r.uc.Delete(request.Context(), destroy)
+	if err != nil {
+		return newAppError(err, http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
 	return nil
 }

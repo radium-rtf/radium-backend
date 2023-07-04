@@ -293,7 +293,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseRequest"
+                            "$ref": "#/definitions/entity.CoursePost"
                         }
                     }
                 ],
@@ -384,6 +384,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/course/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/join/group/{groupId}": {
             "patch": {
                 "security": [
@@ -430,7 +465,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.ModuleRequest"
+                            "$ref": "#/definitions/entity.ModulePost"
                         }
                     }
                 ],
@@ -440,6 +475,41 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/entity.ModuleDto"
                         }
+                    }
+                }
+            }
+        },
+        "/module/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -456,12 +526,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "создание слайда",
+                        "description": "создание",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.PageRequest"
+                            "$ref": "#/definitions/entity.PagePost"
                         }
                     }
                 ],
@@ -502,6 +572,39 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             }
         },
         "/section": {
@@ -534,6 +637,41 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/entity.SectionDto"
                         }
+                    }
+                }
+            }
+        },
+        "/section/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -718,7 +856,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.CourseRequest": {
+        "entity.CoursePost": {
             "type": "object",
             "properties": {
                 "authors": {
@@ -736,7 +874,7 @@ const docTemplate = `{
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Link"
+                        "$ref": "#/definitions/entity.LinkDto"
                     }
                 },
                 "logo": {
@@ -754,32 +892,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "location": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Link": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -815,7 +927,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ModuleRequest": {
+        "entity.ModulePost": {
             "type": "object",
             "properties": {
                 "courseId": {
@@ -903,7 +1015,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.PageRequest": {
+        "entity.PagePost": {
             "type": "object",
             "properties": {
                 "moduleId": {

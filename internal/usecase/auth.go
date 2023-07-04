@@ -133,7 +133,7 @@ func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) 
 }
 
 func (uc AuthUseCase) verifyUser(ctx context.Context, id uuid.UUID) (entity.VerificationResult, error) {
-	err := uc.userRepo.VerifyUser(ctx, id)
+	err := uc.userRepo.Verify(ctx, id)
 	if err != nil {
 		return entity.VerificationResult{Success: false}, err
 	}

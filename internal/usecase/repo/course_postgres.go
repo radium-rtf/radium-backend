@@ -2,11 +2,11 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
 	"gorm.io/gen"
 )
 
@@ -18,9 +18,7 @@ func NewCourseRepo(pg *db.Query) CourseRepo {
 	return CourseRepo{pg: pg}
 }
 
-func (r CourseRepo) Create(ctx context.Context, c entity.CourseRequest) (*entity.Course, error) {
-	course := entity.NewCourse(c)
-	course.Slug = translit.RuEn(c.Name)
+func (r CourseRepo) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {
 	err := r.pg.Course.WithContext(ctx).Preload(r.pg.Course.Authors).Create(course)
 	if err != nil {
 		return &entity.Course{}, err
@@ -49,16 +47,20 @@ func (r CourseRepo) GetCourses(ctx context.Context) ([]*entity.Course, error) {
 
 func (r CourseRepo) get(ctx context.Context, where ...gen.Condition) ([]*entity.Course, error) {
 	c := r.pg.Course
+	s := c.Modules.Pages.Sections
 	return c.WithContext(ctx).Debug().
-		Preload(c.Links, c.Authors, c.Modules.Pages.Sections).
+		Preload(c.Links, c.Authors).
+		Preload(c.Modules.Pages.Sections, s.Order(r.pg.Section.Order)).
 		Where(where...).
 		Find()
 }
 
 func (r CourseRepo) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
 	c := r.pg.Course
+	sections := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors, c.Modules).
+		Preload(sections, sections.Order(r.pg.Section.Order)).
 		Where(c.Id.Eq(id)).Take()
 	return course, err
 }
@@ -68,8 +70,10 @@ func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Cour
 	s := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors, c.Modules.Pages).
-		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.MultiChoiceSection).
-		Where(c.Id.Eq(id)).Take()
+		Preload(s, s.Order(r.pg.Section.Order)).
+		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection).
+		Where(c.Id.Eq(id)).
+		Take()
 	return course, err
 }
 
@@ -77,7 +81,8 @@ func (r CourseRepo) GetFullBySlug(ctx context.Context, slug string) (*entity.Cou
 	c := r.pg.Course
 	course, err := c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors, c.Modules.Pages).
-		Where(c.Slug.Eq(slug)).Take()
+		Where(c.Slug.Eq(slug)).
+		Take()
 	return course, err
 }
 
@@ -129,4 +134,16 @@ func (r CourseRepo) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*enti
 	}
 
 	return courses, nil
+}
+
+func (r CourseRepo) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	c := r.pg.Course.WithContext(ctx)
+	if !destroy.IsSoft {
+		c = c.Unscoped()
+	}
+	info, err := c.Where(r.pg.Course.Id.Eq(destroy.Id)).Delete()
+	if err == nil && info.RowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }

@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -16,13 +17,12 @@ func NewPageRepo(pg *db.Query) PageRepo {
 	return PageRepo{pg: pg}
 }
 
-func (r PageRepo) Create(ctx context.Context, page entity.PageRequest) (*entity.Page, error) {
-	p := entity.NewPageRequestToPage(page)
-	err := r.pg.Page.WithContext(ctx).Create(&p)
+func (r PageRepo) Create(ctx context.Context, page *entity.Page) (*entity.Page, error) {
+	err := r.pg.Page.WithContext(ctx).Create(page)
 	if err != nil {
 		return &entity.Page{}, err
 	}
-	return &p, err
+	return page, err
 }
 
 func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
@@ -35,6 +35,18 @@ func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, erro
 		Preload(s.ShortAnswerSection).
 		Where(r.pg.Page.Id.Eq(id)).
 		Take()
+}
+
+func (r PageRepo) Delete(ctx context.Context, destroy *entity.Destroy) error {
+	p := r.pg.Page.WithContext(ctx)
+	if !destroy.IsSoft {
+		p = p.Unscoped()
+	}
+	info, err := p.Where(r.pg.Page.Id.Eq(destroy.Id)).Delete()
+	if err == nil && info.RowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }
 
 // TODO: перенос в module
