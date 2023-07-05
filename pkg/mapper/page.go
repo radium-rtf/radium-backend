@@ -20,6 +20,14 @@ func (p Page) Page(page *entity.Page, answers map[uuid.UUID]*entity.Answer) *ent
 	}
 }
 
+func (p Page) Pages(pages []*entity.Page, answers map[uuid.UUID]*entity.Answer) []*entity.PageDto {
+	dtos := make([]*entity.PageDto, 0, len(pages))
+	for _, page := range pages {
+		dtos = append(dtos, p.Page(page, answers))
+	}
+	return dtos
+}
+
 func (p Page) NewPostToPage(page *entity.PagePost) *entity.Page {
 	return &entity.Page{
 		DBModel:  entity.DBModel{Id: uuid.New()},

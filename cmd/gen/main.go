@@ -11,7 +11,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = postgres.New(cfg.URL)
+	err = postgres.Gen(cfg.URL)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -8,50 +8,6 @@ import (
 type Section struct {
 }
 
-func (Section) MultiChoice(section *entity.MultiChoiceSection, verdict entity.Verdict) *entity.MultiChoiceSectionDto {
-	if section == nil {
-		return nil
-	}
-	return &entity.MultiChoiceSectionDto{
-		MaxScore: section.MaxScore,
-		Verdict:  verdict,
-		Question: section.Question,
-		Variants: section.Variants,
-	}
-}
-
-func (Section) Choice(section *entity.ChoiceSection, verdict entity.Verdict) *entity.ChoiceSectionDto {
-	if section == nil {
-		return nil
-	}
-	return &entity.ChoiceSectionDto{
-		MaxScore: section.MaxScore,
-		Question: section.Question,
-		Variants: section.Variants,
-		Verdict:  verdict,
-	}
-}
-
-func (Section) ShortAnswer(section *entity.ShortAnswerSection, verdict entity.Verdict) *entity.ShortAnswerSectionDto {
-	if section == nil {
-		return nil
-	}
-	return &entity.ShortAnswerSectionDto{
-		MaxScore: section.MaxScore,
-		Question: section.Question,
-		Verdict:  verdict,
-	}
-}
-
-func (Section) Text(section *entity.TextSection) *entity.TextSectionDto {
-	if section == nil {
-		return nil
-	}
-	return &entity.TextSectionDto{
-		Content: section.Content,
-	}
-}
-
 func (s Section) Sections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) []*entity.SectionDto {
 	dtos := make([]*entity.SectionDto, 0, len(sections))
 	for _, section := range sections {
@@ -66,14 +22,25 @@ func (s Section) Sections(sections []*entity.Section, answers map[uuid.UUID]*ent
 }
 
 func (s Section) Section(section *entity.Section, verdict entity.Verdict) *entity.SectionDto {
+	var sectionType entity.SectionType
+	if section.MultiChoiceSection != nil {
+		sectionType = entity.MultiChoiceType
+	} else if section.ChoiceSection != nil {
+		sectionType = entity.ChoiceType
+	} else if section.TextSection != nil {
+		sectionType = entity.TextType
+	} else if section.ShortAnswerSection != nil {
+		sectionType = entity.ShortAnswerType
+	}
 	return &entity.SectionDto{
-		Id:                 section.Id,
-		PageId:             section.PageId,
-		Order:              section.Order,
-		TextSection:        s.Text(section.TextSection),
-		ChoiceSection:      s.Choice(section.ChoiceSection, verdict),
-		ShortAnswerSection: s.ShortAnswer(section.ShortAnswerSection, verdict),
-		MultiChoiceSection: s.MultiChoice(section.MultiChoiceSection, verdict),
+		Id:       section.Id,
+		PageId:   section.PageId,
+		Order:    section.Order,
+		Content:  section.Content(),
+		MaxScore: section.MaxScore(),
+		Verdict:  verdict,
+		Variants: section.Variants(),
+		Type:     sectionType,
 	}
 }
 

@@ -5,7 +5,16 @@ import (
 	"github.com/lib/pq"
 )
 
+const (
+	ChoiceType      = SectionType("choice")
+	MultiChoiceType = SectionType("multiChoice")
+	TextType        = SectionType("text")
+	ShortAnswerType = SectionType("shortAnswer")
+)
+
 type (
+	SectionType string
+
 	SectionPost struct {
 		PageId uuid.UUID `gorm:"type:uuid; not null"`
 		Order  uint      `gorm:"not null"`
@@ -52,13 +61,14 @@ type (
 	}
 
 	SectionDto struct {
-		Id                 uuid.UUID              `json:"id"`
-		PageId             uuid.UUID              `json:"pageId"`
-		Order              uint                   `json:"order"`
-		TextSection        *TextSectionDto        `json:"text,omitempty"`
-		ChoiceSection      *ChoiceSectionDto      `json:"choice,omitempty"`
-		MultiChoiceSection *MultiChoiceSectionDto `json:"multichoice,omitempty"`
-		ShortAnswerSection *ShortAnswerSectionDto `json:"shortanswer,omitempty"`
+		Id       uuid.UUID   `json:"id"`
+		PageId   uuid.UUID   `json:"pageId"`
+		Order    uint        `json:"order"`
+		Type     SectionType `json:"type"`
+		Content  string      `json:"content"`
+		MaxScore uint        `json:"maxScore"`
+		Variants []string    `json:"variants"`
+		Verdict  Verdict     `json:"verdict"`
 	}
 
 	TextSection struct {
@@ -66,10 +76,6 @@ type (
 		Content   string    `gorm:"type:text; not null"`
 		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
 		OwnerType string    `gorm:"not null"`
-	}
-
-	TextSectionDto struct {
-		Content string `json:"content"`
 	}
 
 	ChoiceSection struct {
@@ -82,13 +88,6 @@ type (
 		OwnerType string         `gorm:"not null"`
 	}
 
-	ChoiceSectionDto struct {
-		MaxScore uint     `json:"maxScore"`
-		Question string   `json:"question"`
-		Variants []string `json:"variants"`
-		Verdict  Verdict  `json:"verdict"`
-	}
-
 	MultiChoiceSection struct {
 		DBModel
 		MaxScore  uint           `gorm:"not null"`
@@ -99,14 +98,6 @@ type (
 		OwnerType string         `gorm:"not null"`
 	}
 
-	MultiChoiceSectionDto struct {
-		MaxScore uint     `json:"maxScore"`
-		Question string   `json:"question"`
-		Variants []string `json:"variants"`
-		Score    uint     `json:"score"`
-		Verdict  Verdict  `json:"verdict"`
-	}
-
 	ShortAnswerSection struct {
 		DBModel
 		MaxScore  uint      `gorm:"not null"`
@@ -115,10 +106,46 @@ type (
 		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
 		OwnerType string    `gorm:"not null"`
 	}
-
-	ShortAnswerSectionDto struct {
-		MaxScore uint    `json:"maxScore"`
-		Question string  `json:"question"`
-		Verdict  Verdict `json:"verdict"`
-	}
 )
+
+func (s Section) Content() string {
+	if s.ChoiceSection != nil {
+		return s.ChoiceSection.Question
+	}
+	if s.MultiChoiceSection != nil {
+		return s.MultiChoiceSection.Question
+	}
+	if s.ShortAnswerSection != nil {
+		return s.ShortAnswerSection.Question
+	}
+	if s.TextSection != nil {
+		return s.TextSection.Content
+	}
+	return ""
+}
+
+func (s Section) MaxScore() uint {
+	if s.ChoiceSection != nil { // TODO: ПЕРЕНЕСТИ В SECTION
+		return s.ChoiceSection.MaxScore
+	}
+	if s.MultiChoiceSection != nil {
+		return s.MultiChoiceSection.MaxScore
+	}
+	if s.ShortAnswerSection != nil {
+		return s.ShortAnswerSection.MaxScore
+	}
+	if s.TextSection != nil {
+		return 0
+	}
+	return 0
+}
+
+func (s Section) Variants() []string {
+	if s.ChoiceSection != nil {
+		return s.ChoiceSection.Variants
+	}
+	if s.MultiChoiceSection != nil {
+		return s.MultiChoiceSection.Variants
+	}
+	return []string{}
+}

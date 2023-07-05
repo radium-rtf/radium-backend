@@ -771,26 +771,6 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ChoiceSectionDto": {
-            "type": "object",
-            "properties": {
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "verdict": {
-                    "type": "string"
-                }
-            }
-        },
         "entity.ChoiceSectionPost": {
             "type": "object",
             "properties": {
@@ -938,29 +918,6 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.MultiChoiceSectionDto": {
-            "type": "object",
-            "properties": {
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "integer"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "verdict": {
-                    "type": "string"
-                }
-            }
-        },
         "entity.MultiChoiceSectionPost": {
             "type": "object",
             "properties": {
@@ -1048,14 +1005,14 @@ const docTemplate = `{
         "entity.SectionDto": {
             "type": "object",
             "properties": {
-                "choice": {
-                    "$ref": "#/definitions/entity.ChoiceSectionDto"
+                "content": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "multichoice": {
-                    "$ref": "#/definitions/entity.MultiChoiceSectionDto"
+                "maxScore": {
+                    "type": "integer"
                 },
                 "order": {
                     "type": "integer"
@@ -1063,11 +1020,17 @@ const docTemplate = `{
                 "pageId": {
                     "type": "string"
                 },
-                "shortanswer": {
-                    "$ref": "#/definitions/entity.ShortAnswerSectionDto"
+                "type": {
+                    "type": "string"
                 },
-                "text": {
-                    "$ref": "#/definitions/entity.TextSectionDto"
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "verdict": {
+                    "type": "string"
                 }
             }
         },
@@ -1098,20 +1061,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ShortAnswerSectionDto": {
-            "type": "object",
-            "properties": {
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "verdict": {
                     "type": "string"
                 }
             }
@@ -1151,14 +1100,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.TextSectionDto": {
-            "type": "object",
-            "properties": {
-                "content": {
                     "type": "string"
                 }
             }

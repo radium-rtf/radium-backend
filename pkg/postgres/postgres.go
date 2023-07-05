@@ -13,6 +13,20 @@ func New(url string) (*db.Query, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = Gen(url)
+	if err != nil {
+		return nil, err
+	}
+	Q := db.Use(gormDb)
+
+	return Q, err
+}
+
+func Gen(url string) error {
+	gormDb, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	if err != nil {
+		return err
+	}
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./pkg/postgres/db",
 		Mode:    gen.WithQueryInterface,
@@ -55,11 +69,8 @@ func New(url string) (*db.Query, error) {
 		entity.MultichoiceSectionAnswer{},
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	g.Execute()
-
-	Q := db.Use(gormDb)
-
-	return Q, err
+	return nil
 }

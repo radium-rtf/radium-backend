@@ -16,19 +16,6 @@ definitions:
       answer:
         type: string
     type: object
-  entity.ChoiceSectionDto:
-    properties:
-      maxScore:
-        type: integer
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-      verdict:
-        type: string
-    type: object
   entity.ChoiceSectionPost:
     properties:
       answer:
@@ -125,21 +112,6 @@ definitions:
       name:
         type: string
     type: object
-  entity.MultiChoiceSectionDto:
-    properties:
-      maxScore:
-        type: integer
-      question:
-        type: string
-      score:
-        type: integer
-      variants:
-        items:
-          type: string
-        type: array
-      verdict:
-        type: string
-    type: object
   entity.MultiChoiceSectionPost:
     properties:
       answer:
@@ -196,20 +168,24 @@ definitions:
     type: object
   entity.SectionDto:
     properties:
-      choice:
-        $ref: '#/definitions/entity.ChoiceSectionDto'
+      content:
+        type: string
       id:
         type: string
-      multichoice:
-        $ref: '#/definitions/entity.MultiChoiceSectionDto'
+      maxScore:
+        type: integer
       order:
         type: integer
       pageId:
         type: string
-      shortanswer:
-        $ref: '#/definitions/entity.ShortAnswerSectionDto'
-      text:
-        $ref: '#/definitions/entity.TextSectionDto'
+      type:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+      verdict:
+        type: string
     type: object
   entity.SectionPost:
     properties:
@@ -229,15 +205,6 @@ definitions:
   entity.ShortAnswerSectionAnswerPost:
     properties:
       answer:
-        type: string
-    type: object
-  entity.ShortAnswerSectionDto:
-    properties:
-      maxScore:
-        type: integer
-      question:
-        type: string
-      verdict:
         type: string
     type: object
   entity.ShortAnswerSectionPost:
@@ -263,11 +230,6 @@ definitions:
       name:
         type: string
       password:
-        type: string
-    type: object
-  entity.TextSectionDto:
-    properties:
-      content:
         type: string
     type: object
   entity.TextSectionPost:

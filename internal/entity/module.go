@@ -25,9 +25,9 @@ type (
 	}
 
 	ModuleDto struct {
-		Id    uuid.UUID `json:"id"`
-		Slug  string    `json:"slug"`
-		Name  string    `json:"name"`
-		Pages []PageDto `json:"pages"`
+		Id    uuid.UUID  `json:"id"`
+		Slug  string     `json:"slug"`
+		Name  string     `json:"name"`
+		Pages []*PageDto `json:"pages"`
 	}
 )

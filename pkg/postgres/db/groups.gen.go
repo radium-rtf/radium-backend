@@ -32,143 +32,160 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 	_group.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_group.DeletedAt = field.NewField(tableName, "deleted_at")
 	_group.Name = field.NewString(tableName, "name")
+	_group.Courses = groupManyToManyCourses{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Courses", "entity.Course"),
+		Links: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Courses.Links", "entity.Link"),
+		},
+		Modules: struct {
+			field.RelationField
+			Pages struct {
+				field.RelationField
+				Sections struct {
+					field.RelationField
+					TextSection struct {
+						field.RelationField
+					}
+					ChoiceSection struct {
+						field.RelationField
+					}
+					MultiChoiceSection struct {
+						field.RelationField
+					}
+					ShortAnswerSection struct {
+						field.RelationField
+					}
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Courses.Modules", "entity.Module"),
+			Pages: struct {
+				field.RelationField
+				Sections struct {
+					field.RelationField
+					TextSection struct {
+						field.RelationField
+					}
+					ChoiceSection struct {
+						field.RelationField
+					}
+					MultiChoiceSection struct {
+						field.RelationField
+					}
+					ShortAnswerSection struct {
+						field.RelationField
+					}
+				}
+			}{
+				RelationField: field.NewRelation("Courses.Modules.Pages", "entity.Page"),
+				Sections: struct {
+					field.RelationField
+					TextSection struct {
+						field.RelationField
+					}
+					ChoiceSection struct {
+						field.RelationField
+					}
+					MultiChoiceSection struct {
+						field.RelationField
+					}
+					ShortAnswerSection struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Courses.Modules.Pages.Sections", "entity.Section"),
+					TextSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.TextSection", "entity.TextSection"),
+					},
+					ChoiceSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.ChoiceSection", "entity.ChoiceSection"),
+					},
+					MultiChoiceSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.MultiChoiceSection", "entity.MultiChoiceSection"),
+					},
+					ShortAnswerSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+					},
+				},
+			},
+		},
+		Authors: struct {
+			field.RelationField
+			Sessions struct {
+				field.RelationField
+			}
+			Courses struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Courses.Authors", "entity.User"),
+			Sessions: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Courses.Authors.Sessions", "entity.Session"),
+			},
+			Courses: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Courses.Authors.Courses", "entity.Course"),
+			},
+		},
+		Students: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Courses.Students", "entity.User"),
+		},
+	}
+
 	_group.Students = groupManyToManyStudents{
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Students", "entity.User"),
-		Sessions: struct {
+	}
+
+	_group.Teachers = groupManyToManyTeachers{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Teachers", "entity.Teacher"),
+		Group: struct {
 			field.RelationField
-		}{
-			RelationField: field.NewRelation("Students.Sessions", "entity.Session"),
-		},
-		Courses: struct {
-			field.RelationField
-			Links struct {
-				field.RelationField
-			}
-			Modules struct {
-				field.RelationField
-				Pages struct {
-					field.RelationField
-					Sections struct {
-						field.RelationField
-						TextSection struct {
-							field.RelationField
-						}
-						ChoiceSection struct {
-							field.RelationField
-						}
-						MultiChoiceSection struct {
-							field.RelationField
-						}
-						ShortAnswerSection struct {
-							field.RelationField
-						}
-					}
-				}
-			}
-			Authors struct {
+			Courses struct {
 				field.RelationField
 			}
 			Students struct {
 				field.RelationField
 			}
+			Teachers struct {
+				field.RelationField
+			}
 		}{
-			RelationField: field.NewRelation("Students.Courses", "entity.Course"),
-			Links: struct {
+			RelationField: field.NewRelation("Teachers.Group", "entity.Group"),
+			Courses: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("Students.Courses.Links", "entity.Link"),
-			},
-			Modules: struct {
-				field.RelationField
-				Pages struct {
-					field.RelationField
-					Sections struct {
-						field.RelationField
-						TextSection struct {
-							field.RelationField
-						}
-						ChoiceSection struct {
-							field.RelationField
-						}
-						MultiChoiceSection struct {
-							field.RelationField
-						}
-						ShortAnswerSection struct {
-							field.RelationField
-						}
-					}
-				}
-			}{
-				RelationField: field.NewRelation("Students.Courses.Modules", "entity.Module"),
-				Pages: struct {
-					field.RelationField
-					Sections struct {
-						field.RelationField
-						TextSection struct {
-							field.RelationField
-						}
-						ChoiceSection struct {
-							field.RelationField
-						}
-						MultiChoiceSection struct {
-							field.RelationField
-						}
-						ShortAnswerSection struct {
-							field.RelationField
-						}
-					}
-				}{
-					RelationField: field.NewRelation("Students.Courses.Modules.Pages", "entity.Page"),
-					Sections: struct {
-						field.RelationField
-						TextSection struct {
-							field.RelationField
-						}
-						ChoiceSection struct {
-							field.RelationField
-						}
-						MultiChoiceSection struct {
-							field.RelationField
-						}
-						ShortAnswerSection struct {
-							field.RelationField
-						}
-					}{
-						RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections", "entity.Section"),
-						TextSection: struct {
-							field.RelationField
-						}{
-							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.TextSection", "entity.TextSection"),
-						},
-						ChoiceSection: struct {
-							field.RelationField
-						}{
-							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.ChoiceSection", "entity.ChoiceSection"),
-						},
-						MultiChoiceSection: struct {
-							field.RelationField
-						}{
-							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.MultiChoiceSection", "entity.MultiChoiceSection"),
-						},
-						ShortAnswerSection: struct {
-							field.RelationField
-						}{
-							RelationField: field.NewRelation("Students.Courses.Modules.Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
-						},
-					},
-				},
-			},
-			Authors: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Students.Courses.Authors", "entity.User"),
+				RelationField: field.NewRelation("Teachers.Group.Courses", "entity.Course"),
 			},
 			Students: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("Students.Courses.Students", "entity.User"),
+				RelationField: field.NewRelation("Teachers.Group.Students", "entity.User"),
+			},
+			Teachers: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Teachers.Group.Teachers", "entity.Teacher"),
 			},
 		},
 	}
@@ -187,7 +204,11 @@ type group struct {
 	UpdatedAt field.Time
 	DeletedAt field.Field
 	Name      field.String
-	Students  groupManyToManyStudents
+	Courses   groupManyToManyCourses
+
+	Students groupManyToManyStudents
+
+	Teachers groupManyToManyTeachers
 
 	fieldMap map[string]field.Expr
 }
@@ -231,7 +252,7 @@ func (g *group) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (g *group) fillFieldMap() {
-	g.fieldMap = make(map[string]field.Expr, 6)
+	g.fieldMap = make(map[string]field.Expr, 8)
 	g.fieldMap["id"] = g.Id
 	g.fieldMap["created_at"] = g.CreatedAt
 	g.fieldMap["updated_at"] = g.UpdatedAt
@@ -250,47 +271,118 @@ func (g group) replaceDB(db *gorm.DB) group {
 	return g
 }
 
-type groupManyToManyStudents struct {
+type groupManyToManyCourses struct {
 	db *gorm.DB
 
 	field.RelationField
 
-	Sessions struct {
+	Links struct {
 		field.RelationField
 	}
-	Courses struct {
+	Modules struct {
 		field.RelationField
-		Links struct {
+		Pages struct {
 			field.RelationField
-		}
-		Modules struct {
-			field.RelationField
-			Pages struct {
+			Sections struct {
 				field.RelationField
-				Sections struct {
+				TextSection struct {
 					field.RelationField
-					TextSection struct {
-						field.RelationField
-					}
-					ChoiceSection struct {
-						field.RelationField
-					}
-					MultiChoiceSection struct {
-						field.RelationField
-					}
-					ShortAnswerSection struct {
-						field.RelationField
-					}
+				}
+				ChoiceSection struct {
+					field.RelationField
+				}
+				MultiChoiceSection struct {
+					field.RelationField
+				}
+				ShortAnswerSection struct {
+					field.RelationField
 				}
 			}
 		}
-		Authors struct {
+	}
+	Authors struct {
+		field.RelationField
+		Sessions struct {
 			field.RelationField
 		}
-		Students struct {
+		Courses struct {
 			field.RelationField
 		}
 	}
+	Students struct {
+		field.RelationField
+	}
+}
+
+func (a groupManyToManyCourses) Where(conds ...field.Expr) *groupManyToManyCourses {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a groupManyToManyCourses) WithContext(ctx context.Context) *groupManyToManyCourses {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a groupManyToManyCourses) Session(session *gorm.Session) *groupManyToManyCourses {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a groupManyToManyCourses) Model(m *entity.Group) *groupManyToManyCoursesTx {
+	return &groupManyToManyCoursesTx{a.db.Model(m).Association(a.Name())}
+}
+
+type groupManyToManyCoursesTx struct{ tx *gorm.Association }
+
+func (a groupManyToManyCoursesTx) Find() (result []*entity.Course, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a groupManyToManyCoursesTx) Append(values ...*entity.Course) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a groupManyToManyCoursesTx) Replace(values ...*entity.Course) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a groupManyToManyCoursesTx) Delete(values ...*entity.Course) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a groupManyToManyCoursesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a groupManyToManyCoursesTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type groupManyToManyStudents struct {
+	db *gorm.DB
+
+	field.RelationField
 }
 
 func (a groupManyToManyStudents) Where(conds ...field.Expr) *groupManyToManyStudents {
@@ -355,6 +447,90 @@ func (a groupManyToManyStudentsTx) Clear() error {
 }
 
 func (a groupManyToManyStudentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type groupManyToManyTeachers struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Group struct {
+		field.RelationField
+		Courses struct {
+			field.RelationField
+		}
+		Students struct {
+			field.RelationField
+		}
+		Teachers struct {
+			field.RelationField
+		}
+	}
+}
+
+func (a groupManyToManyTeachers) Where(conds ...field.Expr) *groupManyToManyTeachers {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a groupManyToManyTeachers) WithContext(ctx context.Context) *groupManyToManyTeachers {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a groupManyToManyTeachers) Session(session *gorm.Session) *groupManyToManyTeachers {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a groupManyToManyTeachers) Model(m *entity.Group) *groupManyToManyTeachersTx {
+	return &groupManyToManyTeachersTx{a.db.Model(m).Association(a.Name())}
+}
+
+type groupManyToManyTeachersTx struct{ tx *gorm.Association }
+
+func (a groupManyToManyTeachersTx) Find() (result []*entity.Teacher, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a groupManyToManyTeachersTx) Append(values ...*entity.Teacher) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a groupManyToManyTeachersTx) Replace(values ...*entity.Teacher) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a groupManyToManyTeachersTx) Delete(values ...*entity.Teacher) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a groupManyToManyTeachersTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a groupManyToManyTeachersTx) Count() int64 {
 	return a.tx.Count()
 }
 

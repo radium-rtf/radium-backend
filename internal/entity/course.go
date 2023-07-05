@@ -41,13 +41,13 @@ type (
 		Name string    `json:"name" gorm:"type:string"`
 		Slug string    `json:"slug"`
 
-		ShortDescription string      `json:"shortDescription"`
-		Description      string      `json:"description"`
-		Logo             string      `json:"logo"`
-		Banner           string      `json:"banner"`
-		Authors          []UserDto   `json:"authors"`
-		Links            []LinkDto   `json:"links"`
-		Modules          []ModuleDto `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
+		ShortDescription string       `json:"shortDescription"`
+		Description      string       `json:"description"`
+		Logo             string       `json:"logo"`
+		Banner           string       `json:"banner"`
+		Authors          []UserDto    `json:"authors"`
+		Links            []LinkDto    `json:"links"`
+		Modules          []*ModuleDto `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
 	}
 )
 

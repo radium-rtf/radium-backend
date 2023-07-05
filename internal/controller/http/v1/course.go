@@ -3,6 +3,7 @@ package v1
 import (
 	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/pkg/mapper"
 	"net/http"
 
 	"github.com/dranikpg/dto-mapper"
@@ -15,7 +16,8 @@ import (
 )
 
 type courseRoutes struct {
-	uc usecase.CourseUseCase
+	uc     usecase.CourseUseCase
+	mapper mapper.Course
 }
 
 func newCourseRoutes(useCase usecase.CourseUseCase, signingKey string) *chi.Mux {
@@ -102,8 +104,7 @@ func (r courseRoutes) getCourse(w http.ResponseWriter, request *http.Request) *a
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	c := entity.CourseDto{}
-	dto.Map(&c, course)
+	c := r.mapper.ToDto(course)
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, c)
 	return nil
@@ -120,8 +121,8 @@ func (r courseRoutes) getCourseBySlug(w http.ResponseWriter, request *http.Reque
 		return newAppError(err, http.StatusBadRequest)
 	}
 
-	c := entity.CourseDto{}
-	dto.Map(&c, course)
+	c := r.mapper.ToDto(course)
+
 	render.Status(request, http.StatusOK)
 	render.JSON(w, request, c)
 	return nil

@@ -26,14 +26,12 @@ func (r PageRepo) Create(ctx context.Context, page *entity.Page) (*entity.Page, 
 }
 
 func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
-	s := r.pg.Page.Sections
-	return r.pg.Page.WithContext(ctx).
-		Preload(r.pg.Page.Sections).
-		Preload(s.TextSection).
-		Preload(s.ChoiceSection).
-		Preload(s.MultiChoiceSection).
-		Preload(s.ShortAnswerSection).
-		Where(r.pg.Page.Id.Eq(id)).
+	p := r.pg.Page
+	s := p.Sections
+	return p.WithContext(ctx).Debug().
+		Preload(s, s.Order(r.pg.Section.Order)).
+		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection).
+		Where(p.Id.Eq(id)).
 		Take()
 }
 

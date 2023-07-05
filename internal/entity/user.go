@@ -29,10 +29,6 @@ type (
 		Avatar string `json:"avatar"`
 	}
 
-	UserName struct {
-		Name string `json:"name"`
-	}
-
 	PasswordUpdate struct {
 		New     string `json:"new"`
 		Current string `json:"current"`
