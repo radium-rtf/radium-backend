@@ -21,6 +21,7 @@ type (
 		VerificationCode string
 		IsVerified       bool
 		Courses          []*Course `gorm:"many2many:course_students"`
+		Groups           []*Group  `gorm:"many2many:group_student"`
 		Sessions         []Session
 	}
 

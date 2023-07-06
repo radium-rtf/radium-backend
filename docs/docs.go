@@ -307,7 +307,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/course/join/{courseId}": {
+        "/course/invite/{courseId}": {
             "patch": {
                 "security": [
                     {
@@ -419,7 +419,56 @@ const docTemplate = `{
                 }
             }
         },
-        "/join/group/{groupId}": {
+        "/group": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.GroupPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/invite/{inviteCode}": {
             "patch": {
                 "security": [
                     {
@@ -432,15 +481,44 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "group id",
-                        "name": "groupId",
+                        "description": "inviteCode",
+                        "name": "inviteCode",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "created",
+                        "description": " ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "groupId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
                         "schema": {
                             "type": "string"
                         }
@@ -676,7 +754,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/teacher/{userId}/group/{groupId}": {
+        "/teacher": {
             "post": {
                 "security": [
                     {
@@ -684,27 +762,42 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "group"
+                    "teacher"
                 ],
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "user id",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "group id",
-                        "name": "groupId",
-                        "in": "path",
-                        "required": true
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.TeacherPost"
+                        }
                     }
                 ],
                 "responses": {
                     "201": {
                         "description": "created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/teacher/courses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
                         "schema": {
                             "type": "string"
                         }
@@ -873,6 +966,26 @@ const docTemplate = `{
             "properties": {
                 "location": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.GroupPost": {
+            "type": "object",
+            "properties": {
+                "coursesIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "studentsIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -1100,6 +1213,31 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.TeacherCoursePost": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.TeacherPost": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.TeacherCoursePost"
+                    }
+                },
+                "teacherId": {
                     "type": "string"
                 }
             }

@@ -5,19 +5,30 @@ import "github.com/google/uuid"
 type (
 	Teacher struct {
 		DBModel
-		UserId uuid.UUID
-		Group  []Group `gorm:"many2many:group_teacher"`
+		UserId  uuid.UUID `gorm:"uniqueIndex; type:uuid"`
+		Courses []*TeacherCourse
+	}
+
+	TeacherCourse struct {
+		TeacherId uuid.UUID `gorm:"type:uuid; primaryKey"`
+		CourseId  uuid.UUID `gorm:"type:uuid; primaryKey"`
+		GroupId   uuid.UUID `gorm:"type:uuid; primaryKey"`
+		Course    *Course
+		Group     *Group
+	}
+
+	TeacherPost struct {
+		TeacherId uuid.UUID `gorm:"type:uuid; primaryKey"`
+		Courses   []*TeacherCoursePost
+	}
+
+	TeacherCoursePost struct {
+		CourseId uuid.UUID
+		GroupId  uuid.UUID
 	}
 
 	TeacherCourseDto struct {
-		DBModel
-		Course Course
-		Groups []Group
-	}
-
-	TeacherDto struct {
-		DBModel
-		UserId uuid.UUID
-		Course []TeacherCourseDto
+		Course *CourseDto  `json:"course"`
+		Groups []*GroupDto `json:"groups"`
 	}
 )

@@ -31,14 +31,14 @@ func newCourseRoutes(useCase usecase.CourseUseCase, signingKey string) *chi.Mux 
 	r.Group(func(r chi.Router) {
 		r.Use(authRequired(signingKey))
 		r.Post("/", handler(routes.postCourse).HTTP)
-		r.Patch("/join/{courseId}", handler(routes.join).HTTP)
+		r.Patch("/invite/{courseId}", handler(routes.join).HTTP)
 		r.Delete("/{id}", handler(routes.delete).HTTP)
 	})
 
 	r.Group(func(r chi.Router) {
 		// r.Use(authRequired(signingKey))
 		// r.Post("/link/course", handler(routes.postLink).HTTP)
-		// r.Post("/join/course/{courseId}", handler(routes.join).HTTP)
+		// r.Post("/invite/course/{courseId}", handler(routes.invite).HTTP)
 	})
 
 	return r
@@ -132,7 +132,7 @@ func (r courseRoutes) getCourseBySlug(w http.ResponseWriter, request *http.Reque
 // @Security ApiKeyAuth
 // @Param        courseId   path      string  true  "course id"
 // @Success      201   {object} entity.CourseDto "created"
-// @Router       /course/join/{courseId} [patch]
+// @Router       /course/invite/{courseId} [patch]
 func (r courseRoutes) join(w http.ResponseWriter, request *http.Request) *appError {
 	userId := request.Context().Value("userId").(uuid.UUID)
 	courseId, err := uuid.Parse(chi.URLParam(request, "courseId"))

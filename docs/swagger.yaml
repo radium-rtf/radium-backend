@@ -85,6 +85,19 @@ definitions:
       location:
         type: string
     type: object
+  entity.GroupPost:
+    properties:
+      coursesIds:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      studentsIds:
+        items:
+          type: string
+        type: array
+    type: object
   entity.LinkDto:
     properties:
       link:
@@ -230,6 +243,22 @@ definitions:
       name:
         type: string
       password:
+        type: string
+    type: object
+  entity.TeacherCoursePost:
+    properties:
+      courseId:
+        type: string
+      groupId:
+        type: string
+    type: object
+  entity.TeacherPost:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/entity.TeacherCoursePost'
+        type: array
+      teacherId:
         type: string
     type: object
   entity.TextSectionPost:
@@ -479,7 +508,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
-  /course/join/{courseId}:
+  /course/invite/{courseId}:
     patch:
       parameters:
       - description: course id
@@ -511,17 +540,62 @@ paths:
             $ref: '#/definitions/entity.CourseDto'
       tags:
       - course
-  /join/group/{groupId}:
-    patch:
+  /group:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+    post:
       parameters:
-      - description: group id
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.GroupPost'
+      responses:
+        "201":
+          description: created
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /group/{id}:
+    get:
+      parameters:
+      - description: groupId
         in: path
-        name: groupId
+        name: id
         required: true
         type: string
       responses:
         "200":
-          description: created
+          description: ' '
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /group/invite/{inviteCode}:
+    patch:
+      parameters:
+      - description: inviteCode
+        in: path
+        name: inviteCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
           schema:
             type: string
       security:
@@ -663,19 +737,15 @@ paths:
       - ApiKeyAuth: []
       tags:
       - section
-  /teacher/{userId}/group/{groupId}:
+  /teacher:
     post:
       parameters:
-      - description: user id
-        in: path
-        name: userId
+      - description: ' '
+        in: body
+        name: request
         required: true
-        type: string
-      - description: group id
-        in: path
-        name: groupId
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/entity.TeacherPost'
       responses:
         "201":
           description: created
@@ -684,7 +754,18 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - group
+      - teacher
+  /teacher/courses:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - teacher
   /upload:
     post:
       consumes:

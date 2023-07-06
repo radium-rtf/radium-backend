@@ -32,6 +32,8 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Session:                  newSession(db, opts...),
 		ShortAnswerSection:       newShortAnswerSection(db, opts...),
 		ShortAnswerSectionAnswer: newShortAnswerSectionAnswer(db, opts...),
+		Teacher:                  newTeacher(db, opts...),
+		TeacherCourse:            newTeacherCourse(db, opts...),
 		TextSection:              newTextSection(db, opts...),
 		User:                     newUser(db, opts...),
 	}
@@ -54,6 +56,8 @@ type Query struct {
 	Session                  session
 	ShortAnswerSection       shortAnswerSection
 	ShortAnswerSectionAnswer shortAnswerSectionAnswer
+	Teacher                  teacher
+	TeacherCourse            teacherCourse
 	TextSection              textSection
 	User                     user
 }
@@ -77,6 +81,8 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Session:                  q.Session.clone(db),
 		ShortAnswerSection:       q.ShortAnswerSection.clone(db),
 		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.clone(db),
+		Teacher:                  q.Teacher.clone(db),
+		TeacherCourse:            q.TeacherCourse.clone(db),
 		TextSection:              q.TextSection.clone(db),
 		User:                     q.User.clone(db),
 	}
@@ -107,6 +113,8 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Session:                  q.Session.replaceDB(db),
 		ShortAnswerSection:       q.ShortAnswerSection.replaceDB(db),
 		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.replaceDB(db),
+		Teacher:                  q.Teacher.replaceDB(db),
+		TeacherCourse:            q.TeacherCourse.replaceDB(db),
 		TextSection:              q.TextSection.replaceDB(db),
 		User:                     q.User.replaceDB(db),
 	}
@@ -127,6 +135,8 @@ type queryCtx struct {
 	Session                  ISessionDo
 	ShortAnswerSection       IShortAnswerSectionDo
 	ShortAnswerSectionAnswer IShortAnswerSectionAnswerDo
+	Teacher                  ITeacherDo
+	TeacherCourse            ITeacherCourseDo
 	TextSection              ITextSectionDo
 	User                     IUserDo
 }
@@ -147,6 +157,8 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Session:                  q.Session.WithContext(ctx),
 		ShortAnswerSection:       q.ShortAnswerSection.WithContext(ctx),
 		ShortAnswerSectionAnswer: q.ShortAnswerSectionAnswer.WithContext(ctx),
+		Teacher:                  q.Teacher.WithContext(ctx),
+		TeacherCourse:            q.TeacherCourse.WithContext(ctx),
 		TextSection:              q.TextSection.WithContext(ctx),
 		User:                     q.User.WithContext(ctx),
 	}

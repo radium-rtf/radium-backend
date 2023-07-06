@@ -129,6 +129,15 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 			Students struct {
 				field.RelationField
 			}
+			Groups struct {
+				field.RelationField
+				Courses struct {
+					field.RelationField
+				}
+				Students struct {
+					field.RelationField
+				}
+			}
 		}{
 			RelationField: field.NewRelation("Authors.Courses", "entity.Course"),
 			Links: struct {
@@ -151,6 +160,32 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 			}{
 				RelationField: field.NewRelation("Authors.Courses.Students", "entity.User"),
 			},
+			Groups: struct {
+				field.RelationField
+				Courses struct {
+					field.RelationField
+				}
+				Students struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Authors.Courses.Groups", "entity.Group"),
+				Courses: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Authors.Courses.Groups.Courses", "entity.Course"),
+				},
+				Students: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Authors.Courses.Groups.Students", "entity.User"),
+				},
+			},
+		},
+		Groups: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Authors.Groups", "entity.Group"),
 		},
 	}
 
@@ -158,6 +193,12 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Students", "entity.User"),
+	}
+
+	_course.Groups = courseManyToManyGroups{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Groups", "entity.Group"),
 	}
 
 	_course.fillFieldMap()
@@ -186,6 +227,8 @@ type course struct {
 	Authors courseManyToManyAuthors
 
 	Students courseManyToManyStudents
+
+	Groups courseManyToManyGroups
 
 	fieldMap map[string]field.Expr
 }
@@ -234,7 +277,7 @@ func (c *course) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *course) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 14)
+	c.fieldMap = make(map[string]field.Expr, 15)
 	c.fieldMap["id"] = c.Id
 	c.fieldMap["created_at"] = c.CreatedAt
 	c.fieldMap["updated_at"] = c.UpdatedAt
@@ -441,6 +484,18 @@ type courseManyToManyAuthors struct {
 		Students struct {
 			field.RelationField
 		}
+		Groups struct {
+			field.RelationField
+			Courses struct {
+				field.RelationField
+			}
+			Students struct {
+				field.RelationField
+			}
+		}
+	}
+	Groups struct {
+		field.RelationField
 	}
 }
 
@@ -577,6 +632,77 @@ func (a courseManyToManyStudentsTx) Clear() error {
 }
 
 func (a courseManyToManyStudentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type courseManyToManyGroups struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a courseManyToManyGroups) Where(conds ...field.Expr) *courseManyToManyGroups {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a courseManyToManyGroups) WithContext(ctx context.Context) *courseManyToManyGroups {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a courseManyToManyGroups) Session(session *gorm.Session) *courseManyToManyGroups {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a courseManyToManyGroups) Model(m *entity.Course) *courseManyToManyGroupsTx {
+	return &courseManyToManyGroupsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type courseManyToManyGroupsTx struct{ tx *gorm.Association }
+
+func (a courseManyToManyGroupsTx) Find() (result []*entity.Group, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a courseManyToManyGroupsTx) Append(values ...*entity.Group) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a courseManyToManyGroupsTx) Replace(values ...*entity.Group) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a courseManyToManyGroupsTx) Delete(values ...*entity.Group) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a courseManyToManyGroupsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a courseManyToManyGroupsTx) Count() int64 {
 	return a.tx.Count()
 }
 
