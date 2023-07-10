@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"math"
 )
 
 type (
@@ -15,6 +16,7 @@ type (
 		Choice      *ChoiceSectionAnswer      `gorm:"polymorphic:Owner"`
 		MultiChoice *MultichoiceSectionAnswer `gorm:"polymorphic:Owner"`
 		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
+		Answer      *AnswerSectionAnswer      `gorm:"polymorphic:Owner"`
 	}
 
 	AnswerPost struct {
@@ -22,10 +24,15 @@ type (
 		Choice      *ChoiceSectionAnswerPost      `json:"choice,omitempty"`
 		MultiChoice *MultichoiceSectionAnswerPost `json:"multiChoice,omitempty"`
 		ShortAnswer *ShortAnswerSectionAnswerPost `json:"shortAnswer,omitempty"`
+		Answer      *AnswerSectionAnswerPost      `json:"answer,omitempty"`
 	}
 
 	MultichoiceSectionAnswerPost struct {
 		Answer []string `json:"answer" swaggertype:"array,string"`
+	}
+
+	AnswerSectionAnswerPost struct {
+		Answer string `json:"answer"`
 	}
 
 	ChoiceSectionAnswerPost struct {
@@ -56,13 +63,60 @@ type (
 		OwnerType string    `json:"ownerType" gorm:"not null"`
 		Answer    string    `json:"answer" gorm:"not null"`
 	}
+
+	AnswerSectionAnswer struct {
+		DBModel
+		OwnerID   uuid.UUID     `json:"ownerID" gorm:"type:uuid; not null"`
+		OwnerType string        `json:"ownerType" gorm:"not null"`
+		Answer    string        `json:"answer" gorm:"not null"`
+		Review    *AnswerReview `json:"review" gorm:"foreignKey:OwnerId"`
+	}
 )
+
+func (a AnswerSectionAnswer) Score(maxScore uint) uint {
+	if a.Review != nil {
+		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
+	}
+	return 0
+}
+
+func (a Answer) Score(section *Section) uint {
+	maxScore := section.MaxScore()
+	if a.Answer != nil {
+		return a.Answer.Score(maxScore)
+	}
+	if a.Verdict == VerdictOK {
+		return maxScore
+	}
+	return 0
+}
+
+func (a Answer) Answers() []string {
+	if a.MultiChoice != nil {
+		return a.MultiChoice.Answer
+	}
+	return []string{}
+}
+
+func (a Answer) AnswerStr() string {
+	if a.ShortAnswer != nil {
+		return a.ShortAnswer.Answer
+	}
+	if a.Choice != nil {
+		return a.Choice.Answer
+	}
+	if a.Answer != nil {
+		return a.Answer.Answer
+	}
+	return ""
+}
 
 func NewPostToAnswer(post *AnswerPost, userId uuid.UUID) *Answer {
 	var (
 		choice      *ChoiceSectionAnswer
 		multichoice *MultichoiceSectionAnswer
 		shortAnswer *ShortAnswerSectionAnswer
+		answer      *AnswerSectionAnswer
 	)
 
 	if post.Choice != nil {
@@ -77,6 +131,10 @@ func NewPostToAnswer(post *AnswerPost, userId uuid.UUID) *Answer {
 		choice = &ChoiceSectionAnswer{Answer: post.ShortAnswer.Answer}
 	}
 
+	if post.Answer != nil {
+		answer = &AnswerSectionAnswer{Answer: post.Answer.Answer}
+	}
+
 	return &Answer{
 		Verdict:     VerdictEMPTY,
 		SectionId:   post.SectionId,
@@ -84,5 +142,6 @@ func NewPostToAnswer(post *AnswerPost, userId uuid.UUID) *Answer {
 		Choice:      choice,
 		MultiChoice: multichoice,
 		ShortAnswer: shortAnswer,
+		Answer:      answer,
 	}
 }

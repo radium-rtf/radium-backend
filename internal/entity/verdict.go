@@ -4,6 +4,7 @@ const (
 	VerdictOK    = Verdict("OK")
 	VerdictEMPTY = Verdict("")
 	VerdictWA    = Verdict("WA")
+	VerdictWAIT  = Verdict("WAIT")
 )
 
 type (

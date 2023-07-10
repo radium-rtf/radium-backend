@@ -52,6 +52,9 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 			ShortAnswerSection struct {
 				field.RelationField
 			}
+			AnswerSection struct {
+				field.RelationField
+			}
 		}{
 			RelationField: field.NewRelation("Pages.Sections", "entity.Section"),
 			TextSection: struct {
@@ -73,6 +76,11 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 				field.RelationField
 			}{
 				RelationField: field.NewRelation("Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+			},
+			AnswerSection: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Pages.Sections.AnswerSection", "entity.AnswerSection"),
 			},
 		},
 	}
@@ -177,6 +185,9 @@ type moduleHasManyPages struct {
 			field.RelationField
 		}
 		ShortAnswerSection struct {
+			field.RelationField
+		}
+		AnswerSection struct {
 			field.RelationField
 		}
 	}

@@ -44,8 +44,7 @@ func (r sectionRoutes) createSection(w http.ResponseWriter, request *http.Reques
 	if err != nil {
 		return newAppError(errors.New(err.Error()), http.StatusBadRequest)
 	}
-
-	dto := r.mapper.Section(section, entity.VerdictEMPTY)
+	dto := r.mapper.Section(section, entity.VerdictEMPTY, 0, "", nil)
 	render.Status(request, http.StatusCreated)
 	render.JSON(w, request, dto)
 

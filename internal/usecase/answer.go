@@ -34,6 +34,8 @@ func (uc AnswerUseCase) Answer(ctx context.Context, answer *entity.Answer) (*ent
 		verdict = uc.choice(answer.Choice, section.ChoiceSection)
 	case answer.ShortAnswer != nil:
 		verdict = uc.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
+	case answer.Answer != nil:
+		verdict = entity.VerdictWAIT
 	default:
 		return nil, errors.New("ответы должны быть")
 	}

@@ -22,21 +22,29 @@ func New(url string) (*db.Query, error) {
 	err = gormDb.AutoMigrate(
 		entity.User{},
 		entity.Session{},
+
 		entity.Course{},
 		entity.Link{},
 		entity.Module{},
 		entity.Page{},
+
 		entity.Section{},
 		entity.TextSection{},
 		entity.ChoiceSection{},
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
+		entity.AnswerSection{},
+
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
 		entity.ShortAnswerSectionAnswer{},
 		entity.MultichoiceSectionAnswer{},
+		entity.AnswerSectionAnswer{},
+
 		entity.Teacher{},
 		entity.TeacherCourse{},
+
+		entity.AnswerReview{},
 	)
 
 	if err != nil {

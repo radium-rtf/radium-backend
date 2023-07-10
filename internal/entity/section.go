@@ -10,6 +10,7 @@ const (
 	MultiChoiceType = SectionType("multiChoice")
 	TextType        = SectionType("text")
 	ShortAnswerType = SectionType("shortAnswer")
+	AnswerType      = SectionType("answer")
 )
 
 type (
@@ -19,10 +20,11 @@ type (
 		PageId uuid.UUID `gorm:"type:uuid; not null"`
 		Order  uint      `gorm:"not null"`
 
-		TextSection        *TextSectionPost        `gorm:"polymorphic:Owner" json:"text,omitempty"`
-		ChoiceSection      *ChoiceSectionPost      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
-		MultiChoiceSection *MultiChoiceSectionPost `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
-		ShortAnswerSection *ShortAnswerSectionPost `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
+		TextSection        *TextSectionPost        `json:"text,omitempty"`
+		ChoiceSection      *ChoiceSectionPost      `json:"choice,omitempty"`
+		MultiChoiceSection *MultiChoiceSectionPost `json:"multichoice,omitempty"`
+		ShortAnswerSection *ShortAnswerSectionPost `json:"shortanswer,omitempty"`
+		AnswerSection      *AnswerSectionPost      `json:"answer,omitempty"`
 	}
 
 	TextSectionPost struct {
@@ -49,6 +51,11 @@ type (
 		Answer   string
 	}
 
+	AnswerSectionPost struct {
+		MaxScore uint
+		Question string
+	}
+
 	Section struct {
 		DBModel
 		PageId uuid.UUID `gorm:"type:uuid; not null"`
@@ -58,6 +65,7 @@ type (
 		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
 		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
 		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
+		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner" json:"answer,omitempty"`
 	}
 
 	SectionDto struct {
@@ -65,6 +73,9 @@ type (
 		PageId   uuid.UUID   `json:"pageId"`
 		Order    uint        `json:"order"`
 		Type     SectionType `json:"type"`
+		Score    uint        `json:"score"`
+		Answer   string      `json:"answer"`
+		Answers  []string    `json:"answers" swaggertype:"array,string"`
 		Content  string      `json:"content"`
 		MaxScore uint        `json:"maxScore"`
 		Variants []string    `json:"variants"`
@@ -74,6 +85,14 @@ type (
 	TextSection struct {
 		DBModel
 		Content   string    `gorm:"type:text; not null"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
+	}
+
+	AnswerSection struct {
+		DBModel
+		Question  string    `gorm:"type:text; not null"`
+		MaxScore  uint      `gorm:"not null"`
 		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
 		OwnerType string    `gorm:"not null"`
 	}
@@ -121,6 +140,9 @@ func (s Section) Content() string {
 	if s.TextSection != nil {
 		return s.TextSection.Content
 	}
+	if s.AnswerSection != nil {
+		return s.AnswerSection.Question
+	}
 	return ""
 }
 
@@ -136,6 +158,9 @@ func (s Section) MaxScore() uint {
 	}
 	if s.TextSection != nil {
 		return 0
+	}
+	if s.AnswerSection != nil {
+		return s.AnswerSection.MaxScore
 	}
 	return 0
 }

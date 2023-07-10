@@ -59,6 +59,9 @@ func newTeacher(db *gorm.DB, opts ...gen.DOOption) teacher {
 						ShortAnswerSection struct {
 							field.RelationField
 						}
+						AnswerSection struct {
+							field.RelationField
+						}
 					}
 				}
 			}
@@ -111,6 +114,9 @@ func newTeacher(db *gorm.DB, opts ...gen.DOOption) teacher {
 						ShortAnswerSection struct {
 							field.RelationField
 						}
+						AnswerSection struct {
+							field.RelationField
+						}
 					}
 				}
 			}{
@@ -131,6 +137,9 @@ func newTeacher(db *gorm.DB, opts ...gen.DOOption) teacher {
 						ShortAnswerSection struct {
 							field.RelationField
 						}
+						AnswerSection struct {
+							field.RelationField
+						}
 					}
 				}{
 					RelationField: field.NewRelation("Courses.Course.Modules.Pages", "entity.Page"),
@@ -146,6 +155,9 @@ func newTeacher(db *gorm.DB, opts ...gen.DOOption) teacher {
 							field.RelationField
 						}
 						ShortAnswerSection struct {
+							field.RelationField
+						}
+						AnswerSection struct {
 							field.RelationField
 						}
 					}{
@@ -169,6 +181,11 @@ func newTeacher(db *gorm.DB, opts ...gen.DOOption) teacher {
 							field.RelationField
 						}{
 							RelationField: field.NewRelation("Courses.Course.Modules.Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+						},
+						AnswerSection: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Courses.Course.Modules.Pages.Sections.AnswerSection", "entity.AnswerSection"),
 						},
 					},
 				},
@@ -345,6 +362,9 @@ type teacherHasManyCourses struct {
 						field.RelationField
 					}
 					ShortAnswerSection struct {
+						field.RelationField
+					}
+					AnswerSection struct {
 						field.RelationField
 					}
 				}

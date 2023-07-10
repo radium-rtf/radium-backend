@@ -52,6 +52,17 @@ func newAnswer(db *gorm.DB, opts ...gen.DOOption) answer {
 		RelationField: field.NewRelation("ShortAnswer", "entity.ShortAnswerSectionAnswer"),
 	}
 
+	_answer.Answer = answerHasOneAnswer{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Answer", "entity.AnswerSectionAnswer"),
+		Review: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Answer.Review", "entity.AnswerReview"),
+		},
+	}
+
 	_answer.fillFieldMap()
 
 	return _answer
@@ -73,6 +84,8 @@ type answer struct {
 	MultiChoice answerHasOneMultiChoice
 
 	ShortAnswer answerHasOneShortAnswer
+
+	Answer answerHasOneAnswer
 
 	fieldMap map[string]field.Expr
 }
@@ -118,7 +131,7 @@ func (a *answer) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *answer) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 10)
+	a.fieldMap = make(map[string]field.Expr, 11)
 	a.fieldMap["id"] = a.Id
 	a.fieldMap["created_at"] = a.CreatedAt
 	a.fieldMap["updated_at"] = a.UpdatedAt
@@ -349,6 +362,81 @@ func (a answerHasOneShortAnswerTx) Clear() error {
 }
 
 func (a answerHasOneShortAnswerTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type answerHasOneAnswer struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Review struct {
+		field.RelationField
+	}
+}
+
+func (a answerHasOneAnswer) Where(conds ...field.Expr) *answerHasOneAnswer {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a answerHasOneAnswer) WithContext(ctx context.Context) *answerHasOneAnswer {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a answerHasOneAnswer) Session(session *gorm.Session) *answerHasOneAnswer {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a answerHasOneAnswer) Model(m *entity.Answer) *answerHasOneAnswerTx {
+	return &answerHasOneAnswerTx{a.db.Model(m).Association(a.Name())}
+}
+
+type answerHasOneAnswerTx struct{ tx *gorm.Association }
+
+func (a answerHasOneAnswerTx) Find() (result *entity.AnswerSectionAnswer, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a answerHasOneAnswerTx) Append(values ...*entity.AnswerSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a answerHasOneAnswerTx) Replace(values ...*entity.AnswerSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a answerHasOneAnswerTx) Delete(values ...*entity.AnswerSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a answerHasOneAnswerTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a answerHasOneAnswerTx) Count() int64 {
 	return a.tx.Count()
 }
 

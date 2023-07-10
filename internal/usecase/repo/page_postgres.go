@@ -30,7 +30,7 @@ func (r PageRepo) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, erro
 	s := p.Sections
 	return p.WithContext(ctx).Debug().
 		Preload(s, s.Order(r.pg.Section.Order)).
-		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection).
+		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection, s.AnswerSection).
 		Where(p.Id.Eq(id)).
 		Take()
 }

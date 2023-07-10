@@ -19,6 +19,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   newAnswer(db, opts...),
+		AnswerReview:             newAnswerReview(db, opts...),
 		ChoiceSection:            newChoiceSection(db, opts...),
 		ChoiceSectionAnswer:      newChoiceSectionAnswer(db, opts...),
 		Course:                   newCourse(db, opts...),
@@ -43,6 +44,7 @@ type Query struct {
 	db *gorm.DB
 
 	Answer                   answer
+	AnswerReview             answerReview
 	ChoiceSection            choiceSection
 	ChoiceSectionAnswer      choiceSectionAnswer
 	Course                   course
@@ -68,6 +70,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   q.Answer.clone(db),
+		AnswerReview:             q.AnswerReview.clone(db),
 		ChoiceSection:            q.ChoiceSection.clone(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.clone(db),
 		Course:                   q.Course.clone(db),
@@ -100,6 +103,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   q.Answer.replaceDB(db),
+		AnswerReview:             q.AnswerReview.replaceDB(db),
 		ChoiceSection:            q.ChoiceSection.replaceDB(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.replaceDB(db),
 		Course:                   q.Course.replaceDB(db),
@@ -122,6 +126,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 
 type queryCtx struct {
 	Answer                   IAnswerDo
+	AnswerReview             IAnswerReviewDo
 	ChoiceSection            IChoiceSectionDo
 	ChoiceSectionAnswer      IChoiceSectionAnswerDo
 	Course                   ICourseDo
@@ -144,6 +149,7 @@ type queryCtx struct {
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Answer:                   q.Answer.WithContext(ctx),
+		AnswerReview:             q.AnswerReview.WithContext(ctx),
 		ChoiceSection:            q.ChoiceSection.WithContext(ctx),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.WithContext(ctx),
 		Course:                   q.Course.WithContext(ctx),

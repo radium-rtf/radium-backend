@@ -685,6 +685,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/review/answer": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "review"
+                ],
+                "parameters": [
+                    {
+                        "description": "score - от 0 до 1",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AnswerReviewPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.AnswerReview"
+                        }
+                    }
+                }
+            }
+        },
         "/section": {
             "post": {
                 "security": [
@@ -842,6 +876,9 @@ const docTemplate = `{
         "entity.AnswerPost": {
             "type": "object",
             "properties": {
+                "answer": {
+                    "$ref": "#/definitions/entity.AnswerSectionAnswerPost"
+                },
                 "choice": {
                     "$ref": "#/definitions/entity.ChoiceSectionAnswerPost"
                 },
@@ -853,6 +890,59 @@ const docTemplate = `{
                 },
                 "shortAnswer": {
                     "$ref": "#/definitions/entity.ShortAnswerSectionAnswerPost"
+                }
+            }
+        },
+        "entity.AnswerReview": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ownerId": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.AnswerReviewPost": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "entity.AnswerSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.AnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
                 }
             }
         },
@@ -1118,6 +1208,15 @@ const docTemplate = `{
         "entity.SectionDto": {
             "type": "object",
             "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "content": {
                     "type": "string"
                 },
@@ -1132,6 +1231,9 @@ const docTemplate = `{
                 },
                 "pageId": {
                     "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -1150,6 +1252,9 @@ const docTemplate = `{
         "entity.SectionPost": {
             "type": "object",
             "properties": {
+                "answer": {
+                    "$ref": "#/definitions/entity.AnswerSectionPost"
+                },
                 "choice": {
                     "$ref": "#/definitions/entity.ChoiceSectionPost"
                 },

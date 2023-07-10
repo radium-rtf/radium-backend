@@ -71,7 +71,7 @@ func (r CourseRepo) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Cour
 	course, err := c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors, c.Modules.Pages).
 		Preload(s, s.Order(r.pg.Section.Order)).
-		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection).
+		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection, s.AnswerSection).
 		Where(c.Id.Eq(id)).
 		Take()
 	return course, err

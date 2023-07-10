@@ -20,22 +20,28 @@ func Gen(url string) error {
 	g.ApplyBasic(
 		entity.User{},
 		entity.Session{},
+
 		entity.Page{},
 		entity.Course{},
-		entity.Group{},
 		entity.Module{},
 		entity.Link{},
+
 		entity.Section{},
 		entity.TextSection{},
 		entity.ChoiceSection{},
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
+
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
 		entity.ShortAnswerSectionAnswer{},
 		entity.MultichoiceSectionAnswer{},
+
+		entity.Group{},
 		entity.Teacher{},
 		entity.TeacherCourse{},
+
+		entity.AnswerReview{},
 	)
 	g.Execute()
 	return nil

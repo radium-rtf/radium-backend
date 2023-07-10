@@ -31,6 +31,7 @@ func (r AnswerRepo) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uui
 	// TODO: хз как написать норм запрос на этом, потом ещё раз попробую.....
 	answers, err := q.WithContext(ctx).
 		Preload(field.Associations).
+		Preload(q.Answer.Review).
 		Where(q.UserId.Eq(userId)).
 		Where(q.SectionId.In(values...)).Find()
 

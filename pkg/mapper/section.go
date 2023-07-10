@@ -11,17 +11,29 @@ type Section struct {
 func (s Section) Sections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) []*entity.SectionDto {
 	dtos := make([]*entity.SectionDto, 0, len(sections))
 	for _, section := range sections {
-		var verdict = entity.VerdictEMPTY
-		if answer, ok := answers[section.Id]; ok {
+		var (
+			verdict    = entity.VerdictEMPTY
+			score      = uint(0)
+			answerStr  = ""
+			answersArr []string
+		)
+
+		answer, ok := answers[section.Id]
+		if ok {
 			verdict = answer.Verdict
+			score = answer.Score(section)
+			answerStr = answer.AnswerStr()
+			answersArr = answer.Answers()
 		}
-		dto := s.Section(section, verdict)
+
+		dto := s.Section(section, verdict, score, answerStr, answersArr)
 		dtos = append(dtos, dto)
 	}
 	return dtos
 }
 
-func (s Section) Section(section *entity.Section, verdict entity.Verdict) *entity.SectionDto {
+func (s Section) Section(section *entity.Section, verdict entity.Verdict,
+	score uint, answer string, answers []string) *entity.SectionDto {
 	var sectionType entity.SectionType
 	if section.MultiChoiceSection != nil {
 		sectionType = entity.MultiChoiceType
@@ -31,6 +43,8 @@ func (s Section) Section(section *entity.Section, verdict entity.Verdict) *entit
 		sectionType = entity.TextType
 	} else if section.ShortAnswerSection != nil {
 		sectionType = entity.ShortAnswerType
+	} else if section.AnswerSection != nil {
+		sectionType = entity.AnswerType
 	}
 	return &entity.SectionDto{
 		Id:       section.Id,
@@ -41,6 +55,9 @@ func (s Section) Section(section *entity.Section, verdict entity.Verdict) *entit
 		Verdict:  verdict,
 		Variants: section.Variants(),
 		Type:     sectionType,
+		Score:    score,
+		Answers:  answers,
+		Answer:   answer,
 	}
 }
 
@@ -52,6 +69,7 @@ func (s Section) PostToSection(post *entity.SectionPost) *entity.Section {
 		ChoiceSection:      s.postToChoice(post.ChoiceSection),
 		MultiChoiceSection: s.postToMultiChoice(post.MultiChoiceSection),
 		ShortAnswerSection: s.postToShortAnswer(post.ShortAnswerSection),
+		AnswerSection:      s.postToAnswer(post.AnswerSection),
 	}
 }
 
@@ -96,5 +114,15 @@ func (s Section) postToShortAnswer(post *entity.ShortAnswerSectionPost) *entity.
 		MaxScore: post.MaxScore,
 		Answer:   post.Answer,
 		Question: post.Question,
+	}
+}
+
+func (s Section) postToAnswer(post *entity.AnswerSectionPost) *entity.AnswerSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.AnswerSection{
+		Question: post.Question,
+		MaxScore: post.MaxScore,
 	}
 }

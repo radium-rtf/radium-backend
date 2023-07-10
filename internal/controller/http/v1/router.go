@@ -28,6 +28,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 	pageUseCase := usecase.NewPageUseCase(pg)
 	sectionUseCase := usecase.NewSectionUseCase(pg)
 	teacherUseCase := usecase.NewTeacherUseCase(pg)
+	reviewUseCase := usecase.NewReviewUseCase(pg)
 
 	h.Route("/v1", func(v1 chi.Router) {
 		v1.Mount("/upload", newFileRoutes(fileUseCase, cfg.SigningKey))
@@ -41,6 +42,7 @@ func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *confi
 		v1.Mount("/section", newSectionRoutes(sectionUseCase, cfg.SigningKey))
 
 		v1.Mount("/answer", newAnswerRoutes(answerUseCase, cfg.SigningKey))
+		v1.Mount("/review", newReviewRoutes(reviewUseCase, cfg.SigningKey))
 
 		v1.Mount("/group", newGroupRoutes(groupUseCase, cfg.SigningKey))
 		v1.Mount("/teacher", newTeacherRoutes(teacherUseCase, cfg.SigningKey))

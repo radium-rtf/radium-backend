@@ -2,6 +2,8 @@ basePath: /v1
 definitions:
   entity.AnswerPost:
     properties:
+      answer:
+        $ref: '#/definitions/entity.AnswerSectionAnswerPost'
       choice:
         $ref: '#/definitions/entity.ChoiceSectionAnswerPost'
       id:
@@ -10,6 +12,40 @@ definitions:
         $ref: '#/definitions/entity.MultichoiceSectionAnswerPost'
       shortAnswer:
         $ref: '#/definitions/entity.ShortAnswerSectionAnswerPost'
+    type: object
+  entity.AnswerReview:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      ownerId:
+        type: string
+      score:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  entity.AnswerReviewPost:
+    properties:
+      id:
+        type: string
+      score:
+        type: number
+    type: object
+  entity.AnswerSectionAnswerPost:
+    properties:
+      answer:
+        type: string
+    type: object
+  entity.AnswerSectionPost:
+    properties:
+      maxScore:
+        type: integer
+      question:
+        type: string
     type: object
   entity.ChoiceSectionAnswerPost:
     properties:
@@ -181,6 +217,12 @@ definitions:
     type: object
   entity.SectionDto:
     properties:
+      answer:
+        type: string
+      answers:
+        items:
+          type: string
+        type: array
       content:
         type: string
       id:
@@ -191,6 +233,8 @@ definitions:
         type: integer
       pageId:
         type: string
+      score:
+        type: integer
       type:
         type: string
       variants:
@@ -202,6 +246,8 @@ definitions:
     type: object
   entity.SectionPost:
     properties:
+      answer:
+        $ref: '#/definitions/entity.AnswerSectionPost'
       choice:
         $ref: '#/definitions/entity.ChoiceSectionPost'
       multichoice:
@@ -696,6 +742,26 @@ paths:
       - ApiKeyAuth: []
       tags:
       - page
+  /review/answer:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: score - от 0 до 1
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AnswerReviewPost'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.AnswerReview'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - review
   /section:
     post:
       consumes:

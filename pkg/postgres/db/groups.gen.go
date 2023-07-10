@@ -60,6 +60,9 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 					ShortAnswerSection struct {
 						field.RelationField
 					}
+					AnswerSection struct {
+						field.RelationField
+					}
 				}
 			}
 		}{
@@ -80,6 +83,9 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 					ShortAnswerSection struct {
 						field.RelationField
 					}
+					AnswerSection struct {
+						field.RelationField
+					}
 				}
 			}{
 				RelationField: field.NewRelation("Courses.Modules.Pages", "entity.Page"),
@@ -95,6 +101,9 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 						field.RelationField
 					}
 					ShortAnswerSection struct {
+						field.RelationField
+					}
+					AnswerSection struct {
 						field.RelationField
 					}
 				}{
@@ -118,6 +127,11 @@ func newGroup(db *gorm.DB, opts ...gen.DOOption) group {
 						field.RelationField
 					}{
 						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.ShortAnswerSection", "entity.ShortAnswerSection"),
+					},
+					AnswerSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.AnswerSection", "entity.AnswerSection"),
 					},
 				},
 			},
@@ -297,6 +311,9 @@ type groupManyToManyCourses struct {
 					field.RelationField
 				}
 				ShortAnswerSection struct {
+					field.RelationField
+				}
+				AnswerSection struct {
 					field.RelationField
 				}
 			}

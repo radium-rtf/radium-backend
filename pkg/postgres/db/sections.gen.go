@@ -57,6 +57,12 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 		RelationField: field.NewRelation("ShortAnswerSection", "entity.ShortAnswerSection"),
 	}
 
+	_section.AnswerSection = sectionHasOneAnswerSection{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("AnswerSection", "entity.AnswerSection"),
+	}
+
 	_section.fillFieldMap()
 
 	return _section
@@ -79,6 +85,8 @@ type section struct {
 	MultiChoiceSection sectionHasOneMultiChoiceSection
 
 	ShortAnswerSection sectionHasOneShortAnswerSection
+
+	AnswerSection sectionHasOneAnswerSection
 
 	fieldMap map[string]field.Expr
 }
@@ -123,7 +131,7 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 10)
+	s.fieldMap = make(map[string]field.Expr, 11)
 	s.fieldMap["id"] = s.Id
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
@@ -424,6 +432,77 @@ func (a sectionHasOneShortAnswerSectionTx) Clear() error {
 }
 
 func (a sectionHasOneShortAnswerSectionTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type sectionHasOneAnswerSection struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a sectionHasOneAnswerSection) Where(conds ...field.Expr) *sectionHasOneAnswerSection {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a sectionHasOneAnswerSection) WithContext(ctx context.Context) *sectionHasOneAnswerSection {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a sectionHasOneAnswerSection) Session(session *gorm.Session) *sectionHasOneAnswerSection {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a sectionHasOneAnswerSection) Model(m *entity.Section) *sectionHasOneAnswerSectionTx {
+	return &sectionHasOneAnswerSectionTx{a.db.Model(m).Association(a.Name())}
+}
+
+type sectionHasOneAnswerSectionTx struct{ tx *gorm.Association }
+
+func (a sectionHasOneAnswerSectionTx) Find() (result *entity.AnswerSection, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a sectionHasOneAnswerSectionTx) Append(values ...*entity.AnswerSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a sectionHasOneAnswerSectionTx) Replace(values ...*entity.AnswerSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a sectionHasOneAnswerSectionTx) Delete(values ...*entity.AnswerSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a sectionHasOneAnswerSectionTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a sectionHasOneAnswerSectionTx) Count() int64 {
 	return a.tx.Count()
 }
 
