@@ -18,16 +18,4 @@ type (
 		ModuleId uuid.UUID  `json:"moduleId" gorm:"type:uuid; not null"`
 		Sections []*Section `json:"sections"`
 	}
-
-	PageDto struct {
-		Id       uuid.UUID     `json:"id"`
-		Slug     string        `json:"slug"`
-		Name     string        `json:"name"`
-		Sections []*SectionDto `json:"sections"`
-	}
-
-	PagePost struct {
-		ModuleId uuid.UUID `json:"moduleId"`
-		Name     string    `json:"name"`
-	}
 )

@@ -3,26 +3,25 @@ package usecase
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type GroupUseCase struct {
-	groupRepo repo.GroupRepo
+	groupRepo postgres.Group
 }
 
-func NewGroupUseCase(pg *db.Query) GroupUseCase {
-	return GroupUseCase{groupRepo: repo.NewGroupRepo(pg)}
+func NewGroupUseCase(groupRepo postgres.Group) GroupUseCase {
+	return GroupUseCase{groupRepo: groupRepo}
 }
 
 func (uc GroupUseCase) Create(ctx context.Context, group *entity.Group) (*entity.Group, error) {
 	return uc.groupRepo.Create(ctx, group)
 }
 
-func (uc GroupUseCase) Join(ctx context.Context, joinGroup entity.GroupJoin) error {
-	return uc.groupRepo.JoinStudent(ctx, joinGroup)
+func (uc GroupUseCase) Join(ctx context.Context, studentId uuid.UUID, code string) error {
+	return uc.groupRepo.JoinStudent(ctx, studentId, code)
 }
 
 func (uc GroupUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Group, error) {

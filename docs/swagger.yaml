@@ -1,17 +1,82 @@
-basePath: /v1
+basePath: /
 definitions:
-  entity.AnswerPost:
+  create.AnswerSectionAnswerPost:
     properties:
       answer:
-        $ref: '#/definitions/entity.AnswerSectionAnswerPost'
-      choice:
-        $ref: '#/definitions/entity.ChoiceSectionAnswerPost'
-      id:
         type: string
-      multiChoice:
-        $ref: '#/definitions/entity.MultichoiceSectionAnswerPost'
-      shortAnswer:
-        $ref: '#/definitions/entity.ShortAnswerSectionAnswerPost'
+    type: object
+  create.AnswerSectionPost:
+    properties:
+      maxScore:
+        type: integer
+      question:
+        type: string
+    type: object
+  create.ChoiceSectionAnswerPost:
+    properties:
+      answer:
+        type: string
+    type: object
+  create.ChoiceSectionPost:
+    properties:
+      answer:
+        type: string
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  create.MultiChoiceSectionPost:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+      maxScore:
+        type: integer
+      question:
+        type: string
+      variants:
+        items:
+          type: string
+        type: array
+    type: object
+  create.MultichoiceSectionAnswerPost:
+    properties:
+      answer:
+        items:
+          type: string
+        type: array
+    type: object
+  create.ShortAnswerSectionAnswerPost:
+    properties:
+      answer:
+        type: string
+    type: object
+  create.ShortAnswerSectionPost:
+    properties:
+      answer:
+        type: string
+      maxScore:
+        type: integer
+      question:
+        type: string
+    type: object
+  create.TextSectionPost:
+    properties:
+      content:
+        type: string
+    type: object
+  create.teacherCoursePost:
+    properties:
+      courseId:
+        type: string
+      groupId:
+        type: string
     type: object
   entity.AnswerReview:
     properties:
@@ -28,74 +93,20 @@ definitions:
       updatedAt:
         type: string
     type: object
-  entity.AnswerReviewPost:
+  internal_httpserver_handlers_answer_internal_create.Request:
     properties:
+      answer:
+        $ref: '#/definitions/create.AnswerSectionAnswerPost'
+      choice:
+        $ref: '#/definitions/create.ChoiceSectionAnswerPost'
       id:
         type: string
-      score:
-        type: number
+      multiChoice:
+        $ref: '#/definitions/create.MultichoiceSectionAnswerPost'
+      shortAnswer:
+        $ref: '#/definitions/create.ShortAnswerSectionAnswerPost'
     type: object
-  entity.AnswerSectionAnswerPost:
-    properties:
-      answer:
-        type: string
-    type: object
-  entity.AnswerSectionPost:
-    properties:
-      maxScore:
-        type: integer
-      question:
-        type: string
-    type: object
-  entity.ChoiceSectionAnswerPost:
-    properties:
-      answer:
-        type: string
-    type: object
-  entity.ChoiceSectionPost:
-    properties:
-      answer:
-        type: string
-      maxScore:
-        type: integer
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.CourseDto:
-    properties:
-      authors:
-        items:
-          $ref: '#/definitions/entity.UserDto'
-        type: array
-      banner:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      links:
-        items:
-          $ref: '#/definitions/entity.LinkDto'
-        type: array
-      logo:
-        type: string
-      modules:
-        description: 'TODO: скрыть для людей, у которых нет доступа к курсу'
-        items:
-          $ref: '#/definitions/entity.ModuleDto'
-        type: array
-      name:
-        type: string
-      shortDescription:
-        type: string
-      slug:
-        type: string
-    type: object
-  entity.CoursePost:
+  internal_httpserver_handlers_course_internal_create.Request:
     properties:
       authors:
         items:
@@ -107,7 +118,7 @@ definitions:
         type: string
       links:
         items:
-          $ref: '#/definitions/entity.LinkDto'
+          $ref: '#/definitions/model.Link'
         type: array
       logo:
         type: string
@@ -116,12 +127,7 @@ definitions:
       shortDescription:
         type: string
     type: object
-  entity.FileDto:
-    properties:
-      location:
-        type: string
-    type: object
-  entity.GroupPost:
+  internal_httpserver_handlers_group_internal_create.Request:
     properties:
       coursesIds:
         items:
@@ -134,14 +140,96 @@ definitions:
           type: string
         type: array
     type: object
-  entity.LinkDto:
+  internal_httpserver_handlers_module_internal_create.Request:
+    properties:
+      courseId:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_httpserver_handlers_page_internal_create.Request:
+    properties:
+      moduleId:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_httpserver_handlers_review_internal_create.Request:
+    properties:
+      id:
+        type: string
+      score:
+        type: number
+    type: object
+  internal_httpserver_handlers_section_internal_create.Request:
+    properties:
+      answer:
+        $ref: '#/definitions/create.AnswerSectionPost'
+      choice:
+        $ref: '#/definitions/create.ChoiceSectionPost'
+      multichoice:
+        $ref: '#/definitions/create.MultiChoiceSectionPost'
+      order:
+        type: integer
+      pageId:
+        type: string
+      shortanswer:
+        $ref: '#/definitions/create.ShortAnswerSectionPost'
+      text:
+        $ref: '#/definitions/create.TextSectionPost'
+    type: object
+  internal_httpserver_handlers_teacher_internal_create.Request:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/create.teacherCoursePost'
+        type: array
+      teacherId:
+        type: string
+    type: object
+  model.Course:
+    properties:
+      authors:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      banner:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      links:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
+      logo:
+        type: string
+      modules:
+        description: 'TODO: скрыть для людей, у которых нет доступа к курсу'
+        items:
+          $ref: '#/definitions/model.Module'
+        type: array
+      name:
+        type: string
+      shortDescription:
+        type: string
+      slug:
+        type: string
+    type: object
+  model.File:
+    properties:
+      location:
+        type: string
+    type: object
+  model.Link:
     properties:
       link:
         type: string
       name:
         type: string
     type: object
-  entity.ModuleDto:
+  model.Module:
     properties:
       id:
         type: string
@@ -149,41 +237,12 @@ definitions:
         type: string
       pages:
         items:
-          $ref: '#/definitions/entity.PageDto'
+          $ref: '#/definitions/model.Page'
         type: array
       slug:
         type: string
     type: object
-  entity.ModulePost:
-    properties:
-      courseId:
-        type: string
-      name:
-        type: string
-    type: object
-  entity.MultiChoiceSectionPost:
-    properties:
-      answer:
-        items:
-          type: string
-        type: array
-      maxScore:
-        type: integer
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.MultichoiceSectionAnswerPost:
-    properties:
-      answer:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.PageDto:
+  model.Page:
     properties:
       id:
         type: string
@@ -191,31 +250,12 @@ definitions:
         type: string
       sections:
         items:
-          $ref: '#/definitions/entity.SectionDto'
+          $ref: '#/definitions/model.Section'
         type: array
       slug:
         type: string
     type: object
-  entity.PagePost:
-    properties:
-      moduleId:
-        type: string
-      name:
-        type: string
-    type: object
-  entity.PasswordUpdate:
-    properties:
-      current:
-        type: string
-      new:
-        type: string
-    type: object
-  entity.RefreshToken:
-    properties:
-      refreshToken:
-        type: string
-    type: object
-  entity.SectionDto:
+  model.Section:
     properties:
       answer:
         type: string
@@ -244,75 +284,7 @@ definitions:
       verdict:
         type: string
     type: object
-  entity.SectionPost:
-    properties:
-      answer:
-        $ref: '#/definitions/entity.AnswerSectionPost'
-      choice:
-        $ref: '#/definitions/entity.ChoiceSectionPost'
-      multichoice:
-        $ref: '#/definitions/entity.MultiChoiceSectionPost'
-      order:
-        type: integer
-      pageId:
-        type: string
-      shortanswer:
-        $ref: '#/definitions/entity.ShortAnswerSectionPost'
-      text:
-        $ref: '#/definitions/entity.TextSectionPost'
-    type: object
-  entity.ShortAnswerSectionAnswerPost:
-    properties:
-      answer:
-        type: string
-    type: object
-  entity.ShortAnswerSectionPost:
-    properties:
-      answer:
-        type: string
-      maxScore:
-        type: integer
-      question:
-        type: string
-    type: object
-  entity.SignIn:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    type: object
-  entity.SignUp:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-    type: object
-  entity.TeacherCoursePost:
-    properties:
-      courseId:
-        type: string
-      groupId:
-        type: string
-    type: object
-  entity.TeacherPost:
-    properties:
-      courses:
-        items:
-          $ref: '#/definitions/entity.TeacherCoursePost'
-        type: array
-      teacherId:
-        type: string
-    type: object
-  entity.TextSectionPost:
-    properties:
-      content:
-        type: string
-    type: object
-  entity.Tokens:
+  model.Tokens:
     properties:
       accessToken:
         type: string
@@ -321,14 +293,7 @@ definitions:
       refreshToken:
         type: string
     type: object
-  entity.UpdateUserRequest:
-    properties:
-      avatar:
-        type: string
-      name:
-        type: string
-    type: object
-  entity.UserDto:
+  model.User:
     properties:
       avatar:
         type: string
@@ -339,13 +304,53 @@ definitions:
       name:
         type: string
     type: object
+  refresh.Request:
+    properties:
+      refreshToken:
+        type: string
+    type: object
+  signin.Request:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  signup.Request:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  update.Request:
+    properties:
+      avatar:
+        type: string
+      name:
+        type: string
+    type: object
+  updatepass.Request:
+    properties:
+      current:
+        type: string
+      new:
+        type: string
+    type: object
+  verdict.Verdict:
+    properties:
+      verdict:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   title: без юлерна
   version: "1.0"
 paths:
-  /account:
+  /v1/account:
     get:
       consumes:
       - application/json
@@ -355,7 +360,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.UserDto'
+            $ref: '#/definitions/model.User'
       security:
       - ApiKeyAuth: []
       tags:
@@ -369,7 +374,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.UpdateUserRequest'
+          $ref: '#/definitions/update.Request'
       produces:
       - application/json
       responses:
@@ -379,28 +384,28 @@ paths:
       - ApiKeyAuth: []
       tags:
       - account
-  /account/courses:
+  /v1/account/courses:
     get:
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       security:
       - ApiKeyAuth: []
       tags:
       - account
-  /account/password:
+  /v1/account/password:
     patch:
       consumes:
       - application/json
       parameters:
-      - description: PasswordUpdate
+      - description: Request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.PasswordUpdate'
+          $ref: '#/definitions/updatepass.Request'
       produces:
       - application/json
       responses:
@@ -410,25 +415,25 @@ paths:
       - ApiKeyAuth: []
       tags:
       - account
-  /answer:
+  /v1/answer:
     post:
       parameters:
-      - description: ответ
+      - description: ' '
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.AnswerPost'
+          $ref: '#/definitions/internal_httpserver_handlers_answer_internal_create.Request'
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.SectionDto'
+            $ref: '#/definitions/verdict.Verdict'
       security:
       - ApiKeyAuth: []
       tags:
       - answer
-  /auth/refresh:
+  /v1/auth/refresh:
     post:
       consumes:
       - application/json
@@ -438,37 +443,37 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.RefreshToken'
+          $ref: '#/definitions/refresh.Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Tokens'
+            $ref: '#/definitions/model.Tokens'
       tags:
       - auth
-  /auth/signIn:
+  /v1/auth/signin:
     post:
       consumes:
       - application/json
       parameters:
-      - description: SignIn
+      - description: Request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.SignIn'
+          $ref: '#/definitions/signin.Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Tokens'
+            $ref: '#/definitions/model.Tokens'
       tags:
       - auth
-  /auth/signUp:
+  /v1/auth/signup:
     post:
       consumes:
       - application/json
@@ -478,23 +483,23 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.SignUp'
+          $ref: '#/definitions/signup.Request'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.Tokens'
+            $ref: '#/definitions/model.Tokens'
       tags:
       - auth
-  /course:
+  /v1/course:
     get:
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       security:
       - ApiKeyAuth: []
       tags:
@@ -508,17 +513,17 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.CoursePost'
+          $ref: '#/definitions/internal_httpserver_handlers_course_internal_create.Request'
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       security:
       - ApiKeyAuth: []
       tags:
       - course
-  /course/{courseId}:
+  /v1/course/{courseId}:
     get:
       parameters:
       - description: course id
@@ -530,10 +535,10 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       tags:
       - course
-  /course/{id}:
+  /v1/course/{id}:
     delete:
       consumes:
       - application/json
@@ -554,7 +559,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
-  /course/invite/{courseId}:
+  /v1/course/join/{courseId}:
     patch:
       parameters:
       - description: course id
@@ -566,12 +571,12 @@ paths:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       security:
       - ApiKeyAuth: []
       tags:
       - course
-  /course/slug/{slug}:
+  /v1/course/slug/{slug}:
     get:
       parameters:
       - description: course slug
@@ -583,10 +588,10 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.CourseDto'
+            $ref: '#/definitions/model.Course'
       tags:
       - course
-  /group:
+  /v1/group:
     get:
       responses:
         "200":
@@ -604,7 +609,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.GroupPost'
+          $ref: '#/definitions/internal_httpserver_handlers_group_internal_create.Request'
       responses:
         "201":
           description: created
@@ -614,7 +619,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /group/{id}:
+  /v1/group/{id}:
     get:
       parameters:
       - description: groupId
@@ -631,7 +636,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /group/invite/{inviteCode}:
+  /v1/group/invite/{inviteCode}:
     patch:
       parameters:
       - description: inviteCode
@@ -648,7 +653,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
-  /module:
+  /v1/module:
     post:
       parameters:
       - description: moduleRequest
@@ -656,17 +661,17 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.ModulePost'
+          $ref: '#/definitions/internal_httpserver_handlers_module_internal_create.Request'
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.ModuleDto'
+            $ref: '#/definitions/model.Module'
       security:
       - ApiKeyAuth: []
       tags:
       - module
-  /module/{id}:
+  /v1/module/{id}:
     delete:
       consumes:
       - application/json
@@ -687,7 +692,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
-  /page:
+  /v1/page:
     post:
       parameters:
       - description: создание
@@ -695,17 +700,17 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.PagePost'
+          $ref: '#/definitions/internal_httpserver_handlers_page_internal_create.Request'
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/entity.PageDto'
+            $ref: '#/definitions/model.Page'
       security:
       - ApiKeyAuth: []
       tags:
       - page
-  /page/{id}:
+  /v1/page/{id}:
     delete:
       consumes:
       - application/json
@@ -737,12 +742,12 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/entity.PageDto'
+            $ref: '#/definitions/model.Page'
       security:
       - ApiKeyAuth: []
       tags:
       - page
-  /review/answer:
+  /v1/review/answer:
     post:
       consumes:
       - application/json
@@ -752,7 +757,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.AnswerReviewPost'
+          $ref: '#/definitions/internal_httpserver_handlers_review_internal_create.Request'
       responses:
         "201":
           description: created
@@ -762,7 +767,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - review
-  /section:
+  /v1/section:
     post:
       consumes:
       - application/json
@@ -772,17 +777,17 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.SectionPost'
+          $ref: '#/definitions/internal_httpserver_handlers_section_internal_create.Request'
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.SectionDto'
+            $ref: '#/definitions/model.Section'
       security:
       - ApiKeyAuth: []
       tags:
       - section
-  /section/{id}:
+  /v1/section/{id}:
     delete:
       consumes:
       - application/json
@@ -803,7 +808,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - section
-  /teacher:
+  /v1/teacher:
     post:
       parameters:
       - description: ' '
@@ -811,7 +816,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.TeacherPost'
+          $ref: '#/definitions/internal_httpserver_handlers_teacher_internal_create.Request'
       responses:
         "201":
           description: created
@@ -821,7 +826,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - teacher
-  /teacher/courses:
+  /v1/teacher/courses:
     get:
       responses:
         "200":
@@ -832,7 +837,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - teacher
-  /upload:
+  /v1/upload:
     post:
       consumes:
       - multipart/form-data
@@ -846,7 +851,7 @@ paths:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.FileDto'
+            $ref: '#/definitions/model.File'
       security:
       - ApiKeyAuth: []
       tags:

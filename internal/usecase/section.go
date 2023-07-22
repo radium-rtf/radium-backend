@@ -2,24 +2,24 @@ package usecase
 
 import (
 	"context"
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type SectionUseCase struct {
-	sectionRepo repo.SectionRepo
+	sectionRepo postgres.Section
 }
 
-func NewSectionUseCase(pg *db.Query) SectionUseCase {
-	return SectionUseCase{sectionRepo: repo.NewSectionRepo(pg)}
+func NewSectionUseCase(sectionRepo postgres.Section) SectionUseCase {
+	return SectionUseCase{sectionRepo: sectionRepo}
 }
 
-func (uc SectionUseCase) CreateSection(ctx context.Context, section *entity.Section) (*entity.Section, error) {
+func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section) (*entity.Section, error) {
 	return uc.sectionRepo.CreateSection(ctx, section)
 }
 
-func (uc SectionUseCase) Delete(ctx context.Context, destroy *entity.Destroy) error {
-	return uc.sectionRepo.Delete(ctx, destroy)
+func (uc SectionUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
+	return uc.sectionRepo.Delete(ctx, id, isSoft)
 }

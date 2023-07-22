@@ -2,74 +2,33 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/mapper"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
-	"reflect"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+
+	ans "github.com/radium-rtf/radium-backend/internal/lib/answer"
 )
 
 type AnswerUseCase struct {
-	sectionRepo repo.SectionRepo
-	answerRepo  repo.AnswerRepo
-	mapper      mapper.Answer
+	sectionRepo postgres.Section
+	answerRepo  postgres.Answer
+	checker     ans.Checker
 }
 
-func NewAnswerUseCase(pg *db.Query) AnswerUseCase {
-	return AnswerUseCase{sectionRepo: repo.NewSectionRepo(pg), answerRepo: repo.NewAnswerRepo(pg)}
+func NewAnswerUseCase(sectionRepo postgres.Section, answerRepo postgres.Answer) AnswerUseCase {
+	return AnswerUseCase{sectionRepo: sectionRepo, answerRepo: answerRepo}
 }
 
-func (uc AnswerUseCase) Answer(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
+func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
 	section, err := uc.sectionRepo.GetSectionById(ctx, answer.SectionId)
 	if err != nil {
 		return nil, err
 	}
-	var verdict entity.Verdict
 
-	switch {
-	case answer.MultiChoice != nil:
-		verdict = uc.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
-	case answer.Choice != nil:
-		verdict = uc.choice(answer.Choice, section.ChoiceSection)
-	case answer.ShortAnswer != nil:
-		verdict = uc.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
-	case answer.Answer != nil:
-		verdict = entity.VerdictWAIT
-	default:
-		return nil, errors.New("ответы должны быть")
+	verdict, err := uc.checker.Check(section, answer)
+	if err != nil {
+		return nil, err
 	}
-
-	answer.Verdict = verdict
+	answer.Verdict = verdict.Verdict
 
 	return answer, uc.answerRepo.Create(ctx, answer)
-}
-
-func (uc AnswerUseCase) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) entity.Verdict {
-	answerArr := []string(answer.Answer)
-	solutionArr := []string(section.Answer)
-	verdict := entity.VerdictOK
-	ok := reflect.DeepEqual(answerArr, solutionArr)
-	if !ok {
-		verdict = entity.VerdictWA
-	}
-	return verdict
-}
-
-func (uc AnswerUseCase) choice(answer *entity.ChoiceSectionAnswer, section *entity.ChoiceSection) entity.Verdict {
-	verdict := entity.VerdictOK
-	ok := answer.Answer == section.Answer
-	if !ok {
-		verdict = entity.VerdictWA
-	}
-	return verdict
-}
-
-func (uc AnswerUseCase) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) entity.Verdict {
-	verdict := entity.VerdictOK
-	ok := answer.Answer == section.Answer
-	if !ok {
-		verdict = entity.VerdictWA
-	}
-	return verdict
 }

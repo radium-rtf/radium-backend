@@ -5,57 +5,7 @@ import (
 	"github.com/lib/pq"
 )
 
-const (
-	ChoiceType      = SectionType("choice")
-	MultiChoiceType = SectionType("multiChoice")
-	TextType        = SectionType("text")
-	ShortAnswerType = SectionType("shortAnswer")
-	AnswerType      = SectionType("answer")
-)
-
 type (
-	SectionType string
-
-	SectionPost struct {
-		PageId uuid.UUID `gorm:"type:uuid; not null"`
-		Order  uint      `gorm:"not null"`
-
-		TextSection        *TextSectionPost        `json:"text,omitempty"`
-		ChoiceSection      *ChoiceSectionPost      `json:"choice,omitempty"`
-		MultiChoiceSection *MultiChoiceSectionPost `json:"multichoice,omitempty"`
-		ShortAnswerSection *ShortAnswerSectionPost `json:"shortanswer,omitempty"`
-		AnswerSection      *AnswerSectionPost      `json:"answer,omitempty"`
-	}
-
-	TextSectionPost struct {
-		Content string
-	}
-
-	ChoiceSectionPost struct {
-		MaxScore uint
-		Question string
-		Answer   string
-		Variants []string `swaggertype:"array,string"`
-	}
-
-	MultiChoiceSectionPost struct {
-		MaxScore uint
-		Question string
-		Answer   []string `swaggertype:"array,string"`
-		Variants []string `swaggertype:"array,string"`
-	}
-
-	ShortAnswerSectionPost struct {
-		MaxScore uint
-		Question string
-		Answer   string
-	}
-
-	AnswerSectionPost struct {
-		MaxScore uint
-		Question string
-	}
-
 	Section struct {
 		DBModel
 		PageId uuid.UUID `gorm:"type:uuid; not null"`
@@ -66,20 +16,6 @@ type (
 		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
 		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
 		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner" json:"answer,omitempty"`
-	}
-
-	SectionDto struct {
-		Id       uuid.UUID   `json:"id"`
-		PageId   uuid.UUID   `json:"pageId"`
-		Order    uint        `json:"order"`
-		Type     SectionType `json:"type"`
-		Score    uint        `json:"score"`
-		Answer   string      `json:"answer"`
-		Answers  []string    `json:"answers" swaggertype:"array,string"`
-		Content  string      `json:"content"`
-		MaxScore uint        `json:"maxScore"`
-		Variants []string    `json:"variants"`
-		Verdict  Verdict     `json:"verdict"`
 	}
 
 	TextSection struct {

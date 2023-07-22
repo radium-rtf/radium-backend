@@ -4,52 +4,44 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type AccountUseCase struct {
-	userRepo       repo.UserRepo
-	passwordHasher hash.PasswordHasher
-	courseRepo     repo.CourseRepo
+	userRepo       postgres.User
+	passwordHasher hash.Hasher
+	courseRepo     postgres.Course
 }
 
-func NewAccountUseCase(pg *db.Query, cfg *config.Config) AccountUseCase {
-	passwordHasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
-	return AccountUseCase{userRepo: repo.NewUserRepo(pg), courseRepo: repo.NewCourseRepo(pg), passwordHasher: passwordHasher}
+func (uc AccountUseCase) GetUser(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+	return uc.userRepo.GetById(ctx, id)
 }
 
-func (uc AccountUseCase) Account(ctx context.Context, userId uuid.UUID) (entity.UserDto, error) {
-	user, err := uc.userRepo.GetById(ctx, userId)
-	if err != nil {
-		return entity.UserDto{}, err
-	}
-	return entity.NewUserDto(user), nil
+func NewAccountUseCase(userRepo postgres.User, courseRepo postgres.Course, passwordHasher hash.Hasher) AccountUseCase {
+	return AccountUseCase{userRepo: userRepo, courseRepo: courseRepo, passwordHasher: passwordHasher}
 }
 
-func (uc AccountUseCase) UpdateUser(ctx context.Context, userId uuid.UUID, update entity.UpdateUserRequest) (entity.UserDto, error) {
-	result, err := uc.userRepo.Update(ctx, userId, update)
-	if err != nil {
-		return entity.UserDto{}, err
-	}
-	return entity.NewUserDto(result), nil
+func (uc AccountUseCase) UpdateUser(ctx context.Context, update *entity.User) (*entity.User, error) {
+	return uc.userRepo.Update(ctx, update)
 }
 
-func (uc AccountUseCase) UpdatePassword(ctx context.Context, userId uuid.UUID, password entity.PasswordUpdate) error {
+func (uc AccountUseCase) UpdatePassword(ctx context.Context, userId uuid.UUID, current, new string) error {
 	user, err := uc.userRepo.GetById(ctx, userId)
 	if err != nil {
 		return err
 	}
-	if !uc.passwordHasher.Equals(user.Password, password.Current) {
+
+	if !uc.passwordHasher.Equals(user.Password, current) {
 		return errors.New("неверный пароль")
 	}
-	hashedPassword, err := uc.passwordHasher.Hash(password.New)
+
+	hashedPassword, err := uc.passwordHasher.Hash(new)
 	if err != nil {
 		return err
 	}
+
 	return uc.userRepo.UpdatePassword(ctx, userId, hashedPassword)
 }
 

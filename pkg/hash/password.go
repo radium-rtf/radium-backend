@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type PasswordHasher interface {
+type Hasher interface {
 	Hash(password string) (string, error)
 	Equals(hashed string, password string) bool
 }

@@ -2,22 +2,21 @@ package usecase
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
 type CourseUseCase struct {
-	courseRepo repo.CourseRepo
+	courseRepo postgres.Course
 }
 
-func NewCourseUseCase(pg *db.Query) CourseUseCase {
-	return CourseUseCase{courseRepo: repo.NewCourseRepo(pg)}
+func NewCourseUseCase(courseRepo postgres.Course) CourseUseCase {
+	return CourseUseCase{courseRepo: courseRepo}
 }
 
-func (uc CourseUseCase) CreateCourse(ctx context.Context, course *entity.Course) (*entity.Course, error) {
+func (uc CourseUseCase) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {
 	course, err := uc.courseRepo.Create(ctx, course)
 	if err != nil {
 		return &entity.Course{}, err
@@ -29,11 +28,11 @@ func (uc CourseUseCase) GetCourses(ctx context.Context) ([]*entity.Course, error
 	return uc.courseRepo.GetCourses(ctx)
 }
 
-func (uc CourseUseCase) GetCourseById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+func (uc CourseUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
 	return uc.courseRepo.GetFullById(ctx, id)
 }
 
-func (uc CourseUseCase) GetCourseBySlug(ctx context.Context, slug string) (*entity.Course, error) {
+func (uc CourseUseCase) GetBySlug(ctx context.Context, slug string) (*entity.Course, error) {
 	return uc.courseRepo.GetFullBySlug(ctx, slug)
 }
 
@@ -45,6 +44,6 @@ func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uui
 	return uc.courseRepo.GetById(ctx, courseId)
 }
 
-func (uc CourseUseCase) Delete(ctx context.Context, destroy *entity.Destroy) error {
-	return uc.courseRepo.Delete(ctx, destroy)
+func (uc CourseUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
+	return uc.courseRepo.Delete(ctx, id, isSoft)
 }

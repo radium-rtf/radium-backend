@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers"
 	"log"
 
 	"github.com/go-chi/chi/v5"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/radium-rtf/radium-backend/config"
 	_ "github.com/radium-rtf/radium-backend/docs"
-	v1 "github.com/radium-rtf/radium-backend/internal/controller/http/v1"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 	"github.com/radium-rtf/radium-backend/pkg/httpserver"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -24,7 +24,7 @@ func Run(cfg *config.Config) {
 	r.Use(cors.AllowAll().Handler)
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 	storage := filestorage.Storage{}
-	v1.NewRouter(r, db, storage, cfg)
+	handlers.NewRouter(r, db, storage, cfg)
 
 	httpServer := httpserver.New(r, httpserver.Port(cfg.HTTP.Port))
 	log.Fatal(httpServer.ListenAndServe())

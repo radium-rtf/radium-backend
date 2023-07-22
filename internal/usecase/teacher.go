@@ -4,16 +4,15 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 )
 
 type TeacherUseCase struct {
-	teacherRepo repo.TeacherRepo
+	teacherRepo postgres.TeacherRepo
 }
 
-func NewTeacherUseCase(pg *db.Query) TeacherUseCase {
-	return TeacherUseCase{teacherRepo: repo.NewTeacherRepo(pg)}
+func NewTeacherUseCase(teacherRepo postgres.TeacherRepo) TeacherUseCase {
+	return TeacherUseCase{teacherRepo: teacherRepo}
 }
 
 func (uc TeacherUseCase) GetByUserId(ctx context.Context, id uuid.UUID) (*entity.Teacher, error) {

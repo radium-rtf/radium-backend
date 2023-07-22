@@ -13,8 +13,8 @@ type TokenManager struct {
 	signingKey string
 }
 
-func NewManager(signingKey string) (TokenManager, error) {
-	return TokenManager{signingKey: signingKey}, nil
+func NewManager(signingKey string) TokenManager {
+	return TokenManager{signingKey: signingKey}
 }
 
 func (m TokenManager) NewJWT(id uuid.UUID, expiresAt time.Time) (string, error) {

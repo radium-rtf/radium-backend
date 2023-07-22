@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account": {
+        "/v1/account": {
             "get": {
                 "security": [
                     {
@@ -36,7 +36,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.UserDto"
+                            "$ref": "#/definitions/model.User"
                         }
                     }
                 }
@@ -63,7 +63,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.UpdateUserRequest"
+                            "$ref": "#/definitions/update.Request"
                         }
                     }
                 ],
@@ -74,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/account/courses": {
+        "/v1/account/courses": {
             "get": {
                 "security": [
                     {
@@ -88,13 +88,13 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
             }
         },
-        "/account/password": {
+        "/v1/account/password": {
             "patch": {
                 "security": [
                     {
@@ -112,12 +112,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "PasswordUpdate",
+                        "description": "Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.PasswordUpdate"
+                            "$ref": "#/definitions/updatepass.Request"
                         }
                     }
                 ],
@@ -128,7 +128,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/answer": {
+        "/v1/answer": {
             "post": {
                 "security": [
                     {
@@ -140,12 +140,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "ответ",
+                        "description": " ",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.AnswerPost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.Request"
                         }
                     }
                 ],
@@ -153,13 +153,13 @@ const docTemplate = `{
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.SectionDto"
+                            "$ref": "#/definitions/verdict.Verdict"
                         }
                     }
                 }
             }
         },
-        "/auth/refresh": {
+        "/v1/auth/refresh": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -177,7 +177,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.RefreshToken"
+                            "$ref": "#/definitions/refresh.Request"
                         }
                     }
                 ],
@@ -185,13 +185,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Tokens"
+                            "$ref": "#/definitions/model.Tokens"
                         }
                     }
                 }
             }
         },
-        "/auth/signIn": {
+        "/v1/auth/signin": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -204,12 +204,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SignIn",
+                        "description": "Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SignIn"
+                            "$ref": "#/definitions/signin.Request"
                         }
                     }
                 ],
@@ -217,13 +217,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Tokens"
+                            "$ref": "#/definitions/model.Tokens"
                         }
                     }
                 }
             }
         },
-        "/auth/signUp": {
+        "/v1/auth/signup": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -241,7 +241,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SignUp"
+                            "$ref": "#/definitions/signup.Request"
                         }
                     }
                 ],
@@ -249,13 +249,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entity.Tokens"
+                            "$ref": "#/definitions/model.Tokens"
                         }
                     }
                 }
             }
         },
-        "/course": {
+        "/v1/course": {
             "get": {
                 "security": [
                     {
@@ -269,7 +269,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
@@ -293,7 +293,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.CoursePost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_course_internal_create.Request"
                         }
                     }
                 ],
@@ -301,13 +301,13 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
             }
         },
-        "/course/invite/{courseId}": {
+        "/v1/course/join/{courseId}": {
             "patch": {
                 "security": [
                     {
@@ -330,13 +330,13 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
             }
         },
-        "/course/slug/{slug}": {
+        "/v1/course/slug/{slug}": {
             "get": {
                 "tags": [
                     "course"
@@ -354,13 +354,13 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
             }
         },
-        "/course/{courseId}": {
+        "/v1/course/{courseId}": {
             "get": {
                 "tags": [
                     "course"
@@ -378,13 +378,13 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.CourseDto"
+                            "$ref": "#/definitions/model.Course"
                         }
                     }
                 }
             }
         },
-        "/course/{id}": {
+        "/v1/course/{id}": {
             "delete": {
                 "security": [
                     {
@@ -419,7 +419,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/group": {
+        "/v1/group": {
             "get": {
                 "security": [
                     {
@@ -454,7 +454,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.GroupPost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_group_internal_create.Request"
                         }
                     }
                 ],
@@ -468,7 +468,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/group/invite/{inviteCode}": {
+        "/v1/group/invite/{inviteCode}": {
             "patch": {
                 "security": [
                     {
@@ -497,7 +497,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/group/{id}": {
+        "/v1/group/{id}": {
             "get": {
                 "security": [
                     {
@@ -526,7 +526,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/module": {
+        "/v1/module": {
             "post": {
                 "security": [
                     {
@@ -543,7 +543,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.ModulePost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_module_internal_create.Request"
                         }
                     }
                 ],
@@ -551,13 +551,13 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.ModuleDto"
+                            "$ref": "#/definitions/model.Module"
                         }
                     }
                 }
             }
         },
-        "/module/{id}": {
+        "/v1/module/{id}": {
             "delete": {
                 "security": [
                     {
@@ -592,7 +592,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/page": {
+        "/v1/page": {
             "post": {
                 "security": [
                     {
@@ -609,7 +609,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.PagePost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_page_internal_create.Request"
                         }
                     }
                 ],
@@ -617,13 +617,13 @@ const docTemplate = `{
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.PageDto"
+                            "$ref": "#/definitions/model.Page"
                         }
                     }
                 }
             }
         },
-        "/page/{id}": {
+        "/v1/page/{id}": {
             "get": {
                 "security": [
                     {
@@ -646,7 +646,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/entity.PageDto"
+                            "$ref": "#/definitions/model.Page"
                         }
                     }
                 }
@@ -685,7 +685,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/review/answer": {
+        "/v1/review/answer": {
             "post": {
                 "security": [
                     {
@@ -705,7 +705,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.AnswerReviewPost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_review_internal_create.Request"
                         }
                     }
                 ],
@@ -719,7 +719,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/section": {
+        "/v1/section": {
             "post": {
                 "security": [
                     {
@@ -739,7 +739,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SectionPost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_section_internal_create.Request"
                         }
                     }
                 ],
@@ -747,13 +747,13 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.SectionDto"
+                            "$ref": "#/definitions/model.Section"
                         }
                     }
                 }
             }
         },
-        "/section/{id}": {
+        "/v1/section/{id}": {
             "delete": {
                 "security": [
                     {
@@ -788,7 +788,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/teacher": {
+        "/v1/teacher": {
             "post": {
                 "security": [
                     {
@@ -805,7 +805,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.TeacherPost"
+                            "$ref": "#/definitions/internal_httpserver_handlers_teacher_internal_create.Request"
                         }
                     }
                 ],
@@ -819,7 +819,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/teacher/courses": {
+        "/v1/teacher/courses": {
             "get": {
                 "security": [
                     {
@@ -839,7 +839,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/upload": {
+        "/v1/upload": {
             "post": {
                 "security": [
                     {
@@ -865,7 +865,7 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.FileDto"
+                            "$ref": "#/definitions/model.File"
                         }
                     }
                 }
@@ -873,23 +873,125 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.AnswerPost": {
+        "create.AnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "$ref": "#/definitions/entity.AnswerSectionAnswerPost"
+                    "type": "string"
+                }
+            }
+        },
+        "create.AnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "maxScore": {
+                    "type": "integer"
                 },
-                "choice": {
-                    "$ref": "#/definitions/entity.ChoiceSectionAnswerPost"
-                },
-                "id": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
                     "type": "string"
                 },
-                "multiChoice": {
-                    "$ref": "#/definitions/entity.MultichoiceSectionAnswerPost"
+                "maxScore": {
+                    "type": "integer"
                 },
-                "shortAnswer": {
-                    "$ref": "#/definitions/entity.ShortAnswerSectionAnswerPost"
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.MultiChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.MultichoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.ShortAnswerSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ShortAnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.TextSectionPost": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.teacherCoursePost": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
                 }
             }
         },
@@ -916,110 +1018,27 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.AnswerReviewPost": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
-                }
-            }
-        },
-        "entity.AnswerSectionAnswerPost": {
+        "internal_httpserver_handlers_answer_internal_create.Request": {
             "type": "object",
             "properties": {
                 "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.AnswerSectionPost": {
-            "type": "object",
-            "properties": {
-                "maxScore": {
-                    "type": "integer"
+                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
                 },
-                "question": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ChoiceSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ChoiceSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "entity.CourseDto": {
-            "type": "object",
-            "properties": {
-                "authors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.UserDto"
-                    }
-                },
-                "banner": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
                 },
                 "id": {
                     "type": "string"
                 },
-                "links": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.LinkDto"
-                    }
+                "multiChoice": {
+                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
                 },
-                "logo": {
-                    "type": "string"
-                },
-                "modules": {
-                    "description": "TODO: скрыть для людей, у которых нет доступа к курсу",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.ModuleDto"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "shortDescription": {
-                    "type": "string"
-                },
-                "slug": {
-                    "type": "string"
+                "shortAnswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
                 }
             }
         },
-        "entity.CoursePost": {
+        "internal_httpserver_handlers_course_internal_create.Request": {
             "type": "object",
             "properties": {
                 "authors": {
@@ -1037,7 +1056,7 @@ const docTemplate = `{
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.LinkDto"
+                        "$ref": "#/definitions/model.Link"
                     }
                 },
                 "logo": {
@@ -1051,15 +1070,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.FileDto": {
-            "type": "object",
-            "properties": {
-                "location": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.GroupPost": {
+        "internal_httpserver_handlers_group_internal_create.Request": {
             "type": "object",
             "properties": {
                 "coursesIds": {
@@ -1079,7 +1090,133 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.LinkDto": {
+        "internal_httpserver_handlers_module_internal_create.Request": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_httpserver_handlers_page_internal_create.Request": {
+            "type": "object",
+            "properties": {
+                "moduleId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_httpserver_handlers_review_internal_create.Request": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_httpserver_handlers_section_internal_create.Request": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionPost"
+                },
+                "multichoice": {
+                    "$ref": "#/definitions/create.MultiChoiceSectionPost"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "shortanswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionPost"
+                },
+                "text": {
+                    "$ref": "#/definitions/create.TextSectionPost"
+                }
+            }
+        },
+        "internal_httpserver_handlers_teacher_internal_create.Request": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/create.teacherCoursePost"
+                    }
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Course": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "banner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "modules": {
+                    "description": "TODO: скрыть для людей, у которых нет доступа к курсу",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Module"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.File": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Link": {
             "type": "object",
             "properties": {
                 "link": {
@@ -1090,7 +1227,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ModuleDto": {
+        "model.Module": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1102,7 +1239,7 @@ const docTemplate = `{
                 "pages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.PageDto"
+                        "$ref": "#/definitions/model.Page"
                     }
                 },
                 "slug": {
@@ -1110,52 +1247,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ModulePost": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.MultiChoiceSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "entity.MultichoiceSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "entity.PageDto": {
+        "model.Page": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1167,7 +1259,7 @@ const docTemplate = `{
                 "sections": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.SectionDto"
+                        "$ref": "#/definitions/model.Section"
                     }
                 },
                 "slug": {
@@ -1175,37 +1267,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.PagePost": {
-            "type": "object",
-            "properties": {
-                "moduleId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.PasswordUpdate": {
-            "type": "object",
-            "properties": {
-                "current": {
-                    "type": "string"
-                },
-                "new": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.RefreshToken": {
-            "type": "object",
-            "properties": {
-                "refreshToken": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SectionDto": {
+        "model.Section": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -1249,113 +1311,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.SectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "$ref": "#/definitions/entity.AnswerSectionPost"
-                },
-                "choice": {
-                    "$ref": "#/definitions/entity.ChoiceSectionPost"
-                },
-                "multichoice": {
-                    "$ref": "#/definitions/entity.MultiChoiceSectionPost"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "pageId": {
-                    "type": "string"
-                },
-                "shortanswer": {
-                    "$ref": "#/definitions/entity.ShortAnswerSectionPost"
-                },
-                "text": {
-                    "$ref": "#/definitions/entity.TextSectionPost"
-                }
-            }
-        },
-        "entity.ShortAnswerSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ShortAnswerSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
-                },
-                "question": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SignIn": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.SignUp": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.TeacherCoursePost": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "groupId": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.TeacherPost": {
-            "type": "object",
-            "properties": {
-                "courses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.TeacherCoursePost"
-                    }
-                },
-                "teacherId": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.TextSectionPost": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Tokens": {
+        "model.Tokens": {
             "type": "object",
             "properties": {
                 "accessToken": {
@@ -1369,18 +1325,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.UserDto": {
+        "model.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -1393,6 +1338,69 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "refresh.Request": {
+            "type": "object",
+            "properties": {
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "signin.Request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "signup.Request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "update.Request": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "updatepass.Request": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "string"
+                },
+                "new": {
+                    "type": "string"
+                }
+            }
+        },
+        "verdict.Verdict": {
+            "type": "object",
+            "properties": {
+                "verdict": {
                     "type": "string"
                 }
             }
@@ -1411,7 +1419,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/v1",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "без юлерна",
 	Description:      "",
