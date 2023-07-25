@@ -1092,6 +1092,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "number"
                 }
             }
         },
@@ -1103,6 +1106,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "number"
                 }
             }
         },
@@ -1230,6 +1236,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "order": {
+                    "type": "number"
+                },
                 "pages": {
                     "type": "array",
                     "items": {
@@ -1249,6 +1258,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "number"
                 },
                 "sections": {
                     "type": "array",

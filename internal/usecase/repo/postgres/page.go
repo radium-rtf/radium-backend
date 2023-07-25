@@ -29,6 +29,7 @@ func (r Page) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	p := r.pg.Page
 	s := p.Sections
 	return p.WithContext(ctx).Debug().
+		Order(p.Order).
 		Preload(s, s.Order(r.pg.Section.Order)).
 		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection, s.AnswerSection).
 		Where(p.Id.Eq(id)).

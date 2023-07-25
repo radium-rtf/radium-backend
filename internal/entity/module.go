@@ -16,6 +16,7 @@ type (
 		Slug     string    `json:"slug" gorm:"type:string; not null"`
 		Name     string    `json:"name" gorm:"type:string; not null"`
 		CourseId uuid.UUID `json:"courseId" gorm:"type:uuid; not null"`
+		Order    float64   `gorm:"not null; default:0"`
 		Pages    []*Page
 	}
 )

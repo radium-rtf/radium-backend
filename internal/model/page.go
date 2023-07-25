@@ -10,6 +10,7 @@ type (
 		Id       uuid.UUID  `json:"id"`
 		Slug     string     `json:"slug"`
 		Name     string     `json:"name"`
+		Order    float64    `json:"order"`
 		Sections []*Section `json:"sections"`
 	}
 )
@@ -20,6 +21,7 @@ func NewPage(page *entity.Page, answers map[uuid.UUID]*entity.Answer) *Page {
 		Id:       page.Id,
 		Slug:     page.Slug,
 		Name:     page.Name,
+		Order:    page.Order,
 		Sections: sectionsDto,
 	}
 }

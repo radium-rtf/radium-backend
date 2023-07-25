@@ -34,6 +34,7 @@ func newPage(db *gorm.DB, opts ...gen.DOOption) page {
 	_page.Name = field.NewString(tableName, "name")
 	_page.Slug = field.NewString(tableName, "slug")
 	_page.ModuleId = field.NewField(tableName, "module_id")
+	_page.Order = field.NewFloat64(tableName, "order")
 	_page.Sections = pageHasManySections{
 		db: db.Session(&gorm.Session{}),
 
@@ -81,6 +82,7 @@ type page struct {
 	Name      field.String
 	Slug      field.String
 	ModuleId  field.Field
+	Order     field.Float64
 	Sections  pageHasManySections
 
 	fieldMap map[string]field.Expr
@@ -105,6 +107,7 @@ func (p *page) updateTableName(table string) *page {
 	p.Name = field.NewString(table, "name")
 	p.Slug = field.NewString(table, "slug")
 	p.ModuleId = field.NewField(table, "module_id")
+	p.Order = field.NewFloat64(table, "order")
 
 	p.fillFieldMap()
 
@@ -127,7 +130,7 @@ func (p *page) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *page) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 8)
+	p.fieldMap = make(map[string]field.Expr, 9)
 	p.fieldMap["id"] = p.Id
 	p.fieldMap["created_at"] = p.CreatedAt
 	p.fieldMap["updated_at"] = p.UpdatedAt
@@ -135,6 +138,7 @@ func (p *page) fillFieldMap() {
 	p.fieldMap["name"] = p.Name
 	p.fieldMap["slug"] = p.Slug
 	p.fieldMap["module_id"] = p.ModuleId
+	p.fieldMap["order"] = p.Order
 
 }
 

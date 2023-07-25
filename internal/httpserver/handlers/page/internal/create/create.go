@@ -32,7 +32,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		page := request.NewPostToPage()
+		page := request.ToPage()
 		page, err = creator.Create(ctx, page)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

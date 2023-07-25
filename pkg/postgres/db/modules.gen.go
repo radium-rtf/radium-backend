@@ -34,6 +34,7 @@ func newModule(db *gorm.DB, opts ...gen.DOOption) module {
 	_module.Slug = field.NewString(tableName, "slug")
 	_module.Name = field.NewString(tableName, "name")
 	_module.CourseId = field.NewField(tableName, "course_id")
+	_module.Order = field.NewFloat64(tableName, "order")
 	_module.Pages = moduleHasManyPages{
 		db: db.Session(&gorm.Session{}),
 
@@ -101,6 +102,7 @@ type module struct {
 	Slug      field.String
 	Name      field.String
 	CourseId  field.Field
+	Order     field.Float64
 	Pages     moduleHasManyPages
 
 	fieldMap map[string]field.Expr
@@ -125,6 +127,7 @@ func (m *module) updateTableName(table string) *module {
 	m.Slug = field.NewString(table, "slug")
 	m.Name = field.NewString(table, "name")
 	m.CourseId = field.NewField(table, "course_id")
+	m.Order = field.NewFloat64(table, "order")
 
 	m.fillFieldMap()
 
@@ -147,7 +150,7 @@ func (m *module) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *module) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 8)
+	m.fieldMap = make(map[string]field.Expr, 9)
 	m.fieldMap["id"] = m.Id
 	m.fieldMap["created_at"] = m.CreatedAt
 	m.fieldMap["updated_at"] = m.UpdatedAt
@@ -155,6 +158,7 @@ func (m *module) fillFieldMap() {
 	m.fieldMap["slug"] = m.Slug
 	m.fieldMap["name"] = m.Name
 	m.fieldMap["course_id"] = m.CourseId
+	m.fieldMap["order"] = m.Order
 
 }
 

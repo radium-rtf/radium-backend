@@ -11,6 +11,7 @@ type (
 		Id    uuid.UUID `json:"id"`
 		Slug  string    `json:"slug"`
 		Name  string    `json:"name"`
+		Order float64   `json:"order"`
 		Pages []*Page   `json:"pages"`
 	}
 )
@@ -20,6 +21,7 @@ func NewModule(module *entity.Module) *Module {
 		Id:    module.Id,
 		Name:  module.Name,
 		Slug:  translit.RuEn(module.Name),
+		Order: module.Order,
 		Pages: NewPages(module.Pages, map[uuid.UUID]*entity.Answer{}),
 	}
 }

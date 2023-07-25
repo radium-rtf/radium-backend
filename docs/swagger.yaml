@@ -142,6 +142,8 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: number
     type: object
   internal_httpserver_handlers_page_internal_create.Request:
     properties:
@@ -149,6 +151,8 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: number
     type: object
   internal_httpserver_handlers_review_internal_create.Request:
     properties:
@@ -231,6 +235,8 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: number
       pages:
         items:
           $ref: '#/definitions/model.Page'
@@ -244,6 +250,8 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: number
       sections:
         items:
           $ref: '#/definitions/model.Section'

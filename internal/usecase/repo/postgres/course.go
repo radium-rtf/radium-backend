@@ -59,30 +59,37 @@ func (r Course) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, erro
 	c := r.pg.Course
 	sections := c.Modules.Pages.Sections
 	course, err := c.WithContext(ctx).Debug().
-		Preload(c.Links, c.Authors, c.Modules).
+		Preload(c.Modules, c.Modules.Order(r.pg.Module.Order)).
+		Preload(c.Links, c.Authors).
 		Preload(sections, sections.Order(r.pg.Section.Order)).
 		Where(c.Id.Eq(id)).Take()
+
 	return course, err
 }
 
 func (r Course) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
-	c := r.pg.Course
-	s := c.Modules.Pages.Sections
-	course, err := c.WithContext(ctx).Debug().
-		Preload(c.Links, c.Authors, c.Modules.Pages).
-		Preload(s, s.Order(r.pg.Section.Order)).
-		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection, s.AnswerSection).
-		Where(c.Id.Eq(id)).
-		Take()
-	return course, err
+	return r.getFull(ctx, r.pg.Course.Id.Eq(id))
 }
 
 func (r Course) GetFullBySlug(ctx context.Context, slug string) (*entity.Course, error) {
+	return r.getFull(ctx, r.pg.Course.Slug.Eq(slug))
+}
+
+func (r Course) getFull(ctx context.Context, where ...gen.Condition) (*entity.Course, error) {
 	c := r.pg.Course
+	m := c.Modules
+	p := m.Pages
+	s := p.Sections
+
 	course, err := c.WithContext(ctx).Debug().
-		Preload(c.Links, c.Authors, c.Modules.Pages).
-		Where(c.Slug.Eq(slug)).
-		Take()
+		Where(where...).
+		Preload(c.Links, c.Authors).
+		Preload(m, m.Order(r.pg.Module.Order)).
+		Preload(p, p.Order(r.pg.Page.Order)).
+		Preload(s, s.Order(r.pg.Section.Order)).
+		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection, s.AnswerSection).
+		First()
+
 	return course, err
 }
 
