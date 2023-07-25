@@ -7,8 +7,8 @@ import (
 
 type (
 	Request struct {
-		PageId uuid.UUID `gorm:"type:uuid; not null"`
-		Order  uint      `gorm:"not null"`
+		PageId uuid.UUID `json:"pageId"`
+		Order  uint      `json:"order"`
 
 		TextSection        *TextSectionPost        `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSectionPost      `json:"choice,omitempty"`

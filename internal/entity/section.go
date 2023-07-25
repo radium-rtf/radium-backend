@@ -11,11 +11,11 @@ type (
 		PageId uuid.UUID `gorm:"type:uuid; not null"`
 		Order  uint      `gorm:"not null"`
 
-		TextSection        *TextSection        `gorm:"polymorphic:Owner" json:"text,omitempty"`
-		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner" json:"choice,omitempty"`
-		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner" json:"multichoice,omitempty"`
-		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner" json:"shortanswer,omitempty"`
-		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner" json:"answer,omitempty"`
+		TextSection        *TextSection        `gorm:"polymorphic:Owner"`
+		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner"`
+		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner"`
+		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner"`
+		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner"`
 	}
 
 	TextSection struct {
@@ -47,8 +47,8 @@ type (
 		DBModel
 		MaxScore  uint           `gorm:"not null"`
 		Question  string         `gorm:"not null"`
-		Answer    pq.StringArray `gorm:"type:text[]; not null" swaggertype:"array,string"`
-		Variants  pq.StringArray `gorm:"type:text[]; not null" swaggertype:"array,string"`
+		Answer    pq.StringArray `gorm:"type:text[]; not null"`
+		Variants  pq.StringArray `gorm:"type:text[]; not null"`
 		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
 		OwnerType string         `gorm:"not null"`
 	}

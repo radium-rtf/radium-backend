@@ -2,6 +2,6 @@ package model
 
 type (
 	File struct {
-		Location string
+		Location string `json:"location"`
 	}
 )
