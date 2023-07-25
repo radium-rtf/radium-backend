@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
@@ -24,6 +25,7 @@ func New(creator creator) http.HandlerFunc {
 		var (
 			request Request
 			ctx     = r.Context()
+			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -33,7 +35,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		course := request.ToCourse()
+		course := request.ToCourse(userId)
 		course, err = creator.Create(ctx, course)
 		if err != nil {
 			render.Status(r, http.StatusCreated)

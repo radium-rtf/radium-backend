@@ -1,17 +1,12 @@
 package main
 
 import (
-	"github.com/radium-rtf/radium-backend/config"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/gen"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/pggen"
 	"log"
 )
 
 func main() {
-	cfg, err := config.NewConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = gen.Gen(cfg.URL)
+	err := pggen.Gen()
 	if err != nil {
 		log.Fatal(err)
 	}

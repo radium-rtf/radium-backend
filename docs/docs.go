@@ -1041,12 +1041,6 @@ const docTemplate = `{
         "internal_httpserver_handlers_course_internal_create.Request": {
             "type": "object",
             "properties": {
-                "authors": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "banner": {
                     "type": "string"
                 },

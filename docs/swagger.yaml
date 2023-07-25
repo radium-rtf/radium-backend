@@ -108,10 +108,6 @@ definitions:
     type: object
   internal_httpserver_handlers_course_internal_create.Request:
     properties:
-      authors:
-        items:
-          type: string
-        type: array
       banner:
         type: string
       description:

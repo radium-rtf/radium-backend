@@ -102,15 +102,3 @@ func (r User) Update(ctx context.Context, update *entity.User) (*entity.User, er
 	}
 	return r.GetById(ctx, update.Id)
 }
-
-func (r User) Delete(ctx context.Context, destroy *entity.Destroy) error {
-	s := r.pg.User.WithContext(ctx)
-	if !destroy.IsSoft {
-		s = s.Unscoped()
-	}
-	info, err := s.Where(r.pg.User.Id.Eq(destroy.Id)).Delete()
-	if err == nil && info.RowsAffected == 0 {
-		return errors.New("not found")
-	}
-	return err
-}

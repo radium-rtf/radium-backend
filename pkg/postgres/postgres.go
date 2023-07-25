@@ -3,7 +3,7 @@ package postgres
 import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/gen"
+	"github.com/radium-rtf/radium-backend/pkg/postgres/pggen"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,7 +13,7 @@ func New(url string) (*db.Query, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = gen.Gen(url)
+	err = pggen.Gen()
 	if err != nil {
 		return nil, err
 	}
