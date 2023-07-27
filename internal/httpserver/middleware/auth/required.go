@@ -15,6 +15,7 @@ func Required(manager auth.TokenManager) func(http.Handler) http.Handler {
 			if err != nil {
 				writer.WriteHeader(http.StatusUnauthorized)
 				writer.Write([]byte(err.Error()))
+				return
 			}
 			ctx := context.WithValue(request.Context(), "userId", userId)
 			next.ServeHTTP(writer, request.WithContext(ctx))
