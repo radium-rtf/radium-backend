@@ -32,8 +32,10 @@ type (
 	}
 )
 
-func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) []*Section {
+func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) ([]*Section, uint, uint) {
 	dtos := make([]*Section, 0, len(sections))
+	var sumMaxScore, sumScore uint = 0, 0
+
 	for _, section := range sections {
 		var (
 			verdictType = verdict.EMPTY
@@ -50,10 +52,14 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 			answersArr = answer.Answers()
 		}
 
+		sumMaxScore += section.MaxScore
+		sumScore += score
+
 		dto := NewSection(section, verdictType, score, answerStr, answersArr)
 		dtos = append(dtos, dto)
 	}
-	return dtos
+
+	return dtos, sumScore, sumMaxScore
 }
 
 func NewSection(section *entity.Section, verdict verdict.Type,
@@ -75,7 +81,7 @@ func NewSection(section *entity.Section, verdict verdict.Type,
 		PageId:   section.PageId,
 		Order:    section.Order,
 		Content:  section.Content(),
-		MaxScore: section.MaxScore(),
+		MaxScore: section.MaxScore,
 		Verdict:  verdict,
 		Variants: section.Variants(),
 		Type:     sectionType,

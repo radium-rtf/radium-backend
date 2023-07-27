@@ -31,7 +31,6 @@ func newShortAnswerSection(db *gorm.DB, opts ...gen.DOOption) shortAnswerSection
 	_shortAnswerSection.CreatedAt = field.NewTime(tableName, "created_at")
 	_shortAnswerSection.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_shortAnswerSection.DeletedAt = field.NewField(tableName, "deleted_at")
-	_shortAnswerSection.MaxScore = field.NewUint(tableName, "max_score")
 	_shortAnswerSection.Question = field.NewString(tableName, "question")
 	_shortAnswerSection.Answer = field.NewString(tableName, "answer")
 	_shortAnswerSection.OwnerID = field.NewField(tableName, "owner_id")
@@ -50,7 +49,6 @@ type shortAnswerSection struct {
 	CreatedAt field.Time
 	UpdatedAt field.Time
 	DeletedAt field.Field
-	MaxScore  field.Uint
 	Question  field.String
 	Answer    field.String
 	OwnerID   field.Field
@@ -75,7 +73,6 @@ func (s *shortAnswerSection) updateTableName(table string) *shortAnswerSection {
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
-	s.MaxScore = field.NewUint(table, "max_score")
 	s.Question = field.NewString(table, "question")
 	s.Answer = field.NewString(table, "answer")
 	s.OwnerID = field.NewField(table, "owner_id")
@@ -104,12 +101,11 @@ func (s *shortAnswerSection) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (s *shortAnswerSection) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 8)
 	s.fieldMap["id"] = s.Id
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt
-	s.fieldMap["max_score"] = s.MaxScore
 	s.fieldMap["question"] = s.Question
 	s.fieldMap["answer"] = s.Answer
 	s.fieldMap["owner_id"] = s.OwnerID

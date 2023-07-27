@@ -7,8 +7,9 @@ import (
 
 type (
 	Request struct {
-		PageId uuid.UUID `json:"pageId"`
-		Order  uint      `json:"order"`
+		PageId   uuid.UUID `json:"pageId"`
+		Order    uint      `json:"order"`
+		MaxScore uint      `json:"maxScore,omitempty"`
 
 		TextSection        *TextSectionPost        `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSectionPost      `json:"choice,omitempty"`
@@ -22,35 +23,32 @@ type (
 	}
 
 	ChoiceSectionPost struct {
-		MaxScore uint
 		Question string
 		Answer   string
 		Variants []string `swaggertype:"array,string"`
 	}
 
 	MultiChoiceSectionPost struct {
-		MaxScore uint
 		Question string
 		Answer   []string `swaggertype:"array,string"`
 		Variants []string `swaggertype:"array,string"`
 	}
 
 	ShortAnswerSectionPost struct {
-		MaxScore uint
 		Question string
 		Answer   string
 	}
 
 	AnswerSectionPost struct {
-		MaxScore uint
 		Question string
 	}
 )
 
-func (r Request) PostToSection() *entity.Section {
+func (r Request) ToSection() *entity.Section {
 	return &entity.Section{
 		PageId:             r.PageId,
 		Order:              r.Order,
+		MaxScore:           r.MaxScore,
 		TextSection:        r.postToText(r.TextSection),
 		ChoiceSection:      r.postToChoice(r.ChoiceSection),
 		MultiChoiceSection: r.postToMultiChoice(r.MultiChoiceSection),
@@ -73,7 +71,6 @@ func (r Request) postToChoice(post *ChoiceSectionPost) *entity.ChoiceSection {
 		return nil
 	}
 	return &entity.ChoiceSection{
-		MaxScore: post.MaxScore,
 		Answer:   post.Answer,
 		Variants: post.Variants,
 		Question: post.Question,
@@ -85,7 +82,6 @@ func (r Request) postToMultiChoice(post *MultiChoiceSectionPost) *entity.MultiCh
 		return nil
 	}
 	return &entity.MultiChoiceSection{
-		MaxScore: post.MaxScore,
 		Answer:   post.Answer,
 		Variants: post.Variants,
 		Question: post.Question,
@@ -97,7 +93,6 @@ func (r Request) postToShortAnswer(post *ShortAnswerSectionPost) *entity.ShortAn
 		return nil
 	}
 	return &entity.ShortAnswerSection{
-		MaxScore: post.MaxScore,
 		Answer:   post.Answer,
 		Question: post.Question,
 	}
@@ -109,6 +104,5 @@ func (r Request) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
 	}
 	return &entity.AnswerSection{
 		Question: post.Question,
-		MaxScore: post.MaxScore,
 	}
 }

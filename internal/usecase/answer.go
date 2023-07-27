@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 
@@ -31,4 +32,8 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	answer.Verdict = verdict.Verdict
 
 	return answer, uc.answerRepo.Create(ctx, answer)
+}
+
+func (uc AnswerUseCase) GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (map[uuid.UUID]*entity.Answer, error) {
+	return uc.answerRepo.Get(ctx, userId, ids)
 }

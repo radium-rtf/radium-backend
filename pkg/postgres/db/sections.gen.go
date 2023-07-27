@@ -33,6 +33,7 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 	_section.DeletedAt = field.NewField(tableName, "deleted_at")
 	_section.PageId = field.NewField(tableName, "page_id")
 	_section.Order = field.NewUint(tableName, "order")
+	_section.MaxScore = field.NewUint(tableName, "max_score")
 	_section.TextSection = sectionHasOneTextSection{
 		db: db.Session(&gorm.Session{}),
 
@@ -78,6 +79,7 @@ type section struct {
 	DeletedAt   field.Field
 	PageId      field.Field
 	Order       field.Uint
+	MaxScore    field.Uint
 	TextSection sectionHasOneTextSection
 
 	ChoiceSection sectionHasOneChoiceSection
@@ -109,6 +111,7 @@ func (s *section) updateTableName(table string) *section {
 	s.DeletedAt = field.NewField(table, "deleted_at")
 	s.PageId = field.NewField(table, "page_id")
 	s.Order = field.NewUint(table, "order")
+	s.MaxScore = field.NewUint(table, "max_score")
 
 	s.fillFieldMap()
 
@@ -131,13 +134,14 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 11)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.Id
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt
 	s.fieldMap["page_id"] = s.PageId
 	s.fieldMap["order"] = s.Order
+	s.fieldMap["max_score"] = s.MaxScore
 
 }
 

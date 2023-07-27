@@ -16,13 +16,15 @@ func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
 
 	pageRepo := postgres.NewPageRepo(pg)
 	answerRepo := postgres.NewAnswerRepo(pg)
+	sectionRepo := postgres.NewSectionRepo(pg)
 
-	useCase := usecase.NewPageUseCase(pageRepo, answerRepo)
+	useCase := usecase.NewPageUseCase(pageRepo)
+	answerUseCase := usecase.NewAnswerUseCase(sectionRepo, answerRepo)
 
 	r.Route("/v1/page", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.UserId(manager))
-			r.Get("/{id}", getbyid.New(useCase))
+			r.Get("/{id}", getbyid.New(useCase, answerUseCase))
 		})
 
 		r.Group(func(r chi.Router) {

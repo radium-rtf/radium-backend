@@ -31,7 +31,6 @@ func newMultiChoiceSection(db *gorm.DB, opts ...gen.DOOption) multiChoiceSection
 	_multiChoiceSection.CreatedAt = field.NewTime(tableName, "created_at")
 	_multiChoiceSection.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_multiChoiceSection.DeletedAt = field.NewField(tableName, "deleted_at")
-	_multiChoiceSection.MaxScore = field.NewUint(tableName, "max_score")
 	_multiChoiceSection.Question = field.NewString(tableName, "question")
 	_multiChoiceSection.Answer = field.NewField(tableName, "answer")
 	_multiChoiceSection.Variants = field.NewField(tableName, "variants")
@@ -51,7 +50,6 @@ type multiChoiceSection struct {
 	CreatedAt field.Time
 	UpdatedAt field.Time
 	DeletedAt field.Field
-	MaxScore  field.Uint
 	Question  field.String
 	Answer    field.Field
 	Variants  field.Field
@@ -77,7 +75,6 @@ func (m *multiChoiceSection) updateTableName(table string) *multiChoiceSection {
 	m.CreatedAt = field.NewTime(table, "created_at")
 	m.UpdatedAt = field.NewTime(table, "updated_at")
 	m.DeletedAt = field.NewField(table, "deleted_at")
-	m.MaxScore = field.NewUint(table, "max_score")
 	m.Question = field.NewString(table, "question")
 	m.Answer = field.NewField(table, "answer")
 	m.Variants = field.NewField(table, "variants")
@@ -107,12 +104,11 @@ func (m *multiChoiceSection) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (m *multiChoiceSection) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 10)
+	m.fieldMap = make(map[string]field.Expr, 9)
 	m.fieldMap["id"] = m.Id
 	m.fieldMap["created_at"] = m.CreatedAt
 	m.fieldMap["updated_at"] = m.UpdatedAt
 	m.fieldMap["deleted_at"] = m.DeletedAt
-	m.fieldMap["max_score"] = m.MaxScore
 	m.fieldMap["question"] = m.Question
 	m.fieldMap["answer"] = m.Answer
 	m.fieldMap["variants"] = m.Variants

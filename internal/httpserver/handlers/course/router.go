@@ -17,12 +17,20 @@ import (
 
 func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
 	courseRepo := postgres.NewCourseRepo(pg)
+	answerRepo := postgres.NewAnswerRepo(pg)
+	sectionRepo := postgres.NewSectionRepo(pg)
+
 	useCase := usecase.NewCourseUseCase(courseRepo)
+	answerUseCase := usecase.NewAnswerUseCase(sectionRepo, answerRepo)
 
 	r.Route("/v1/course", func(r chi.Router) {
 		r.Get("/", get.New(useCase))
-		r.Get("/{courseId}", getbyid.New(useCase))
-		r.Get("/slug/{slug}", getbyslug.New(useCase))
+
+		r.Group(func(r chi.Router) {
+			r.Use(mwAuth.UserId(manager))
+			r.Get("/{courseId}", getbyid.New(useCase, answerUseCase))
+			r.Get("/slug/{slug}", getbyslug.New(useCase, answerUseCase))
+		})
 
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.Required(manager))

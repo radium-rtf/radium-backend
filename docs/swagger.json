@@ -330,6 +330,11 @@
         },
         "/v1/course/slug/{slug}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "tags": [
                     "course"
                 ],
@@ -354,6 +359,11 @@
         },
         "/v1/course/{courseId}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "tags": [
                     "course"
                 ],
@@ -876,9 +886,6 @@
         "create.AnswerSectionPost": {
             "type": "object",
             "properties": {
-                "maxScore": {
-                    "type": "integer"
-                },
                 "question": {
                     "type": "string"
                 }
@@ -897,9 +904,6 @@
             "properties": {
                 "answer": {
                     "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -920,9 +924,6 @@
                     "items": {
                         "type": "string"
                     }
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -959,9 +960,6 @@
             "properties": {
                 "answer": {
                     "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -1124,6 +1122,9 @@
                 "choice": {
                     "$ref": "#/definitions/create.ChoiceSectionPost"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "multichoice": {
                     "$ref": "#/definitions/create.MultiChoiceSectionPost"
                 },
@@ -1182,6 +1183,9 @@
                 "logo": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "modules": {
                     "description": "TODO: скрыть для людей, у которых нет доступа к курсу",
                     "type": "array",
@@ -1191,6 +1195,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 },
                 "shortDescription": {
                     "type": "string"
@@ -1225,6 +1232,9 @@
                 "id": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1237,6 +1247,9 @@
                         "$ref": "#/definitions/model.Page"
                     }
                 },
+                "score": {
+                    "type": "integer"
+                },
                 "slug": {
                     "type": "string"
                 }
@@ -1248,11 +1261,17 @@
                 "id": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
                 "order": {
                     "type": "number"
+                },
+                "score": {
+                    "type": "integer"
                 },
                 "sections": {
                     "type": "array",

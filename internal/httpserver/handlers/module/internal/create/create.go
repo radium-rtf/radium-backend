@@ -3,6 +3,7 @@ package create
 import (
 	"context"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
@@ -39,7 +40,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewModule(module)
+		dto := model.NewModule(module, map[uuid.UUID]*entity.Answer{})
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}

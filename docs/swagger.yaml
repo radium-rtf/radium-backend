@@ -7,8 +7,6 @@ definitions:
     type: object
   create.AnswerSectionPost:
     properties:
-      maxScore:
-        type: integer
       question:
         type: string
     type: object
@@ -21,8 +19,6 @@ definitions:
     properties:
       answer:
         type: string
-      maxScore:
-        type: integer
       question:
         type: string
       variants:
@@ -36,8 +32,6 @@ definitions:
         items:
           type: string
         type: array
-      maxScore:
-        type: integer
       question:
         type: string
       variants:
@@ -61,8 +55,6 @@ definitions:
     properties:
       answer:
         type: string
-      maxScore:
-        type: integer
       question:
         type: string
     type: object
@@ -167,6 +159,8 @@ definitions:
         $ref: '#/definitions/create.AnswerSectionPost'
       choice:
         $ref: '#/definitions/create.ChoiceSectionPost'
+      maxScore:
+        type: integer
       multichoice:
         $ref: '#/definitions/create.MultiChoiceSectionPost'
       order:
@@ -205,6 +199,8 @@ definitions:
         type: array
       logo:
         type: string
+      maxScore:
+        type: integer
       modules:
         description: 'TODO: скрыть для людей, у которых нет доступа к курсу'
         items:
@@ -212,6 +208,8 @@ definitions:
         type: array
       name:
         type: string
+      score:
+        type: integer
       shortDescription:
         type: string
       slug:
@@ -233,6 +231,8 @@ definitions:
     properties:
       id:
         type: string
+      maxScore:
+        type: integer
       name:
         type: string
       order:
@@ -241,6 +241,8 @@ definitions:
         items:
           $ref: '#/definitions/model.Page'
         type: array
+      score:
+        type: integer
       slug:
         type: string
     type: object
@@ -248,10 +250,14 @@ definitions:
     properties:
       id:
         type: string
+      maxScore:
+        type: integer
       name:
         type: string
       order:
         type: number
+      score:
+        type: integer
       sections:
         items:
           $ref: '#/definitions/model.Section'
@@ -540,6 +546,8 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
       tags:
       - course
   /v1/course/{id}:
@@ -593,6 +601,8 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
       tags:
       - course
   /v1/group:

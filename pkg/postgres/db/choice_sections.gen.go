@@ -31,7 +31,6 @@ func newChoiceSection(db *gorm.DB, opts ...gen.DOOption) choiceSection {
 	_choiceSection.CreatedAt = field.NewTime(tableName, "created_at")
 	_choiceSection.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_choiceSection.DeletedAt = field.NewField(tableName, "deleted_at")
-	_choiceSection.MaxScore = field.NewUint(tableName, "max_score")
 	_choiceSection.Question = field.NewString(tableName, "question")
 	_choiceSection.Answer = field.NewString(tableName, "answer")
 	_choiceSection.Variants = field.NewField(tableName, "variants")
@@ -51,7 +50,6 @@ type choiceSection struct {
 	CreatedAt field.Time
 	UpdatedAt field.Time
 	DeletedAt field.Field
-	MaxScore  field.Uint
 	Question  field.String
 	Answer    field.String
 	Variants  field.Field
@@ -77,7 +75,6 @@ func (c *choiceSection) updateTableName(table string) *choiceSection {
 	c.CreatedAt = field.NewTime(table, "created_at")
 	c.UpdatedAt = field.NewTime(table, "updated_at")
 	c.DeletedAt = field.NewField(table, "deleted_at")
-	c.MaxScore = field.NewUint(table, "max_score")
 	c.Question = field.NewString(table, "question")
 	c.Answer = field.NewString(table, "answer")
 	c.Variants = field.NewField(table, "variants")
@@ -107,12 +104,11 @@ func (c *choiceSection) GetFieldByName(fieldName string) (field.OrderExpr, bool)
 }
 
 func (c *choiceSection) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 10)
+	c.fieldMap = make(map[string]field.Expr, 9)
 	c.fieldMap["id"] = c.Id
 	c.fieldMap["created_at"] = c.CreatedAt
 	c.fieldMap["updated_at"] = c.UpdatedAt
 	c.fieldMap["deleted_at"] = c.DeletedAt
-	c.fieldMap["max_score"] = c.MaxScore
 	c.fieldMap["question"] = c.Question
 	c.fieldMap["answer"] = c.Answer
 	c.fieldMap["variants"] = c.Variants

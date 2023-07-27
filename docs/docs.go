@@ -338,6 +338,11 @@ const docTemplate = `{
         },
         "/v1/course/slug/{slug}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "tags": [
                     "course"
                 ],
@@ -362,6 +367,11 @@ const docTemplate = `{
         },
         "/v1/course/{courseId}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "tags": [
                     "course"
                 ],
@@ -884,9 +894,6 @@ const docTemplate = `{
         "create.AnswerSectionPost": {
             "type": "object",
             "properties": {
-                "maxScore": {
-                    "type": "integer"
-                },
                 "question": {
                     "type": "string"
                 }
@@ -905,9 +912,6 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -928,9 +932,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -967,9 +968,6 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "string"
-                },
-                "maxScore": {
-                    "type": "integer"
                 },
                 "question": {
                     "type": "string"
@@ -1132,6 +1130,9 @@ const docTemplate = `{
                 "choice": {
                     "$ref": "#/definitions/create.ChoiceSectionPost"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "multichoice": {
                     "$ref": "#/definitions/create.MultiChoiceSectionPost"
                 },
@@ -1190,6 +1191,9 @@ const docTemplate = `{
                 "logo": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "modules": {
                     "description": "TODO: скрыть для людей, у которых нет доступа к курсу",
                     "type": "array",
@@ -1199,6 +1203,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 },
                 "shortDescription": {
                     "type": "string"
@@ -1233,6 +1240,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1245,6 +1255,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.Page"
                     }
                 },
+                "score": {
+                    "type": "integer"
+                },
                 "slug": {
                     "type": "string"
                 }
@@ -1256,11 +1269,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
                 "order": {
                     "type": "number"
+                },
+                "score": {
+                    "type": "integer"
                 },
                 "sections": {
                     "type": "array",

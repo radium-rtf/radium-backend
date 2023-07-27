@@ -58,7 +58,7 @@ func (a AnswerSectionAnswer) Score(maxScore uint) uint {
 }
 
 func (a Answer) Score(section *Section) uint {
-	maxScore := section.MaxScore()
+	maxScore := section.MaxScore
 	if a.Answer != nil {
 		return a.Answer.Score(maxScore)
 	}

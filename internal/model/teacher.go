@@ -21,7 +21,7 @@ func NewTeacherCourses(teacher *entity.Teacher) []*TeacherCourse {
 			courseGroups[course.CourseId] = make([]*Group, 0)
 		}
 		if _, ok := courseById[course.CourseId]; !ok {
-			courseById[course.CourseId] = NewCourse(course.Course)
+			courseById[course.CourseId] = NewCourse(course.Course, map[uuid.UUID]*entity.Answer{})
 		}
 
 		group := NewGroup(course.Group)

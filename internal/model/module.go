@@ -3,33 +3,45 @@ package model
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
 type (
 	Module struct {
-		Id    uuid.UUID `json:"id"`
-		Slug  string    `json:"slug"`
-		Name  string    `json:"name"`
-		Order float64   `json:"order"`
-		Pages []*Page   `json:"pages"`
+		Id       uuid.UUID `json:"id"`
+		Slug     string    `json:"slug"`
+		Name     string    `json:"name"`
+		Order    float64   `json:"order"`
+		MaxScore uint      `json:"maxScore"`
+		Score    uint      `json:"score"`
+		Pages    []*Page   `json:"pages"`
 	}
 )
 
-func NewModule(module *entity.Module) *Module {
+func NewModule(module *entity.Module, answers map[uuid.UUID]*entity.Answer) *Module {
+	pages, score, maxScore := NewPages(module.Pages, answers)
+
 	return &Module{
-		Id:    module.Id,
-		Name:  module.Name,
-		Slug:  translit.RuEn(module.Name),
-		Order: module.Order,
-		Pages: NewPages(module.Pages, map[uuid.UUID]*entity.Answer{}),
+		Id:       module.Id,
+		Name:     module.Name,
+		Slug:     module.Slug,
+		Order:    module.Order,
+		Score:    score,
+		MaxScore: maxScore,
+		Pages:    pages,
 	}
 }
 
-func NewModules(modules []*entity.Module) []*Module {
-	dto := make([]*Module, 0, len(modules))
+func NewModules(modules []*entity.Module, answers map[uuid.UUID]*entity.Answer) ([]*Module, uint, uint) {
+	dtos := make([]*Module, 0, len(modules))
+	var score, maxScore uint = 0, 0
+
 	for _, module := range modules {
-		dto = append(dto, NewModule(module))
+		dto := NewModule(module, answers)
+		score += dto.Score
+		maxScore += dto.MaxScore
+
+		dtos = append(dtos, dto)
 	}
-	return dto
+
+	return dtos, score, maxScore
 }
