@@ -5,15 +5,14 @@ import (
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/joho/godotenv"
 )
 
 type (
 	Config struct {
-		HTTP `yaml:"http"`
-		PG   `yaml:"postgres"`
-		Auth `yaml:"auth"`
-		Storage
+		HTTP    `yaml:"http"`
+		PG      `yaml:"postgres"`
+		Auth    `yaml:"auth"`
+		Storage `yaml:"storage"`
 	}
 
 	HTTP struct {
@@ -33,26 +32,16 @@ type (
 	}
 
 	Storage struct {
-		Id       string `env-required:"true" env:"STORAGE_ID"`
-		Endpoint string `env-required:"true" env:"STORAGE_ENDPOINT"`
-		Secret   string `env-required:"true" env:"STORAGE_SECRET"`
-		Region   string `env-required:"true" env:"STORAGE_REGION"`
+		Endpoint string `env-required:"true" yaml:"endpoint"`
+		Id       string `env-required:"true" yaml:"id"`
+		Secret   string `env-required:"true" yaml:"secret"`
+		Region   string `env-required:"true" yaml:"region"`
 	}
 )
 
 func NewConfig() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
-
 	cfg := &Config{}
-	err = cleanenv.ReadEnv(&cfg.Storage)
-	if err != nil {
-		return nil, err
-	}
-
-	err = cleanenv.ReadConfig("./config/config.yml", cfg)
+	err := cleanenv.ReadConfig("./config/config.yml", cfg)
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)
 	}

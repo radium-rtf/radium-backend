@@ -12,6 +12,5 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 
 FROM scratch
 COPY --from=builder /app/config /config
-COPY --from=builder /app/.env ./.env
 COPY --from=builder /bin/app /app
 CMD ["/app"]
