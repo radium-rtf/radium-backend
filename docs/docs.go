@@ -988,6 +988,9 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "string"
+                },
+                "lang": {
+                    "type": "string"
                 }
             }
         },

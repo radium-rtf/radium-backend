@@ -33,7 +33,8 @@ type (
 	}
 
 	CodeSectionAnswerPost struct {
-		Answer string `json:"answer"`
+		Answer   string `json:"answer"`
+		Language string `json:"lang"`
 	}
 )
 
@@ -63,7 +64,7 @@ func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
 	}
 
 	if r.Code != nil {
-		code = &entity.CodeSectionAnswer{Answer: r.Code.Answer}
+		code = &entity.CodeSectionAnswer{Answer: r.Code.Answer, Language: r.Code.Language}
 	}
 
 	return &entity.Answer{

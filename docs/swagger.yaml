@@ -46,6 +46,8 @@ definitions:
     properties:
       answer:
         type: string
+      lang:
+        type: string
     type: object
   create.CodeSectionPost:
     properties:
