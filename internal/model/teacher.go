@@ -34,9 +34,7 @@ func NewTeacherCourses(teacher *entity.Teacher) []*TeacherCourse {
 		courseDto := courseById[courseId]
 		teacherCourse := &TeacherCourse{Course: courseDto}
 
-		for _, group := range groups {
-			teacherCourse.Groups = append(teacherCourse.Groups, group)
-		}
+		teacherCourse.Groups = append(teacherCourse.Groups, groups...)
 		courses = append(courses, teacherCourse)
 	}
 
