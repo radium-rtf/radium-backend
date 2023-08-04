@@ -20,8 +20,13 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		db:                       db,
 		Answer:                   newAnswer(db, opts...),
 		AnswerReview:             newAnswerReview(db, opts...),
+		AnswerSection:            newAnswerSection(db, opts...),
+		AnswerSectionAnswer:      newAnswerSectionAnswer(db, opts...),
 		ChoiceSection:            newChoiceSection(db, opts...),
 		ChoiceSectionAnswer:      newChoiceSectionAnswer(db, opts...),
+		CodeReview:               newCodeReview(db, opts...),
+		CodeSection:              newCodeSection(db, opts...),
+		CodeSectionAnswer:        newCodeSectionAnswer(db, opts...),
 		Course:                   newCourse(db, opts...),
 		Group:                    newGroup(db, opts...),
 		Link:                     newLink(db, opts...),
@@ -45,8 +50,13 @@ type Query struct {
 
 	Answer                   answer
 	AnswerReview             answerReview
+	AnswerSection            answerSection
+	AnswerSectionAnswer      answerSectionAnswer
 	ChoiceSection            choiceSection
 	ChoiceSectionAnswer      choiceSectionAnswer
+	CodeReview               codeReview
+	CodeSection              codeSection
+	CodeSectionAnswer        codeSectionAnswer
 	Course                   course
 	Group                    group
 	Link                     link
@@ -71,8 +81,13 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		db:                       db,
 		Answer:                   q.Answer.clone(db),
 		AnswerReview:             q.AnswerReview.clone(db),
+		AnswerSection:            q.AnswerSection.clone(db),
+		AnswerSectionAnswer:      q.AnswerSectionAnswer.clone(db),
 		ChoiceSection:            q.ChoiceSection.clone(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.clone(db),
+		CodeReview:               q.CodeReview.clone(db),
+		CodeSection:              q.CodeSection.clone(db),
+		CodeSectionAnswer:        q.CodeSectionAnswer.clone(db),
 		Course:                   q.Course.clone(db),
 		Group:                    q.Group.clone(db),
 		Link:                     q.Link.clone(db),
@@ -104,8 +119,13 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		db:                       db,
 		Answer:                   q.Answer.replaceDB(db),
 		AnswerReview:             q.AnswerReview.replaceDB(db),
+		AnswerSection:            q.AnswerSection.replaceDB(db),
+		AnswerSectionAnswer:      q.AnswerSectionAnswer.replaceDB(db),
 		ChoiceSection:            q.ChoiceSection.replaceDB(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.replaceDB(db),
+		CodeReview:               q.CodeReview.replaceDB(db),
+		CodeSection:              q.CodeSection.replaceDB(db),
+		CodeSectionAnswer:        q.CodeSectionAnswer.replaceDB(db),
 		Course:                   q.Course.replaceDB(db),
 		Group:                    q.Group.replaceDB(db),
 		Link:                     q.Link.replaceDB(db),
@@ -127,8 +147,13 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 type queryCtx struct {
 	Answer                   IAnswerDo
 	AnswerReview             IAnswerReviewDo
+	AnswerSection            IAnswerSectionDo
+	AnswerSectionAnswer      IAnswerSectionAnswerDo
 	ChoiceSection            IChoiceSectionDo
 	ChoiceSectionAnswer      IChoiceSectionAnswerDo
+	CodeReview               ICodeReviewDo
+	CodeSection              ICodeSectionDo
+	CodeSectionAnswer        ICodeSectionAnswerDo
 	Course                   ICourseDo
 	Group                    IGroupDo
 	Link                     ILinkDo
@@ -150,8 +175,13 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Answer:                   q.Answer.WithContext(ctx),
 		AnswerReview:             q.AnswerReview.WithContext(ctx),
+		AnswerSection:            q.AnswerSection.WithContext(ctx),
+		AnswerSectionAnswer:      q.AnswerSectionAnswer.WithContext(ctx),
 		ChoiceSection:            q.ChoiceSection.WithContext(ctx),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.WithContext(ctx),
+		CodeReview:               q.CodeReview.WithContext(ctx),
+		CodeSection:              q.CodeSection.WithContext(ctx),
+		CodeSectionAnswer:        q.CodeSectionAnswer.WithContext(ctx),
 		Course:                   q.Course.WithContext(ctx),
 		Group:                    q.Group.WithContext(ctx),
 		Link:                     q.Link.WithContext(ctx),

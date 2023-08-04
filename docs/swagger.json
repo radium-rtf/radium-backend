@@ -707,7 +707,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_review_internal_create.Request"
+                            "$ref": "#/definitions/create.AnswerRequest"
                         }
                     }
                 ],
@@ -716,6 +716,40 @@
                         "description": "created",
                         "schema": {
                             "$ref": "#/definitions/entity.AnswerReview"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/review/code": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "review"
+                ],
+                "parameters": [
+                    {
+                        "description": "score - от 0 до 1",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.CodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.CodeReview"
                         }
                     }
                 }
@@ -875,6 +909,17 @@
         }
     },
     "definitions": {
+        "create.AnswerRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
         "create.AnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
@@ -913,6 +958,36 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "create.CodeRequest": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "create.CodeSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CodeSectionPost": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
                 }
             }
         },
@@ -1008,6 +1083,32 @@
                 }
             }
         },
+        "entity.CodeReview": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ownerId": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_httpserver_handlers_answer_internal_create.Request": {
             "type": "object",
             "properties": {
@@ -1016,6 +1117,9 @@
                 },
                 "choice": {
                     "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
                 },
                 "id": {
                     "type": "string"
@@ -1102,17 +1206,6 @@
                 }
             }
         },
-        "internal_httpserver_handlers_review_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
-                }
-            }
-        },
         "internal_httpserver_handlers_section_internal_create.Request": {
             "type": "object",
             "properties": {
@@ -1121,6 +1214,9 @@
                 },
                 "choice": {
                     "$ref": "#/definitions/create.ChoiceSectionPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSectionPost"
                 },
                 "maxScore": {
                     "type": "integer"
@@ -1315,7 +1411,7 @@
                     "type": "integer"
                 },
                 "type": {
-                    "type": "string"
+                    "$ref": "#/definitions/model.SectionType"
                 },
                 "variants": {
                     "type": "array",
@@ -1327,6 +1423,25 @@
                     "type": "string"
                 }
             }
+        },
+        "model.SectionType": {
+            "type": "string",
+            "enum": [
+                "choice",
+                "multiChoice",
+                "text",
+                "shortAnswer",
+                "answer",
+                "code"
+            ],
+            "x-enum-varnames": [
+                "ChoiceType",
+                "MultiChoiceType",
+                "TextType",
+                "ShortAnswerType",
+                "AnswerType",
+                "CodeType"
+            ]
         },
         "model.Tokens": {
             "type": "object",
@@ -1414,11 +1529,26 @@
                 }
             }
         },
+        "verdict.Type": {
+            "type": "string",
+            "enum": [
+                "OK",
+                "",
+                "WA",
+                "WAIT"
+            ],
+            "x-enum-varnames": [
+                "OK",
+                "EMPTY",
+                "WA",
+                "WAIT"
+            ]
+        },
         "verdict.Verdict": {
             "type": "object",
             "properties": {
                 "verdict": {
-                    "type": "string"
+                    "$ref": "#/definitions/verdict.Type"
                 }
             }
         }

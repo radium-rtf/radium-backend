@@ -17,6 +17,7 @@ func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
 
 	r.Route("/v1/review", func(r chi.Router) {
 		r.Use(mwAuth.Required(manager))
-		r.Post("/answer", create.New(useCase))
+		r.Post("/answer", create.NewAnswerReview(useCase))
+		r.Post("/code", create.NewCodeReview(useCase))
 	})
 }

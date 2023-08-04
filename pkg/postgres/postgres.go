@@ -34,17 +34,20 @@ func New(url string) (*db.Query, error) {
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
 		entity.AnswerSection{},
+		entity.CodeSection{},
 
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
 		entity.ShortAnswerSectionAnswer{},
 		entity.MultichoiceSectionAnswer{},
 		entity.AnswerSectionAnswer{},
+		entity.CodeSectionAnswer{},
 
 		entity.Teacher{},
 		entity.TeacherCourse{},
 
 		entity.AnswerReview{},
+		entity.CodeReview{},
 	)
 
 	if err != nil {

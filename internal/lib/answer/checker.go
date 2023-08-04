@@ -1,9 +1,10 @@
 package answer
 
 import (
+	"reflect"
+
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
-	"reflect"
 )
 
 type Checker struct {
@@ -21,6 +22,8 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 		verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
 	case answer.Answer != nil:
 		verdictType = verdict.EMPTY
+	case answer.Code != nil:
+		verdictType = verdict.WAIT
 	default:
 		return verdict.Verdict{}, errEmptyAnswer
 	}

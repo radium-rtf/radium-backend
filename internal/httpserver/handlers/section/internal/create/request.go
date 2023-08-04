@@ -16,6 +16,7 @@ type (
 		MultiChoiceSection *MultiChoiceSectionPost `json:"multichoice,omitempty"`
 		ShortAnswerSection *ShortAnswerSectionPost `json:"shortanswer,omitempty"`
 		AnswerSection      *AnswerSectionPost      `json:"answer,omitempty"`
+		CodeSection        *CodeSectionPost        `json:"code,omitempty"`
 	}
 
 	TextSectionPost struct {
@@ -42,6 +43,10 @@ type (
 	AnswerSectionPost struct {
 		Question string
 	}
+
+	CodeSectionPost struct {
+		Question string
+	}
 )
 
 func (r Request) ToSection() *entity.Section {
@@ -54,6 +59,7 @@ func (r Request) ToSection() *entity.Section {
 		MultiChoiceSection: r.postToMultiChoice(r.MultiChoiceSection),
 		ShortAnswerSection: r.postToShortAnswer(r.ShortAnswerSection),
 		AnswerSection:      r.postToAnswer(r.AnswerSection),
+		CodeSection:        r.postToCode(r.CodeSection),
 	}
 }
 
@@ -103,6 +109,15 @@ func (r Request) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
 		return nil
 	}
 	return &entity.AnswerSection{
+		Question: post.Question,
+	}
+}
+
+func (r Request) postToCode(post *CodeSectionPost) *entity.CodeSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.CodeSection{
 		Question: post.Question,
 	}
 }

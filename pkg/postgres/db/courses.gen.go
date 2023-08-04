@@ -66,6 +66,9 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 				AnswerSection struct {
 					field.RelationField
 				}
+				CodeSection struct {
+					field.RelationField
+				}
 			}
 		}{
 			RelationField: field.NewRelation("Modules.Pages", "entity.Page"),
@@ -84,6 +87,9 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 					field.RelationField
 				}
 				AnswerSection struct {
+					field.RelationField
+				}
+				CodeSection struct {
 					field.RelationField
 				}
 			}{
@@ -112,6 +118,11 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 					field.RelationField
 				}{
 					RelationField: field.NewRelation("Modules.Pages.Sections.AnswerSection", "entity.AnswerSection"),
+				},
+				CodeSection: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Modules.Pages.Sections.CodeSection", "entity.CodeSection"),
 				},
 			},
 		},
@@ -405,6 +416,9 @@ type courseHasManyModules struct {
 				field.RelationField
 			}
 			AnswerSection struct {
+				field.RelationField
+			}
+			CodeSection struct {
 				field.RelationField
 			}
 		}

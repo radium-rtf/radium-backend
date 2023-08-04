@@ -14,27 +14,32 @@ func Gen() error {
 		entity.User{},
 		entity.Session{},
 
-		entity.Page{},
 		entity.Course{},
-		entity.Module{},
 		entity.Link{},
+		entity.Module{},
+		entity.Page{},
 
 		entity.Section{},
 		entity.TextSection{},
 		entity.ChoiceSection{},
 		entity.MultiChoiceSection{},
 		entity.ShortAnswerSection{},
+		entity.AnswerSection{},
+		entity.CodeSection{},
 
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
 		entity.ShortAnswerSectionAnswer{},
 		entity.MultichoiceSectionAnswer{},
+		entity.AnswerSectionAnswer{},
+		entity.CodeSectionAnswer{},
 
 		entity.Group{},
 		entity.Teacher{},
 		entity.TeacherCourse{},
 
 		entity.AnswerReview{},
+		entity.CodeReview{},
 	)
 	g.Execute()
 	return nil

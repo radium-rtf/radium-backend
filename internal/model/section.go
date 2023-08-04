@@ -12,6 +12,7 @@ const (
 	TextType        = SectionType("text")
 	ShortAnswerType = SectionType("shortAnswer")
 	AnswerType      = SectionType("answer")
+	CodeType        = SectionType("code")
 )
 
 type (
@@ -75,7 +76,10 @@ func NewSection(section *entity.Section, verdict verdict.Type,
 		sectionType = ShortAnswerType
 	} else if section.AnswerSection != nil {
 		sectionType = AnswerType
+	} else if section.CodeSection != nil {
+		sectionType = CodeType
 	}
+
 	return &Section{
 		Id:       section.Id,
 		PageId:   section.PageId,

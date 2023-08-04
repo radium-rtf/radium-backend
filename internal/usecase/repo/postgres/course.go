@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -45,12 +46,14 @@ func (r Course) GetCourses(ctx context.Context) ([]*entity.Course, error) {
 	return r.get(ctx, nil)
 }
 
+// TODO: спросить про необходимость показывать курс полностью в списке всех курсов
 func (r Course) get(ctx context.Context, where ...gen.Condition) ([]*entity.Course, error) {
 	c := r.pg.Course
-	s := c.Modules.Pages.Sections
+	// s := c.Modules.Pages.Sections
 	return c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors).
-		Preload(c.Modules.Pages.Sections, s.Order(r.pg.Section.Order)).
+		// Preload(c.Modules.Pages.Sections, s.Order(r.pg.Section.Order)).
+		Preload(c.Modules).
 		Where(where...).
 		Find()
 }

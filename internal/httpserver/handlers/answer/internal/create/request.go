@@ -13,6 +13,7 @@ type (
 		MultiChoice *MultichoiceSectionAnswerPost `json:"multiChoice,omitempty"`
 		ShortAnswer *ShortAnswerSectionAnswerPost `json:"shortAnswer,omitempty"`
 		Answer      *AnswerSectionAnswerPost      `json:"answer,omitempty"`
+		Code        *CodeSectionAnswerPost        `json:"code,omitempty"`
 	}
 
 	MultichoiceSectionAnswerPost struct {
@@ -30,6 +31,10 @@ type (
 	ShortAnswerSectionAnswerPost struct {
 		Answer string `json:"answer"`
 	}
+
+	CodeSectionAnswerPost struct {
+		Answer string `json:"answer"`
+	}
 )
 
 func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
@@ -38,6 +43,7 @@ func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
 		multichoice *entity.MultichoiceSectionAnswer
 		shortAnswer *entity.ShortAnswerSectionAnswer
 		answer      *entity.AnswerSectionAnswer
+		code        *entity.CodeSectionAnswer
 	)
 
 	if r.Choice != nil {
@@ -56,6 +62,10 @@ func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
 		answer = &entity.AnswerSectionAnswer{Answer: r.Answer.Answer}
 	}
 
+	if r.Code != nil {
+		code = &entity.CodeSectionAnswer{Answer: r.Code.Answer}
+	}
+
 	return &entity.Answer{
 		Verdict:     verdict.EMPTY,
 		SectionId:   r.SectionId,
@@ -64,5 +74,6 @@ func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
 		MultiChoice: multichoice,
 		ShortAnswer: shortAnswer,
 		Answer:      answer,
+		Code:        code,
 	}
 }

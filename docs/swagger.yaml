@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  create.AnswerRequest:
+    properties:
+      id:
+        type: string
+      score:
+        type: number
+    type: object
   create.AnswerSectionAnswerPost:
     properties:
       answer:
@@ -25,6 +32,25 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  create.CodeRequest:
+    properties:
+      comment:
+        type: string
+      id:
+        type: string
+      score:
+        type: number
+    type: object
+  create.CodeSectionAnswerPost:
+    properties:
+      answer:
+        type: string
+    type: object
+  create.CodeSectionPost:
+    properties:
+      question:
+        type: string
     type: object
   create.MultiChoiceSectionPost:
     properties:
@@ -85,12 +111,31 @@ definitions:
       updatedAt:
         type: string
     type: object
+  entity.CodeReview:
+    properties:
+      comment:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      ownerId:
+        type: string
+      score:
+        type: number
+      updatedAt:
+        type: string
+    type: object
   internal_httpserver_handlers_answer_internal_create.Request:
     properties:
       answer:
         $ref: '#/definitions/create.AnswerSectionAnswerPost'
       choice:
         $ref: '#/definitions/create.ChoiceSectionAnswerPost'
+      code:
+        $ref: '#/definitions/create.CodeSectionAnswerPost'
       id:
         type: string
       multiChoice:
@@ -146,19 +191,14 @@ definitions:
       order:
         type: number
     type: object
-  internal_httpserver_handlers_review_internal_create.Request:
-    properties:
-      id:
-        type: string
-      score:
-        type: number
-    type: object
   internal_httpserver_handlers_section_internal_create.Request:
     properties:
       answer:
         $ref: '#/definitions/create.AnswerSectionPost'
       choice:
         $ref: '#/definitions/create.ChoiceSectionPost'
+      code:
+        $ref: '#/definitions/create.CodeSectionPost'
       maxScore:
         type: integer
       multichoice:
@@ -286,7 +326,7 @@ definitions:
       score:
         type: integer
       type:
-        type: string
+        $ref: '#/definitions/model.SectionType'
       variants:
         items:
           type: string
@@ -294,6 +334,22 @@ definitions:
       verdict:
         type: string
     type: object
+  model.SectionType:
+    enum:
+    - choice
+    - multiChoice
+    - text
+    - shortAnswer
+    - answer
+    - code
+    type: string
+    x-enum-varnames:
+    - ChoiceType
+    - MultiChoiceType
+    - TextType
+    - ShortAnswerType
+    - AnswerType
+    - CodeType
   model.Tokens:
     properties:
       accessToken:
@@ -349,10 +405,22 @@ definitions:
       new:
         type: string
     type: object
+  verdict.Type:
+    enum:
+    - OK
+    - ""
+    - WA
+    - WAIT
+    type: string
+    x-enum-varnames:
+    - OK
+    - EMPTY
+    - WA
+    - WAIT
   verdict.Verdict:
     properties:
       verdict:
-        type: string
+        $ref: '#/definitions/verdict.Type'
     type: object
 host: localhost:8080
 info:
@@ -771,12 +839,32 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_review_internal_create.Request'
+          $ref: '#/definitions/create.AnswerRequest'
       responses:
         "201":
           description: created
           schema:
             $ref: '#/definitions/entity.AnswerReview'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - review
+  /v1/review/code:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: score - от 0 до 1
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.CodeRequest'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/entity.CodeReview'
       security:
       - ApiKeyAuth: []
       tags:

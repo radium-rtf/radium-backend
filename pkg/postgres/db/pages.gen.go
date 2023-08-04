@@ -64,6 +64,11 @@ func newPage(db *gorm.DB, opts ...gen.DOOption) page {
 		}{
 			RelationField: field.NewRelation("Sections.AnswerSection", "entity.AnswerSection"),
 		},
+		CodeSection: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Sections.CodeSection", "entity.CodeSection"),
+		},
 	}
 
 	_page.fillFieldMap()
@@ -170,6 +175,9 @@ type pageHasManySections struct {
 		field.RelationField
 	}
 	AnswerSection struct {
+		field.RelationField
+	}
+	CodeSection struct {
 		field.RelationField
 	}
 }

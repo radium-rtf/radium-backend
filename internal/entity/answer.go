@@ -1,10 +1,11 @@
 package entity
 
 import (
+	"math"
+
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
-	"math"
 )
 
 type (
@@ -18,6 +19,7 @@ type (
 		MultiChoice *MultichoiceSectionAnswer `gorm:"polymorphic:Owner"`
 		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
 		Answer      *AnswerSectionAnswer      `gorm:"polymorphic:Owner"`
+		Code        *CodeSectionAnswer        `gorm:"polymorphic:Owner"`
 	}
 
 	ChoiceSectionAnswer struct {
@@ -47,6 +49,15 @@ type (
 		OwnerType string        `gorm:"not null"`
 		Answer    string        `gorm:"not null"`
 		Review    *AnswerReview `gorm:"foreignKey:OwnerId"`
+	}
+
+	CodeSectionAnswer struct {
+		DBModel
+		OwnerID   uuid.UUID   `gorm:"type:uuid; not null"`
+		OwnerType string      `gorm:"not null"`
+		Answer    string      `gorm:"not null"`
+		Language  string      `gorm:"not null"`
+		Review    *CodeReview `gorm:"foreignKey:OwnerId"`
 	}
 )
 

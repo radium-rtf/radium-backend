@@ -64,6 +64,12 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 		RelationField: field.NewRelation("AnswerSection", "entity.AnswerSection"),
 	}
 
+	_section.CodeSection = sectionHasOneCodeSection{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("CodeSection", "entity.CodeSection"),
+	}
+
 	_section.fillFieldMap()
 
 	return _section
@@ -89,6 +95,8 @@ type section struct {
 	ShortAnswerSection sectionHasOneShortAnswerSection
 
 	AnswerSection sectionHasOneAnswerSection
+
+	CodeSection sectionHasOneCodeSection
 
 	fieldMap map[string]field.Expr
 }
@@ -134,7 +142,7 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 12)
+	s.fieldMap = make(map[string]field.Expr, 13)
 	s.fieldMap["id"] = s.Id
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
@@ -507,6 +515,77 @@ func (a sectionHasOneAnswerSectionTx) Clear() error {
 }
 
 func (a sectionHasOneAnswerSectionTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type sectionHasOneCodeSection struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a sectionHasOneCodeSection) Where(conds ...field.Expr) *sectionHasOneCodeSection {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a sectionHasOneCodeSection) WithContext(ctx context.Context) *sectionHasOneCodeSection {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a sectionHasOneCodeSection) Session(session *gorm.Session) *sectionHasOneCodeSection {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a sectionHasOneCodeSection) Model(m *entity.Section) *sectionHasOneCodeSectionTx {
+	return &sectionHasOneCodeSectionTx{a.db.Model(m).Association(a.Name())}
+}
+
+type sectionHasOneCodeSectionTx struct{ tx *gorm.Association }
+
+func (a sectionHasOneCodeSectionTx) Find() (result *entity.CodeSection, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a sectionHasOneCodeSectionTx) Append(values ...*entity.CodeSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a sectionHasOneCodeSectionTx) Replace(values ...*entity.CodeSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a sectionHasOneCodeSectionTx) Delete(values ...*entity.CodeSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a sectionHasOneCodeSectionTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a sectionHasOneCodeSectionTx) Count() int64 {
 	return a.tx.Count()
 }
 

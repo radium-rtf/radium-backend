@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
@@ -17,6 +19,7 @@ type (
 		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner"`
 		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner"`
 		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner"`
+		CodeSection        *CodeSection        `gorm:"polymorphic:Owner"`
 	}
 
 	TextSection struct {
@@ -58,6 +61,13 @@ type (
 		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
 		OwnerType string    `gorm:"not null"`
 	}
+
+	CodeSection struct {
+		DBModel
+		Question  string    `gorm:"not null"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
+	}
 )
 
 func (s Section) Content() string {
@@ -75,6 +85,10 @@ func (s Section) Content() string {
 	}
 	if s.AnswerSection != nil {
 		return s.AnswerSection.Question
+	}
+	fmt.Printf("%+v", s)
+	if s.CodeSection != nil {
+		return s.CodeSection.Question
 	}
 	return ""
 }
