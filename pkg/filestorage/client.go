@@ -37,14 +37,13 @@ type Storage struct {
 
 func New(cfg config.Storage) Storage {
 	creds := credentials.NewStaticV4(cfg.Id, cfg.Secret, "")
-	client, err := minio.New(cfg.Endpoint, &minio.Options{
-		Region: cfg.Region,
-		Creds:  creds,
-	})
+	client, err := open(creds, cfg.Endpoint, cfg.Region)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	storage := Storage{client: client}
+
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
 		log.Fatal(err)

@@ -4,19 +4,20 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/pggen"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 func New(url string) (*db.Query, error) {
-	gormDb, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	gormDb, err := open(url)
+
 	if err != nil {
 		return nil, err
 	}
+
 	err = pggen.Gen()
 	if err != nil {
 		return nil, err
 	}
+
 	Q := db.Use(gormDb)
 
 	err = gormDb.AutoMigrate(

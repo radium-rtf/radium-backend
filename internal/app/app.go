@@ -20,10 +20,12 @@ func Run(cfg *config.Config) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	r := chi.NewRouter()
 	r.Use(cors.AllowAll().Handler)
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
-	storage := filestorage.Storage{}
+
+	storage := filestorage.New(cfg.Storage)
 	handlers.NewRouter(r, db, storage, cfg)
 
 	httpServer := httpserver.New(r, httpserver.Port(cfg.HTTP.Port))
