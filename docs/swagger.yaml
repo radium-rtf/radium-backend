@@ -7,32 +7,6 @@ definitions:
       score:
         type: number
     type: object
-  create.AnswerSectionAnswerPost:
-    properties:
-      answer:
-        type: string
-    type: object
-  create.AnswerSectionPost:
-    properties:
-      question:
-        type: string
-    type: object
-  create.ChoiceSectionAnswerPost:
-    properties:
-      answer:
-        type: string
-    type: object
-  create.ChoiceSectionPost:
-    properties:
-      answer:
-        type: string
-      question:
-        type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
   create.CodeRequest:
     properties:
       comment:
@@ -42,60 +16,21 @@ definitions:
       score:
         type: number
     type: object
-  create.CodeSectionAnswerPost:
+  create.Request:
     properties:
-      answer:
+      banner:
         type: string
-      lang:
+      description:
         type: string
-    type: object
-  create.CodeSectionPost:
-    properties:
-      question:
-        type: string
-    type: object
-  create.MultiChoiceSectionPost:
-    properties:
-      answer:
+      links:
         items:
-          type: string
+          $ref: '#/definitions/model.Link'
         type: array
-      question:
+      logo:
         type: string
-      variants:
-        items:
-          type: string
-        type: array
-    type: object
-  create.MultichoiceSectionAnswerPost:
-    properties:
-      answer:
-        items:
-          type: string
-        type: array
-    type: object
-  create.ShortAnswerSectionAnswerPost:
-    properties:
-      answer:
+      name:
         type: string
-    type: object
-  create.ShortAnswerSectionPost:
-    properties:
-      answer:
-        type: string
-      question:
-        type: string
-    type: object
-  create.TextSectionPost:
-    properties:
-      content:
-        type: string
-    type: object
-  create.teacherCoursePost:
-    properties:
-      courseId:
-        type: string
-      groupId:
+      shortDescription:
         type: string
     type: object
   entity.AnswerReview:
@@ -128,99 +63,6 @@ definitions:
       score:
         type: number
       updatedAt:
-        type: string
-    type: object
-  internal_httpserver_handlers_answer_internal_create.Request:
-    properties:
-      answer:
-        $ref: '#/definitions/create.AnswerSectionAnswerPost'
-      choice:
-        $ref: '#/definitions/create.ChoiceSectionAnswerPost'
-      code:
-        $ref: '#/definitions/create.CodeSectionAnswerPost'
-      id:
-        type: string
-      multiChoice:
-        $ref: '#/definitions/create.MultichoiceSectionAnswerPost'
-      shortAnswer:
-        $ref: '#/definitions/create.ShortAnswerSectionAnswerPost'
-    type: object
-  internal_httpserver_handlers_course_internal_create.Request:
-    properties:
-      banner:
-        type: string
-      description:
-        type: string
-      links:
-        items:
-          $ref: '#/definitions/model.Link'
-        type: array
-      logo:
-        type: string
-      name:
-        type: string
-      shortDescription:
-        type: string
-    type: object
-  internal_httpserver_handlers_group_internal_create.Request:
-    properties:
-      coursesIds:
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      studentsIds:
-        items:
-          type: string
-        type: array
-    type: object
-  internal_httpserver_handlers_module_internal_create.Request:
-    properties:
-      courseId:
-        type: string
-      name:
-        type: string
-      order:
-        type: number
-    type: object
-  internal_httpserver_handlers_page_internal_create.Request:
-    properties:
-      moduleId:
-        type: string
-      name:
-        type: string
-      order:
-        type: number
-    type: object
-  internal_httpserver_handlers_section_internal_create.Request:
-    properties:
-      answer:
-        $ref: '#/definitions/create.AnswerSectionPost'
-      choice:
-        $ref: '#/definitions/create.ChoiceSectionPost'
-      code:
-        $ref: '#/definitions/create.CodeSectionPost'
-      maxScore:
-        type: integer
-      multichoice:
-        $ref: '#/definitions/create.MultiChoiceSectionPost'
-      order:
-        type: integer
-      pageId:
-        type: string
-      shortanswer:
-        $ref: '#/definitions/create.ShortAnswerSectionPost'
-      text:
-        $ref: '#/definitions/create.TextSectionPost'
-    type: object
-  internal_httpserver_handlers_teacher_internal_create.Request:
-    properties:
-      courses:
-        items:
-          $ref: '#/definitions/create.teacherCoursePost'
-        type: array
-      teacherId:
         type: string
     type: object
   model.Course:
@@ -328,7 +170,7 @@ definitions:
       score:
         type: integer
       type:
-        $ref: '#/definitions/model.SectionType'
+        type: string
       variants:
         items:
           type: string
@@ -336,22 +178,6 @@ definitions:
       verdict:
         type: string
     type: object
-  model.SectionType:
-    enum:
-    - choice
-    - multiChoice
-    - text
-    - shortAnswer
-    - answer
-    - code
-    type: string
-    x-enum-varnames:
-    - ChoiceType
-    - MultiChoiceType
-    - TextType
-    - ShortAnswerType
-    - AnswerType
-    - CodeType
   model.Tokens:
     properties:
       accessToken:
@@ -407,22 +233,10 @@ definitions:
       new:
         type: string
     type: object
-  verdict.Type:
-    enum:
-    - OK
-    - ""
-    - WA
-    - WAIT
-    type: string
-    x-enum-varnames:
-    - OK
-    - EMPTY
-    - WA
-    - WAIT
   verdict.Verdict:
     properties:
       verdict:
-        $ref: '#/definitions/verdict.Type'
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -503,7 +317,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_answer_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: ok
@@ -593,7 +407,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_course_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: created
@@ -693,7 +507,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_group_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: created
@@ -745,7 +559,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_module_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: created
@@ -784,7 +598,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_page_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: ok
@@ -881,7 +695,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_section_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: created
@@ -920,7 +734,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_teacher_internal_create.Request'
+          $ref: '#/definitions/create.Request'
       responses:
         "201":
           description: created

@@ -137,7 +137,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -285,7 +285,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_course_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -456,7 +456,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_group_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -545,7 +545,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_module_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -611,7 +611,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_page_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -775,7 +775,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_section_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -841,7 +841,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_teacher_internal_create.Request"
+                            "$ref": "#/definitions/create.Request"
                         }
                     }
                 ],
@@ -920,47 +920,6 @@
                 }
             }
         },
-        "create.AnswerSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.AnswerSectionPost": {
-            "type": "object",
-            "properties": {
-                "question": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.ChoiceSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.ChoiceSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "question": {
-                    "type": "string"
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "create.CodeRequest": {
             "type": "object",
             "properties": {
@@ -975,90 +934,28 @@
                 }
             }
         },
-        "create.CodeSectionAnswerPost": {
+        "create.Request": {
             "type": "object",
             "properties": {
-                "answer": {
+                "banner": {
                     "type": "string"
                 },
-                "lang": {
+                "description": {
                     "type": "string"
-                }
-            }
-        },
-        "create.CodeSectionPost": {
-            "type": "object",
-            "properties": {
-                "question": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.MultiChoiceSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
+                },
+                "links": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/model.Link"
                     }
                 },
-                "question": {
+                "logo": {
                     "type": "string"
                 },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "create.MultichoiceSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "create.ShortAnswerSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.ShortAnswerSectionPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
+                "name": {
                     "type": "string"
                 },
-                "question": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.TextSectionPost": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.teacherCoursePost": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "groupId": {
+                "shortDescription": {
                     "type": "string"
                 }
             }
@@ -1108,149 +1005,6 @@
                     "type": "number"
                 },
                 "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_httpserver_handlers_answer_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
-                },
-                "choice": {
-                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
-                },
-                "code": {
-                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "multiChoice": {
-                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
-                },
-                "shortAnswer": {
-                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
-                }
-            }
-        },
-        "internal_httpserver_handlers_course_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "banner": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "links": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Link"
-                    }
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "shortDescription": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_httpserver_handlers_group_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "coursesIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "studentsIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "internal_httpserver_handlers_module_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "number"
-                }
-            }
-        },
-        "internal_httpserver_handlers_page_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "moduleId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "number"
-                }
-            }
-        },
-        "internal_httpserver_handlers_section_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "$ref": "#/definitions/create.AnswerSectionPost"
-                },
-                "choice": {
-                    "$ref": "#/definitions/create.ChoiceSectionPost"
-                },
-                "code": {
-                    "$ref": "#/definitions/create.CodeSectionPost"
-                },
-                "maxScore": {
-                    "type": "integer"
-                },
-                "multichoice": {
-                    "$ref": "#/definitions/create.MultiChoiceSectionPost"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "pageId": {
-                    "type": "string"
-                },
-                "shortanswer": {
-                    "$ref": "#/definitions/create.ShortAnswerSectionPost"
-                },
-                "text": {
-                    "$ref": "#/definitions/create.TextSectionPost"
-                }
-            }
-        },
-        "internal_httpserver_handlers_teacher_internal_create.Request": {
-            "type": "object",
-            "properties": {
-                "courses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/create.teacherCoursePost"
-                    }
-                },
-                "teacherId": {
                     "type": "string"
                 }
             }
@@ -1414,7 +1168,7 @@
                     "type": "integer"
                 },
                 "type": {
-                    "$ref": "#/definitions/model.SectionType"
+                    "type": "string"
                 },
                 "variants": {
                     "type": "array",
@@ -1426,25 +1180,6 @@
                     "type": "string"
                 }
             }
-        },
-        "model.SectionType": {
-            "type": "string",
-            "enum": [
-                "choice",
-                "multiChoice",
-                "text",
-                "shortAnswer",
-                "answer",
-                "code"
-            ],
-            "x-enum-varnames": [
-                "ChoiceType",
-                "MultiChoiceType",
-                "TextType",
-                "ShortAnswerType",
-                "AnswerType",
-                "CodeType"
-            ]
         },
         "model.Tokens": {
             "type": "object",
@@ -1532,26 +1267,11 @@
                 }
             }
         },
-        "verdict.Type": {
-            "type": "string",
-            "enum": [
-                "OK",
-                "",
-                "WA",
-                "WAIT"
-            ],
-            "x-enum-varnames": [
-                "OK",
-                "EMPTY",
-                "WA",
-                "WAIT"
-            ]
-        },
         "verdict.Verdict": {
             "type": "object",
             "properties": {
                 "verdict": {
-                    "$ref": "#/definitions/verdict.Type"
+                    "type": "string"
                 }
             }
         }

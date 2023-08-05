@@ -1,13 +1,14 @@
 package postgres
 
 import (
+	"database/sql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"time"
 )
 
-func open(url string) (*gorm.DB, error) {
+func open(url string) (*gorm.DB, *sql.DB, error) {
 	var (
 		err    error
 		gormDb *gorm.DB
@@ -23,5 +24,14 @@ func open(url string) (*gorm.DB, error) {
 		time.Sleep(time.Second)
 	}
 
-	return gormDb, err
+	if err != nil {
+		return nil, nil, err
+	}
+
+	sqlDb, err := gormDb.DB()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return gormDb, sqlDb, err
 }

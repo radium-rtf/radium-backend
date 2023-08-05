@@ -2,13 +2,11 @@ package filestorage
 
 import (
 	"context"
-	"io"
-	"log"
-
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/radium-rtf/radium-backend/config"
+	"io"
 )
 
 const (
@@ -35,26 +33,26 @@ type Storage struct {
 	client *minio.Client
 }
 
-func New(cfg config.Storage) Storage {
+func New(cfg config.Storage) (Storage, error) {
 	creds := credentials.NewStaticV4(cfg.Id, cfg.Secret, "")
 	client, err := open(creds, cfg.Endpoint, cfg.Region)
 	if err != nil {
-		log.Fatal(err)
+		return Storage{}, err
 	}
 
 	storage := Storage{client: client}
 
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
-		log.Fatal(err)
+		return Storage{}, err
 	}
 
 	err = storage.client.SetBucketPolicy(context.Background(), bucket, policy)
 	if err != nil {
-		log.Fatal(err)
+		return Storage{}, err
 	}
 
-	return storage
+	return Storage{}, err
 }
 
 func (s Storage) makeBucket(ctx context.Context, bucketName string, options minio.MakeBucketOptions) error {

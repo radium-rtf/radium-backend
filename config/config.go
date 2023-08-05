@@ -16,12 +16,19 @@ type (
 	}
 
 	HTTP struct {
-		Port string `env-required:"true" yaml:"port"`
+		Port           string        `env-required:"true" yaml:"port"`
+		ReadTimeout    time.Duration `env-required:"true" yaml:"read_timeout"`
+		WriteTimeout   time.Duration `env-required:"true" yaml:"write_timeout"`
+		IdleTimeout    time.Duration `env-required:"true" yaml:"idle_timeout"`
+		MaxHeaderBytes int           `env-required:"true" yaml:"max_header_bytes"`
 	}
 
 	PG struct {
-		PoolMax int    `env-required:"true" yaml:"pool_max"`
-		URL     string `env-required:"true" yaml:"pg_url"`
+		URL             string        `env-required:"true" yaml:"pg_url"`
+		MaxOpenConns    int           `env-required:"true" yaml:"max_open_conns"`
+		MaxIdleConns    int           `env-required:"true" yaml:"max_idle_conns"`
+		ConnMaxIdleTime time.Duration `env-required:"true" yaml:"conn_max_idle_time"`
+		ConnMaxLifetime time.Duration `env-required:"true" yaml:"conn_max_lifetime"`
 	}
 
 	Auth struct {

@@ -61,18 +61,15 @@ type (
 	}
 )
 
-func (a AnswerSectionAnswer) Score(maxScore uint) uint {
-	if a.Review != nil {
-		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
-	}
-	return 0
-}
-
 func (a Answer) Score(section *Section) uint {
 	maxScore := section.MaxScore
-	if a.Answer != nil {
-		return a.Answer.Score(maxScore)
+	if a.Answer != nil && a.Answer.Review != nil {
+		return uint(math.Round(float64(float32(maxScore) * a.Answer.Review.Score)))
 	}
+	if a.Code != nil && a.Code.Review != nil {
+		return uint(math.Round(float64(float32(maxScore) * a.Code.Review.Score)))
+	}
+
 	if a.Verdict == verdict.OK {
 		return maxScore
 	}
@@ -95,6 +92,9 @@ func (a Answer) AnswerStr() string {
 	}
 	if a.Answer != nil {
 		return a.Answer.Answer
+	}
+	if a.Code != nil {
+		return a.Code.Answer
 	}
 	return ""
 }

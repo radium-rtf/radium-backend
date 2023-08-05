@@ -1,15 +1,25 @@
 http:
   port: "8080"
+  read_timeout: 5s
+  write_timeout: 5s
+  idle_timeout: 3m
+  max_header_bytes: 65000
+
 
 postgres:
-  pool_max: 2
   pg_url: postgres://user:password@postgres:5432/postgres?sslmode=disable
+  max_open_conns: 5
+  max_idle_conns: 2
+  conn_max_idle_time: 5m
+  conn_max_lifetime: 10m
+
 
 auth:
   jwt_signing_key: wdkadwadwakpklrbjb
   password_salt: ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ
   access_token_ttl: 2h
   refresh_token_ttl: 720h
+
 
 storage:
   endpoint: minio:9000

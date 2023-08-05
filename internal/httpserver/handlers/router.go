@@ -21,7 +21,6 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-// NewRouter
 // @title       без юлерна
 // @version     1.0
 // @host        localhost:8080

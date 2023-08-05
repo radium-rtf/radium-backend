@@ -25,6 +25,18 @@ func WriteTimeout(timeout time.Duration) Option {
 	}
 }
 
+func IdleTimeout(timeout time.Duration) Option {
+	return func(s *Server) {
+		s.server.IdleTimeout = timeout
+	}
+}
+
+func MaxHeaderBytes(max int) Option {
+	return func(s *Server) {
+		s.server.MaxHeaderBytes = max
+	}
+}
+
 func ShutdownTimeout(timeout time.Duration) Option {
 	return func(s *Server) {
 		s.shutdownTimeout = timeout
