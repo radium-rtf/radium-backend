@@ -15,13 +15,13 @@ type creator interface {
 
 // @Tags page
 // @Security ApiKeyAuth
-// @Param       request body Request true "создание"
+// @Param       request body Page true "создание"
 // @Success      201   {object} model.Page "ok"
 // @Router      /v1/page [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Page
 			ctx     = r.Context()
 		)
 
@@ -32,7 +32,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		page := request.ToPage()
+		page := request.toPage()
 		page, err = creator.Create(ctx, page)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

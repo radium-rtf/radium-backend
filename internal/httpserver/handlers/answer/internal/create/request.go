@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	Request struct {
+	Answer struct {
 		SectionId   uuid.UUID                     `json:"id"`
 		Choice      *ChoiceSectionAnswerPost      `json:"choice,omitempty"`
 		MultiChoice *MultichoiceSectionAnswerPost `json:"multiChoice,omitempty"`
@@ -38,7 +38,7 @@ type (
 	}
 )
 
-func (r *Request) ToAnswer(userId uuid.UUID) *entity.Answer {
+func (r *Answer) ToAnswer(userId uuid.UUID) *entity.Answer {
 	var (
 		choice      *entity.ChoiceSectionAnswer
 		multichoice *entity.MultichoiceSectionAnswer

@@ -1,5 +1,5 @@
 package verify
 
-type Request struct {
+type VerificationCode struct {
 	VerificationCode string `json:"verificationCode"`
 }

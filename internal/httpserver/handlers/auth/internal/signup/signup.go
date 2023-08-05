@@ -17,14 +17,14 @@ type signUp interface {
 // @Tags  	    auth
 // @Accept      json
 // @Produce     json
-// @Param       request body Request true "SignUp"
+// @Param       request body SignUp true "SignUp"
 // @Success     201 {object} model.Tokens
 // @Router      /v1/auth/signup [post]
 func New(signUp signUp) http.HandlerFunc {
 	emailPattern, _ := regexp.Compile("[a-zA-Z.]@urfu.(me|ru)")
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request SignUp
 			ctx     = r.Context()
 		)
 
@@ -41,7 +41,7 @@ func New(signUp signUp) http.HandlerFunc {
 			return
 		}
 
-		user := request.ToUser()
+		user := request.toUser()
 		tokens, err := signUp.SignUp(ctx, user)
 		if err != nil {
 			render.Status(r, http.StatusCreated)

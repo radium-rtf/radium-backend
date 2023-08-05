@@ -17,13 +17,13 @@ type creator interface {
 // @Tags course
 // @Security ApiKeyAuth
 // @Accept       json
-// @Param request body Request true "Данные о курсе"
+// @Param request body Course true "Данные о курсе"
 // @Success      201   {object} model.Course       "created"
 // @Router       /v1/course [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Course
 			ctx     = r.Context()
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)
@@ -35,7 +35,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		course := request.ToCourse(userId)
+		course := request.toCourse(userId)
 		course, err = creator.Create(ctx, course)
 		if err != nil {
 			render.Status(r, http.StatusCreated)

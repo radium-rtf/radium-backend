@@ -14,8 +14,8 @@ type verify interface {
 func New(verify verify) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request  Request
-			response Response
+			request  VerificationCode
+			response Success
 			ctx      = r.Context()
 		)
 

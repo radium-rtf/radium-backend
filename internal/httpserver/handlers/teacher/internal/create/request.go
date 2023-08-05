@@ -6,18 +6,18 @@ import (
 )
 
 type (
-	Request struct {
-		TeacherId uuid.UUID            `json:"teacherId"`
-		Courses   []*teacherCoursePost `json:"courses"`
+	Teacher struct {
+		TeacherId uuid.UUID        `json:"teacherId"`
+		Courses   []*TeacherCourse `json:"courses"`
 	}
 
-	teacherCoursePost struct {
+	TeacherCourse struct {
 		CourseId uuid.UUID `json:"courseId"`
 		GroupId  uuid.UUID `json:"groupId"`
 	}
 )
 
-func (r Request) toTeacher() *entity.Teacher {
+func (r Teacher) toTeacher() *entity.Teacher {
 	teacher := &entity.Teacher{UserId: r.TeacherId, DBModel: entity.DBModel{Id: uuid.New()}}
 	courses := make([]*entity.TeacherCourse, 0, len(r.Courses))
 	for _, coursePost := range r.Courses {

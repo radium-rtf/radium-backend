@@ -7,7 +7,7 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
-type Request struct {
+type Course struct {
 	Name             string       `json:"name"`
 	ShortDescription string       `json:"shortDescription"`
 	Description      string       `json:"description"`
@@ -16,7 +16,7 @@ type Request struct {
 	Links            []model.Link `json:"links"`
 }
 
-func (r Request) ToCourse(authorId uuid.UUID) *entity.Course {
+func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
 	authors := make([]entity.User, 0, 1)
 	authors = append(authors, entity.User{DBModel: entity.DBModel{Id: authorId}})
 

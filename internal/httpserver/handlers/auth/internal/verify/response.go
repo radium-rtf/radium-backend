@@ -1,5 +1,5 @@
 package verify
 
-type Response struct {
+type Success struct {
 	Success bool `json:"success"`
 }

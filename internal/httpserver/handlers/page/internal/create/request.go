@@ -6,13 +6,13 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
-type Request struct {
+type Page struct {
 	ModuleId uuid.UUID `json:"moduleId"`
 	Name     string    `json:"name"`
 	Order    float64   `json:"order"`
 }
 
-func (r Request) ToPage() *entity.Page {
+func (r Page) toPage() *entity.Page {
 	return &entity.Page{
 		DBModel:  entity.DBModel{Id: uuid.New()},
 		Name:     r.Name,

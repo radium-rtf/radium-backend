@@ -6,13 +6,13 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/otp"
 )
 
-type Request struct {
+type Group struct {
 	Name        string      `json:"name"`
 	CoursesIds  []uuid.UUID `json:"coursesIds"`
 	StudentsIds []uuid.UUID `json:"studentsIds"`
 }
 
-func (r Request) ToGroup() *entity.Group {
+func (r Group) toGroup() *entity.Group {
 	courses := make([]*entity.Course, 0, len(r.StudentsIds))
 	for _, id := range r.StudentsIds {
 		courses = append(courses, &entity.Course{DBModel: entity.DBModel{Id: id}})

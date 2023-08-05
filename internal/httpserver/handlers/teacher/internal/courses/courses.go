@@ -15,7 +15,7 @@ type getter interface {
 
 // @Tags teacher
 // @Security ApiKeyAuth
-// @Success      200   {string}  entity.TeacherCourse        " "
+// @Success      200   {string}  model.TeacherCourse        " "
 // @Router       /v1/teacher/courses [get]
 func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

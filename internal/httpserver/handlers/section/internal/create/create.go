@@ -17,13 +17,13 @@ type creator interface {
 // @Tags section
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body Request true "Информация для раздела"
+// @Param request body Section true "Информация для раздела"
 // @Success 201 {object} model.Section "created"
 // @Router /v1/section [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			create Request
+			create Section
 			ctx    = r.Context()
 		)
 
@@ -34,7 +34,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		section := create.ToSection()
+		section := create.toSection()
 		section, err = creator.Create(ctx, section)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

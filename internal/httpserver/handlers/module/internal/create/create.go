@@ -15,13 +15,13 @@ type creator interface {
 
 // @Tags module
 // @Security ApiKeyAuth
-// @Param       request body Request true "moduleRequest"
+// @Param       request body Module true "moduleRequest"
 // @Success      201   {object} model.Module       "created"
 // @Router       /v1/module [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Module
 			ctx     = r.Context()
 		)
 
@@ -32,7 +32,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		module := request.ToModule()
+		module := request.toModule()
 		module, err = creator.Create(ctx, module)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

@@ -5,15 +5,15 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
 
-type Request struct {
+type User struct {
 	Name   string `json:"name"`
 	Avatar string `json:"avatar"`
 }
 
-func (r Request) ToUser(userId uuid.UUID) *entity.User {
+func (u User) ToUser(userId uuid.UUID) *entity.User {
 	return &entity.User{
 		DBModel: entity.DBModel{Id: userId},
-		Avatar:  r.Avatar,
-		Name:    r.Name,
+		Avatar:  u.Avatar,
+		Name:    u.Name,
 	}
 }

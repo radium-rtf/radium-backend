@@ -63,7 +63,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/update.Request"
+                            "$ref": "#/definitions/update.User"
                         }
                     }
                 ],
@@ -112,12 +112,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Request",
+                        "description": "Password",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/updatepass.Request"
+                            "$ref": "#/definitions/updatepass.Password"
                         }
                     }
                 ],
@@ -145,7 +145,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.Answer"
                         }
                     }
                 ],
@@ -177,7 +177,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/refresh.Request"
+                            "$ref": "#/definitions/refresh.Refresh"
                         }
                     }
                 ],
@@ -204,12 +204,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Request",
+                        "description": "SignIn",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/signin.Request"
+                            "$ref": "#/definitions/signin.SignIn"
                         }
                     }
                 ],
@@ -241,7 +241,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/signup.Request"
+                            "$ref": "#/definitions/signup.SignUp"
                         }
                     }
                 ],
@@ -293,7 +293,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Course"
                         }
                     }
                 ],
@@ -464,7 +464,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Group"
                         }
                     }
                 ],
@@ -553,7 +553,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Module"
                         }
                     }
                 ],
@@ -619,7 +619,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Page"
                         }
                     }
                 ],
@@ -715,7 +715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.AnswerRequest"
+                            "$ref": "#/definitions/internal_httpserver_handlers_review_internal_create.Answer"
                         }
                     }
                 ],
@@ -749,7 +749,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.CodeRequest"
+                            "$ref": "#/definitions/create.Code"
                         }
                     }
                 ],
@@ -783,7 +783,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Section"
                         }
                     }
                 ],
@@ -849,7 +849,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Teacher"
                         }
                     }
                 ],
@@ -917,18 +917,48 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "create.AnswerRequest": {
+        "create.AnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
-                "id": {
+                "answer": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "number"
                 }
             }
         },
-        "create.CodeRequest": {
+        "create.AnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Code": {
             "type": "object",
             "properties": {
                 "comment": {
@@ -942,7 +972,26 @@ const docTemplate = `{
                 }
             }
         },
-        "create.Request": {
+        "create.CodeSection": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CodeSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Course": {
             "type": "object",
             "properties": {
                 "banner": {
@@ -964,6 +1013,169 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shortDescription": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Group": {
+            "type": "object",
+            "properties": {
+                "coursesIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "studentsIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Module": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "number"
+                }
+            }
+        },
+        "create.MultiChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.MultichoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Page": {
+            "type": "object",
+            "properties": {
+                "moduleId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "number"
+                }
+            }
+        },
+        "create.Section": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSection"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "multichoice": {
+                    "$ref": "#/definitions/create.MultiChoiceSectionPost"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "shortanswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionPost"
+                },
+                "text": {
+                    "$ref": "#/definitions/create.TextSectionPost"
+                }
+            }
+        },
+        "create.ShortAnswerSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ShortAnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Teacher": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/create.TeacherCourse"
+                    }
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.TeacherCourse": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.TextSectionPost": {
+            "type": "object",
+            "properties": {
+                "content": {
                     "type": "string"
                 }
             }
@@ -1014,6 +1226,40 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_httpserver_handlers_answer_internal_create.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "multiChoice": {
+                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
+                },
+                "shortAnswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
+                }
+            }
+        },
+        "internal_httpserver_handlers_review_internal_create.Answer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
                 }
             }
         },
@@ -1176,7 +1422,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "choice",
+                        "multiChoice",
+                        "text",
+                        "shortAnswer",
+                        "answer",
+                        "code"
+                    ]
                 },
                 "variants": {
                     "type": "array",
@@ -1185,7 +1439,13 @@ const docTemplate = `{
                     }
                 },
                 "verdict": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "WA",
+                        "WAIT",
+                        ""
+                    ]
                 }
             }
         },
@@ -1220,7 +1480,7 @@ const docTemplate = `{
                 }
             }
         },
-        "refresh.Request": {
+        "refresh.Refresh": {
             "type": "object",
             "properties": {
                 "refreshToken": {
@@ -1228,7 +1488,7 @@ const docTemplate = `{
                 }
             }
         },
-        "signin.Request": {
+        "signin.SignIn": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1239,7 +1499,7 @@ const docTemplate = `{
                 }
             }
         },
-        "signup.Request": {
+        "signup.SignUp": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1253,7 +1513,7 @@ const docTemplate = `{
                 }
             }
         },
-        "update.Request": {
+        "update.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -1264,7 +1524,7 @@ const docTemplate = `{
                 }
             }
         },
-        "updatepass.Request": {
+        "updatepass.Password": {
             "type": "object",
             "properties": {
                 "current": {
@@ -1279,7 +1539,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "verdict": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "WA",
+                        "WAIT",
+                        ""
+                    ]
                 }
             }
         }

@@ -55,7 +55,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/update.Request"
+                            "$ref": "#/definitions/update.User"
                         }
                     }
                 ],
@@ -104,12 +104,12 @@
                 ],
                 "parameters": [
                     {
-                        "description": "Request",
+                        "description": "Password",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/updatepass.Request"
+                            "$ref": "#/definitions/updatepass.Password"
                         }
                     }
                 ],
@@ -137,7 +137,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.Answer"
                         }
                     }
                 ],
@@ -169,7 +169,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/refresh.Request"
+                            "$ref": "#/definitions/refresh.Refresh"
                         }
                     }
                 ],
@@ -196,12 +196,12 @@
                 ],
                 "parameters": [
                     {
-                        "description": "Request",
+                        "description": "SignIn",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/signin.Request"
+                            "$ref": "#/definitions/signin.SignIn"
                         }
                     }
                 ],
@@ -233,7 +233,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/signup.Request"
+                            "$ref": "#/definitions/signup.SignUp"
                         }
                     }
                 ],
@@ -285,7 +285,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Course"
                         }
                     }
                 ],
@@ -456,7 +456,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Group"
                         }
                     }
                 ],
@@ -545,7 +545,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Module"
                         }
                     }
                 ],
@@ -611,7 +611,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Page"
                         }
                     }
                 ],
@@ -707,7 +707,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.AnswerRequest"
+                            "$ref": "#/definitions/internal_httpserver_handlers_review_internal_create.Answer"
                         }
                     }
                 ],
@@ -741,7 +741,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.CodeRequest"
+                            "$ref": "#/definitions/create.Code"
                         }
                     }
                 ],
@@ -775,7 +775,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Section"
                         }
                     }
                 ],
@@ -841,7 +841,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Request"
+                            "$ref": "#/definitions/create.Teacher"
                         }
                     }
                 ],
@@ -909,18 +909,48 @@
         }
     },
     "definitions": {
-        "create.AnswerRequest": {
+        "create.AnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
-                "id": {
+                "answer": {
                     "type": "string"
-                },
-                "score": {
-                    "type": "number"
                 }
             }
         },
-        "create.CodeRequest": {
+        "create.AnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Code": {
             "type": "object",
             "properties": {
                 "comment": {
@@ -934,7 +964,26 @@
                 }
             }
         },
-        "create.Request": {
+        "create.CodeSection": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CodeSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Course": {
             "type": "object",
             "properties": {
                 "banner": {
@@ -956,6 +1005,169 @@
                     "type": "string"
                 },
                 "shortDescription": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Group": {
+            "type": "object",
+            "properties": {
+                "coursesIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "studentsIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Module": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "number"
+                }
+            }
+        },
+        "create.MultiChoiceSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string"
+                },
+                "variants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.MultichoiceSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.Page": {
+            "type": "object",
+            "properties": {
+                "moduleId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "number"
+                }
+            }
+        },
+        "create.Section": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSection"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "multichoice": {
+                    "$ref": "#/definitions/create.MultiChoiceSectionPost"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "shortanswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionPost"
+                },
+                "text": {
+                    "$ref": "#/definitions/create.TextSectionPost"
+                }
+            }
+        },
+        "create.ShortAnswerSectionAnswerPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.ShortAnswerSectionPost": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.Teacher": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/create.TeacherCourse"
+                    }
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.TeacherCourse": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.TextSectionPost": {
+            "type": "object",
+            "properties": {
+                "content": {
                     "type": "string"
                 }
             }
@@ -1006,6 +1218,40 @@
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_httpserver_handlers_answer_internal_create.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "multiChoice": {
+                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
+                },
+                "shortAnswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
+                }
+            }
+        },
+        "internal_httpserver_handlers_review_internal_create.Answer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
                 }
             }
         },
@@ -1168,7 +1414,15 @@
                     "type": "integer"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "choice",
+                        "multiChoice",
+                        "text",
+                        "shortAnswer",
+                        "answer",
+                        "code"
+                    ]
                 },
                 "variants": {
                     "type": "array",
@@ -1177,7 +1431,13 @@
                     }
                 },
                 "verdict": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "WA",
+                        "WAIT",
+                        ""
+                    ]
                 }
             }
         },
@@ -1212,7 +1472,7 @@
                 }
             }
         },
-        "refresh.Request": {
+        "refresh.Refresh": {
             "type": "object",
             "properties": {
                 "refreshToken": {
@@ -1220,7 +1480,7 @@
                 }
             }
         },
-        "signin.Request": {
+        "signin.SignIn": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1231,7 +1491,7 @@
                 }
             }
         },
-        "signup.Request": {
+        "signup.SignUp": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1245,7 +1505,7 @@
                 }
             }
         },
-        "update.Request": {
+        "update.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -1256,7 +1516,7 @@
                 }
             }
         },
-        "updatepass.Request": {
+        "updatepass.Password": {
             "type": "object",
             "properties": {
                 "current": {
@@ -1271,7 +1531,13 @@
             "type": "object",
             "properties": {
                 "verdict": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "WA",
+                        "WAIT",
+                        ""
+                    ]
                 }
             }
         }

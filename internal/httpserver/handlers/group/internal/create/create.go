@@ -14,13 +14,13 @@ type creator interface {
 
 // @Tags group
 // @Security ApiKeyAuth
-// @Param       request body Request true " "
+// @Param       request body Group true " "
 // @Success      201   {string} model.Group "created"
 // @Router       /v1/group [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Group
 			ctx     = r.Context()
 		)
 
@@ -31,7 +31,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		group := request.ToGroup()
+		group := request.toGroup()
 		group, err = creator.Create(ctx, group)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

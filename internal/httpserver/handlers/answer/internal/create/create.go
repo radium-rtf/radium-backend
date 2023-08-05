@@ -15,13 +15,13 @@ type creator interface {
 
 // @Tags answer
 // @Security ApiKeyAuth
-// @Param       request body Request true " "
+// @Param       request body Answer true " "
 // @Success      201   {object} verdict.Verdict "ok"
 // @Router      /v1/answer [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Answer
 			ctx     = r.Context()
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)

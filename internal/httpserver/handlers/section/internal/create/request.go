@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	Request struct {
+	Section struct {
 		PageId   uuid.UUID `json:"pageId"`
 		Order    uint      `json:"order"`
 		MaxScore uint      `json:"maxScore,omitempty"`
@@ -16,7 +16,7 @@ type (
 		MultiChoiceSection *MultiChoiceSectionPost `json:"multichoice,omitempty"`
 		ShortAnswerSection *ShortAnswerSectionPost `json:"shortanswer,omitempty"`
 		AnswerSection      *AnswerSectionPost      `json:"answer,omitempty"`
-		CodeSection        *CodeSectionPost        `json:"code,omitempty"`
+		CodeSection        *CodeSection            `json:"code,omitempty"`
 	}
 
 	TextSectionPost struct {
@@ -44,12 +44,12 @@ type (
 		Question string
 	}
 
-	CodeSectionPost struct {
+	CodeSection struct {
 		Question string
 	}
 )
 
-func (r Request) ToSection() *entity.Section {
+func (r Section) toSection() *entity.Section {
 	return &entity.Section{
 		PageId:             r.PageId,
 		Order:              r.Order,
@@ -63,7 +63,7 @@ func (r Request) ToSection() *entity.Section {
 	}
 }
 
-func (r Request) postToText(post *TextSectionPost) *entity.TextSection {
+func (r Section) postToText(post *TextSectionPost) *entity.TextSection {
 	if post == nil {
 		return nil
 	}
@@ -72,7 +72,7 @@ func (r Request) postToText(post *TextSectionPost) *entity.TextSection {
 	}
 }
 
-func (r Request) postToChoice(post *ChoiceSectionPost) *entity.ChoiceSection {
+func (r Section) postToChoice(post *ChoiceSectionPost) *entity.ChoiceSection {
 	if post == nil {
 		return nil
 	}
@@ -83,7 +83,7 @@ func (r Request) postToChoice(post *ChoiceSectionPost) *entity.ChoiceSection {
 	}
 }
 
-func (r Request) postToMultiChoice(post *MultiChoiceSectionPost) *entity.MultiChoiceSection {
+func (r Section) postToMultiChoice(post *MultiChoiceSectionPost) *entity.MultiChoiceSection {
 	if post == nil {
 		return nil
 	}
@@ -94,7 +94,7 @@ func (r Request) postToMultiChoice(post *MultiChoiceSectionPost) *entity.MultiCh
 	}
 }
 
-func (r Request) postToShortAnswer(post *ShortAnswerSectionPost) *entity.ShortAnswerSection {
+func (r Section) postToShortAnswer(post *ShortAnswerSectionPost) *entity.ShortAnswerSection {
 	if post == nil {
 		return nil
 	}
@@ -104,7 +104,7 @@ func (r Request) postToShortAnswer(post *ShortAnswerSectionPost) *entity.ShortAn
 	}
 }
 
-func (r Request) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
+func (r Section) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
 	if post == nil {
 		return nil
 	}
@@ -113,7 +113,7 @@ func (r Request) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
 	}
 }
 
-func (r Request) postToCode(post *CodeSectionPost) *entity.CodeSection {
+func (r Section) postToCode(post *CodeSection) *entity.CodeSection {
 	if post == nil {
 		return nil
 	}

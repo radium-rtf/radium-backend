@@ -15,13 +15,13 @@ type updater interface {
 // @Accept      json
 // @Produce     json
 // @Security ApiKeyAuth
-// @Param       request body Request true "Request"
+// @Param       request body Password true "Password"
 // @Success     200
 // @Router      /v1/account/password [patch]
 func New(updater updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Password
 			ctx     = r.Context()
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)

@@ -15,14 +15,14 @@ type signIn interface {
 // @Tags  	    auth
 // @Accept      json
 // @Produce     json
-// @Param       request body Request true "Request"
+// @Param       request body SignIn true "SignIn"
 // @Success     200 {object} model.Tokens
 // @Router      /v1/auth/signin [post]
 func New(in signIn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			ctx     = r.Context()
-			request Request
+			request SignIn
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&request)

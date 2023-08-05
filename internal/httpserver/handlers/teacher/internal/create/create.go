@@ -13,13 +13,13 @@ type creator interface {
 
 // @Tags teacher
 // @Security ApiKeyAuth
-// @Param       request body Request true " "
+// @Param       request body Teacher true " "
 // @Success      201   {string}  string        "created"
 // @Router       /v1/teacher [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Teacher
 			ctx     = r.Context()
 		)
 

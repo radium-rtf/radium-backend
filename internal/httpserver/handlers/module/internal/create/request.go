@@ -6,13 +6,13 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
-type Request struct {
+type Module struct {
 	CourseId uuid.UUID `json:"courseId"`
 	Name     string    `json:"name"`
 	Order    float64   `json:"order"`
 }
 
-func (m Request) ToModule() *entity.Module {
+func (m Module) toModule() *entity.Module {
 	return &entity.Module{
 		Name:     m.Name,
 		CourseId: m.CourseId,

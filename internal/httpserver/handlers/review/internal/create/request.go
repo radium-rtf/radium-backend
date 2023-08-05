@@ -5,25 +5,25 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
 
-type AnswerRequest struct {
+type Answer struct {
 	Id    uuid.UUID `json:"id"`
 	Score float32   `json:"score"`
 }
 
-type CodeRequest struct {
+type Code struct {
 	Id      uuid.UUID `json:"id"`
 	Score   float32   `json:"score"`
 	Comment string    `json:"comment"`
 }
 
-func (r AnswerRequest) ToReview() *entity.AnswerReview {
+func (r Answer) toReview() *entity.AnswerReview {
 	return &entity.AnswerReview{
 		OwnerId: r.Id,
 		Score:   r.Score,
 	}
 }
 
-func (r CodeRequest) ToReview() *entity.CodeReview {
+func (r Code) toReview() *entity.CodeReview {
 	return &entity.CodeReview{
 		OwnerId: r.Id,
 		Score:   r.Score,

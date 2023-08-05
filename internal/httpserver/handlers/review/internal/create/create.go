@@ -17,13 +17,13 @@ type creator interface {
 // @Tags review
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body AnswerRequest true "score - от 0 до 1"
+// @Param request body Answer true "score - от 0 до 1"
 // @Success 201 {object} entity.AnswerReview "created"
 // @Router /v1/review/answer [post]
 func NewAnswerReview(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request AnswerRequest
+			request Answer
 			ctx     = r.Context()
 		)
 
@@ -34,7 +34,7 @@ func NewAnswerReview(creator creator) http.HandlerFunc {
 			return
 		}
 
-		review := request.ToReview()
+		review := request.toReview()
 		review, err = creator.CreateAnswerReview(ctx, review)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
@@ -50,13 +50,13 @@ func NewAnswerReview(creator creator) http.HandlerFunc {
 // @Tags review
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body CodeRequest true "score - от 0 до 1"
+// @Param request body Code true "score - от 0 до 1"
 // @Success 201 {object} entity.CodeReview "created"
 // @Router /v1/review/code [post]
 func NewCodeReview(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request CodeRequest
+			request Code
 			ctx     = r.Context()
 		)
 
@@ -67,7 +67,7 @@ func NewCodeReview(creator creator) http.HandlerFunc {
 			return
 		}
 
-		review := request.ToReview()
+		review := request.toReview()
 		review, err = creator.CreateCodeReview(ctx, review)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

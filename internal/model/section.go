@@ -22,14 +22,14 @@ type (
 		Id       uuid.UUID    `json:"id"`
 		PageId   uuid.UUID    `json:"pageId"`
 		Order    uint         `json:"order"`
-		Type     SectionType  `json:"type"`
+		Type     SectionType  `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
 		Score    uint         `json:"score"`
 		Answer   string       `json:"answer"`
 		Answers  []string     `json:"answers" swaggertype:"array,string"`
 		Content  string       `json:"content"`
 		MaxScore uint         `json:"maxScore"`
 		Variants []string     `json:"variants"`
-		Verdict  verdict.Type `json:"verdict" swaggertype:"string"`
+		Verdict  verdict.Type `json:"verdict" enums:"OK,WA,WAIT,"`
 	}
 )
 

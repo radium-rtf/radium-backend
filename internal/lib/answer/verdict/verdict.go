@@ -11,6 +11,6 @@ type (
 	Type string
 
 	Verdict struct {
-		Verdict Type `json:"verdict"`
+		Verdict Type `json:"verdict" enums:"OK,WA,WAIT,"`
 	}
 )

@@ -15,13 +15,13 @@ type refresh interface {
 // @Tags  	    auth
 // @Accept      json
 // @Produce     json
-// @Param       request body Request true "RefreshToken"
+// @Param       request body Refresh true "RefreshToken"
 // @Success     200 {object} model.Tokens
 // @Router      /v1/auth/refresh [post]
 func New(refresh refresh) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Request
+			request Refresh
 			ctx     = r.Context()
 		)
 
