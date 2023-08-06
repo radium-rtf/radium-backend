@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql/driver"
-
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -31,10 +30,11 @@ func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UU
 	q := r.pg.Answer
 	// TODO: хз как написать норм запрос на этом, потом ещё раз попробую.....
 	answers, err := q.WithContext(ctx).
-		Preload(field.Associations).
-		Preload(q.Answer.Review).
 		Where(q.UserId.Eq(userId)).
-		Where(q.SectionId.In(values...)).Find()
+		Where(q.SectionId.In(values...)).
+		Preload(field.Associations).
+		Preload(q.Review).
+		Find()
 
 	if err != nil {
 		return nil, err

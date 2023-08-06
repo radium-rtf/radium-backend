@@ -3,6 +3,7 @@ package create
 import (
 	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -10,21 +11,21 @@ import (
 )
 
 type creator interface {
-	CreateAnswerReview(ctx context.Context, review *entity.AnswerReview) (*entity.AnswerReview, error)
-	CreateCodeReview(ctx context.Context, review *entity.CodeReview) (*entity.CodeReview, error)
+	Create(ctx context.Context, review *entity.Review) (*entity.Review, error)
 }
 
 // @Tags review
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body Answer true "score - от 0 до 1"
-// @Success 201 {object} entity.AnswerReview "created"
-// @Router /v1/review/answer [post]
-func NewAnswerReview(creator creator) http.HandlerFunc {
+// @Param request body Review true "score - от 0 до 1"
+// @Success 201 {object} entity.Review "created"
+// @Router /v1/review [post]
+func NewReview(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Answer
+			request Review
 			ctx     = r.Context()
+			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -34,41 +35,8 @@ func NewAnswerReview(creator creator) http.HandlerFunc {
 			return
 		}
 
-		review := request.toReview()
-		review, err = creator.CreateAnswerReview(ctx, review)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
-
-		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, review)
-	}
-}
-
-// @Tags review
-// @Security ApiKeyAuth
-// @Accept json
-// @Param request body Code true "score - от 0 до 1"
-// @Success 201 {object} entity.CodeReview "created"
-// @Router /v1/review/code [post]
-func NewCodeReview(creator creator) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var (
-			request Code
-			ctx     = r.Context()
-		)
-
-		err := json.NewDecoder(r.Body).Decode(&request)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
-
-		review := request.toReview()
-		review, err = creator.CreateCodeReview(ctx, review)
+		review := request.toReview(userId)
+		review, err = creator.Create(ctx, review)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

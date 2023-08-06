@@ -56,22 +56,18 @@ func newAnswer(db *gorm.DB, opts ...gen.DOOption) answer {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Answer", "entity.AnswerSectionAnswer"),
-		Review: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Answer.Review", "entity.AnswerReview"),
-		},
 	}
 
 	_answer.Code = answerHasOneCode{
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Code", "entity.CodeSectionAnswer"),
-		Review: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Code.Review", "entity.CodeReview"),
-		},
+	}
+
+	_answer.Review = answerHasOneReview{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Review", "entity.Review"),
 	}
 
 	_answer.fillFieldMap()
@@ -99,6 +95,8 @@ type answer struct {
 	Answer answerHasOneAnswer
 
 	Code answerHasOneCode
+
+	Review answerHasOneReview
 
 	fieldMap map[string]field.Expr
 }
@@ -144,7 +142,7 @@ func (a *answer) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *answer) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 12)
+	a.fieldMap = make(map[string]field.Expr, 13)
 	a.fieldMap["id"] = a.Id
 	a.fieldMap["created_at"] = a.CreatedAt
 	a.fieldMap["updated_at"] = a.UpdatedAt
@@ -382,10 +380,6 @@ type answerHasOneAnswer struct {
 	db *gorm.DB
 
 	field.RelationField
-
-	Review struct {
-		field.RelationField
-	}
 }
 
 func (a answerHasOneAnswer) Where(conds ...field.Expr) *answerHasOneAnswer {
@@ -457,10 +451,6 @@ type answerHasOneCode struct {
 	db *gorm.DB
 
 	field.RelationField
-
-	Review struct {
-		field.RelationField
-	}
 }
 
 func (a answerHasOneCode) Where(conds ...field.Expr) *answerHasOneCode {
@@ -525,6 +515,77 @@ func (a answerHasOneCodeTx) Clear() error {
 }
 
 func (a answerHasOneCodeTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type answerHasOneReview struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a answerHasOneReview) Where(conds ...field.Expr) *answerHasOneReview {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a answerHasOneReview) WithContext(ctx context.Context) *answerHasOneReview {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a answerHasOneReview) Session(session *gorm.Session) *answerHasOneReview {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a answerHasOneReview) Model(m *entity.Answer) *answerHasOneReviewTx {
+	return &answerHasOneReviewTx{a.db.Model(m).Association(a.Name())}
+}
+
+type answerHasOneReviewTx struct{ tx *gorm.Association }
+
+func (a answerHasOneReviewTx) Find() (result *entity.Review, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a answerHasOneReviewTx) Append(values ...*entity.Review) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a answerHasOneReviewTx) Replace(values ...*entity.Review) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a answerHasOneReviewTx) Delete(values ...*entity.Review) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a answerHasOneReviewTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a answerHasOneReviewTx) Count() int64 {
 	return a.tx.Count()
 }
 

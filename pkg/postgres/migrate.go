@@ -33,7 +33,6 @@ func migrate(db *gorm.DB) error {
 		entity.Teacher{},
 		entity.TeacherCourse{},
 
-		entity.AnswerReview{},
-		entity.CodeReview{},
+		entity.Review{},
 	)
 }

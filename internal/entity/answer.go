@@ -20,6 +20,8 @@ type (
 		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
 		Answer      *AnswerSectionAnswer      `gorm:"polymorphic:Owner"`
 		Code        *CodeSectionAnswer        `gorm:"polymorphic:Owner"`
+
+		Review *Review
 	}
 
 	ChoiceSectionAnswer struct {
@@ -45,29 +47,27 @@ type (
 
 	AnswerSectionAnswer struct {
 		DBModel
-		OwnerID   uuid.UUID     `gorm:"type:uuid; not null"`
-		OwnerType string        `gorm:"not null"`
-		Answer    string        `gorm:"not null"`
-		Review    *AnswerReview `gorm:"foreignKey:OwnerId"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
+		Answer    string    `gorm:"not null"`
 	}
 
 	CodeSectionAnswer struct {
 		DBModel
-		OwnerID   uuid.UUID   `gorm:"type:uuid; not null"`
-		OwnerType string      `gorm:"not null"`
-		Answer    string      `gorm:"not null"`
-		Language  string      `gorm:"not null"`
-		Review    *CodeReview `gorm:"foreignKey:OwnerId"`
+		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
+		OwnerType string    `gorm:"not null"`
+		Answer    string    `gorm:"not null"`
+		Language  string    `gorm:"not null"`
 	}
 )
 
 func (a Answer) Score(section *Section) uint {
 	maxScore := section.MaxScore
-	if a.Answer != nil && a.Answer.Review != nil {
-		return uint(math.Round(float64(float32(maxScore) * a.Answer.Review.Score)))
+	if a.Answer != nil && a.Review != nil {
+		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
 	}
-	if a.Code != nil && a.Code.Review != nil {
-		return uint(math.Round(float64(float32(maxScore) * a.Code.Review.Score)))
+	if a.Code != nil && a.Review != nil {
+		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
 	}
 
 	if a.Verdict == verdict.OK {

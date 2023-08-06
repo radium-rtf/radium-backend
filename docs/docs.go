@@ -145,7 +145,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.Answer"
+                            "$ref": "#/definitions/create.Answer"
                         }
                     }
                 ],
@@ -695,7 +695,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/review/answer": {
+        "/v1/review": {
             "post": {
                 "security": [
                     {
@@ -715,7 +715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_httpserver_handlers_review_internal_create.Answer"
+                            "$ref": "#/definitions/create.Review"
                         }
                     }
                 ],
@@ -723,41 +723,7 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.AnswerReview"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/review/code": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "review"
-                ],
-                "parameters": [
-                    {
-                        "description": "score - от 0 до 1",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/create.Code"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "created",
-                        "schema": {
-                            "$ref": "#/definitions/entity.CodeReview"
+                            "$ref": "#/definitions/entity.Review"
                         }
                     }
                 }
@@ -917,6 +883,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "create.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
+                },
+                "choice": {
+                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
+                },
+                "code": {
+                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "multiChoice": {
+                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
+                },
+                "shortAnswer": {
+                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
+                }
+            }
+        },
         "create.AnswerSectionAnswerPost": {
             "type": "object",
             "properties": {
@@ -955,20 +944,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "create.Code": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
                 }
             }
         },
@@ -1096,6 +1071,20 @@ const docTemplate = `{
                 }
             }
         },
+        "create.Review": {
+            "type": "object",
+            "properties": {
+                "answer_id": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
         "create.Section": {
             "type": "object",
             "properties": {
@@ -1180,82 +1169,16 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.AnswerReview": {
+        "entity.Review": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "answerId": {
                     "type": "string"
                 },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "ownerId": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.CodeReview": {
-            "type": "object",
-            "properties": {
                 "comment": {
                     "type": "string"
                 },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "ownerId": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_httpserver_handlers_answer_internal_create.Answer": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
-                },
-                "choice": {
-                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
-                },
-                "code": {
-                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "multiChoice": {
-                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
-                },
-                "shortAnswer": {
-                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
-                }
-            }
-        },
-        "internal_httpserver_handlers_review_internal_create.Answer": {
-            "type": "object",
-            "properties": {
-                "id": {
+                "reviewerId": {
                     "type": "string"
                 },
                 "score": {

@@ -19,12 +19,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   newAnswer(db, opts...),
-		AnswerReview:             newAnswerReview(db, opts...),
 		AnswerSection:            newAnswerSection(db, opts...),
 		AnswerSectionAnswer:      newAnswerSectionAnswer(db, opts...),
 		ChoiceSection:            newChoiceSection(db, opts...),
 		ChoiceSectionAnswer:      newChoiceSectionAnswer(db, opts...),
-		CodeReview:               newCodeReview(db, opts...),
 		CodeSection:              newCodeSection(db, opts...),
 		CodeSectionAnswer:        newCodeSectionAnswer(db, opts...),
 		Course:                   newCourse(db, opts...),
@@ -34,6 +32,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		MultiChoiceSection:       newMultiChoiceSection(db, opts...),
 		MultichoiceSectionAnswer: newMultichoiceSectionAnswer(db, opts...),
 		Page:                     newPage(db, opts...),
+		Review:                   newReview(db, opts...),
 		Section:                  newSection(db, opts...),
 		Session:                  newSession(db, opts...),
 		ShortAnswerSection:       newShortAnswerSection(db, opts...),
@@ -49,12 +48,10 @@ type Query struct {
 	db *gorm.DB
 
 	Answer                   answer
-	AnswerReview             answerReview
 	AnswerSection            answerSection
 	AnswerSectionAnswer      answerSectionAnswer
 	ChoiceSection            choiceSection
 	ChoiceSectionAnswer      choiceSectionAnswer
-	CodeReview               codeReview
 	CodeSection              codeSection
 	CodeSectionAnswer        codeSectionAnswer
 	Course                   course
@@ -64,6 +61,7 @@ type Query struct {
 	MultiChoiceSection       multiChoiceSection
 	MultichoiceSectionAnswer multichoiceSectionAnswer
 	Page                     page
+	Review                   review
 	Section                  section
 	Session                  session
 	ShortAnswerSection       shortAnswerSection
@@ -80,12 +78,10 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   q.Answer.clone(db),
-		AnswerReview:             q.AnswerReview.clone(db),
 		AnswerSection:            q.AnswerSection.clone(db),
 		AnswerSectionAnswer:      q.AnswerSectionAnswer.clone(db),
 		ChoiceSection:            q.ChoiceSection.clone(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.clone(db),
-		CodeReview:               q.CodeReview.clone(db),
 		CodeSection:              q.CodeSection.clone(db),
 		CodeSectionAnswer:        q.CodeSectionAnswer.clone(db),
 		Course:                   q.Course.clone(db),
@@ -95,6 +91,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		MultiChoiceSection:       q.MultiChoiceSection.clone(db),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.clone(db),
 		Page:                     q.Page.clone(db),
+		Review:                   q.Review.clone(db),
 		Section:                  q.Section.clone(db),
 		Session:                  q.Session.clone(db),
 		ShortAnswerSection:       q.ShortAnswerSection.clone(db),
@@ -118,12 +115,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
 		Answer:                   q.Answer.replaceDB(db),
-		AnswerReview:             q.AnswerReview.replaceDB(db),
 		AnswerSection:            q.AnswerSection.replaceDB(db),
 		AnswerSectionAnswer:      q.AnswerSectionAnswer.replaceDB(db),
 		ChoiceSection:            q.ChoiceSection.replaceDB(db),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.replaceDB(db),
-		CodeReview:               q.CodeReview.replaceDB(db),
 		CodeSection:              q.CodeSection.replaceDB(db),
 		CodeSectionAnswer:        q.CodeSectionAnswer.replaceDB(db),
 		Course:                   q.Course.replaceDB(db),
@@ -133,6 +128,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		MultiChoiceSection:       q.MultiChoiceSection.replaceDB(db),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.replaceDB(db),
 		Page:                     q.Page.replaceDB(db),
+		Review:                   q.Review.replaceDB(db),
 		Section:                  q.Section.replaceDB(db),
 		Session:                  q.Session.replaceDB(db),
 		ShortAnswerSection:       q.ShortAnswerSection.replaceDB(db),
@@ -146,12 +142,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 
 type queryCtx struct {
 	Answer                   IAnswerDo
-	AnswerReview             IAnswerReviewDo
 	AnswerSection            IAnswerSectionDo
 	AnswerSectionAnswer      IAnswerSectionAnswerDo
 	ChoiceSection            IChoiceSectionDo
 	ChoiceSectionAnswer      IChoiceSectionAnswerDo
-	CodeReview               ICodeReviewDo
 	CodeSection              ICodeSectionDo
 	CodeSectionAnswer        ICodeSectionAnswerDo
 	Course                   ICourseDo
@@ -161,6 +155,7 @@ type queryCtx struct {
 	MultiChoiceSection       IMultiChoiceSectionDo
 	MultichoiceSectionAnswer IMultichoiceSectionAnswerDo
 	Page                     IPageDo
+	Review                   IReviewDo
 	Section                  ISectionDo
 	Session                  ISessionDo
 	ShortAnswerSection       IShortAnswerSectionDo
@@ -174,12 +169,10 @@ type queryCtx struct {
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Answer:                   q.Answer.WithContext(ctx),
-		AnswerReview:             q.AnswerReview.WithContext(ctx),
 		AnswerSection:            q.AnswerSection.WithContext(ctx),
 		AnswerSectionAnswer:      q.AnswerSectionAnswer.WithContext(ctx),
 		ChoiceSection:            q.ChoiceSection.WithContext(ctx),
 		ChoiceSectionAnswer:      q.ChoiceSectionAnswer.WithContext(ctx),
-		CodeReview:               q.CodeReview.WithContext(ctx),
 		CodeSection:              q.CodeSection.WithContext(ctx),
 		CodeSectionAnswer:        q.CodeSectionAnswer.WithContext(ctx),
 		Course:                   q.Course.WithContext(ctx),
@@ -189,6 +182,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		MultiChoiceSection:       q.MultiChoiceSection.WithContext(ctx),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.WithContext(ctx),
 		Page:                     q.Page.WithContext(ctx),
+		Review:                   q.Review.WithContext(ctx),
 		Section:                  q.Section.WithContext(ctx),
 		Session:                  q.Session.WithContext(ctx),
 		ShortAnswerSection:       q.ShortAnswerSection.WithContext(ctx),

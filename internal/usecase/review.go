@@ -8,17 +8,13 @@ import (
 )
 
 type ReviewUseCase struct {
-	reviewRepo postgres.Repo
+	reviewRepo postgres.ReviewRepo
 }
 
-func NewReviewUseCase(reviewRepo postgres.Repo) ReviewUseCase {
+func NewReviewUseCase(reviewRepo postgres.ReviewRepo) ReviewUseCase {
 	return ReviewUseCase{reviewRepo: reviewRepo}
 }
 
-func (r ReviewUseCase) CreateAnswerReview(ctx context.Context, review *entity.AnswerReview) (*entity.AnswerReview, error) {
-	return r.reviewRepo.CreateAnswerReview(ctx, review)
-}
-
-func (r ReviewUseCase) CreateCodeReview(ctx context.Context, review *entity.CodeReview) (*entity.CodeReview, error) {
-	return r.reviewRepo.CreateCodeReview(ctx, review)
+func (r ReviewUseCase) Create(ctx context.Context, review *entity.Review) (*entity.Review, error) {
+	return r.reviewRepo.Create(ctx, review)
 }

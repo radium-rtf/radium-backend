@@ -37,9 +37,7 @@ func Gen() error {
 		entity.Group{},
 		entity.Teacher{},
 		entity.TeacherCourse{},
-
-		entity.AnswerReview{},
-		entity.CodeReview{},
+		entity.Review{},
 	)
 	g.Execute()
 	return nil

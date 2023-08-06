@@ -35,11 +35,6 @@ func newCodeSectionAnswer(db *gorm.DB, opts ...gen.DOOption) codeSectionAnswer {
 	_codeSectionAnswer.OwnerType = field.NewString(tableName, "owner_type")
 	_codeSectionAnswer.Answer = field.NewString(tableName, "answer")
 	_codeSectionAnswer.Language = field.NewString(tableName, "language")
-	_codeSectionAnswer.Review = codeSectionAnswerHasOneReview{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Review", "entity.CodeReview"),
-	}
 
 	_codeSectionAnswer.fillFieldMap()
 
@@ -58,7 +53,6 @@ type codeSectionAnswer struct {
 	OwnerType field.String
 	Answer    field.String
 	Language  field.String
-	Review    codeSectionAnswerHasOneReview
 
 	fieldMap map[string]field.Expr
 }
@@ -107,7 +101,7 @@ func (c *codeSectionAnswer) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (c *codeSectionAnswer) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 9)
+	c.fieldMap = make(map[string]field.Expr, 8)
 	c.fieldMap["id"] = c.Id
 	c.fieldMap["created_at"] = c.CreatedAt
 	c.fieldMap["updated_at"] = c.UpdatedAt
@@ -116,7 +110,6 @@ func (c *codeSectionAnswer) fillFieldMap() {
 	c.fieldMap["owner_type"] = c.OwnerType
 	c.fieldMap["answer"] = c.Answer
 	c.fieldMap["language"] = c.Language
-
 }
 
 func (c codeSectionAnswer) clone(db *gorm.DB) codeSectionAnswer {
@@ -127,77 +120,6 @@ func (c codeSectionAnswer) clone(db *gorm.DB) codeSectionAnswer {
 func (c codeSectionAnswer) replaceDB(db *gorm.DB) codeSectionAnswer {
 	c.codeSectionAnswerDo.ReplaceDB(db)
 	return c
-}
-
-type codeSectionAnswerHasOneReview struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a codeSectionAnswerHasOneReview) Where(conds ...field.Expr) *codeSectionAnswerHasOneReview {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a codeSectionAnswerHasOneReview) WithContext(ctx context.Context) *codeSectionAnswerHasOneReview {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a codeSectionAnswerHasOneReview) Session(session *gorm.Session) *codeSectionAnswerHasOneReview {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a codeSectionAnswerHasOneReview) Model(m *entity.CodeSectionAnswer) *codeSectionAnswerHasOneReviewTx {
-	return &codeSectionAnswerHasOneReviewTx{a.db.Model(m).Association(a.Name())}
-}
-
-type codeSectionAnswerHasOneReviewTx struct{ tx *gorm.Association }
-
-func (a codeSectionAnswerHasOneReviewTx) Find() (result *entity.CodeReview, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a codeSectionAnswerHasOneReviewTx) Append(values ...*entity.CodeReview) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a codeSectionAnswerHasOneReviewTx) Replace(values ...*entity.CodeReview) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a codeSectionAnswerHasOneReviewTx) Delete(values ...*entity.CodeReview) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a codeSectionAnswerHasOneReviewTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a codeSectionAnswerHasOneReviewTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type codeSectionAnswerDo struct{ gen.DO }
