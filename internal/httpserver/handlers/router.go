@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/radium-rtf/radium-backend/config"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/account"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/answer"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth"
@@ -14,11 +13,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/review"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/teacher"
-	session2 "github.com/radium-rtf/radium-backend/internal/lib/session"
-	authutil "github.com/radium-rtf/radium-backend/pkg/auth"
-	"github.com/radium-rtf/radium-backend/pkg/filestorage"
-	"github.com/radium-rtf/radium-backend/pkg/hash"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
 // @title       без юлерна
@@ -28,25 +23,21 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func NewRouter(h *chi.Mux, pg *db.Query, storage filestorage.Storage, cfg *config.Config) {
-	hasher := hash.NewSHA1Hasher(cfg.PasswordSalt)
-	tokenManager := authutil.NewManager(cfg.SigningKey)
-	session := session2.New(tokenManager, cfg.AccessTokenTTL, cfg.RefreshTokenTTL)
+func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
+	answer.New(h, useCases)
 
-	answer.New(h, pg, tokenManager)
+	course.New(h, useCases)
+	module.New(h, useCases)
+	page.New(h, useCases)
+	section.New(h, useCases)
 
-	course.New(h, pg, tokenManager)
-	module.New(h, pg, tokenManager)
-	page.New(h, pg, tokenManager)
-	section.New(h, pg, tokenManager)
+	group.New(h, useCases)
 
-	group.New(h, pg, tokenManager)
+	teacher.New(h, useCases)
+	review.New(h, useCases)
 
-	teacher.New(h, pg, tokenManager)
-	review.New(h, pg, tokenManager)
+	auth.New(h, useCases)
+	account.New(h, useCases)
 
-	auth.New(h, pg, hasher, session)
-	account.New(h, pg, tokenManager, hasher)
-
-	file.New(h, storage, tokenManager)
+	file.New(h, useCases)
 }

@@ -6,18 +6,14 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/teacher/internal/create"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
-	teacherRepo := postgres.NewTeacherRepo(pg)
-	useCase := usecase.NewTeacherUseCase(teacherRepo)
+func New(r *chi.Mux, useCases usecase.UseCases) {
+	useCase := useCases.Teacher
 
 	r.Route("/v1/teacher", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.Required(manager))
+			r.Use(mwAuth.Required(useCases.Deps.TokenManager))
 			r.Post("/", create.New(useCase))
 			r.Get("/courses", courses.New(useCase))
 		})

@@ -7,14 +7,14 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-type ReviewRepo struct {
+type Review struct {
 	pg *db.Query
 }
 
-func NewReviewRepo(pg *db.Query) ReviewRepo {
-	return ReviewRepo{pg: pg}
+func NewReviewRepo(pg *db.Query) Review {
+	return Review{pg: pg}
 }
 
-func (r ReviewRepo) Create(ctx context.Context, review *entity.Review) (*entity.Review, error) {
+func (r Review) Create(ctx context.Context, review *entity.Review) (*entity.Review, error) {
 	return review, r.pg.Review.WithContext(ctx).Save(review)
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type ReviewUseCase struct {
-	reviewRepo postgres.ReviewRepo
+	reviewRepo postgres.Review
 }
 
-func NewReviewUseCase(reviewRepo postgres.ReviewRepo) ReviewUseCase {
+func NewReviewUseCase(reviewRepo postgres.Review) ReviewUseCase {
 	return ReviewUseCase{reviewRepo: reviewRepo}
 }
 

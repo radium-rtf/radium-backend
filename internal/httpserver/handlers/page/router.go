@@ -7,28 +7,20 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/getbyid"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
-
-	pageRepo := postgres.NewPageRepo(pg)
-	answerRepo := postgres.NewAnswerRepo(pg)
-	sectionRepo := postgres.NewSectionRepo(pg)
-
-	useCase := usecase.NewPageUseCase(pageRepo)
-	answerUseCase := usecase.NewAnswerUseCase(sectionRepo, answerRepo)
+func New(r *chi.Mux, useCases usecase.UseCases) {
+	useCase := useCases.Page
+	answerUseCase := useCases.Answer
 
 	r.Route("/v1/page", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.UserId(manager))
+			r.Use(mwAuth.UserId(useCases.Deps.TokenManager))
 			r.Get("/{id}", getbyid.New(useCase, answerUseCase))
 		})
 
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.Required(manager))
+			r.Use(mwAuth.Required(useCases.Deps.TokenManager))
 			r.Post("/", create.New(useCase))
 			r.Delete("/{id}", destroy.New(useCase))
 		})

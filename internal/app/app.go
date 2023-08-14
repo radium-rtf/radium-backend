@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers"
 	"log"
 	"os"
 	"os/signal"
@@ -14,18 +13,23 @@ import (
 
 	"github.com/radium-rtf/radium-backend/config"
 	_ "github.com/radium-rtf/radium-backend/docs"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers"
+	"github.com/radium-rtf/radium-backend/internal/lib/session"
+	"github.com/radium-rtf/radium-backend/internal/usecase"
+	pg "github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
+	"github.com/radium-rtf/radium-backend/pkg/hash"
 	"github.com/radium-rtf/radium-backend/pkg/httpserver"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 )
 
 func Run(cfg *config.Config) {
-	pg := cfg.PG
-	db, err := postgres.New(pg.URL,
-		postgres.MaxOpenConns(pg.MaxOpenConns),
-		postgres.ConnMaxIdleTime(pg.ConnMaxIdleTime),
-		postgres.MaxIdleConns(pg.MaxIdleConns),
-		postgres.ConnMaxLifetime(pg.ConnMaxLifetime),
+	db, err := postgres.New(cfg.PG.URL,
+		postgres.MaxOpenConns(cfg.PG.MaxOpenConns),
+		postgres.ConnMaxIdleTime(cfg.PG.ConnMaxIdleTime),
+		postgres.MaxIdleConns(cfg.PG.MaxIdleConns),
+		postgres.ConnMaxLifetime(cfg.PG.ConnMaxLifetime),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +44,20 @@ func Run(cfg *config.Config) {
 	r := chi.NewRouter()
 	r.Use(cors.AllowAll().Handler)
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
-	handlers.NewRouter(r, db.Q, storage, cfg)
+
+	repositories := pg.NewRepositories(db.Q)
+	tokenManager := auth.NewManager(cfg.Auth.SigningKey)
+	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	dependencies := usecase.Dependencies{
+		Repos:          repositories,
+		TokenManager:   tokenManager,
+		Storage:        storage,
+		PasswordHasher: passwordHasher,
+		Session:        session.New(tokenManager, cfg.AccessTokenTTL, cfg.RefreshTokenTTL),
+	}
+
+	useCases := usecase.NewUseCases(dependencies)
+	handlers.NewRouter(r, useCases)
 
 	http := cfg.HTTP
 	httpServer := httpserver.New(r,

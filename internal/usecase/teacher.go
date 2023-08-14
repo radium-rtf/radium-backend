@@ -8,10 +8,10 @@ import (
 )
 
 type TeacherUseCase struct {
-	teacherRepo postgres.TeacherRepo
+	teacherRepo postgres.Teacher
 }
 
-func NewTeacherUseCase(teacherRepo postgres.TeacherRepo) TeacherUseCase {
+func NewTeacherUseCase(teacherRepo postgres.Teacher) TeacherUseCase {
 	return TeacherUseCase{teacherRepo: teacherRepo}
 }
 

@@ -10,30 +10,23 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/join"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
-	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
-func New(r *chi.Mux, pg *db.Query, manager auth.TokenManager) {
-	courseRepo := postgres.NewCourseRepo(pg)
-	answerRepo := postgres.NewAnswerRepo(pg)
-	sectionRepo := postgres.NewSectionRepo(pg)
-
-	useCase := usecase.NewCourseUseCase(courseRepo)
-	answerUseCase := usecase.NewAnswerUseCase(sectionRepo, answerRepo)
+func New(r *chi.Mux, useCases usecase.UseCases) {
+	useCase := useCases.Course
+	answerUseCase := useCases.Answer
 
 	r.Route("/v1/course", func(r chi.Router) {
 		r.Get("/", get.New(useCase))
 
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.UserId(manager))
+			r.Use(mwAuth.UserId(useCases.Deps.TokenManager))
 			r.Get("/{courseId}", getbyid.New(useCase, answerUseCase))
 			r.Get("/slug/{slug}", getbyslug.New(useCase, answerUseCase))
 		})
 
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.Required(manager))
+			r.Use(mwAuth.Required(useCases.Deps.TokenManager))
 			r.Post("/", create.New(useCase))
 			r.Patch("/join/{courseId}", join.New(useCase))
 			r.Delete("/{id}", destroy.New(useCase))
