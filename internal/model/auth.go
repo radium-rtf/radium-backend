@@ -4,8 +4,9 @@ import "time"
 
 type (
 	Tokens struct {
-		AccessToken  string    `json:"accessToken"`
-		RefreshToken string    `json:"refreshToken"`
+		User         User      `json:"user"`
+		AccessToken  string    `json:"accessToken,omitempty"`
+		RefreshToken string    `json:"refreshToken,omitempty"`
 		ExpiresIn    time.Time `json:"expiresIn"`
 	}
 )

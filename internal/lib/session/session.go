@@ -17,16 +17,16 @@ func New(tokenManager auth.TokenManager, accessTTL, refreshTTL time.Duration) Se
 	return Session{tokenManager: tokenManager, accessTTL: accessTTL, refreshTTL: refreshTTL}
 }
 
-func (s Session) Create(userId uuid.UUID) (entity.Session, model.Tokens, error) {
+func (s Session) Create(user model.User) (entity.Session, model.Tokens, error) {
 	var (
-		tokens  model.Tokens
+		tokens  = model.Tokens{User: user}
 		session entity.Session
 		err     error
 	)
 
 	expiresIn := time.Now().Add(s.accessTTL)
 	tokens.ExpiresIn = expiresIn
-	tokens.AccessToken, err = s.tokenManager.NewJWT(userId, expiresIn)
+	tokens.AccessToken, err = s.tokenManager.NewJWT(user.Id, expiresIn)
 	if err != nil {
 		return session, tokens, err
 	}
@@ -39,7 +39,7 @@ func (s Session) Create(userId uuid.UUID) (entity.Session, model.Tokens, error) 
 	session = entity.Session{
 		RefreshToken: tokens.RefreshToken,
 		ExpiresIn:    time.Now().Add(s.refreshTTL),
-		UserId:       userId,
+		UserId:       user.Id,
 	}
 
 	return session, tokens, err
@@ -50,6 +50,7 @@ func (s Session) Refresh(id uuid.UUID, refreshToken string) (model.Tokens, time.
 		tokens model.Tokens
 		err    error
 	)
+
 	expiresIn := time.Now().Add(s.accessTTL)
 	tokens.ExpiresIn = expiresIn
 	tokens.RefreshToken = refreshToken

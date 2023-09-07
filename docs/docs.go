@@ -1490,6 +1490,9 @@ const docTemplate = `{
                 },
                 "refreshToken": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
                 }
             }
         },

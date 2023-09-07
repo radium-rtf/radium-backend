@@ -39,7 +39,7 @@ func (uc AuthUseCase) SignIn(ctx context.Context, email, password string) (model
 	if !uc.hasher.Equals(user.Password, password) {
 		return tokens, errors.New("неверный пароль")
 	}
-	return uc.createSession(ctx, user.Id)
+	return uc.createSession(ctx, user)
 }
 
 func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (model.Tokens, error) {
@@ -60,7 +60,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (model.Toke
 
 	verificationCode := uc.otpGenerator.RandomSecret(16)
 	uc.userRepo.SetVerificationCode(ctx, user.Id, verificationCode)
-	return uc.createSession(ctx, user.Id)
+	return uc.createSession(ctx, user)
 }
 
 func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (model.Tokens, error) {
@@ -72,8 +72,8 @@ func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (mo
 	return uc.refreshSession(ctx, user.Id, refreshToken)
 }
 
-func (uc AuthUseCase) createSession(ctx context.Context, id uuid.UUID) (model.Tokens, error) {
-	userSession, tokens, err := uc.session.Create(id)
+func (uc AuthUseCase) createSession(ctx context.Context, user *entity.User) (model.Tokens, error) {
+	userSession, tokens, err := uc.session.Create(model.NewUser(user))
 	if err != nil {
 		return model.Tokens{}, err
 	}
