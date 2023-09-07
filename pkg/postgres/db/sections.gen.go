@@ -132,6 +132,8 @@ func (s section) TableName() string { return s.sectionDo.TableName() }
 
 func (s section) Alias() string { return s.sectionDo.Alias() }
 
+func (s section) Columns(cols ...field.Expr) gen.Columns { return s.sectionDo.Columns(cols...) }
+
 func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -694,10 +696,6 @@ func (s sectionDo) Select(conds ...field.Expr) ISectionDo {
 
 func (s sectionDo) Where(conds ...gen.Condition) ISectionDo {
 	return s.withDO(s.DO.Where(conds...))
-}
-
-func (s sectionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ISectionDo {
-	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (s sectionDo) Order(conds ...field.Expr) ISectionDo {

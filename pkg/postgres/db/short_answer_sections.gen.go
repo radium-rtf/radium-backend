@@ -91,6 +91,10 @@ func (s shortAnswerSection) TableName() string { return s.shortAnswerSectionDo.T
 
 func (s shortAnswerSection) Alias() string { return s.shortAnswerSectionDo.Alias() }
 
+func (s shortAnswerSection) Columns(cols ...field.Expr) gen.Columns {
+	return s.shortAnswerSectionDo.Columns(cols...)
+}
+
 func (s *shortAnswerSection) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -227,10 +231,6 @@ func (s shortAnswerSectionDo) Select(conds ...field.Expr) IShortAnswerSectionDo 
 
 func (s shortAnswerSectionDo) Where(conds ...gen.Condition) IShortAnswerSectionDo {
 	return s.withDO(s.DO.Where(conds...))
-}
-
-func (s shortAnswerSectionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IShortAnswerSectionDo {
-	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (s shortAnswerSectionDo) Order(conds ...field.Expr) IShortAnswerSectionDo {

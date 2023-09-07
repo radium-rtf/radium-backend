@@ -125,6 +125,8 @@ func (p page) TableName() string { return p.pageDo.TableName() }
 
 func (p page) Alias() string { return p.pageDo.Alias() }
 
+func (p page) Columns(cols ...field.Expr) gen.Columns { return p.pageDo.Columns(cols...) }
+
 func (p *page) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := p.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -352,10 +354,6 @@ func (p pageDo) Select(conds ...field.Expr) IPageDo {
 
 func (p pageDo) Where(conds ...gen.Condition) IPageDo {
 	return p.withDO(p.DO.Where(conds...))
-}
-
-func (p pageDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IPageDo {
-	return p.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (p pageDo) Order(conds ...field.Expr) IPageDo {

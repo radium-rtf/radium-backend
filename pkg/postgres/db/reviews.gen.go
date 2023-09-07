@@ -77,6 +77,8 @@ func (r review) TableName() string { return r.reviewDo.TableName() }
 
 func (r review) Alias() string { return r.reviewDo.Alias() }
 
+func (r review) Columns(cols ...field.Expr) gen.Columns { return r.reviewDo.Columns(cols...) }
+
 func (r *review) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := r.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -209,10 +211,6 @@ func (r reviewDo) Select(conds ...field.Expr) IReviewDo {
 
 func (r reviewDo) Where(conds ...gen.Condition) IReviewDo {
 	return r.withDO(r.DO.Where(conds...))
-}
-
-func (r reviewDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IReviewDo {
-	return r.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (r reviewDo) Order(conds ...field.Expr) IReviewDo {

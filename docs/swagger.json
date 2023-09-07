@@ -499,6 +499,42 @@
                 }
             }
         },
+        "/v1/group/report/{groupId}/{courseId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "courseId",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "groupId",
+                        "name": "groupId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Report"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/group/{id}": {
             "get": {
                 "security": [
@@ -1306,6 +1342,51 @@
                 }
             }
         },
+        "model.Report": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "$ref": "#/definitions/model.ReportHeader"
+                },
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ReportRow"
+                    }
+                }
+            }
+        },
+        "model.ReportHeader": {
+            "type": "object",
+            "properties": {
+                "maxScore": {
+                    "type": "integer"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Module"
+                    }
+                }
+            }
+        },
+        "model.ReportRow": {
+            "type": "object",
+            "properties": {
+                "score": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "model.Section": {
             "type": "object",
             "properties": {
@@ -1337,7 +1418,6 @@
                     "type": "integer"
                 },
                 "type": {
-                    "type": "string",
                     "enum": [
                         "choice",
                         "multiChoice",
@@ -1345,6 +1425,11 @@
                         "shortAnswer",
                         "answer",
                         "code"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.SectionType"
+                        }
                     ]
                 },
                 "variants": {
@@ -1354,15 +1439,38 @@
                     }
                 },
                 "verdict": {
-                    "type": "string",
                     "enum": [
                         "OK",
                         "WA",
                         "WAIT",
                         ""
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/verdict.Type"
+                        }
                     ]
                 }
             }
+        },
+        "model.SectionType": {
+            "type": "string",
+            "enum": [
+                "choice",
+                "multiChoice",
+                "text",
+                "shortAnswer",
+                "answer",
+                "code"
+            ],
+            "x-enum-varnames": [
+                "ChoiceType",
+                "MultiChoiceType",
+                "TextType",
+                "ShortAnswerType",
+                "AnswerType",
+                "CodeType"
+            ]
         },
         "model.Tokens": {
             "type": "object",
@@ -1450,16 +1558,35 @@
                 }
             }
         },
+        "verdict.Type": {
+            "type": "string",
+            "enum": [
+                "OK",
+                "",
+                "WA",
+                "WAIT"
+            ],
+            "x-enum-varnames": [
+                "OK",
+                "EMPTY",
+                "WA",
+                "WAIT"
+            ]
+        },
         "verdict.Verdict": {
             "type": "object",
             "properties": {
                 "verdict": {
-                    "type": "string",
                     "enum": [
                         "OK",
                         "WA",
                         "WAIT",
                         ""
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/verdict.Type"
+                        }
                     ]
                 }
             }

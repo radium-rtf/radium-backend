@@ -324,6 +324,8 @@ func (t teacher) TableName() string { return t.teacherDo.TableName() }
 
 func (t teacher) Alias() string { return t.teacherDo.Alias() }
 
+func (t teacher) Columns(cols ...field.Expr) gen.Columns { return t.teacherDo.Columns(cols...) }
+
 func (t *teacher) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -590,10 +592,6 @@ func (t teacherDo) Select(conds ...field.Expr) ITeacherDo {
 
 func (t teacherDo) Where(conds ...gen.Condition) ITeacherDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t teacherDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ITeacherDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t teacherDo) Order(conds ...field.Expr) ITeacherDo {

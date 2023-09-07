@@ -59,6 +59,15 @@ type (
 		Answer    string    `gorm:"not null"`
 		Language  string    `gorm:"not null"`
 	}
+
+	UsersAnswersCollection struct {
+		Users           []*User
+		AnswersByUserId map[uuid.UUID]*AnswersCollection
+	}
+
+	AnswersCollection struct {
+		AnswerBySectionId map[uuid.UUID]*Answer
+	}
 )
 
 func (a Answer) Score(section *Section) uint {
@@ -97,4 +106,22 @@ func (a Answer) AnswerStr() string {
 		return a.Code.Answer
 	}
 	return ""
+}
+
+func NewUsersAnswersCollection(users []*User, answers []*Answer) *UsersAnswersCollection {
+	result := &UsersAnswersCollection{
+		Users:           users,
+		AnswersByUserId: make(map[uuid.UUID]*AnswersCollection, len(users)),
+	}
+
+	for _, answer := range answers {
+		if _, ok := result.AnswersByUserId[answer.UserId]; !ok {
+			result.AnswersByUserId[answer.UserId] = &AnswersCollection{
+				AnswerBySectionId: make(map[uuid.UUID]*Answer),
+			}
+		}
+		result.AnswersByUserId[answer.UserId].AnswerBySectionId[answer.SectionId] = answer
+	}
+
+	return result
 }

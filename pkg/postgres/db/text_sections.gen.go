@@ -88,6 +88,8 @@ func (t textSection) TableName() string { return t.textSectionDo.TableName() }
 
 func (t textSection) Alias() string { return t.textSectionDo.Alias() }
 
+func (t textSection) Columns(cols ...field.Expr) gen.Columns { return t.textSectionDo.Columns(cols...) }
+
 func (t *textSection) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -223,10 +225,6 @@ func (t textSectionDo) Select(conds ...field.Expr) ITextSectionDo {
 
 func (t textSectionDo) Where(conds ...gen.Condition) ITextSectionDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t textSectionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ITextSectionDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t textSectionDo) Order(conds ...field.Expr) ITextSectionDo {

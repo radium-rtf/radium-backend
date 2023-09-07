@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"database/sql/driver"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -22,16 +21,12 @@ func (r Answer) Create(ctx context.Context, answer *entity.Answer) error {
 }
 
 func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UUID) (map[uuid.UUID]*entity.Answer, error) {
-	values := make([]driver.Valuer, 0, len(sectionsIds))
-	for _, id := range sectionsIds {
-		values = append(values, id)
-	}
+	values := uuids(sectionsIds).toValuers()
 
 	q := r.pg.Answer
-	// TODO: хз как написать норм запрос на этом, потом ещё раз попробую.....
+	// TODO: должен быть запрос, который достает последние ответы, потом доку горма еще раз почитаю
 	answers, err := q.WithContext(ctx).
-		Where(q.UserId.Eq(userId)).
-		Where(q.SectionId.In(values...)).
+		Where(q.UserId.Eq(userId), q.SectionId.In(values...)).
 		Preload(field.Associations).
 		Preload(q.Review).
 		Find()
@@ -49,4 +44,41 @@ func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UU
 	}
 
 	return result, nil
+}
+
+func (r Answer) GetByUsers(ctx context.Context, usersIds, sectionsIds []uuid.UUID) (*entity.UsersAnswersCollection, error) {
+	sectionsV := uuids(sectionsIds).toValuers()
+	usersV := uuids(usersIds).toValuers()
+
+	q := r.pg.Answer
+
+	// TODO: должен быть запрос, который достает последние ответы, потом доку горма еще раз почитаю
+	answers, err := q.WithContext(ctx).
+		Where(q.UserId.In(usersV...), q.SectionId.In(sectionsV...)).
+		Preload(field.Associations, q.Review).
+		Find()
+
+	if err != nil {
+		return nil, err
+	}
+
+	users, err := r.pg.User.WithContext(ctx).Where(r.pg.User.Id.In(usersV...)).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	answersMap := make(map[uuid.UUID]*entity.Answer)
+	for _, answer := range answers {
+		prev, ok := answersMap[answer.SectionId]
+		if !ok || prev.CreatedAt.Before(answer.CreatedAt) {
+			answersMap[answer.SectionId] = answer
+		}
+	}
+
+	answers = make([]*entity.Answer, 0, len(answersMap))
+	for _, answer := range answersMap {
+		answers = append(answers, answer)
+	}
+
+	return entity.NewUsersAnswersCollection(users, answers), nil
 }

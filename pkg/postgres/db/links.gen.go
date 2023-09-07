@@ -86,6 +86,8 @@ func (l link) TableName() string { return l.linkDo.TableName() }
 
 func (l link) Alias() string { return l.linkDo.Alias() }
 
+func (l link) Columns(cols ...field.Expr) gen.Columns { return l.linkDo.Columns(cols...) }
+
 func (l *link) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := l.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -221,10 +223,6 @@ func (l linkDo) Select(conds ...field.Expr) ILinkDo {
 
 func (l linkDo) Where(conds ...gen.Condition) ILinkDo {
 	return l.withDO(l.DO.Where(conds...))
-}
-
-func (l linkDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ILinkDo {
-	return l.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (l linkDo) Order(conds ...field.Expr) ILinkDo {

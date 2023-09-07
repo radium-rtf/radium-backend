@@ -94,6 +94,10 @@ func (m multiChoiceSection) TableName() string { return m.multiChoiceSectionDo.T
 
 func (m multiChoiceSection) Alias() string { return m.multiChoiceSectionDo.Alias() }
 
+func (m multiChoiceSection) Columns(cols ...field.Expr) gen.Columns {
+	return m.multiChoiceSectionDo.Columns(cols...)
+}
+
 func (m *multiChoiceSection) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -231,10 +235,6 @@ func (m multiChoiceSectionDo) Select(conds ...field.Expr) IMultiChoiceSectionDo 
 
 func (m multiChoiceSectionDo) Where(conds ...gen.Condition) IMultiChoiceSectionDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m multiChoiceSectionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IMultiChoiceSectionDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m multiChoiceSectionDo) Order(conds ...field.Expr) IMultiChoiceSectionDo {

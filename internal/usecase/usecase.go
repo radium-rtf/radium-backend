@@ -44,7 +44,7 @@ func NewUseCases(deps Dependencies) UseCases {
 		Auth:    NewAuthUseCase(repos.User, repos.Session, deps.PasswordHasher, deps.Session),
 		Course:  NewCourseUseCase(repos.Course),
 		File:    NewFileUseCase(deps.Storage),
-		Group:   NewGroupUseCase(repos.Group),
+		Group:   NewGroupUseCase(repos.Group, repos.Course, repos.Answer),
 		Module:  NewModuleUseCase(repos.Module),
 		Page:    NewPageUseCase(repos.Page),
 		Review:  NewReviewUseCase(repos.Review),

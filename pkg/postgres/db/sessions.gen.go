@@ -74,6 +74,8 @@ func (s session) TableName() string { return s.sessionDo.TableName() }
 
 func (s session) Alias() string { return s.sessionDo.Alias() }
 
+func (s session) Columns(cols ...field.Expr) gen.Columns { return s.sessionDo.Columns(cols...) }
+
 func (s *session) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -205,10 +207,6 @@ func (s sessionDo) Select(conds ...field.Expr) ISessionDo {
 
 func (s sessionDo) Where(conds ...gen.Condition) ISessionDo {
 	return s.withDO(s.DO.Where(conds...))
-}
-
-func (s sessionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ISessionDo {
-	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (s sessionDo) Order(conds ...field.Expr) ISessionDo {

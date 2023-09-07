@@ -148,6 +148,8 @@ func (m module) TableName() string { return m.moduleDo.TableName() }
 
 func (m module) Alias() string { return m.moduleDo.Alias() }
 
+func (m module) Columns(cols ...field.Expr) gen.Columns { return m.moduleDo.Columns(cols...) }
+
 func (m *module) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -378,10 +380,6 @@ func (m moduleDo) Select(conds ...field.Expr) IModuleDo {
 
 func (m moduleDo) Where(conds ...gen.Condition) IModuleDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m moduleDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IModuleDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m moduleDo) Order(conds ...field.Expr) IModuleDo {

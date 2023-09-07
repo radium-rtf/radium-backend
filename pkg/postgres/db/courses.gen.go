@@ -289,6 +289,8 @@ func (c course) TableName() string { return c.courseDo.TableName() }
 
 func (c course) Alias() string { return c.courseDo.Alias() }
 
+func (c course) Columns(cols ...field.Expr) gen.Columns { return c.courseDo.Columns(cols...) }
+
 func (c *course) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := c.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -839,10 +841,6 @@ func (c courseDo) Select(conds ...field.Expr) ICourseDo {
 
 func (c courseDo) Where(conds ...gen.Condition) ICourseDo {
 	return c.withDO(c.DO.Where(conds...))
-}
-
-func (c courseDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ICourseDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (c courseDo) Order(conds ...field.Expr) ICourseDo {

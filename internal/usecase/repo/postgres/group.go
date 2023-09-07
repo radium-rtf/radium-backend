@@ -31,7 +31,7 @@ func (r Group) Create(ctx context.Context, group *entity.Group) (*entity.Group, 
 func (r Group) GetById(ctx context.Context, id uuid.UUID) (*entity.Group, error) {
 	g := r.pg.Group
 	return g.WithContext(ctx).
-		Preload(g.Students).
+		Preload(g.Students, g.Courses).
 		Where(g.Id.Eq(id)).
 		First()
 }

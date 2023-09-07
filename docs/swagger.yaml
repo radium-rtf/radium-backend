@@ -279,6 +279,35 @@ definitions:
       slug:
         type: string
     type: object
+  model.Report:
+    properties:
+      header:
+        $ref: '#/definitions/model.ReportHeader'
+      rows:
+        items:
+          $ref: '#/definitions/model.ReportRow'
+        type: array
+    type: object
+  model.ReportHeader:
+    properties:
+      maxScore:
+        type: integer
+      modules:
+        items:
+          $ref: '#/definitions/model.Module'
+        type: array
+    type: object
+  model.ReportRow:
+    properties:
+      score:
+        type: integer
+      user:
+        $ref: '#/definitions/model.User'
+      values:
+        items:
+          type: integer
+        type: array
+    type: object
   model.Section:
     properties:
       answer:
@@ -300,6 +329,8 @@ definitions:
       score:
         type: integer
       type:
+        allOf:
+        - $ref: '#/definitions/model.SectionType'
         enum:
         - choice
         - multiChoice
@@ -307,19 +338,35 @@ definitions:
         - shortAnswer
         - answer
         - code
-        type: string
       variants:
         items:
           type: string
         type: array
       verdict:
+        allOf:
+        - $ref: '#/definitions/verdict.Type'
         enum:
         - OK
         - WA
         - WAIT
         - ""
-        type: string
     type: object
+  model.SectionType:
+    enum:
+    - choice
+    - multiChoice
+    - text
+    - shortAnswer
+    - answer
+    - code
+    type: string
+    x-enum-varnames:
+    - ChoiceType
+    - MultiChoiceType
+    - TextType
+    - ShortAnswerType
+    - AnswerType
+    - CodeType
   model.Tokens:
     properties:
       accessToken:
@@ -375,15 +422,28 @@ definitions:
       new:
         type: string
     type: object
+  verdict.Type:
+    enum:
+    - OK
+    - ""
+    - WA
+    - WAIT
+    type: string
+    x-enum-varnames:
+    - OK
+    - EMPTY
+    - WA
+    - WAIT
   verdict.Verdict:
     properties:
       verdict:
+        allOf:
+        - $ref: '#/definitions/verdict.Type'
         enum:
         - OK
         - WA
         - WAIT
         - ""
-        type: string
     type: object
 host: localhost:8080
 info:
@@ -694,6 +754,28 @@ paths:
           description: ' '
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/report/{groupId}/{courseId}:
+    get:
+      parameters:
+      - description: courseId
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: groupId
+        in: path
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Report'
       security:
       - ApiKeyAuth: []
       tags:

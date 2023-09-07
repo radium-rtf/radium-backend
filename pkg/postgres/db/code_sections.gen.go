@@ -88,6 +88,8 @@ func (c codeSection) TableName() string { return c.codeSectionDo.TableName() }
 
 func (c codeSection) Alias() string { return c.codeSectionDo.Alias() }
 
+func (c codeSection) Columns(cols ...field.Expr) gen.Columns { return c.codeSectionDo.Columns(cols...) }
+
 func (c *codeSection) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := c.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -223,10 +225,6 @@ func (c codeSectionDo) Select(conds ...field.Expr) ICodeSectionDo {
 
 func (c codeSectionDo) Where(conds ...gen.Condition) ICodeSectionDo {
 	return c.withDO(c.DO.Where(conds...))
-}
-
-func (c codeSectionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ICodeSectionDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (c codeSectionDo) Order(conds ...field.Expr) ICodeSectionDo {
