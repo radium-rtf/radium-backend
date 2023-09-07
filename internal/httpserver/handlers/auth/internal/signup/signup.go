@@ -36,15 +36,15 @@ func New(signUp signUp) http.HandlerFunc {
 		}
 
 		if ok := emailPattern.MatchString(request.Email); !ok {
-			render.Status(r, http.StatusCreated)
-			render.JSON(w, r, err.Error())
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, "почта должна быть вида [a-zA-Z.]@urfu.(me|ru)")
 			return
 		}
 
 		user := request.toUser()
 		tokens, err := signUp.SignUp(ctx, user)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
