@@ -292,10 +292,19 @@ definitions:
     properties:
       maxScore:
         type: integer
-      modules:
+      values:
         items:
-          $ref: '#/definitions/model.Module'
+          $ref: '#/definitions/model.ReportHeaderValue'
         type: array
+    type: object
+  model.ReportHeaderValue:
+    properties:
+      isModule:
+        type: boolean
+      maxScore:
+        type: integer
+      name:
+        type: string
     type: object
   model.ReportRow:
     properties:

@@ -1369,11 +1369,25 @@ const docTemplate = `{
                 "maxScore": {
                     "type": "integer"
                 },
-                "modules": {
+                "values": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Module"
+                        "$ref": "#/definitions/model.ReportHeaderValue"
                     }
+                }
+            }
+        },
+        "model.ReportHeaderValue": {
+            "type": "object",
+            "properties": {
+                "isModule": {
+                    "type": "boolean"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

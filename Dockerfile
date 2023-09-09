@@ -1,9 +1,9 @@
-FROM golang:1.19 AS modules
+FROM golang:1.21.0 AS modules
 COPY go.mod go.sum /modules/
 WORKDIR /modules
 RUN go mod download
 
-FROM golang:1.19 AS builder
+FROM golang:1.21.0 AS builder
 COPY --from=modules /go/pkg /go/pkg
 COPY . /app
 WORKDIR /app

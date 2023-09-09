@@ -12,13 +12,15 @@ import (
 )
 
 type GroupUseCase struct {
-	group  postgres.Group
-	course postgres.Course
-	answer postgres.Answer
+	group   postgres.Group
+	teacher postgres.Teacher
+	course  postgres.Course
+	answer  postgres.Answer
 }
 
-func NewGroupUseCase(groupRepo postgres.Group, course postgres.Course, answer postgres.Answer) GroupUseCase {
-	return GroupUseCase{group: groupRepo, course: course, answer: answer}
+func NewGroupUseCase(groupRepo postgres.Group, course postgres.Course, answer postgres.Answer,
+	teacher postgres.Teacher) GroupUseCase {
+	return GroupUseCase{group: groupRepo, course: course, answer: answer, teacher: teacher}
 }
 
 func (uc GroupUseCase) Create(ctx context.Context, group *entity.Group) (*entity.Group, error) {
@@ -44,18 +46,23 @@ func (uc GroupUseCase) GetReportByCourse(ctx context.Context, userId, courseId, 
 		return nil, err
 	}
 
-	contains := slices.ContainsFunc(group.Students, func(user *entity.User) bool {
-		return userId == user.Id
-	})
-	if !contains {
-		return nil, errors.New("у вас нет доступа к просмотру этой ведомости")
+	teacher, err := uc.teacher.GetByUserId(ctx, userId)
+	if err != nil {
+		return nil, err
 	}
 
-	contains = slices.ContainsFunc(group.Courses, func(course *entity.Course) bool {
+	contains := slices.ContainsFunc(group.Courses, func(course *entity.Course) bool {
 		return course.Id == courseId
 	})
 	if !contains {
 		return nil, errors.New("такой курс не назначен группе")
+	}
+
+	contains = slices.ContainsFunc(teacher.Courses, func(course *entity.TeacherCourse) bool {
+		return course.CourseId == courseId && course.GroupId == groupId
+	})
+	if !contains {
+		return nil, errors.New("только преподаватели имеют доступ к ведомости")
 	}
 
 	return uc.newReport(ctx, courseId, group)
