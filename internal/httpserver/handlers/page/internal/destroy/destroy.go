@@ -44,7 +44,7 @@ func New(deleter deleter) http.HandlerFunc {
 		err = deleter.Delete(ctx, id, isSoft)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, errors.Wrap(err, "parse id").Error())
+			render.JSON(w, r, err.Error())
 			return
 		}
 
