@@ -11,6 +11,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/module"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/review"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/role"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/teacher"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
@@ -38,6 +39,7 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 
 	auth.New(h, useCases)
 	account.New(h, useCases)
+	role.New(h, useCases)
 
 	file.New(h, useCases)
 }

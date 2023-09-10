@@ -764,6 +764,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/role/teacher": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "parameters": [
+                    {
+                        "description": "почта будущего преподавателя",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/postteacher.Email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
         "/v1/section": {
             "post": {
                 "security": [
@@ -1522,7 +1553,18 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "isTeacher": {
+                    "type": "boolean"
+                },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "postteacher.Email": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }

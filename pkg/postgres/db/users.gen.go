@@ -37,6 +37,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Password = field.NewString(tableName, "password")
 	_user.VerificationCode = field.NewString(tableName, "verification_code")
 	_user.IsVerified = field.NewBool(tableName, "is_verified")
+	_user.IsTeacher = field.NewBool(tableName, "is_teacher")
 	_user.Sessions = userHasManySessions{
 		db: db.Session(&gorm.Session{}),
 
@@ -248,6 +249,7 @@ type user struct {
 	Password         field.String
 	VerificationCode field.String
 	IsVerified       field.Bool
+	IsTeacher        field.Bool
 	Sessions         userHasManySessions
 
 	Courses userManyToManyCourses
@@ -279,6 +281,7 @@ func (u *user) updateTableName(table string) *user {
 	u.Password = field.NewString(table, "password")
 	u.VerificationCode = field.NewString(table, "verification_code")
 	u.IsVerified = field.NewBool(table, "is_verified")
+	u.IsTeacher = field.NewBool(table, "is_teacher")
 
 	u.fillFieldMap()
 
@@ -303,7 +306,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 13)
+	u.fieldMap = make(map[string]field.Expr, 14)
 	u.fieldMap["id"] = u.Id
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
@@ -314,6 +317,7 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["password"] = u.Password
 	u.fieldMap["verification_code"] = u.VerificationCode
 	u.fieldMap["is_verified"] = u.IsVerified
+	u.fieldMap["is_teacher"] = u.IsTeacher
 
 }
 

@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/session"
@@ -69,7 +68,7 @@ func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (mo
 	if err != nil {
 		return model.Tokens{}, err
 	}
-	return uc.refreshSession(ctx, user.Id, refreshToken)
+	return uc.refreshSession(ctx, user, refreshToken)
 }
 
 func (uc AuthUseCase) createSession(ctx context.Context, user *entity.User) (model.Tokens, error) {
@@ -82,8 +81,8 @@ func (uc AuthUseCase) createSession(ctx context.Context, user *entity.User) (mod
 	return tokens, err
 }
 
-func (uc AuthUseCase) refreshSession(ctx context.Context, id uuid.UUID, refreshToken string) (model.Tokens, error) {
-	tokens, refreshTime, err := uc.session.Refresh(id, refreshToken)
+func (uc AuthUseCase) refreshSession(ctx context.Context, user *entity.User, refreshToken string) (model.Tokens, error) {
+	tokens, refreshTime, err := uc.session.Refresh(model.NewUser(user), refreshToken)
 	if err != nil {
 		return model.Tokens{}, err
 	}
@@ -93,8 +92,6 @@ func (uc AuthUseCase) refreshSession(ctx context.Context, id uuid.UUID, refreshT
 
 func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) (bool, error) {
 	user, err := uc.userRepo.GetByVerificationCode(ctx, verificationCode)
-	fmt.Printf("user: %v\n", user)
-	fmt.Printf("err: %v\n", err)
 	if err != nil {
 		return false, err
 	}

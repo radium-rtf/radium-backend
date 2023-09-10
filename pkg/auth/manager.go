@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"github.com/radium-rtf/radium-backend/internal/model"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -17,16 +18,17 @@ func NewManager(signingKey string) TokenManager {
 	return TokenManager{signingKey: signingKey}
 }
 
-func (m TokenManager) NewJWT(id uuid.UUID, expiresAt time.Time) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(expiresAt),
-		Subject:   id.String(),
+func (m TokenManager) NewJWT(user model.User, expiresAt time.Time) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp":       jwt.NewNumericDate(expiresAt),
+		"sub":       user.Id.String(),
+		"isTeacher": user.IsTeacher,
 	})
 
 	return token.SignedString([]byte(m.signingKey))
 }
 
-func (m TokenManager) Parse(accessToken string) (string, error) {
+func (m TokenManager) Parse(accessToken string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -35,15 +37,15 @@ func (m TokenManager) Parse(accessToken string) (string, error) {
 		return []byte(m.signingKey), nil
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", fmt.Errorf("error get user claims from token")
+		return nil, fmt.Errorf("error get user claims from token")
 	}
 
-	return claims["sub"].(string), nil
+	return claims, nil
 }
 
 func (m TokenManager) NewRefreshToken() (string, error) {
@@ -55,13 +57,46 @@ func (m TokenManager) NewRefreshToken() (string, error) {
 }
 
 func (m TokenManager) ExtractUserId(tokenHeader []string) (uuid.UUID, error) {
-	if len(tokenHeader) == 1 {
-		return uuid.UUID{}, errors.New("empty or corrupted Authorization header")
-	}
-	token := tokenHeader[1]
-	userId, err := m.Parse(token)
+	claims, err := m.extractClaims(tokenHeader)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
-	return uuid.MustParse(userId), nil
+
+	sub, err := claims.GetSubject()
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return uuid.MustParse(sub), nil
+}
+
+func (m TokenManager) extractClaims(tokenHeader []string) (jwt.MapClaims, error) {
+	token, err := m.getToken(tokenHeader)
+	if err != nil {
+		return jwt.MapClaims{}, err
+	}
+
+	claims, err := m.Parse(token)
+	if err != nil {
+		return jwt.MapClaims{}, err
+	}
+
+	return claims, nil
+}
+
+func (m TokenManager) ExtractIsTeacher(tokenHeader []string) (bool, error) {
+	claims, err := m.extractClaims(tokenHeader)
+	if err != nil {
+		return false, err
+	}
+
+	roles := claims["isTeacher"].(bool)
+	return roles, nil
+}
+
+func (m TokenManager) getToken(tokenHeader []string) (string, error) {
+	if len(tokenHeader) != 2 || tokenHeader[0] != "Bearer" {
+		return "", errors.New("empty or corrupted Authorization header: Bearer <token>")
+	}
+	return tokenHeader[1], nil
 }

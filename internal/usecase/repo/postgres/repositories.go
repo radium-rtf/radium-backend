@@ -15,6 +15,7 @@ type Repositories struct {
 	Session
 	Teacher
 	User
+	Role
 }
 
 func NewRepositories(pg *db.Query) Repositories {
@@ -29,5 +30,6 @@ func NewRepositories(pg *db.Query) Repositories {
 		Session: NewSessionRepo(pg),
 		Teacher: NewTeacherRepo(pg),
 		User:    NewUserRepo(pg),
+		Role:    NewRoleRepo(pg),
 	}
 }

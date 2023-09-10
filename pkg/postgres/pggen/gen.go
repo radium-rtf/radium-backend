@@ -5,7 +5,7 @@ import (
 	"gorm.io/gen"
 )
 
-func Gen() error {
+func Gen() {
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./pkg/postgres/db",
 		Mode:    gen.WithQueryInterface,
@@ -40,5 +40,4 @@ func Gen() error {
 		entity.Review{},
 	)
 	g.Execute()
-	return nil
 }

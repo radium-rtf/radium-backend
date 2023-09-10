@@ -26,10 +26,19 @@ func (t Teacher) GetByUserId(ctx context.Context, id uuid.UUID) (*entity.Teacher
 
 func (t Teacher) Create(ctx context.Context, teacher *entity.Teacher) (*entity.Teacher, error) {
 	courses := t.pg.Teacher.Courses
-	err := t.pg.Teacher.WithContext(ctx).
-		Preload(courses, courses.Group, courses.Course).Create(teacher)
-	if err != nil {
-		return nil, err
-	}
-	return t.GetByUserId(ctx, teacher.UserId)
+	err := t.pg.Transaction(func(tx *db.Query) error {
+		err := tx.Teacher.WithContext(ctx).
+			Preload(courses, courses.Group, courses.Course).
+			Create(teacher)
+		if err != nil {
+			return err
+		}
+
+		_, err = t.pg.User.WithContext(ctx).Where(t.pg.User.Id.Eq(teacher.UserId)).
+			UpdateColumn(t.pg.User.IsTeacher, true)
+
+		return err
+	})
+
+	return teacher, err
 }

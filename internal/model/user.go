@@ -7,18 +7,20 @@ import (
 
 type (
 	User struct {
-		Id     uuid.UUID `json:"id"`
-		Email  string    `json:"email"`
-		Name   string    `json:"name"`
-		Avatar string    `json:"avatar"`
+		Id        uuid.UUID `json:"id"`
+		Email     string    `json:"email"`
+		Name      string    `json:"name"`
+		Avatar    string    `json:"avatar"`
+		IsTeacher bool      `json:"isTeacher"`
 	}
 )
 
 func NewUser(user *entity.User) User {
 	return User{
-		Id:     user.Id,
-		Email:  user.Email,
-		Name:   user.Name,
-		Avatar: user.Avatar,
+		Id:        user.Id,
+		Email:     user.Email,
+		Name:      user.Name,
+		Avatar:    user.Avatar,
+		IsTeacher: user.IsTeacher,
 	}
 }

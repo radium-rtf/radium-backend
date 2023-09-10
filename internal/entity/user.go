@@ -12,5 +12,7 @@ type (
 		Courses          []*Course `gorm:"many2many:course_students"`
 		Groups           []*Group  `gorm:"many2many:group_student"`
 		Sessions         []Session
+
+		IsTeacher bool `gorm:"not null; default:false"`
 	}
 )

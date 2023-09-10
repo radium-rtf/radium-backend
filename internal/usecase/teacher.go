@@ -8,17 +8,17 @@ import (
 )
 
 type TeacherUseCase struct {
-	teacherRepo postgres.Teacher
+	teacher postgres.Teacher
 }
 
 func NewTeacherUseCase(teacherRepo postgres.Teacher) TeacherUseCase {
-	return TeacherUseCase{teacherRepo: teacherRepo}
+	return TeacherUseCase{teacher: teacherRepo}
 }
 
 func (uc TeacherUseCase) GetByUserId(ctx context.Context, id uuid.UUID) (*entity.Teacher, error) {
-	return uc.teacherRepo.GetByUserId(ctx, id)
+	return uc.teacher.GetByUserId(ctx, id)
 }
 
 func (uc TeacherUseCase) Create(ctx context.Context, teacher *entity.Teacher) (*entity.Teacher, error) {
-	return uc.teacherRepo.Create(ctx, teacher)
+	return uc.teacher.Create(ctx, teacher)
 }

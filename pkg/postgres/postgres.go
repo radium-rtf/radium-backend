@@ -31,10 +31,7 @@ func New(url string, opts ...Option) (*Postgres, error) {
 		return nil, err
 	}
 
-	err = pggen.Gen()
-	if err != nil {
-		return nil, err
-	}
+	pggen.Gen()
 
 	Q := db.Use(gormDb)
 

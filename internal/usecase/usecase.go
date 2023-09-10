@@ -29,6 +29,7 @@ type UseCases struct {
 	Review  ReviewUseCase
 	Section SectionUseCase
 	Teacher TeacherUseCase
+	Role    RoleUseCase
 
 	Deps Dependencies
 }
@@ -50,5 +51,6 @@ func NewUseCases(deps Dependencies) UseCases {
 		Review:  NewReviewUseCase(repos.Review),
 		Section: NewSectionUseCase(repos.Section),
 		Teacher: NewTeacherUseCase(repos.Teacher),
+		Role:    NewRoleUseCase(repos.Role),
 	}
 }

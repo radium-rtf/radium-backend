@@ -395,7 +395,14 @@ definitions:
         type: string
       id:
         type: string
+      isTeacher:
+        type: boolean
       name:
+        type: string
+    type: object
+  postteacher.Email:
+    properties:
+      email:
         type: string
     type: object
   refresh.Refresh:
@@ -905,6 +912,24 @@ paths:
       - ApiKeyAuth: []
       tags:
       - review
+  /v1/role/teacher:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: почта будущего преподавателя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/postteacher.Email'
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
   /v1/section:
     post:
       consumes:
