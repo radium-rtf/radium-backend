@@ -8,8 +8,8 @@ import (
 
 type Page struct {
 	ModuleId uuid.UUID `json:"moduleId"`
-	Name     string    `json:"name"`
-	Order    float64   `json:"order"`
+	Name     string    `json:"name" validate:"required,min=1,max=20"`
+	Order    float64   `json:"order" validate:"numeric"`
 }
 
 func (r Page) toPage() *entity.Page {

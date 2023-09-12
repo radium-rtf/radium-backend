@@ -6,8 +6,8 @@ import (
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
-	"regexp"
 )
 
 type signUp interface {
@@ -21,7 +21,6 @@ type signUp interface {
 // @Success     201 {object} model.Tokens
 // @Router      /v1/auth/signup [post]
 func New(signUp signUp) http.HandlerFunc {
-	emailPattern, _ := regexp.Compile("[a-zA-Z.]@urfu.(me|ru)")
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			request SignUp
@@ -35,9 +34,10 @@ func New(signUp signUp) http.HandlerFunc {
 			return
 		}
 
-		if ok := emailPattern.MatchString(request.Email); !ok {
+		err = validator.Struct(request)
+		if err != nil {
 			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, "почта должна быть вида [a-zA-Z.]@urfu.(me|ru)")
+			render.JSON(w, r, err.Error())
 			return
 		}
 

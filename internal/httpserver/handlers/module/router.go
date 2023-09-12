@@ -18,7 +18,5 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 			r.Post("/", create.New(useCase))
 			r.Delete("/{id}", destroy.New(useCase))
 		})
-
 	})
-
 }

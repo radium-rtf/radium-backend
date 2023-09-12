@@ -8,12 +8,12 @@ import (
 )
 
 type Course struct {
-	Name             string       `json:"name"`
-	ShortDescription string       `json:"shortDescription"`
-	Description      string       `json:"description"`
-	Logo             string       `json:"logo"`
-	Banner           string       `json:"banner"`
-	Links            []model.Link `json:"links"`
+	Name             string       `json:"name" validate:"required,min=1,max=45"`
+	ShortDescription string       `json:"shortDescription" validate:"required,min=1,max=200"`
+	Description      string       `json:"description" validate:"max=3000"`
+	Logo             string       `json:"logo" validate:"url"`
+	Banner           string       `json:"banner" validate:"url"`
+	Links            []model.Link `json:"links" validate:"dive"`
 }
 
 func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
@@ -22,7 +22,7 @@ func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
 
 	links := make([]entity.Link, 0, len(r.Links))
 	for _, v := range r.Links {
-		links = append(links, entity.Link{Name: v.Link, Link: v.Link})
+		links = append(links, entity.Link{Name: v.Name, Link: v.Link})
 	}
 
 	return &entity.Course{

@@ -22,7 +22,7 @@ func New(getter getter) http.HandlerFunc {
 
 		groups, err := getter.Get(ctx)
 		if err != nil {
-			render.Status(r, http.StatusOK)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 		}
 

@@ -3,11 +3,12 @@ package create
 import (
 	"context"
 	"encoding/json"
+	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"net/http"
 
-	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 )
 
 type creator interface {
@@ -29,6 +30,13 @@ func NewReview(creator creator) http.HandlerFunc {
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		err = validator.Struct(request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

@@ -5,6 +5,8 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
 )
 
@@ -34,6 +36,13 @@ func New(updater updater) http.HandlerFunc {
 			return
 		}
 
+		err = validator.Struct(request)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
 		user := request.ToUser(userId)
 		result, err := updater.UpdateUser(ctx, user)
 		if err != nil {
@@ -43,6 +52,6 @@ func New(updater updater) http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, result)
+		render.JSON(w, r, model.NewUser(result))
 	}
 }

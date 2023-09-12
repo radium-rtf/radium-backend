@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
 )
 
@@ -26,6 +27,13 @@ func New(creator creator) http.HandlerFunc {
 		)
 
 		err := render.DecodeJSON(r.Body, &request)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		err = validator.Struct(request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

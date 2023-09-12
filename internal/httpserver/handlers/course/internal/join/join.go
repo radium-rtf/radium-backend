@@ -27,14 +27,14 @@ func New(connector connector) http.HandlerFunc {
 
 		courseId, err := uuid.Parse(chi.URLParam(r, "courseId"))
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
 		courses, err := connector.Join(ctx, userId, courseId)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}

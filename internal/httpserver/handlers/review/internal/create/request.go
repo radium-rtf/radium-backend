@@ -6,9 +6,9 @@ import (
 )
 
 type Review struct {
-	Id      uuid.UUID `json:"answer_id"`
-	Score   float32   `json:"score"`
-	Comment string    `json:"comment"`
+	Id      uuid.UUID `json:"answerId"`
+	Score   float32   `json:"score" validate:"numeric,min=0,max=1"`
+	Comment string    `json:"comment" validate:"max=400"`
 }
 
 func (r Review) toReview(reviewerId uuid.UUID) *entity.Review {

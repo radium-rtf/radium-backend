@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
 )
 
@@ -30,7 +31,14 @@ func New(creator creator) http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&request)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		err = validator.Struct(request)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
@@ -38,7 +46,7 @@ func New(creator creator) http.HandlerFunc {
 		course := request.toCourse(userId)
 		course, err = creator.Create(ctx, course)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}

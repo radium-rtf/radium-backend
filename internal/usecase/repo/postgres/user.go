@@ -89,16 +89,22 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 	return r.updateColumn(ctx, r.pg.User.Id.Eq(id), r.pg.User.Password, password)
 }
 
-func (r User) Update(ctx context.Context, update *entity.User) (*entity.User, error) {
+func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
+	type updateUser struct {
+		Name, Avatar string
+	}
+
+	update := &updateUser{Name: user.Name, Avatar: user.Avatar}
 	m := structs.Map(update)
 	utils.RemoveEmptyMapFields(m)
 
-	info, err := r.pg.User.WithContext(ctx).Debug().Where(r.pg.User.Id.Eq(update.Id)).Updates(m)
+	info, err := r.pg.User.WithContext(ctx).Debug().Where(r.pg.User.Id.Eq(user.Id)).Updates(m)
 	if err != nil {
 		return nil, err
 	}
 	if info.RowsAffected == 0 {
 		return nil, errors.New("not found")
 	}
-	return r.GetById(ctx, update.Id)
+
+	return r.GetById(ctx, user.Id)
 }

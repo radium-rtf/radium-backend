@@ -5,9 +5,9 @@ import (
 )
 
 type SignUp struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
+	Email    string `json:"email" validate:"email"`
+	Password string `json:"password" validate:"password"`
+	Name     string `json:"name" validate:"required,min=1,max=30"`
 }
 
 func (s SignUp) toUser() *entity.User {

@@ -7,7 +7,7 @@ import (
 )
 
 type Group struct {
-	Name        string      `json:"name"`
+	Name        string      `json:"name" validate:"required,min=1,max=40"`
 	CoursesIds  []uuid.UUID `json:"coursesIds"`
 	StudentsIds []uuid.UUID `json:"studentsIds"`
 }

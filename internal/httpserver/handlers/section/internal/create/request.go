@@ -8,8 +8,8 @@ import (
 type (
 	Section struct {
 		PageId   uuid.UUID `json:"pageId"`
-		Order    uint      `json:"order"`
-		MaxScore uint      `json:"maxScore,omitempty"`
+		Order    uint      `json:"order" validate:"number"`
+		MaxScore uint      `json:"maxScore,omitempty" validate:"min=0,max=300"`
 
 		TextSection        *TextSectionPost        `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSectionPost      `json:"choice,omitempty"`
@@ -20,32 +20,32 @@ type (
 	}
 
 	TextSectionPost struct {
-		Content string
+		Content string `validate:"required,max=10000"`
 	}
 
 	ChoiceSectionPost struct {
-		Question string
-		Answer   string
-		Variants []string `swaggertype:"array,string"`
+		Question string   `validate:"required,max=1000"`
+		Answer   string   `validate:"required,max=100"`
+		Variants []string `swaggertype:"array,string" validate:"required,min=2,max=6,dive,required,max=100"`
 	}
 
 	MultiChoiceSectionPost struct {
-		Question string
-		Answer   []string `swaggertype:"array,string"`
-		Variants []string `swaggertype:"array,string"`
+		Question string   `validate:"required,max=1000"`
+		Answer   []string `swaggertype:"array,string" validate:"required,max=6,dive,required,max=100"`
+		Variants []string `swaggertype:"array,string" validate:"required,min=2,max=6,dive,required,max=100"`
 	}
 
 	ShortAnswerSectionPost struct {
-		Question string
-		Answer   string
+		Question string `validate:"required,max=100"`
+		Answer   string `validate:"required,max=10"`
 	}
 
 	AnswerSectionPost struct {
-		Question string
+		Question string `validate:"required,max=3000"`
 	}
 
 	CodeSection struct {
-		Question string
+		Question string `validate:"required,max=5000"`
 	}
 )
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
 )
 
@@ -25,6 +26,13 @@ func New(creator creator) http.HandlerFunc {
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		err = validator.Struct(request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

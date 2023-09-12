@@ -20,7 +20,7 @@ func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		courses, err := getter.GetCourses(r.Context())
 		if err != nil {
-			render.Status(r, http.StatusOK)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}

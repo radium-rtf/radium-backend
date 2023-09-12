@@ -6,8 +6,8 @@ import (
 )
 
 type User struct {
-	Name   string `json:"name"`
-	Avatar string `json:"avatar"`
+	Name   string `json:"name" validate:"required,min=1,max=25"`
+	Avatar string `json:"avatar" validate:"required,url"`
 }
 
 func (u User) ToUser(userId uuid.UUID) *entity.User {
