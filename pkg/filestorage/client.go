@@ -52,7 +52,7 @@ func New(cfg config.Storage) (Storage, error) {
 		return Storage{}, err
 	}
 
-	return Storage{}, err
+	return storage, err
 }
 
 func (s Storage) makeBucket(ctx context.Context, bucketName string, options minio.MakeBucketOptions) error {
