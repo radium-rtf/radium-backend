@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/radium-rtf/radium-backend/internal/model"
+	"slices"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -22,7 +23,7 @@ func (m TokenManager) NewJWT(user model.User, expiresAt time.Time) (string, erro
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":       jwt.NewNumericDate(expiresAt),
 		"sub":       user.Id.String(),
-		"isTeacher": user.IsTeacher,
+		"isTeacher": slices.Contains(user.Roles, model.TeacherRole),
 	})
 
 	return token.SignedString([]byte(m.signingKey))

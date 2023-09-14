@@ -764,6 +764,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/role/author": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "parameters": [
+                    {
+                        "description": "почта будущего автора",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/postauthor.Email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
         "/v1/role/teacher": {
             "post": {
                 "security": [
@@ -982,9 +1013,13 @@ const docTemplate = `{
         },
         "create.AnswerSectionPost": {
             "type": "object",
+            "required": [
+                "question"
+            ],
             "properties": {
                 "question": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 3000
                 }
             }
         },
@@ -998,15 +1033,24 @@ const docTemplate = `{
         },
         "create.ChoiceSectionPost": {
             "type": "object",
+            "required": [
+                "answer",
+                "question",
+                "variants"
+            ],
             "properties": {
                 "answer": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "question": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "variants": {
                     "type": "array",
+                    "maxItems": 6,
+                    "minItems": 2,
                     "items": {
                         "type": "string"
                     }
@@ -1015,9 +1059,13 @@ const docTemplate = `{
         },
         "create.CodeSection": {
             "type": "object",
+            "required": [
+                "question"
+            ],
             "properties": {
                 "question": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 5000
                 }
             }
         },
@@ -1034,12 +1082,17 @@ const docTemplate = `{
         },
         "create.Course": {
             "type": "object",
+            "required": [
+                "name",
+                "shortDescription"
+            ],
             "properties": {
                 "banner": {
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 3000
                 },
                 "links": {
                     "type": "array",
@@ -1051,15 +1104,22 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 45,
+                    "minLength": 1
                 },
                 "shortDescription": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 1
                 }
             }
         },
         "create.Group": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "coursesIds": {
                     "type": "array",
@@ -1068,7 +1128,9 @@ const docTemplate = `{
                     }
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 40,
+                    "minLength": 1
                 },
                 "studentsIds": {
                     "type": "array",
@@ -1080,12 +1142,17 @@ const docTemplate = `{
         },
         "create.Module": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "courseId": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 1
                 },
                 "order": {
                     "type": "number"
@@ -1094,18 +1161,27 @@ const docTemplate = `{
         },
         "create.MultiChoiceSectionPost": {
             "type": "object",
+            "required": [
+                "answer",
+                "question",
+                "variants"
+            ],
             "properties": {
                 "answer": {
                     "type": "array",
+                    "maxItems": 6,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "variants": {
                     "type": "array",
+                    "maxItems": 6,
+                    "minItems": 2,
                     "items": {
                         "type": "string"
                     }
@@ -1125,12 +1201,17 @@ const docTemplate = `{
         },
         "create.Page": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "moduleId": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 1
                 },
                 "order": {
                     "type": "number"
@@ -1140,14 +1221,17 @@ const docTemplate = `{
         "create.Review": {
             "type": "object",
             "properties": {
-                "answer_id": {
+                "answerId": {
                     "type": "string"
                 },
                 "comment": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 400
                 },
                 "score": {
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0
                 }
             }
         },
@@ -1164,7 +1248,9 @@ const docTemplate = `{
                     "$ref": "#/definitions/create.CodeSection"
                 },
                 "maxScore": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 300,
+                    "minimum": 0
                 },
                 "multichoice": {
                     "$ref": "#/definitions/create.MultiChoiceSectionPost"
@@ -1193,12 +1279,18 @@ const docTemplate = `{
         },
         "create.ShortAnswerSectionPost": {
             "type": "object",
+            "required": [
+                "answer",
+                "question"
+            ],
             "properties": {
                 "answer": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 10
                 },
                 "question": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -1229,9 +1321,13 @@ const docTemplate = `{
         },
         "create.TextSectionPost": {
             "type": "object",
+            "required": [
+                "content"
+            ],
             "properties": {
                 "content": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 10000
                 }
             }
         },
@@ -1313,12 +1409,18 @@ const docTemplate = `{
         },
         "model.Link": {
             "type": "object",
+            "required": [
+                "link",
+                "name"
+            ],
             "properties": {
                 "link": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 1
                 }
             }
         },
@@ -1439,6 +1541,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Role": {
+            "type": "string",
+            "enum": [
+                "teacher",
+                "author"
+            ],
+            "x-enum-varnames": [
+                "TeacherRole",
+                "AuthorRole"
+            ]
+        },
         "model.Section": {
             "type": "object",
             "properties": {
@@ -1553,10 +1666,21 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "isTeacher": {
-                    "type": "boolean"
-                },
                 "name": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Role"
+                    }
+                }
+            }
+        },
+        "postauthor.Email": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }
@@ -1590,12 +1714,17 @@ const docTemplate = `{
         },
         "signup.SignUp": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 1
                 },
                 "password": {
                     "type": "string"
@@ -1604,17 +1733,26 @@ const docTemplate = `{
         },
         "update.User": {
             "type": "object",
+            "required": [
+                "avatar",
+                "name"
+            ],
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 25,
+                    "minLength": 1
                 }
             }
         },
         "updatepass.Password": {
             "type": "object",
+            "required": [
+                "current"
+            ],
             "properties": {
                 "current": {
                     "type": "string"

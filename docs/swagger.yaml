@@ -23,7 +23,10 @@ definitions:
   create.AnswerSectionPost:
     properties:
       question:
+        maxLength: 3000
         type: string
+    required:
+    - question
     type: object
   create.ChoiceSectionAnswerPost:
     properties:
@@ -33,18 +36,29 @@ definitions:
   create.ChoiceSectionPost:
     properties:
       answer:
+        maxLength: 100
         type: string
       question:
+        maxLength: 1000
         type: string
       variants:
         items:
           type: string
+        maxItems: 6
+        minItems: 2
         type: array
+    required:
+    - answer
+    - question
+    - variants
     type: object
   create.CodeSection:
     properties:
       question:
+        maxLength: 5000
         type: string
+    required:
+    - question
     type: object
   create.CodeSectionAnswerPost:
     properties:
@@ -58,6 +72,7 @@ definitions:
       banner:
         type: string
       description:
+        maxLength: 3000
         type: string
       links:
         items:
@@ -66,9 +81,16 @@ definitions:
       logo:
         type: string
       name:
+        maxLength: 45
+        minLength: 1
         type: string
       shortDescription:
+        maxLength: 200
+        minLength: 1
         type: string
+    required:
+    - name
+    - shortDescription
     type: object
   create.Group:
     properties:
@@ -77,33 +99,49 @@ definitions:
           type: string
         type: array
       name:
+        maxLength: 40
+        minLength: 1
         type: string
       studentsIds:
         items:
           type: string
         type: array
+    required:
+    - name
     type: object
   create.Module:
     properties:
       courseId:
         type: string
       name:
+        maxLength: 20
+        minLength: 1
         type: string
       order:
         type: number
+    required:
+    - name
     type: object
   create.MultiChoiceSectionPost:
     properties:
       answer:
         items:
           type: string
+        maxItems: 6
         type: array
       question:
+        maxLength: 1000
         type: string
       variants:
         items:
           type: string
+        maxItems: 6
+        minItems: 2
         type: array
+    required:
+    - answer
+    - question
+    - variants
     type: object
   create.MultichoiceSectionAnswerPost:
     properties:
@@ -117,17 +155,24 @@ definitions:
       moduleId:
         type: string
       name:
+        maxLength: 20
+        minLength: 1
         type: string
       order:
         type: number
+    required:
+    - name
     type: object
   create.Review:
     properties:
-      answer_id:
+      answerId:
         type: string
       comment:
+        maxLength: 400
         type: string
       score:
+        maximum: 1
+        minimum: 0
         type: number
     type: object
   create.Section:
@@ -139,6 +184,8 @@ definitions:
       code:
         $ref: '#/definitions/create.CodeSection'
       maxScore:
+        maximum: 300
+        minimum: 0
         type: integer
       multichoice:
         $ref: '#/definitions/create.MultiChoiceSectionPost'
@@ -159,9 +206,14 @@ definitions:
   create.ShortAnswerSectionPost:
     properties:
       answer:
+        maxLength: 10
         type: string
       question:
+        maxLength: 100
         type: string
+    required:
+    - answer
+    - question
     type: object
   create.Teacher:
     properties:
@@ -182,7 +234,10 @@ definitions:
   create.TextSectionPost:
     properties:
       content:
+        maxLength: 10000
         type: string
+    required:
+    - content
     type: object
   entity.Review:
     properties:
@@ -239,7 +294,12 @@ definitions:
       link:
         type: string
       name:
+        maxLength: 15
+        minLength: 1
         type: string
+    required:
+    - link
+    - name
     type: object
   model.Module:
     properties:
@@ -317,6 +377,14 @@ definitions:
           type: integer
         type: array
     type: object
+  model.Role:
+    enum:
+    - teacher
+    - author
+    type: string
+    x-enum-varnames:
+    - TeacherRole
+    - AuthorRole
   model.Section:
     properties:
       answer:
@@ -395,9 +463,16 @@ definitions:
         type: string
       id:
         type: string
-      isTeacher:
-        type: boolean
       name:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+    type: object
+  postauthor.Email:
+    properties:
+      email:
         type: string
     type: object
   postteacher.Email:
@@ -422,16 +497,25 @@ definitions:
       email:
         type: string
       name:
+        maxLength: 30
+        minLength: 1
         type: string
       password:
         type: string
+    required:
+    - name
     type: object
   update.User:
     properties:
       avatar:
         type: string
       name:
+        maxLength: 25
+        minLength: 1
         type: string
+    required:
+    - avatar
+    - name
     type: object
   updatepass.Password:
     properties:
@@ -439,6 +523,8 @@ definitions:
         type: string
       new:
         type: string
+    required:
+    - current
     type: object
   verdict.Type:
     enum:
@@ -912,6 +998,24 @@ paths:
       - ApiKeyAuth: []
       tags:
       - review
+  /v1/role/author:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: почта будущего автора
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/postauthor.Email'
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
   /v1/role/teacher:
     post:
       consumes:

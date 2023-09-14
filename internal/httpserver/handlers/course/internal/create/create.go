@@ -2,12 +2,11 @@ package create
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"github.com/radium-rtf/radium-backend/internal/model"
-	"github.com/radium-rtf/radium-backend/pkg/validator"
 	"net/http"
 )
 
@@ -29,14 +28,7 @@ func New(creator creator) http.HandlerFunc {
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
-		err := json.NewDecoder(r.Body).Decode(&request)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
-
-		err = validator.Struct(request)
+		err := decode.Json(r.Body, &request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

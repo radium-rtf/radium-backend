@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -26,7 +27,7 @@ func New(creator creator) http.HandlerFunc {
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
-		if err := render.DecodeJSON(r.Body, &request); err != nil {
+		if err := decode.Json(r.Body, &request); err != nil {
 			render.Status(r, http.StatusCreated)
 			render.JSON(w, r, err.Error())
 			return

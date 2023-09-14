@@ -14,5 +14,6 @@ type (
 		Sessions         []Session
 
 		IsTeacher bool `gorm:"not null; default:false"`
+		IsAuthor  bool `gorm:"not null; default:false"`
 	}
 )

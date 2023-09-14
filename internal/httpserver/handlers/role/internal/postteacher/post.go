@@ -2,9 +2,8 @@ package postteacher
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/go-chi/render"
-	"github.com/radium-rtf/radium-backend/pkg/validator"
+	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
 )
 
@@ -25,14 +24,7 @@ func New(creator creator) http.HandlerFunc {
 			ctx     = r.Context()
 		)
 
-		err := json.NewDecoder(r.Body).Decode(&request)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
-
-		err = validator.Struct(request)
+		err := decode.Json(r.Body, &request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

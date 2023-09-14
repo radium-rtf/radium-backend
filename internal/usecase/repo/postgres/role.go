@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"gorm.io/gen/field"
 )
 
 type Role struct {
@@ -14,6 +15,14 @@ func NewRoleRepo(pg *db.Query) Role {
 }
 
 func (r Role) AddTeacher(ctx context.Context, email string) error {
+	return r.addRole(ctx, r.pg.User.IsTeacher, email)
+}
+
+func (r Role) AddAuthor(ctx context.Context, email string) error {
+	return r.addRole(ctx, r.pg.User.IsAuthor, email)
+}
+
+func (r Role) addRole(ctx context.Context, field field.Expr, email string) error {
 	u := r.pg.User
 	user, err := u.WithContext(ctx).Where(u.Email.Eq(email)).First()
 	if err != nil {
@@ -22,7 +31,7 @@ func (r Role) AddTeacher(ctx context.Context, email string) error {
 
 	_, err = u.WithContext(ctx).
 		Where(u.Id.Eq(user.Id)).
-		UpdateColumn(u.IsTeacher, true)
+		UpdateColumn(field, true)
 
 	return err
 }

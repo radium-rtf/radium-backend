@@ -16,3 +16,7 @@ func NewRoleUseCase(role postgres.Role) RoleUseCase {
 func (uc RoleUseCase) AddTeacher(ctx context.Context, email string) error {
 	return uc.role.AddTeacher(ctx, email)
 }
+
+func (uc RoleUseCase) AddAuthor(ctx context.Context, email string) error {
+	return uc.role.AddAuthor(ctx, email)
+}

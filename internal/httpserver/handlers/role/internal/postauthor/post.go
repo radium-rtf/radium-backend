@@ -1,31 +1,27 @@
-package create
+package postauthor
 
 import (
 	"context"
 	"github.com/go-chi/render"
-	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
-
-	"github.com/radium-rtf/radium-backend/internal/entity"
 )
 
 type creator interface {
-	Create(ctx context.Context, review *entity.Review) (*entity.Review, error)
+	AddAuthor(ctx context.Context, email string) error
 }
 
-// @Tags review
+// @Tags role
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body Review true "score - от 0 до 1"
-// @Success 201 {object} entity.Review "created"
-// @Router /v1/review [post]
-func NewReview(creator creator) http.HandlerFunc {
+// @Param request body Email true "почта будущего автора"
+// @Success 201
+// @Router /v1/role/author [post]
+func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Review
+			request Email
 			ctx     = r.Context()
-			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
 		err := decode.Json(r.Body, &request)
@@ -35,8 +31,8 @@ func NewReview(creator creator) http.HandlerFunc {
 			return
 		}
 
-		review := request.toReview(userId)
-		review, err = creator.Create(ctx, review)
+		email := request.Email
+		err = creator.AddAuthor(ctx, email)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
@@ -44,6 +40,5 @@ func NewReview(creator creator) http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, review)
 	}
 }
