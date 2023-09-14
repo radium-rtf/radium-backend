@@ -27,6 +27,7 @@ func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
 
 	return &entity.Course{
 		Name:             r.Name,
+		Banner:           r.Banner,
 		Slug:             translit.RuEn(r.Name),
 		ShortDescription: r.ShortDescription,
 		Description:      r.Description,
