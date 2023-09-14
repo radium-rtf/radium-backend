@@ -15,27 +15,21 @@ type TokenManager struct {
 	signingKey string
 }
 
-const (
-	isTeacher = "isTeacher"
-	isAuthor  = "isAuthor"
-)
-
 func NewManager(signingKey string) TokenManager {
 	return TokenManager{signingKey: signingKey}
 }
 
 func (m TokenManager) NewJWT(user model.User, expiresAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":     jwt.NewNumericDate(expiresAt),
-		"sub":     user.Id.String(),
-		isTeacher: slices.Contains(user.Roles, model.TeacherRole),
-		isAuthor:  slices.Contains(user.Roles, model.AuthorRole),
+		"exp":       jwt.NewNumericDate(expiresAt),
+		"sub":       user.Id.String(),
+		"isTeacher": slices.Contains(user.Roles, model.TeacherRole),
 	})
 
 	return token.SignedString([]byte(m.signingKey))
 }
 
-func (m TokenManager) parse(accessToken string) (jwt.MapClaims, error) {
+func (m TokenManager) Parse(accessToken string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -83,7 +77,7 @@ func (m TokenManager) extractClaims(tokenHeader []string) (jwt.MapClaims, error)
 		return jwt.MapClaims{}, err
 	}
 
-	claims, err := m.parse(token)
+	claims, err := m.Parse(token)
 	if err != nil {
 		return jwt.MapClaims{}, err
 	}
@@ -91,33 +85,14 @@ func (m TokenManager) extractClaims(tokenHeader []string) (jwt.MapClaims, error)
 	return claims, nil
 }
 
-func (m TokenManager) extractClaim(tokenHeader []string, key string) (any, error) {
+func (m TokenManager) ExtractIsTeacher(tokenHeader []string) (bool, error) {
 	claims, err := m.extractClaims(tokenHeader)
 	if err != nil {
 		return false, err
 	}
 
-	claim, ok := claims[key]
-	if !ok {
-		return false, errors.New("invalid claim")
-	}
-	return claim, nil
-}
-
-func (m TokenManager) ExtractIsTeacher(tokenHeader []string) (bool, error) {
-	claim, err := m.extractClaim(tokenHeader, isTeacher)
-	if err != nil {
-		return false, err
-	}
-	return claim.(bool), nil
-}
-
-func (m TokenManager) ExtractIsAuthor(tokenHeader []string) (bool, error) {
-	claim, err := m.extractClaim(tokenHeader, isAuthor)
-	if err != nil {
-		return false, err
-	}
-	return claim.(bool), nil
+	roles := claims["isTeacher"].(bool)
+	return roles, nil
 }
 
 func (m TokenManager) getToken(tokenHeader []string) (string, error) {

@@ -9,33 +9,27 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/getbyslug"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/join"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
-	"github.com/radium-rtf/radium-backend/internal/httpserver/middleware/role"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
 func New(r *chi.Mux, useCases usecase.UseCases) {
 	useCase := useCases.Course
 	answerUseCase := useCases.Answer
-	tokenManager := useCases.Deps.TokenManager
 
 	r.Route("/v1/course", func(r chi.Router) {
 		r.Get("/", get.New(useCase))
 
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.UserId(tokenManager))
+			r.Use(mwAuth.UserId(useCases.Deps.TokenManager))
 			r.Get("/{courseId}", getbyid.New(useCase, answerUseCase))
 			r.Get("/slug/{slug}", getbyslug.New(useCase, answerUseCase))
 		})
 
 		r.Group(func(r chi.Router) {
-			r.Use(mwAuth.Required(tokenManager))
+			r.Use(mwAuth.Required(useCases.Deps.TokenManager))
+			r.Post("/", create.New(useCase))
 			r.Patch("/join/{courseId}", join.New(useCase))
 			r.Delete("/{id}", destroy.New(useCase))
-
-			r.Group(func(r chi.Router) {
-				r.Use(role.Author(tokenManager))
-				r.Post("/", create.New(useCase))
-			})
 		})
 	})
 }
