@@ -2,6 +2,7 @@ package filestorage
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -30,17 +31,18 @@ var policy = `{
 }`
 
 type Storage struct {
-	client *minio.Client
+	client   *minio.Client
+	endpoint string
 }
 
 func New(cfg config.Storage) (Storage, error) {
 	creds := credentials.NewStaticV4(cfg.Id, cfg.Secret, "")
-	client, err := open(creds, cfg.Endpoint, cfg.Region)
+	client, err := open(creds, cfg.PrivateEndpoint, cfg.Region)
 	if err != nil {
 		return Storage{}, err
 	}
 
-	storage := Storage{client: client}
+	storage := Storage{client: client, endpoint: cfg.Endpoint}
 
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
@@ -79,6 +81,7 @@ func (s Storage) PutImage(ctx context.Context, reader io.Reader, objectSize int6
 	if err != nil {
 		return minio.UploadInfo{}, err
 	}
-	out.Location = s.client.EndpointURL().JoinPath(out.Bucket, out.Key).String()
+	location := fmt.Sprintf("https://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
+	out.Location = location
 	return out, err
 }

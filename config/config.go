@@ -39,10 +39,11 @@ type (
 	}
 
 	Storage struct {
-		Endpoint string `env-required:"true" yaml:"endpoint"`
-		Id       string `env-required:"true" yaml:"id"`
-		Secret   string `env-required:"true" yaml:"secret"`
-		Region   string `env-required:"true" yaml:"region"`
+		PrivateEndpoint string `env-required:"true" yaml:"private_endpoint"`
+		Endpoint        string `env-required:"true" yaml:"endpoint"`
+		Id              string `env-required:"true" yaml:"id"`
+		Secret          string `env-required:"true" yaml:"secret"`
+		Region          string `env-required:"true" yaml:"region"`
 	}
 )
 
