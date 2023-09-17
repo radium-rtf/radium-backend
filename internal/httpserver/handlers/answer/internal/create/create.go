@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	verdict2 "github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
 
@@ -34,13 +35,14 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		answer := request.ToAnswer(userId)
-		verdict, err := creator.Create(r.Context(), answer)
+		answer, err := creator.Create(r.Context(), answer)
 		if err != nil {
 			render.Status(r, http.StatusCreated)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
+		verdict := verdict2.Verdict{Verdict: answer.Verdict}
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, verdict)
 	}

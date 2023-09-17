@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/account"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/answer"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/file"
@@ -32,6 +33,8 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 	group.New(h, useCases)
 	teacher.New(h, useCases)
 	review.New(h, useCases)
+
+	answer.New(h, useCases)
 
 	auth.New(h, useCases)
 	account.New(h, useCases)

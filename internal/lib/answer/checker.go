@@ -1,8 +1,6 @@
 package answer
 
 import (
-	"reflect"
-
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 )
@@ -34,28 +32,49 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 func (c Checker) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) verdict.Type {
 	answerArr := []string(answer.Answer)
 	solutionArr := []string(section.Answer)
-	verdictType := verdict.OK
-	ok := reflect.DeepEqual(answerArr, solutionArr)
-	if !ok {
-		verdictType = verdict.WA
+	if len(answerArr) != len(solutionArr) {
+		return verdict.WA
 	}
-	return verdictType
+
+	solutionMap := c.toMap(solutionArr)
+	answerMap := c.toMap(answerArr)
+	if len(answerArr) != len(solutionArr) {
+		return verdict.WA
+	}
+
+	for ans, count := range answerMap {
+		if sCount, ok := solutionMap[ans]; ok && count == sCount {
+			continue
+		}
+		return verdict.WA
+	}
+
+	return verdict.OK
 }
 
 func (c Checker) choice(answer *entity.ChoiceSectionAnswer, section *entity.ChoiceSection) verdict.Type {
-	verdictType := verdict.OK
 	ok := answer.Answer == section.Answer
 	if !ok {
-		verdictType = verdict.WA
+		return verdict.WA
 	}
-	return verdictType
+	return verdict.OK
 }
 
 func (c Checker) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) verdict.Type {
-	verdictType := verdict.OK
-	ok := answer.Answer == section.Answer
+	ok := answer.Answer == section.Answer // TODO: (не)учитывать caps lock
 	if !ok {
-		verdictType = verdict.WA
+		return verdict.WA
 	}
-	return verdictType
+	return verdict.OK
+}
+
+func (Checker) toMap(arr []string) map[string]int {
+	m := make(map[string]int, len(arr))
+	for _, v := range arr {
+		if _, ok := m[v]; !ok {
+			m[v] = 0
+		}
+		m[v] += 1
+	}
+	return m
 }
