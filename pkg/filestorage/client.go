@@ -81,7 +81,7 @@ func (s Storage) PutImage(ctx context.Context, reader io.Reader, objectSize int6
 	if err != nil {
 		return minio.UploadInfo{}, err
 	}
-	location := fmt.Sprintf("https://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
+	location := fmt.Sprintf("http://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
 	out.Location = location
 	return out, err
 }
