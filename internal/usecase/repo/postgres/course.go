@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
+	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
@@ -49,10 +49,8 @@ func (r Course) GetCourses(ctx context.Context) ([]*entity.Course, error) {
 // TODO: спросить про необходимость показывать курс полностью в списке всех курсов
 func (r Course) get(ctx context.Context, where ...gen.Condition) ([]*entity.Course, error) {
 	c := r.pg.Course
-	// s := c.Modules.Pages.Sections
 	return c.WithContext(ctx).Debug().
 		Preload(c.Links, c.Authors).
-		// Preload(c.Modules.Pages.Sections, s.Order(r.pg.Section.Order)).
 		Preload(c.Modules).
 		Where(where...).
 		Find()
@@ -156,4 +154,21 @@ func (r Course) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 		return errors.New("not found")
 	}
 	return err
+}
+
+func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Course, error) {
+	m := structs.Map(course)
+	delete(m, "DBModel")
+
+	c := r.pg.Course
+	info, err := c.WithContext(ctx).Where(c.Id.Eq(course.Id)).Updates(m)
+	if err != nil {
+		return nil, err
+	}
+
+	if info.RowsAffected == 0 {
+		return nil, errors.New("not found")
+	}
+
+	return r.GetById(ctx, course.Id)
 }

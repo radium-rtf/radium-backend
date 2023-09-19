@@ -47,3 +47,7 @@ func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uui
 func (uc CourseUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 	return uc.courseRepo.Delete(ctx, id, isSoft)
 }
+
+func (uc CourseUseCase) Update(ctx context.Context, course *entity.Course, userId uuid.UUID) (*entity.Course, error) {
+	return uc.courseRepo.Update(ctx, course)
+}

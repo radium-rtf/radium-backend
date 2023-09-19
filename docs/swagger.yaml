@@ -505,6 +505,27 @@ definitions:
     required:
     - name
     type: object
+  update.Course:
+    properties:
+      banner:
+        type: string
+      description:
+        maxLength: 3000
+        type: string
+      logo:
+        type: string
+      name:
+        maxLength: 45
+        minLength: 1
+        type: string
+      shortDescription:
+        maxLength: 200
+        minLength: 1
+        type: string
+    required:
+    - name
+    - shortDescription
+    type: object
   update.User:
     properties:
       avatar:
@@ -739,6 +760,30 @@ paths:
       responses:
         "200":
           description: ok
+          schema:
+            $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: course id
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Данные о курсе
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/update.Course'
+      responses:
+        "201":
+          description: created
           schema:
             $ref: '#/definitions/model.Course'
       security:

@@ -10,9 +10,14 @@ type validate struct {
 }
 
 func newValidate() (*validate, error) {
-	v := validate{v: validator.New()}
+	v := validate{v: validator.New(validator.WithRequiredStructEnabled())}
 
 	err := v.v.RegisterValidation("email", v.emailValidate)
+	if err != nil {
+		return nil, err
+	}
+
+	err = v.v.RegisterValidation("url", v.urlValidate)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +31,7 @@ func newValidate() (*validate, error) {
 }
 
 func Struct(i any) error {
-	v, err := newValidate()
+	v, err := newValidate() //TODO: хотелось бы прокидвать ошибки не через структуру, тк библиоткека содержит кэш
 	if err != nil {
 		return err
 	}
