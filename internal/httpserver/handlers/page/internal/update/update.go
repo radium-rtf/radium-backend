@@ -13,24 +13,24 @@ import (
 )
 
 type updater interface {
-	Update(ctx context.Context, module *entity.Module, id uuid.UUID) (*entity.Module, error)
+	Update(ctx context.Context, page *entity.Page, userId uuid.UUID) (*entity.Page, error)
 }
 
-// @Tags module
+// @Tags page
 // @Security ApiKeyAuth
-// @Param        moduleId   path      string  true  "id"
+// @Param        pageId   path      string  true  "id"
 // @Param       request body Module true " "
-// @Success      201   {object} model.Module       "created"
-// @Router       /v1/module/{moduleId} [put]
+// @Success      201   {object} model.Page       "created"
+// @Router       /v1/page/{pageId} [put]
 func New(updater updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request Module
+			request Page
 			ctx     = r.Context()
 			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
-		moduleId, err := uuid.Parse(chi.URLParam(r, "moduleId"))
+		pageId, err := uuid.Parse(chi.URLParam(r, "pageId"))
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, errors.Wrap(err, "parse id").Error())
@@ -44,15 +44,15 @@ func New(updater updater) http.HandlerFunc {
 			return
 		}
 
-		module := request.toModule(moduleId)
-		module, err = updater.Update(ctx, module, userId)
+		page := request.toPage(pageId)
+		page, err = updater.Update(ctx, page, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
-		dto := model.NewModule(module, map[uuid.UUID]*entity.Answer{})
+		dto := model.NewPage(page, map[uuid.UUID]*entity.Answer{})
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}

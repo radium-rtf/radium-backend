@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"github.com/radium-rtf/radium-backend/pkg/utils"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -29,7 +30,6 @@ func (r Page) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	p := r.pg.Page
 	s := p.Sections
 	return p.WithContext(ctx).Debug().
-		Order(p.Order).
 		Preload(s, s.Order(r.pg.Section.Order)).
 		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection, s.AnswerSection, s.CodeSection).
 		Where(p.Id.Eq(id)).
@@ -46,4 +46,21 @@ func (r Page) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 		return errors.New("not found")
 	}
 	return err
+}
+
+func (r Page) Update(ctx context.Context, page *entity.Page) (*entity.Page, error) {
+	m := utils.RemoveEmptyFields(page)
+
+	info, err := r.pg.Page.WithContext(ctx).
+		Where(r.pg.Page.Id.Eq(page.Id)).
+		Updates(m)
+	if err != nil {
+		return nil, err
+	}
+
+	if info.RowsAffected == 0 {
+		return nil, errors.New("not found")
+	}
+
+	return r.GetByID(ctx, page.Id)
 }
