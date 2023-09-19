@@ -24,6 +24,10 @@ func (uc ModuleUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) e
 	return uc.moduleRepo.Delete(ctx, id, isSoft)
 }
 
+func (uc ModuleUseCase) Update(ctx context.Context, module *entity.Module, userId uuid.UUID) (*entity.Module, error) {
+	return uc.moduleRepo.Update(ctx, module)
+}
+
 // func (uc ModuleUseCase) GetCourseModules(ctx context.Context, courseId int) (entity.CourseModules, error) {
 // 	return uc.moduleRepo.GetModules(ctx, courseId)
 // }

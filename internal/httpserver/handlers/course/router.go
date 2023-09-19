@@ -31,12 +31,12 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.Required(tokenManager))
 			r.Patch("/join/{courseId}", join.New(useCase))
-			r.Delete("/{id}", destroy.New(useCase))
 
 			r.Group(func(r chi.Router) {
 				r.Use(role.Author(tokenManager))
 				r.Post("/", create.New(useCase))
 				r.Put("/{courseId}", update.New(useCase))
+				r.Delete("/{id}", destroy.New(useCase))
 			})
 		})
 	})

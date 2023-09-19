@@ -31,7 +31,7 @@ func newValidate() (*validate, error) {
 }
 
 func Struct(i any) error {
-	v, err := newValidate() //TODO: хотелось бы прокидвать ошибки не через структуру, тк библиоткека содержит кэш
+	v, err := newValidate() // TODO: хотелось бы прокидвать ошибки не через структуру, тк библиоткека содержит кэш
 	if err != nil {
 		return err
 	}

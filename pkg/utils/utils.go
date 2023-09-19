@@ -11,6 +11,7 @@ func RemoveEmptyMapFields(m map[string]interface{}) {
 			delete(m, k)
 		}
 	}
+	delete(m, "DBModel")
 }
 
 func RemoveEmptyFields(s any) map[string]interface{} {

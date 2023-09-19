@@ -676,6 +676,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/module/{moduleId}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "moduleId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "moduleRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/update.Module"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Module"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/page": {
             "post": {
                 "security": [
@@ -1795,6 +1833,19 @@ const docTemplate = `{
                 "shortDescription": {
                     "type": "string",
                     "maxLength": 200,
+                    "minLength": 1
+                }
+            }
+        },
+        "update.Module": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
                     "minLength": 1
                 }
             }

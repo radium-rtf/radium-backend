@@ -526,6 +526,15 @@ definitions:
     - name
     - shortDescription
     type: object
+  update.Module:
+    properties:
+      name:
+        maxLength: 20
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
   update.User:
     properties:
       avatar:
@@ -964,6 +973,29 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
+  /v1/module/{moduleId}:
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: moduleId
+        required: true
+        type: string
+      - description: moduleRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/update.Module'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Module'
       security:
       - ApiKeyAuth: []
       tags:
