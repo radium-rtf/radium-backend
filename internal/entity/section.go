@@ -10,7 +10,7 @@ type (
 		DBModel
 		PageId   uuid.UUID `gorm:"type:uuid; not null"`
 		Order    uint      `gorm:"not null"`
-		MaxScore uint      `gorm:"not null; default:10"`
+		MaxScore uint      `gorm:"not null; default:0"`
 
 		TextSection        *TextSection        `gorm:"polymorphic:Owner"`
 		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner"`
