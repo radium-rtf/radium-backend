@@ -2,4 +2,4 @@ package answer
 
 import "errors"
 
-var errEmptyAnswer = errors.New("empty answer or not implemented")
+var errChecker = errors.New("empty answer, invalid id or not implemented")

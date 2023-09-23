@@ -3,6 +3,7 @@ package answer
 import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
+	"reflect"
 )
 
 type Checker struct {
@@ -11,17 +12,26 @@ type Checker struct {
 func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.Verdict, error) {
 	var verdictType verdict.Type
 
+	isExists := func(v1, v2 any) bool {
+		return !reflect.ValueOf(v1).IsNil() && !reflect.ValueOf(v2).IsNil()
+	}
+
 	switch {
-	case answer.MultiChoice != nil:
+	case isExists(answer.MultiChoice, section.MultiChoiceSection):
 		verdictType = c.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
-	case answer.Choice != nil:
+
+	case isExists(answer.Choice, section.ChoiceSection):
 		verdictType = c.choice(answer.Choice, section.ChoiceSection)
-	case answer.ShortAnswer != nil:
+
+	case isExists(answer.ShortAnswer, section.ShortAnswerSection):
 		verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
-	case answer.Answer != nil || answer.Code != nil:
+
+	case isExists(answer.Answer, section.AnswerSection) ||
+		isExists(answer.Code, section.CodeSection):
 		verdictType = verdict.WAIT
+
 	default:
-		return verdict.Verdict{}, errEmptyAnswer
+		return verdict.Verdict{}, errChecker
 	}
 
 	return verdict.Verdict{Verdict: verdictType}, nil
@@ -34,14 +44,14 @@ func (c Checker) multiChoice(answer *entity.MultichoiceSectionAnswer, section *e
 		return verdict.WA
 	}
 
-	solutionMap := c.toMap(solutionArr)
-	answerMap := c.toMap(answerArr)
-	if len(answerArr) != len(solutionArr) {
+	solutionCounter := c.toCounter(solutionArr)
+	answerCounter := c.toCounter(answerArr)
+	if len(answerCounter) != len(solutionCounter) {
 		return verdict.WA
 	}
 
-	for ans, count := range answerMap {
-		if sCount, ok := solutionMap[ans]; ok && count == sCount {
+	for ans, count := range answerCounter {
+		if sCount, ok := solutionCounter[ans]; ok && count == sCount {
 			continue
 		}
 		return verdict.WA
@@ -66,7 +76,7 @@ func (c Checker) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *e
 	return verdict.OK
 }
 
-func (Checker) toMap(arr []string) map[string]int {
+func (Checker) toCounter(arr []string) map[string]int {
 	m := make(map[string]int, len(arr))
 	for _, v := range arr {
 		if _, ok := m[v]; !ok {
