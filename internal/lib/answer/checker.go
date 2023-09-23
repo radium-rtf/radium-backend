@@ -18,9 +18,7 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 		verdictType = c.choice(answer.Choice, section.ChoiceSection)
 	case answer.ShortAnswer != nil:
 		verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
-	case answer.Answer != nil:
-		verdictType = verdict.EMPTY
-	case answer.Code != nil:
+	case answer.Answer != nil || answer.Code != nil:
 		verdictType = verdict.WAIT
 	default:
 		return verdict.Verdict{}, errEmptyAnswer

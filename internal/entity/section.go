@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
@@ -86,7 +84,6 @@ func (s Section) Content() string {
 	if s.AnswerSection != nil {
 		return s.AnswerSection.Question
 	}
-	fmt.Printf("%+v", s)
 	if s.CodeSection != nil {
 		return s.CodeSection.Question
 	}
