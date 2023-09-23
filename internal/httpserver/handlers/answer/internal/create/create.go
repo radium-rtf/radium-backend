@@ -35,7 +35,7 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		answer := request.ToAnswer(userId)
-		answer, err := creator.Create(r.Context(), answer)
+		answer, err := creator.Create(ctx, answer)
 		if err != nil {
 			render.Status(r, http.StatusCreated)
 			render.JSON(w, r, err.Error())

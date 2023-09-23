@@ -56,7 +56,7 @@ func (r *Answer) ToAnswer(userId uuid.UUID) *entity.Answer {
 	}
 
 	if r.ShortAnswer != nil {
-		choice = &entity.ChoiceSectionAnswer{Answer: r.ShortAnswer.Answer}
+		shortAnswer = &entity.ShortAnswerSectionAnswer{Answer: r.ShortAnswer.Answer}
 	}
 
 	if r.Answer != nil {

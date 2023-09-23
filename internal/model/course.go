@@ -31,6 +31,7 @@ func NewCourses(courses []*entity.Course) []*Course {
 	}
 	return c
 }
+
 func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Course {
 	links := make([]Link, 0, len(course.Links))
 	for _, link := range course.Links {
