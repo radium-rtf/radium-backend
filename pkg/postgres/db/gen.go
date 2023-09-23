@@ -32,6 +32,8 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		MultiChoiceSection:       newMultiChoiceSection(db, opts...),
 		MultichoiceSectionAnswer: newMultichoiceSectionAnswer(db, opts...),
 		Page:                     newPage(db, opts...),
+		PermutationSection:       newPermutationSection(db, opts...),
+		PermutationSectionAnswer: newPermutationSectionAnswer(db, opts...),
 		Review:                   newReview(db, opts...),
 		Section:                  newSection(db, opts...),
 		Session:                  newSession(db, opts...),
@@ -61,6 +63,8 @@ type Query struct {
 	MultiChoiceSection       multiChoiceSection
 	MultichoiceSectionAnswer multichoiceSectionAnswer
 	Page                     page
+	PermutationSection       permutationSection
+	PermutationSectionAnswer permutationSectionAnswer
 	Review                   review
 	Section                  section
 	Session                  session
@@ -91,6 +95,8 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		MultiChoiceSection:       q.MultiChoiceSection.clone(db),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.clone(db),
 		Page:                     q.Page.clone(db),
+		PermutationSection:       q.PermutationSection.clone(db),
+		PermutationSectionAnswer: q.PermutationSectionAnswer.clone(db),
 		Review:                   q.Review.clone(db),
 		Section:                  q.Section.clone(db),
 		Session:                  q.Session.clone(db),
@@ -128,6 +134,8 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		MultiChoiceSection:       q.MultiChoiceSection.replaceDB(db),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.replaceDB(db),
 		Page:                     q.Page.replaceDB(db),
+		PermutationSection:       q.PermutationSection.replaceDB(db),
+		PermutationSectionAnswer: q.PermutationSectionAnswer.replaceDB(db),
 		Review:                   q.Review.replaceDB(db),
 		Section:                  q.Section.replaceDB(db),
 		Session:                  q.Session.replaceDB(db),
@@ -155,6 +163,8 @@ type queryCtx struct {
 	MultiChoiceSection       IMultiChoiceSectionDo
 	MultichoiceSectionAnswer IMultichoiceSectionAnswerDo
 	Page                     IPageDo
+	PermutationSection       IPermutationSectionDo
+	PermutationSectionAnswer IPermutationSectionAnswerDo
 	Review                   IReviewDo
 	Section                  ISectionDo
 	Session                  ISessionDo
@@ -182,6 +192,8 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		MultiChoiceSection:       q.MultiChoiceSection.WithContext(ctx),
 		MultichoiceSectionAnswer: q.MultichoiceSectionAnswer.WithContext(ctx),
 		Page:                     q.Page.WithContext(ctx),
+		PermutationSection:       q.PermutationSection.WithContext(ctx),
+		PermutationSectionAnswer: q.PermutationSectionAnswer.WithContext(ctx),
 		Review:                   q.Review.WithContext(ctx),
 		Section:                  q.Section.WithContext(ctx),
 		Session:                  q.Session.WithContext(ctx),

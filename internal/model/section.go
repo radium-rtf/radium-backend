@@ -13,6 +13,7 @@ const (
 	ShortAnswerType = SectionType("shortAnswer")
 	AnswerType      = SectionType("answer")
 	CodeType        = SectionType("code")
+	PermutationType = SectionType("permutation")
 )
 
 type (
@@ -63,22 +64,30 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 	return dtos, sumScore, sumMaxScore
 }
 
+func getSectionType(s *entity.Section) SectionType {
+	switch {
+	case s.MultiChoiceSection != nil:
+		return MultiChoiceType
+	case s.ChoiceSection != nil:
+		return ChoiceType
+	case s.TextSection != nil:
+		return TextType
+	case s.ShortAnswerSection != nil:
+		return ShortAnswerType
+	case s.AnswerSection != nil:
+		return AnswerType
+	case s.CodeSection != nil:
+		return CodeType
+	case s.PermutationSection != nil:
+		return PermutationType
+	default:
+		panic("")
+	}
+}
+
 func NewSection(section *entity.Section, verdict verdict.Type,
 	score uint, answer string, answers []string) *Section {
-	var sectionType SectionType
-	if section.MultiChoiceSection != nil {
-		sectionType = MultiChoiceType
-	} else if section.ChoiceSection != nil {
-		sectionType = ChoiceType
-	} else if section.TextSection != nil {
-		sectionType = TextType
-	} else if section.ShortAnswerSection != nil {
-		sectionType = ShortAnswerType
-	} else if section.AnswerSection != nil {
-		sectionType = AnswerType
-	} else if section.CodeSection != nil {
-		sectionType = CodeType
-	}
+	sectionType := getSectionType(section)
 
 	return &Section{
 		Id:       section.Id,

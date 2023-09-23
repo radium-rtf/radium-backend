@@ -22,6 +22,7 @@ func migrate(db *gorm.DB) error {
 		entity.ShortAnswerSection{},
 		entity.AnswerSection{},
 		entity.CodeSection{},
+		entity.PermutationSection{},
 
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
@@ -29,6 +30,7 @@ func migrate(db *gorm.DB) error {
 		entity.MultichoiceSectionAnswer{},
 		entity.AnswerSectionAnswer{},
 		entity.CodeSectionAnswer{},
+		entity.PermutationSectionAnswer{},
 
 		entity.Teacher{},
 		entity.TeacherCourse{},

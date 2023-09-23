@@ -26,6 +26,7 @@ func Gen() {
 		entity.ShortAnswerSection{},
 		entity.AnswerSection{},
 		entity.CodeSection{},
+		entity.PermutationSection{},
 
 		entity.Answer{},
 		entity.ChoiceSectionAnswer{},
@@ -33,6 +34,7 @@ func Gen() {
 		entity.MultichoiceSectionAnswer{},
 		entity.AnswerSectionAnswer{},
 		entity.CodeSectionAnswer{},
+		entity.PermutationSectionAnswer{},
 
 		entity.Group{},
 		entity.Teacher{},

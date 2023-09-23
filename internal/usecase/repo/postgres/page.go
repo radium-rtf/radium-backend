@@ -3,11 +3,10 @@ package postgres
 import (
 	"context"
 	"errors"
-	"github.com/radium-rtf/radium-backend/pkg/utils"
-
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"github.com/radium-rtf/radium-backend/pkg/utils"
 )
 
 type Page struct {
@@ -31,7 +30,8 @@ func (r Page) GetByID(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	s := p.Sections
 	return p.WithContext(ctx).Debug().
 		Preload(s, s.Order(r.pg.Section.Order)).
-		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection, s.AnswerSection, s.CodeSection).
+		Preload(s.TextSection, s.ChoiceSection, s.MultiChoiceSection, s.ShortAnswerSection,
+			s.AnswerSection, s.CodeSection, s.PermutationSection).
 		Where(p.Id.Eq(id)).
 		Take()
 }

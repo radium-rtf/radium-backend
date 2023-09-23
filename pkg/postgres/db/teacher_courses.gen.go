@@ -63,6 +63,9 @@ func newTeacherCourse(db *gorm.DB, opts ...gen.DOOption) teacherCourse {
 					CodeSection struct {
 						field.RelationField
 					}
+					PermutationSection struct {
+						field.RelationField
+					}
 				}
 			}
 		}{
@@ -89,6 +92,9 @@ func newTeacherCourse(db *gorm.DB, opts ...gen.DOOption) teacherCourse {
 					CodeSection struct {
 						field.RelationField
 					}
+					PermutationSection struct {
+						field.RelationField
+					}
 				}
 			}{
 				RelationField: field.NewRelation("Course.Modules.Pages", "entity.Page"),
@@ -110,6 +116,9 @@ func newTeacherCourse(db *gorm.DB, opts ...gen.DOOption) teacherCourse {
 						field.RelationField
 					}
 					CodeSection struct {
+						field.RelationField
+					}
+					PermutationSection struct {
 						field.RelationField
 					}
 				}{
@@ -143,6 +152,11 @@ func newTeacherCourse(db *gorm.DB, opts ...gen.DOOption) teacherCourse {
 						field.RelationField
 					}{
 						RelationField: field.NewRelation("Course.Modules.Pages.Sections.CodeSection", "entity.CodeSection"),
+					},
+					PermutationSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Course.Modules.Pages.Sections.PermutationSection", "entity.PermutationSection"),
 					},
 				},
 			},
@@ -325,6 +339,9 @@ type teacherCourseBelongsToCourse struct {
 					field.RelationField
 				}
 				CodeSection struct {
+					field.RelationField
+				}
+				PermutationSection struct {
 					field.RelationField
 				}
 			}

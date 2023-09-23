@@ -78,6 +78,9 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 					CodeSection struct {
 						field.RelationField
 					}
+					PermutationSection struct {
+						field.RelationField
+					}
 				}
 			}
 		}{
@@ -104,6 +107,9 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 					CodeSection struct {
 						field.RelationField
 					}
+					PermutationSection struct {
+						field.RelationField
+					}
 				}
 			}{
 				RelationField: field.NewRelation("Courses.Modules.Pages", "entity.Page"),
@@ -125,6 +131,9 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 						field.RelationField
 					}
 					CodeSection struct {
+						field.RelationField
+					}
+					PermutationSection struct {
 						field.RelationField
 					}
 				}{
@@ -158,6 +167,11 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 						field.RelationField
 					}{
 						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.CodeSection", "entity.CodeSection"),
+					},
+					PermutationSection: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Courses.Modules.Pages.Sections.PermutationSection", "entity.PermutationSection"),
 					},
 				},
 			},
@@ -436,6 +450,9 @@ type userManyToManyCourses struct {
 					field.RelationField
 				}
 				CodeSection struct {
+					field.RelationField
+				}
+				PermutationSection struct {
 					field.RelationField
 				}
 			}

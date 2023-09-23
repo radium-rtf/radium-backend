@@ -1099,26 +1099,29 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answer": {
-                    "$ref": "#/definitions/create.AnswerSectionAnswerPost"
+                    "$ref": "#/definitions/create.AnswerSection"
                 },
                 "choice": {
-                    "$ref": "#/definitions/create.ChoiceSectionAnswerPost"
+                    "$ref": "#/definitions/create.Choice"
                 },
                 "code": {
-                    "$ref": "#/definitions/create.CodeSectionAnswerPost"
+                    "$ref": "#/definitions/create.Code"
                 },
                 "id": {
                     "type": "string"
                 },
                 "multiChoice": {
-                    "$ref": "#/definitions/create.MultichoiceSectionAnswerPost"
+                    "$ref": "#/definitions/create.MultiChoice"
+                },
+                "permutation": {
+                    "$ref": "#/definitions/create.Permutation"
                 },
                 "shortAnswer": {
-                    "$ref": "#/definitions/create.ShortAnswerSectionAnswerPost"
+                    "$ref": "#/definitions/create.ShortAnswer"
                 }
             }
         },
-        "create.AnswerSectionAnswerPost": {
+        "create.AnswerSection": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -1138,7 +1141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.ChoiceSectionAnswerPost": {
+        "create.Choice": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -1172,6 +1175,17 @@ const docTemplate = `{
                 }
             }
         },
+        "create.Code": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                }
+            }
+        },
         "create.CodeSection": {
             "type": "object",
             "required": [
@@ -1181,17 +1195,6 @@ const docTemplate = `{
                 "question": {
                     "type": "string",
                     "maxLength": 5000
-                }
-            }
-        },
-        "create.CodeSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "lang": {
-                    "type": "string"
                 }
             }
         },
@@ -1274,6 +1277,17 @@ const docTemplate = `{
                 }
             }
         },
+        "create.MultiChoice": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "create.MultiChoiceSectionPost": {
             "type": "object",
             "required": [
@@ -1303,17 +1317,6 @@ const docTemplate = `{
                 }
             }
         },
-        "create.MultichoiceSectionAnswerPost": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "create.Page": {
             "type": "object",
             "required": [
@@ -1330,6 +1333,41 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "number"
+                }
+            }
+        },
+        "create.Permutation": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.PermutationSection": {
+            "type": "object",
+            "required": [
+                "answer",
+                "question"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 500
                 }
             }
         },
@@ -1376,6 +1414,9 @@ const docTemplate = `{
                 "pageId": {
                     "type": "string"
                 },
+                "permutation": {
+                    "$ref": "#/definitions/create.PermutationSection"
+                },
                 "shortanswer": {
                     "$ref": "#/definitions/create.ShortAnswerSectionPost"
                 },
@@ -1384,7 +1425,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.ShortAnswerSectionAnswerPost": {
+        "create.ShortAnswer": {
             "type": "object",
             "properties": {
                 "answer": {

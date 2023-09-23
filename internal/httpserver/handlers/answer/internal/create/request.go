@@ -8,33 +8,38 @@ import (
 
 type (
 	Answer struct {
-		SectionId   uuid.UUID                     `json:"id"`
-		Choice      *ChoiceSectionAnswerPost      `json:"choice,omitempty"`
-		MultiChoice *MultichoiceSectionAnswerPost `json:"multiChoice,omitempty"`
-		ShortAnswer *ShortAnswerSectionAnswerPost `json:"shortAnswer,omitempty"`
-		Answer      *AnswerSectionAnswerPost      `json:"answer,omitempty"`
-		Code        *CodeSectionAnswerPost        `json:"code,omitempty"`
+		SectionId   uuid.UUID      `json:"id"`
+		Choice      *Choice        `json:"choice,omitempty"`
+		MultiChoice *MultiChoice   `json:"multiChoice,omitempty"`
+		ShortAnswer *ShortAnswer   `json:"shortAnswer,omitempty"`
+		Answer      *AnswerSection `json:"answer,omitempty"`
+		Code        *Code          `json:"code,omitempty"`
+		Permutation *Permutation   `json:"permutation,omitempty"`
 	}
 
-	MultichoiceSectionAnswerPost struct {
+	MultiChoice struct {
 		Answer []string `json:"answer" swaggertype:"array,string"`
 	}
 
-	AnswerSectionAnswerPost struct {
+	AnswerSection struct {
 		Answer string `json:"answer"`
 	}
 
-	ChoiceSectionAnswerPost struct {
+	Choice struct {
 		Answer string `json:"answer"`
 	}
 
-	ShortAnswerSectionAnswerPost struct {
+	ShortAnswer struct {
 		Answer string `json:"answer"`
 	}
 
-	CodeSectionAnswerPost struct {
+	Code struct {
 		Answer   string `json:"answer"`
 		Language string `json:"lang"`
+	}
+
+	Permutation struct {
+		Answer []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
 	}
 )
 
@@ -45,26 +50,22 @@ func (r *Answer) ToAnswer(userId uuid.UUID) *entity.Answer {
 		shortAnswer *entity.ShortAnswerSectionAnswer
 		answer      *entity.AnswerSectionAnswer
 		code        *entity.CodeSectionAnswer
+		permutatuon *entity.PermutationSectionAnswer
 	)
 
-	if r.Choice != nil {
+	switch {
+	case r.Choice != nil:
 		choice = &entity.ChoiceSectionAnswer{Answer: r.Choice.Answer}
-	}
-
-	if r.MultiChoice != nil {
+	case r.MultiChoice != nil:
 		multichoice = &entity.MultichoiceSectionAnswer{Answer: r.MultiChoice.Answer}
-	}
-
-	if r.ShortAnswer != nil {
+	case r.ShortAnswer != nil:
 		shortAnswer = &entity.ShortAnswerSectionAnswer{Answer: r.ShortAnswer.Answer}
-	}
-
-	if r.Answer != nil {
+	case r.Answer != nil:
 		answer = &entity.AnswerSectionAnswer{Answer: r.Answer.Answer}
-	}
-
-	if r.Code != nil {
+	case r.Code != nil:
 		code = &entity.CodeSectionAnswer{Answer: r.Code.Answer, Language: r.Code.Language}
+	case r.Permutation != nil:
+		permutatuon = &entity.PermutationSectionAnswer{Answer: r.Permutation.Answer}
 	}
 
 	return &entity.Answer{
@@ -76,5 +77,6 @@ func (r *Answer) ToAnswer(userId uuid.UUID) *entity.Answer {
 		ShortAnswer: shortAnswer,
 		Answer:      answer,
 		Code:        code,
+		Permutation: permutatuon,
 	}
 }

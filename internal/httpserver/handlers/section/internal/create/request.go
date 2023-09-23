@@ -17,6 +17,7 @@ type (
 		ShortAnswerSection *ShortAnswerSectionPost `json:"shortanswer,omitempty"`
 		AnswerSection      *AnswerSectionPost      `json:"answer,omitempty"`
 		CodeSection        *CodeSection            `json:"code,omitempty"`
+		PermutationSection *PermutationSection     `json:"permutation,omitempty"`
 	}
 
 	TextSectionPost struct {
@@ -47,6 +48,11 @@ type (
 	CodeSection struct {
 		Question string `validate:"required,max=5000"`
 	}
+
+	PermutationSection struct {
+		Question string   `validate:"required,max=500"`
+		Answer   []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
+	}
 )
 
 func (r Section) toSection() *entity.Section {
@@ -63,6 +69,7 @@ func (r Section) toSection() *entity.Section {
 		ShortAnswerSection: r.postToShortAnswer(r.ShortAnswerSection),
 		AnswerSection:      r.postToAnswer(r.AnswerSection),
 		CodeSection:        r.postToCode(r.CodeSection),
+		PermutationSection: r.postToPermutation(r.PermutationSection),
 	}
 }
 
@@ -122,5 +129,15 @@ func (r Section) postToCode(post *CodeSection) *entity.CodeSection {
 	}
 	return &entity.CodeSection{
 		Question: post.Question,
+	}
+}
+
+func (r Section) postToPermutation(post *PermutationSection) *entity.PermutationSection {
+	if post == nil {
+		return nil
+	}
+	return &entity.PermutationSection{
+		Question: post.Question,
+		Answer:   post.Answer,
 	}
 }

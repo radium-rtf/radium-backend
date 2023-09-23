@@ -4,6 +4,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"reflect"
+	"slices"
 )
 
 type Checker struct {
@@ -25,6 +26,9 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 
 	case isExists(answer.ShortAnswer, section.ShortAnswerSection):
 		verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
+
+	case isExists(answer.Permutation, section.PermutationSection):
+		verdictType = c.permutation(answer.Permutation, section.PermutationSection)
 
 	case isExists(answer.Answer, section.AnswerSection) ||
 		isExists(answer.Code, section.CodeSection):
@@ -70,6 +74,14 @@ func (c Checker) choice(answer *entity.ChoiceSectionAnswer, section *entity.Choi
 
 func (c Checker) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) verdict.Type {
 	ok := answer.Answer == section.Answer // TODO: (не)учитывать caps lock
+	if !ok {
+		return verdict.WA
+	}
+	return verdict.OK
+}
+
+func (c Checker) permutation(permutation *entity.PermutationSectionAnswer, section *entity.PermutationSection) verdict.Type {
+	ok := slices.Equal(permutation.Answer, section.Answer)
 	if !ok {
 		return verdict.WA
 	}

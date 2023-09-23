@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -88,7 +87,8 @@ func (r Course) getFull(ctx context.Context, where ...gen.Condition) (*entity.Co
 		Preload(m, m.Order(r.pg.Module.Order)).
 		Preload(p, p.Order(r.pg.Page.Order)).
 		Preload(s, s.Order(r.pg.Section.Order)).
-		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection, s.ShortAnswerSection, s.AnswerSection).
+		Preload(s.ChoiceSection, s.MultiChoiceSection, s.TextSection,
+			s.ShortAnswerSection, s.AnswerSection, s.CodeSection, s.PermutationSection).
 		First()
 
 	return course, err
@@ -98,50 +98,16 @@ func (r Course) Join(ctx context.Context, userId, courseId uuid.UUID) error {
 	course := entity.Course{DBModel: entity.DBModel{Id: courseId}}
 	user := &entity.User{DBModel: entity.DBModel{Id: userId}}
 	err := r.pg.Course.Students.WithContext(ctx).Model(&course).Append(user)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("%+v", course)
-
-	return nil
+	return err
 }
-
-// func (r Course) CreateLink(ctx context.Context, link entity.Link) error {
-// 	sql, args, err := r.pg.Builder.
-// 		Insert("course_links").
-// 		Columns("id", "name", "link", "course_id").
-// 		Values(link.Id, link.Name, link.Link, link.CourseId).
-// 		ToSql()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	_, err = r.pg.Pool.Exec(ctx, sql, args...)
-// 	return err
-// }
-
-// func (r Course) CreateCollaborator(ctx context.Context, collaborator entity.CourseCollaborator) error {
-// 	sql, args, err := r.pg.Builder.
-// 		Insert("course_collaborators").
-// 		Columns("id", "user_email", "course_id").
-// 		Values(collaborator.Id, collaborator.UserEmail, collaborator.CourseId).
-// 		ToSql()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	_, err = r.pg.Pool.Exec(ctx, sql, args...)
-// 	return err
-// }
 
 func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.Course, error) {
 	c := r.pg.Course
 	u := r.pg.User
-	courses, err := c.WithContext(ctx).Preload(c.Students.On(u.Id.Eq(userId))).Find()
-	if err != nil {
-		return []*entity.Course{}, err
-	}
 
-	return courses, nil
+	return c.WithContext(ctx).
+		Preload(c.Students.On(u.Id.Eq(userId))).
+		Find()
 }
 
 func (r Course) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {

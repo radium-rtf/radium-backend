@@ -70,6 +70,12 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 		RelationField: field.NewRelation("CodeSection", "entity.CodeSection"),
 	}
 
+	_section.PermutationSection = sectionHasOnePermutationSection{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("PermutationSection", "entity.PermutationSection"),
+	}
+
 	_section.fillFieldMap()
 
 	return _section
@@ -97,6 +103,8 @@ type section struct {
 	AnswerSection sectionHasOneAnswerSection
 
 	CodeSection sectionHasOneCodeSection
+
+	PermutationSection sectionHasOnePermutationSection
 
 	fieldMap map[string]field.Expr
 }
@@ -144,7 +152,7 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 13)
+	s.fieldMap = make(map[string]field.Expr, 14)
 	s.fieldMap["id"] = s.Id
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
@@ -588,6 +596,77 @@ func (a sectionHasOneCodeSectionTx) Clear() error {
 }
 
 func (a sectionHasOneCodeSectionTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type sectionHasOnePermutationSection struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a sectionHasOnePermutationSection) Where(conds ...field.Expr) *sectionHasOnePermutationSection {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a sectionHasOnePermutationSection) WithContext(ctx context.Context) *sectionHasOnePermutationSection {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a sectionHasOnePermutationSection) Session(session *gorm.Session) *sectionHasOnePermutationSection {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a sectionHasOnePermutationSection) Model(m *entity.Section) *sectionHasOnePermutationSectionTx {
+	return &sectionHasOnePermutationSectionTx{a.db.Model(m).Association(a.Name())}
+}
+
+type sectionHasOnePermutationSectionTx struct{ tx *gorm.Association }
+
+func (a sectionHasOnePermutationSectionTx) Find() (result *entity.PermutationSection, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a sectionHasOnePermutationSectionTx) Append(values ...*entity.PermutationSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a sectionHasOnePermutationSectionTx) Replace(values ...*entity.PermutationSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a sectionHasOnePermutationSectionTx) Delete(values ...*entity.PermutationSection) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a sectionHasOnePermutationSectionTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a sectionHasOnePermutationSectionTx) Count() int64 {
 	return a.tx.Count()
 }
 

@@ -1,11 +1,10 @@
 package entity
 
 import (
-	"math"
-
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
+	"math"
 )
 
 type (
@@ -20,6 +19,7 @@ type (
 		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
 		Answer      *AnswerSectionAnswer      `gorm:"polymorphic:Owner"`
 		Code        *CodeSectionAnswer        `gorm:"polymorphic:Owner"`
+		Permutation *PermutationSectionAnswer `gorm:"polymorphic:Owner"`
 
 		Review *Review
 	}
@@ -60,6 +60,13 @@ type (
 		Language  string    `gorm:"not null"`
 	}
 
+	PermutationSectionAnswer struct {
+		DBModel
+		Answer    pq.StringArray `gorm:"type:text[]; not null"`
+		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
+		OwnerType string         `gorm:"not null"`
+	}
+
 	UsersAnswersCollection struct {
 		Users           []*User
 		AnswersByUserId map[uuid.UUID]*AnswersCollection
@@ -88,6 +95,9 @@ func (a Answer) Score(section *Section) uint {
 func (a Answer) Answers() []string {
 	if a.MultiChoice != nil {
 		return a.MultiChoice.Answer
+	}
+	if a.Permutation != nil {
+		return a.Permutation.Answer
 	}
 	return []string{}
 }

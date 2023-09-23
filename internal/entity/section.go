@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"math/rand"
 )
 
 type (
@@ -18,6 +19,7 @@ type (
 		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner"`
 		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner"`
 		CodeSection        *CodeSection        `gorm:"polymorphic:Owner"`
+		PermutationSection *PermutationSection `gorm:"polymorphic:Owner"`
 	}
 
 	TextSection struct {
@@ -66,28 +68,33 @@ type (
 		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
 		OwnerType string    `gorm:"not null"`
 	}
+
+	PermutationSection struct {
+		DBModel
+		Question  string         `gorm:"not null"`
+		Answer    pq.StringArray `gorm:"type:text[]; not null"`
+		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
+		OwnerType string         `gorm:"not null"`
+	}
 )
 
 func (s Section) Content() string {
-	if s.ChoiceSection != nil {
+	switch {
+	case s.ChoiceSection != nil:
 		return s.ChoiceSection.Question
-	}
-	if s.MultiChoiceSection != nil {
-		return s.MultiChoiceSection.Question
-	}
-	if s.ShortAnswerSection != nil {
+	case s.ShortAnswerSection != nil:
 		return s.ShortAnswerSection.Question
-	}
-	if s.TextSection != nil {
+	case s.TextSection != nil:
 		return s.TextSection.Content
-	}
-	if s.AnswerSection != nil {
+	case s.AnswerSection != nil:
 		return s.AnswerSection.Question
-	}
-	if s.CodeSection != nil {
+	case s.CodeSection != nil:
 		return s.CodeSection.Question
+	case s.PermutationSection != nil:
+		return s.PermutationSection.Question
+	default:
+		panic("")
 	}
-	return ""
 }
 
 func (s Section) Variants() []string {
@@ -96,6 +103,13 @@ func (s Section) Variants() []string {
 	}
 	if s.MultiChoiceSection != nil {
 		return s.MultiChoiceSection.Variants
+	}
+	if s.PermutationSection != nil {
+		variants := []string(s.PermutationSection.Answer)
+		rand.Shuffle(len(variants), func(i, j int) {
+			variants[i], variants[j] = variants[j], variants[i]
+		})
+		return variants
 	}
 	return []string{}
 }

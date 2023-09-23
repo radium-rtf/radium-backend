@@ -64,6 +64,12 @@ func newAnswer(db *gorm.DB, opts ...gen.DOOption) answer {
 		RelationField: field.NewRelation("Code", "entity.CodeSectionAnswer"),
 	}
 
+	_answer.Permutation = answerHasOnePermutation{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Permutation", "entity.PermutationSectionAnswer"),
+	}
+
 	_answer.Review = answerHasOneReview{
 		db: db.Session(&gorm.Session{}),
 
@@ -95,6 +101,8 @@ type answer struct {
 	Answer answerHasOneAnswer
 
 	Code answerHasOneCode
+
+	Permutation answerHasOnePermutation
 
 	Review answerHasOneReview
 
@@ -144,7 +152,7 @@ func (a *answer) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *answer) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 13)
+	a.fieldMap = make(map[string]field.Expr, 14)
 	a.fieldMap["id"] = a.Id
 	a.fieldMap["created_at"] = a.CreatedAt
 	a.fieldMap["updated_at"] = a.UpdatedAt
@@ -517,6 +525,77 @@ func (a answerHasOneCodeTx) Clear() error {
 }
 
 func (a answerHasOneCodeTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type answerHasOnePermutation struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a answerHasOnePermutation) Where(conds ...field.Expr) *answerHasOnePermutation {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a answerHasOnePermutation) WithContext(ctx context.Context) *answerHasOnePermutation {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a answerHasOnePermutation) Session(session *gorm.Session) *answerHasOnePermutation {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a answerHasOnePermutation) Model(m *entity.Answer) *answerHasOnePermutationTx {
+	return &answerHasOnePermutationTx{a.db.Model(m).Association(a.Name())}
+}
+
+type answerHasOnePermutationTx struct{ tx *gorm.Association }
+
+func (a answerHasOnePermutationTx) Find() (result *entity.PermutationSectionAnswer, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a answerHasOnePermutationTx) Append(values ...*entity.PermutationSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a answerHasOnePermutationTx) Replace(values ...*entity.PermutationSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a answerHasOnePermutationTx) Delete(values ...*entity.PermutationSectionAnswer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a answerHasOnePermutationTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a answerHasOnePermutationTx) Count() int64 {
 	return a.tx.Count()
 }
 

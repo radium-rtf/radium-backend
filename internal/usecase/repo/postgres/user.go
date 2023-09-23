@@ -24,22 +24,15 @@ func NewUserRepo(pg *db.Query) User {
 
 func (r User) Create(ctx context.Context, user *entity.User) error {
 	u := r.pg.User
-	err := r.pg.User.WithContext(ctx).Select(u.Email, u.Password, u.Name, u.Id).Create(user)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return u.WithContext(ctx).
+		Select(u.Email, u.Password, u.Name, u.Id).
+		Create(user)
 }
 
 func (r User) get(ctx context.Context, cond ...gen.Condition) (*entity.User, error) {
-	user, err := r.pg.User.WithContext(ctx).Where(cond...).First()
-	if err != nil {
-		return &entity.User{}, err
-	}
-
-	return user, nil
+	return r.pg.User.WithContext(ctx).
+		Where(cond...).
+		First()
 }
 
 func (r User) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
