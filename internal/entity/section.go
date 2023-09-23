@@ -99,3 +99,10 @@ func (s Section) Variants() []string {
 	}
 	return []string{}
 }
+
+func (s Section) GetMaxScore() uint {
+	if s.TextSection != nil {
+		return 0
+	}
+	return s.MaxScore
+}

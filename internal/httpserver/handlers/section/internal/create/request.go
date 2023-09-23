@@ -50,6 +50,9 @@ type (
 )
 
 func (r Section) toSection() *entity.Section {
+	if r.TextSection != nil {
+		r.MaxScore = 0
+	}
 	return &entity.Section{
 		PageId:             r.PageId,
 		Order:              r.Order,

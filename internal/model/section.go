@@ -53,7 +53,7 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 			answersArr = answer.Answers()
 		}
 
-		sumMaxScore += section.MaxScore
+		sumMaxScore += section.GetMaxScore()
 		sumScore += score
 
 		dto := NewSection(section, verdictType, score, answerStr, answersArr)
@@ -85,7 +85,7 @@ func NewSection(section *entity.Section, verdict verdict.Type,
 		PageId:   section.PageId,
 		Order:    section.Order,
 		Content:  section.Content(),
-		MaxScore: section.MaxScore,
+		MaxScore: section.GetMaxScore(),
 		Verdict:  verdict,
 		Variants: section.Variants(),
 		Type:     sectionType,
