@@ -1228,7 +1228,7 @@ const docTemplate = `{
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 200,
+                    "maxLength": 400,
                     "minLength": 1
                 }
             }
@@ -1782,7 +1782,8 @@ const docTemplate = `{
                 "text",
                 "shortAnswer",
                 "answer",
-                "code"
+                "code",
+                "permutation"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -1790,7 +1791,8 @@ const docTemplate = `{
                 "TextType",
                 "ShortAnswerType",
                 "AnswerType",
-                "CodeType"
+                "CodeType",
+                "PermutationType"
             ]
         },
         "model.Tokens": {
@@ -1911,7 +1913,7 @@ const docTemplate = `{
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 200,
+                    "maxLength": 400,
                     "minLength": 1
                 }
             }

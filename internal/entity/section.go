@@ -92,6 +92,8 @@ func (s Section) Content() string {
 		return s.CodeSection.Question
 	case s.PermutationSection != nil:
 		return s.PermutationSection.Question
+	case s.MultiChoiceSection != nil:
+		return s.MultiChoiceSection.Question
 	default:
 		panic("")
 	}

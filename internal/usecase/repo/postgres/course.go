@@ -136,5 +136,5 @@ func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Cour
 		return nil, errors.New("not found")
 	}
 
-	return r.GetById(ctx, course.Id)
+	return r.GetFullById(ctx, course.Id)
 }

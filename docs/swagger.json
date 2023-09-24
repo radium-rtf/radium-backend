@@ -1221,7 +1221,7 @@
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 200,
+                    "maxLength": 400,
                     "minLength": 1
                 }
             }
@@ -1775,7 +1775,8 @@
                 "text",
                 "shortAnswer",
                 "answer",
-                "code"
+                "code",
+                "permutation"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -1783,7 +1784,8 @@
                 "TextType",
                 "ShortAnswerType",
                 "AnswerType",
-                "CodeType"
+                "CodeType",
+                "PermutationType"
             ]
         },
         "model.Tokens": {
@@ -1904,7 +1906,7 @@
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 200,
+                    "maxLength": 400,
                     "minLength": 1
                 }
             }

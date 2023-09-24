@@ -14,6 +14,6 @@ func (r Page) toPage(pageId uuid.UUID) *entity.Page {
 	return &entity.Page{
 		DBModel: entity.DBModel{Id: pageId},
 		Name:    r.Name,
-		Slug:    translit.RuEn(r.Name),
+		Slug:    translit.Make(r.Name),
 	}
 }

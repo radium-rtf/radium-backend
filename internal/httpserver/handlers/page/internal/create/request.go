@@ -18,6 +18,6 @@ func (r Page) toPage() *entity.Page {
 		Name:     r.Name,
 		ModuleId: r.ModuleId,
 		Order:    r.Order,
-		Slug:     translit.RuEn(r.Name),
+		Slug:     translit.Make(r.Name),
 	}
 }

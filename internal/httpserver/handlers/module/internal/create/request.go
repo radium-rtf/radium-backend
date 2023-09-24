@@ -17,6 +17,6 @@ func (m Module) toModule() *entity.Module {
 		Name:     m.Name,
 		CourseId: m.CourseId,
 		Order:    m.Order,
-		Slug:     translit.RuEn(m.Name),
+		Slug:     translit.Make(m.Name),
 	}
 }

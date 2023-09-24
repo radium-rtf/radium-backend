@@ -87,7 +87,7 @@ definitions:
         minLength: 1
         type: string
       shortDescription:
-        maxLength: 200
+        maxLength: 400
         minLength: 1
         type: string
     required:
@@ -464,6 +464,7 @@ definitions:
     - shortAnswer
     - answer
     - code
+    - permutation
     type: string
     x-enum-varnames:
     - ChoiceType
@@ -472,6 +473,7 @@ definitions:
     - ShortAnswerType
     - AnswerType
     - CodeType
+    - PermutationType
   model.Tokens:
     properties:
       accessToken:
@@ -547,7 +549,7 @@ definitions:
         minLength: 1
         type: string
       shortDescription:
-        maxLength: 200
+        maxLength: 400
         minLength: 1
         type: string
     required:

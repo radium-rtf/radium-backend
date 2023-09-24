@@ -13,7 +13,7 @@ type Module struct {
 func (m Module) toModule(moduleId uuid.UUID) *entity.Module {
 	return &entity.Module{
 		Name:    m.Name,
-		Slug:    translit.RuEn(m.Name),
+		Slug:    translit.Make(m.Name),
 		DBModel: entity.DBModel{Id: moduleId},
 	}
 }
