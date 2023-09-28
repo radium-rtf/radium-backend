@@ -2,8 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
-	"github.com/radium-rtf/radium-backend/pkg/postgres/pggen"
 	"time"
 )
 
@@ -15,7 +13,6 @@ const (
 )
 
 type Postgres struct {
-	Q   *db.Query
 	sql *sql.DB
 
 	maxOpenConns    int
@@ -25,41 +22,7 @@ type Postgres struct {
 }
 
 func New(url string, opts ...Option) (*Postgres, error) {
-	gormDb, sqlDb, err := open(url)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pggen.Gen()
-
-	Q := db.Use(gormDb)
-
-	err = migrate(gormDb)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pg := &Postgres{
-		Q:               Q,
-		sql:             sqlDb,
-		maxOpenConns:    defaultMaxOpenConns,
-		maxIdleConns:    defaultMaxIdleConns,
-		connMaxLifetime: defaultConnMaxLifetime,
-		connMaxIdleTime: defaultConnMaxIdleTime,
-	}
-
-	for _, opt := range opts {
-		opt(pg)
-	}
-
-	sqlDb.SetMaxOpenConns(pg.maxOpenConns)
-	sqlDb.SetMaxIdleConns(pg.maxIdleConns)
-	sqlDb.SetConnMaxIdleTime(pg.connMaxIdleTime)
-	sqlDb.SetConnMaxLifetime(pg.connMaxLifetime)
-
-	return &Postgres{Q: Q, sql: sqlDb}, err
+	panic("not implemented")
 }
 
 func (p Postgres) Close() error {

@@ -18,10 +18,6 @@ require (
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.2
 	github.com/xlzd/gotp v0.1.0
-	gorm.io/driver/postgres v1.5.2
-	gorm.io/gen v0.3.23
-	gorm.io/gorm v1.25.4
-	gorm.io/plugin/dbresolver v1.4.7
 )
 
 require (
@@ -83,6 +79,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c // indirect
 	gorm.io/driver/mysql v1.5.1-0.20230509030346-3715c134c25b // indirect
+	gorm.io/gen v0.3.23 // indirect
+	gorm.io/gorm v1.25.1-0.20230505075827-e61b98d69677 // indirect
 	gorm.io/hints v1.1.0 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )
