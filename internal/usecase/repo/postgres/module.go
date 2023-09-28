@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/utils"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -14,8 +15,8 @@ type Module struct {
 	pg *db.Query
 }
 
-func NewModuleRepo(pg *db.Query) Module {
-	return Module{pg: pg}
+func NewModuleRepo(pg *postgres.Postgres) Module {
+	return Module{pg: pg.Q}
 }
 
 func (r Module) Create(ctx context.Context, module *entity.Module) (*entity.Module, error) {

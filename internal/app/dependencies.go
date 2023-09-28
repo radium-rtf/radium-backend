@@ -12,7 +12,7 @@ import (
 )
 
 func newDependencies(storage filestorage.Storage, cfg *config.Config, db *postgres.Postgres) usecase.Dependencies {
-	repositories := pg.NewRepositories(db.Q)
+	repositories := pg.NewRepositories(db)
 	tokenManager := auth.NewManager(cfg.Auth.SigningKey)
 	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	return usecase.Dependencies{

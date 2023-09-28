@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 )
 
 type Repositories struct {
@@ -18,7 +18,7 @@ type Repositories struct {
 	Role
 }
 
-func NewRepositories(pg *db.Query) Repositories {
+func NewRepositories(pg *postgres.Postgres) Repositories {
 	return Repositories{
 		Course:  NewCourseRepo(pg),
 		Answer:  NewAnswerRepo(pg),

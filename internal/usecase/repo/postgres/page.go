@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"github.com/radium-rtf/radium-backend/pkg/utils"
 )
@@ -13,8 +14,8 @@ type Page struct {
 	pg *db.Query
 }
 
-func NewPageRepo(pg *db.Query) Page {
-	return Page{pg: pg}
+func NewPageRepo(pg *postgres.Postgres) Page {
+	return Page{pg: pg.Q}
 }
 
 func (r Page) Create(ctx context.Context, page *entity.Page) (*entity.Page, error) {

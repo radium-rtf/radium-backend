@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 )
 
@@ -11,8 +12,8 @@ type Teacher struct {
 	pg *db.Query
 }
 
-func NewTeacherRepo(pg *db.Query) Teacher {
-	return Teacher{pg: pg}
+func NewTeacherRepo(pg *postgres.Postgres) Teacher {
+	return Teacher{pg: pg.Q}
 }
 
 func (t Teacher) GetByUserId(ctx context.Context, id uuid.UUID) (*entity.Teacher, error) {

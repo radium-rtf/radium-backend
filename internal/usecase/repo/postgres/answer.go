@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"gorm.io/gen/field"
 )
@@ -12,8 +13,8 @@ type Answer struct {
 	pg *db.Query
 }
 
-func NewAnswerRepo(pg *db.Query) Answer {
-	return Answer{pg: pg}
+func NewAnswerRepo(pg *postgres.Postgres) Answer {
+	return Answer{pg: pg.Q}
 }
 
 func (r Answer) Create(ctx context.Context, answer *entity.Answer) error {

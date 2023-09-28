@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"gorm.io/gen/field"
 )
@@ -10,8 +11,8 @@ type Role struct {
 	pg *db.Query
 }
 
-func NewRoleRepo(pg *db.Query) Role {
-	return Role{pg: pg}
+func NewRoleRepo(pg *postgres.Postgres) Role {
+	return Role{pg: pg.Q}
 }
 
 func (r Role) AddTeacher(ctx context.Context, email string) error {

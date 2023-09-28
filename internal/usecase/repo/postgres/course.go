@@ -6,6 +6,7 @@ import (
 	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/postgres/db"
 	"gorm.io/gen"
 )
@@ -14,8 +15,8 @@ type Course struct {
 	pg *db.Query
 }
 
-func NewCourseRepo(pg *db.Query) Course {
-	return Course{pg: pg}
+func NewCourseRepo(pg *postgres.Postgres) Course {
+	return Course{pg: pg.Q}
 }
 
 func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {

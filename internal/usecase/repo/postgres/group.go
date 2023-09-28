@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 
 	"github.com/google/uuid"
 
@@ -13,8 +14,8 @@ type Group struct {
 	pg *db.Query
 }
 
-func NewGroupRepo(pg *db.Query) Group {
-	return Group{pg: pg}
+func NewGroupRepo(pg *postgres.Postgres) Group {
+	return Group{pg: pg.Q}
 }
 
 func (r Group) Create(ctx context.Context, group *entity.Group) (*entity.Group, error) {

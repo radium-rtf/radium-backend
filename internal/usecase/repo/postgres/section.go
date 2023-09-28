@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"gorm.io/gen/field"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -14,8 +15,8 @@ type Section struct {
 	pg *db.Query
 }
 
-func NewSectionRepo(pg *db.Query) Section {
-	return Section{pg: pg}
+func NewSectionRepo(pg *postgres.Postgres) Section {
+	return Section{pg: pg.Q}
 }
 
 func (r Section) CreateSection(ctx context.Context, section *entity.Section) (*entity.Section, error) {

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"time"
 
 	"github.com/fatih/structs"
@@ -18,8 +19,8 @@ type User struct {
 	pg *db.Query
 }
 
-func NewUserRepo(pg *db.Query) User {
-	return User{pg: pg}
+func NewUserRepo(pg *postgres.Postgres) User {
+	return User{pg: pg.Q}
 }
 
 func (r User) Create(ctx context.Context, user *entity.User) error {

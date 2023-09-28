@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"time"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -12,8 +13,8 @@ type Session struct {
 	pg *db.Query
 }
 
-func NewSessionRepo(pg *db.Query) Session {
-	return Session{pg: pg}
+func NewSessionRepo(pg *postgres.Postgres) Session {
+	return Session{pg: pg.Q}
 }
 
 func (r Session) Create(ctx context.Context, session entity.Session) error {
