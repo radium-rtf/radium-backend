@@ -24,11 +24,16 @@ func New(url string, opts ...Option) (*Postgres, error) {
 		connMaxLifetimeDB(options.connMaxLifetime),
 	)
 
+	err = migrate(db)
+	if err != nil {
+		return nil, err
+	}
+
 	pg := &Postgres{
 		DB: db,
 	}
 
-	return pg, err
+	return pg, nil
 }
 
 func (p Postgres) Close() error {

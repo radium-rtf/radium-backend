@@ -14,6 +14,9 @@ func open(url string) (*sql.DB, error) {
 	}
 
 	sqldb := stdlib.OpenDB(*config)
+	if err = sqldb.Ping(); err == nil {
+		return sqldb, nil
+	}
 
 	for i := 0; i < 20; i++ {
 		time.Sleep(time.Second * 20)
