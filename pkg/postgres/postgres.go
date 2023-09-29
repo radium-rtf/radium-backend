@@ -1,30 +1,36 @@
 package postgres
 
 import (
-	"database/sql"
-	"time"
-)
-
-const (
-	defaultMaxOpenConns    = 3
-	defaultMaxIdleConns    = 2
-	defaultConnMaxIdleTime = time.Minute * 1
-	defaultConnMaxLifetime = time.Minute * 1
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
 )
 
 type Postgres struct {
-	sql *sql.DB
-
-	maxOpenConns    int
-	maxIdleConns    int
-	connMaxIdleTime time.Duration
-	connMaxLifetime time.Duration
+	DB *bun.DB
 }
 
 func New(url string, opts ...Option) (*Postgres, error) {
-	panic("not implemented")
+	sqldb, err := open(url)
+	if err != nil {
+		return nil, err
+	}
+
+	options := newOptions(opts...)
+
+	db := bun.NewDB(sqldb, pgdialect.New(),
+		maxIdleConnsDB(options.maxIdleConns),
+		maxOpenConnsDB(options.maxOpenConns),
+		connMaxIdleTimeDB(options.connMaxIdleTime),
+		connMaxLifetimeDB(options.connMaxLifetime),
+	)
+
+	pg := &Postgres{
+		DB: db,
+	}
+
+	return pg, err
 }
 
 func (p Postgres) Close() error {
-	return p.sql.Close()
+	return p.DB.Close()
 }
