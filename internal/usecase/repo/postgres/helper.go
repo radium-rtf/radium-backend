@@ -14,3 +14,8 @@ func (v uuids) toValuers() []driver.Valuer {
 	}
 	return valuers
 }
+
+type columnValue struct {
+	column string
+	value  any
+}

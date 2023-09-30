@@ -1,6 +1,7 @@
 package signup
 
 import (
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
 
@@ -11,5 +12,10 @@ type SignUp struct {
 }
 
 func (s SignUp) toUser() *entity.User {
-	return &entity.User{Email: s.Email, Password: s.Password, Name: s.Name}
+	return &entity.User{
+		DBModel:  entity.DBModel{Id: uuid.New()},
+		Email:    s.Email,
+		Password: s.Password,
+		Name:     s.Name,
+	}
 }

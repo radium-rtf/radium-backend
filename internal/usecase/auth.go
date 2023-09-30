@@ -57,13 +57,10 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (model.Toke
 		return tokens, err
 	}
 
-	verificationCode := uc.otpGenerator.RandomSecret(16)
-	uc.userRepo.SetVerificationCode(ctx, user.Id, verificationCode)
 	return uc.createSession(ctx, user)
 }
 
-func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken string) (model.Tokens, error) {
-	// добавить юзерайди
+func (uc AuthUseCase) RefreshToken(ctx context.Context, refreshToken uuid.UUID) (model.Tokens, error) {
 	user, err := uc.userRepo.GetByRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return model.Tokens{}, err
@@ -81,7 +78,7 @@ func (uc AuthUseCase) createSession(ctx context.Context, user *entity.User) (mod
 	return tokens, err
 }
 
-func (uc AuthUseCase) refreshSession(ctx context.Context, user *entity.User, refreshToken string) (model.Tokens, error) {
+func (uc AuthUseCase) refreshSession(ctx context.Context, user *entity.User, refreshToken uuid.UUID) (model.Tokens, error) {
 	tokens, refreshTime, err := uc.session.Refresh(model.NewUser(user), refreshToken)
 	if err != nil {
 		return model.Tokens{}, err
@@ -91,19 +88,9 @@ func (uc AuthUseCase) refreshSession(ctx context.Context, user *entity.User, ref
 }
 
 func (uc AuthUseCase) VerifyEmail(ctx context.Context, verificationCode string) (bool, error) {
-	user, err := uc.userRepo.GetByVerificationCode(ctx, verificationCode)
-	if err != nil {
-		return false, err
-	}
-
-	return uc.verifyUser(ctx, user.Id)
+	panic("not implemented")
 }
 
 func (uc AuthUseCase) verifyUser(ctx context.Context, id uuid.UUID) (bool, error) {
-	err := uc.userRepo.Verify(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	panic("not implemented")
 }

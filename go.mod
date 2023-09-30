@@ -23,7 +23,7 @@ require (
 	github.com/swaggo/swag v1.16.2
 	github.com/uptrace/bun v1.1.16
 	github.com/uptrace/bun/dialect/pgdialect v1.1.16
-	github.com/uptrace/bun/example/migrate v0.0.0-20230927121621-495336731da0
+	github.com/uptrace/bun/extra/bundebug v1.1.16
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/xlzd/gotp v0.1.0
 )

@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
 
 type refresh interface {
-	RefreshToken(ctx context.Context, refreshToken string) (model.Tokens, error)
+	RefreshToken(ctx context.Context, refreshToken uuid.UUID) (model.Tokens, error)
 }
 
 // @Tags  	    auth

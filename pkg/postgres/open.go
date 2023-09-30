@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
 	"time"
 )
 
@@ -26,4 +28,13 @@ func open(url string) (*sql.DB, error) {
 	}
 
 	return nil, err
+}
+
+func OpenDB(url string) (*bun.DB, error) {
+	sqldb, err := open(url)
+	if err != nil {
+		return nil, err
+	}
+	db := bun.NewDB(sqldb, pgdialect.New())
+	return db, nil
 }

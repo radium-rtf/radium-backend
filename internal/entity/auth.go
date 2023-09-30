@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/uptrace/bun"
 	"time"
 
 	"github.com/google/uuid"
@@ -8,8 +9,10 @@ import (
 
 type (
 	Session struct {
-		RefreshToken string    `json:"refreshToken; not null"`
-		ExpiresIn    time.Time `json:"expiresIn; not null"`
-		UserId       uuid.UUID `json:"userId" gorm:"type:uuid; not null"`
+		bun.BaseModel `bun:"table:sessions"`
+		RefreshToken  uuid.UUID `bun:",pk"`
+		ExpiresIn     time.Time
+		UserId        uuid.UUID
+		User          *User `bun:"rel:belongs-to,join:user_id=id"`
 	}
 )

@@ -1,6 +1,7 @@
 package session
 
 import (
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"github.com/radium-rtf/radium-backend/pkg/auth"
@@ -30,7 +31,7 @@ func (s Session) Create(user model.User) (entity.Session, model.Tokens, error) {
 		return session, tokens, err
 	}
 
-	tokens.RefreshToken, err = s.tokenManager.NewRefreshToken()
+	tokens.RefreshToken = s.tokenManager.NewRefreshToken()
 	if err != nil {
 		return session, tokens, err
 	}
@@ -44,12 +45,13 @@ func (s Session) Create(user model.User) (entity.Session, model.Tokens, error) {
 	return session, tokens, err
 }
 
-func (s Session) Refresh(user model.User, refreshToken string) (model.Tokens, time.Time, error) {
+func (s Session) Refresh(user model.User, refreshToken uuid.UUID) (model.Tokens, time.Time, error) {
 	var (
 		tokens model.Tokens
 		err    error
 	)
 
+	tokens.User = user
 	expiresIn := time.Now().Add(s.accessTTL)
 	tokens.ExpiresIn = expiresIn
 	tokens.RefreshToken = refreshToken

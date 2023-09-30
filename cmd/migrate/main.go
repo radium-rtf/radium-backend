@@ -16,13 +16,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	db, err := postgres.New(cfg.URL)
+	db, err := postgres.OpenDB(cfg.URL)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer db.Close()
 
-	migrator := newMigrator(migrate.NewMigrator(db.DB, migrations.Migrations))
+	migrator := newMigrator(migrate.NewMigrator(db, migrations.Migrations))
 	app := &cli.App{
 		Name: "bun",
 

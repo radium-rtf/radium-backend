@@ -12,24 +12,16 @@ type (
 		Name   string    `json:"name"`
 		Avatar string    `json:"avatar"`
 
-		Roles []Role `json:"roles"`
+		Roles *Roles `json:"roles"`
 	}
 )
 
 func NewUser(user *entity.User) User {
-	roles := make([]Role, 0, 1)
-	if user.IsTeacher {
-		roles = append(roles, TeacherRole)
-	}
-	if user.IsAuthor {
-		roles = append(roles, AuthorRole)
-	}
-
 	return User{
 		Id:     user.Id,
 		Email:  user.Email,
 		Name:   user.Name,
-		Avatar: user.Avatar,
-		Roles:  roles,
+		Avatar: user.Avatar.String,
+		Roles:  NewRoles(user.Roles),
 	}
 }

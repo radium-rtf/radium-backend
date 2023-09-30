@@ -3,6 +3,7 @@ package postgres
 import (
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 type Postgres struct {
@@ -23,6 +24,7 @@ func New(url string, opts ...Option) (*Postgres, error) {
 		connMaxIdleTimeDB(options.connMaxIdleTime),
 		connMaxLifetimeDB(options.connMaxLifetime),
 	)
+	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
 	err = migrate(db)
 	if err != nil {

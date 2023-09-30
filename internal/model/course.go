@@ -41,7 +41,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Cou
 	authors := make([]User, 0, len(course.Authors))
 	for _, author := range course.Authors {
 		authors = append(authors,
-			User{Id: author.Id, Name: author.Name, Avatar: author.Avatar, Email: author.Email})
+			User{Id: author.Id, Name: author.Name, Avatar: author.Avatar.String, Email: author.Email})
 	}
 
 	modules, score, maxScore := NewModules(course.Modules, answers)

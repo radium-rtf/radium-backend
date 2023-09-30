@@ -1,5 +1,7 @@
 package refresh
 
+import "github.com/google/uuid"
+
 type Refresh struct {
-	RefreshToken string `json:"refreshToken"`
+	RefreshToken uuid.UUID `json:"refreshToken"`
 }
