@@ -22,13 +22,13 @@ func NewUserRepo(pg *postgres.Postgres) User {
 
 func (r User) Create(ctx context.Context, user *entity.User) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		_, err := r.db.NewInsert().Model(user).Exec(ctx)
+		_, err := tx.NewInsert().Model(user).Exec(ctx)
 		if err != nil {
 			return err
 		}
 
 		roles := &entity.Roles{UserId: user.Id}
-		_, err = r.db.NewInsert().Model(roles).Exec(ctx)
+		_, err = tx.NewInsert().Model(roles).Exec(ctx)
 		return err
 	})
 }
