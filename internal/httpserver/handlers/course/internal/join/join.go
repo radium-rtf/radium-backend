@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
 
@@ -32,7 +33,7 @@ func New(connector connector) http.HandlerFunc {
 			return
 		}
 
-		courses, err := connector.Join(ctx, userId, courseId)
+		course, err := connector.Join(ctx, userId, courseId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
@@ -40,6 +41,6 @@ func New(connector connector) http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, courses)
+		render.JSON(w, r, model.NewCourse(course, nil))
 	}
 }
