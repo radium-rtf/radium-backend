@@ -1697,16 +1697,16 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Role": {
-            "type": "string",
-            "enum": [
-                "teacher",
-                "author"
-            ],
-            "x-enum-varnames": [
-                "TeacherRole",
-                "AuthorRole"
-            ]
+        "model.Roles": {
+            "type": "object",
+            "properties": {
+                "isAuthor": {
+                    "type": "boolean"
+                },
+                "isTeacher": {
+                    "type": "boolean"
+                }
+            }
         },
         "model.Section": {
             "type": "object",
@@ -1828,10 +1828,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "roles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Role"
-                    }
+                    "$ref": "#/definitions/model.Roles"
                 }
             }
         },
@@ -1933,18 +1930,13 @@ const docTemplate = `{
         },
         "update.User": {
             "type": "object",
-            "required": [
-                "avatar",
-                "name"
-            ],
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 25,
-                    "minLength": 1
+                    "maxLength": 25
                 }
             }
         },

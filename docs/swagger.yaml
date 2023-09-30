@@ -405,14 +405,13 @@ definitions:
           type: integer
         type: array
     type: object
-  model.Role:
-    enum:
-    - teacher
-    - author
-    type: string
-    x-enum-varnames:
-    - TeacherRole
-    - AuthorRole
+  model.Roles:
+    properties:
+      isAuthor:
+        type: boolean
+      isTeacher:
+        type: boolean
+    type: object
   model.Section:
     properties:
       answer:
@@ -496,9 +495,7 @@ definitions:
       name:
         type: string
       roles:
-        items:
-          $ref: '#/definitions/model.Role'
-        type: array
+        $ref: '#/definitions/model.Roles'
     type: object
   postauthor.Email:
     properties:
@@ -571,11 +568,7 @@ definitions:
         type: string
       name:
         maxLength: 25
-        minLength: 1
         type: string
-    required:
-    - avatar
-    - name
     type: object
   updatepass.Password:
     properties:
