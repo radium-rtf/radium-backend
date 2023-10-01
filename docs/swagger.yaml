@@ -543,15 +543,10 @@ definitions:
         type: string
       name:
         maxLength: 45
-        minLength: 1
         type: string
       shortDescription:
         maxLength: 400
-        minLength: 1
         type: string
-    required:
-    - name
-    - shortDescription
     type: object
   update.Module:
     properties:

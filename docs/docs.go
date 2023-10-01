@@ -1888,10 +1888,6 @@ const docTemplate = `{
         },
         "update.Course": {
             "type": "object",
-            "required": [
-                "name",
-                "shortDescription"
-            ],
             "properties": {
                 "banner": {
                     "type": "string"
@@ -1905,13 +1901,11 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 45,
-                    "minLength": 1
+                    "maxLength": 45
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400,
-                    "minLength": 1
+                    "maxLength": 400
                 }
             }
         },
