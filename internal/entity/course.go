@@ -17,9 +17,12 @@ type (
 		Logo             string
 		Banner           string
 
-		Authors  []User `bun:"m2m:course_author,join:Course=User"`
 		Students []User `bun:"m2m:course_student,join:Course=User"`
-		Links    []Link `bun:"rel:has-many,join:id=course_id"`
+
+		Authors []User `bun:"m2m:course_author,join:Course=User"`
+		Links   []Link `bun:"rel:has-many,join:id=course_id"`
+
+		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 	}
 
 	CourseAuthor struct {

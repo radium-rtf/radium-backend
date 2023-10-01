@@ -43,7 +43,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Cou
 		authors = append(authors, NewUser(&author))
 	}
 
-	modules, score, maxScore := NewModules([]*entity.Module{}, answers)
+	modules, score, maxScore := NewModules(course.Modules, answers)
 
 	return &Course{
 		Id:               course.Id,

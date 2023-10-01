@@ -2,9 +2,7 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -67,9 +65,11 @@ func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course,
 	err := r.db.NewSelect().
 		Model(course).
 		Where(where.column+" = ?", where.value).
-		Relation("Authors").
-		Relation("Authors.Roles").
+		Relation("Authors").Relation("Authors.Roles").
 		Relation("Links").
+		Relation("Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
 		Scan(ctx)
 	return course, err
 }
@@ -105,13 +105,14 @@ func (r Course) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 }
 
 func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Course, error) {
-	_, err := r.db.NewUpdate().
+	info, err := r.db.NewUpdate().
 		Model(course).
 		WherePK().
 		OmitZero().
 		Exec(ctx)
 
-	if errors.Is(err, pgx.ErrNoRows) {
+	n, _ := info.RowsAffected()
+	if err == nil && n == 0 {
 		return nil, repoerr.CourseNotFound
 	}
 	if err != nil {

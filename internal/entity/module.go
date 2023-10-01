@@ -1,22 +1,19 @@
 package entity
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
-)
-
-var (
-	ErrModulesNotFound = errors.New("модули курса не найдены")
+	"github.com/uptrace/bun"
 )
 
 type (
 	Module struct {
+		bun.BaseModel `bun:"table:modules"`
 		DBModel
-		Slug     string    `gorm:"type:string; not null"`
-		Name     string    `gorm:"type:string; not null"`
-		CourseId uuid.UUID `gorm:"type:uuid; not null"`
-		Order    float64   `gorm:"not null; default:0"`
-		Pages    []*Page
+
+		CourseId uuid.UUID
+
+		Slug  string
+		Name  string
+		Order float64
 	}
 )

@@ -116,7 +116,7 @@ definitions:
       courseId:
         type: string
       name:
-        maxLength: 20
+        maxLength: 40
         minLength: 1
         type: string
       order:
@@ -551,7 +551,7 @@ definitions:
   update.Module:
     properties:
       name:
-        maxLength: 20
+        maxLength: 40
         minLength: 1
         type: string
     required:
