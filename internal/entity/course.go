@@ -1,13 +1,8 @@
 package entity
 
 import (
-	"errors"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
-)
-
-var (
-	ErrCourseNotFound = errors.New("курс не найден")
 )
 
 type (
@@ -15,12 +10,12 @@ type (
 		bun.BaseModel `bun:"table:courses"`
 		DBModel
 
-		Name             string `gorm:"type:string; not null"`
-		Slug             string `gorm:"type:string; not null"`
-		ShortDescription string `gorm:"not null"`
-		Description      string `gorm:"not null"`
-		Logo             string `gorm:"not null"`
-		Banner           string `json:"banner"`
+		Name             string
+		Slug             string
+		ShortDescription string
+		Description      string
+		Logo             string
+		Banner           string
 
 		Authors  []User `bun:"m2m:course_author,join:Course=User"`
 		Students []User `bun:"m2m:course_student,join:Course=User"`

@@ -9,8 +9,8 @@ type (
 	Link struct {
 		bun.BaseModel `bun:"table:links"`
 		DBModel
-		Name     string    `gorm:"type:string; not null"`
-		Link     string    `gorm:"type:string; not null"`
-		CourseId uuid.UUID `gorm:"type:uuid; not null"`
+		Name     string
+		Link     string
+		CourseId uuid.UUID
 	}
 )
