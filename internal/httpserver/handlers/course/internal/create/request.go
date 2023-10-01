@@ -17,15 +17,23 @@ type Course struct {
 }
 
 func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
+	courseId := uuid.New()
 	authors := make([]entity.User, 0, 1)
 	authors = append(authors, entity.User{DBModel: entity.DBModel{Id: authorId}})
 
 	links := make([]entity.Link, 0, len(r.Links))
 	for _, v := range r.Links {
-		links = append(links, entity.Link{Name: v.Name, Link: v.Link})
+		link := entity.Link{
+			DBModel:  entity.DBModel{Id: uuid.New()},
+			Name:     v.Name,
+			Link:     v.Link,
+			CourseId: courseId,
+		}
+		links = append(links, link)
 	}
 
 	return &entity.Course{
+		DBModel:          entity.DBModel{Id: courseId},
 		Name:             r.Name,
 		Banner:           r.Banner,
 		Slug:             translit.Make(r.Name),

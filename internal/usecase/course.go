@@ -41,7 +41,7 @@ func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uui
 	if err != nil {
 		return &entity.Course{}, err
 	}
-	return uc.courseRepo.GetById(ctx, courseId)
+	return uc.courseRepo.GetFullById(ctx, courseId)
 }
 
 func (uc CourseUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {

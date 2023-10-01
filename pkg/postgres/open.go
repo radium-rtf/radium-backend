@@ -36,5 +36,6 @@ func OpenDB(url string) (*bun.DB, error) {
 		return nil, err
 	}
 	db := bun.NewDB(sqldb, pgdialect.New())
+	initDB(db)
 	return db, nil
 }

@@ -4,18 +4,19 @@ SET statement_timeout = 0;
 
 create table users
 (
-    id uuid primary key default gen_random_uuid(),
+    id         uuid primary key default gen_random_uuid(),
 
-    email varchar(200) unique not null,
-    avatar varchar(500),
-    name varchar(50) not null,
-    password varchar(600) not null,
+    email      varchar(200) not null,
+    avatar     varchar(500),
+    name       varchar(50)  not null,
+    password   varchar(600) not null,
 
     updated_at timestamptz,
     deleted_at timestamptz,
-    created_at timestamptz not null
+    created_at timestamptz  not null
 );
 
+create unique index users_email_idx on users (email) where deleted_at is null;
 
 --bun:split
 

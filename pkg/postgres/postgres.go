@@ -26,6 +26,7 @@ func New(url string, opts ...Option) (*Postgres, error) {
 	)
 	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
+	initDB(db)
 	err = migrate(db)
 	if err != nil {
 		return nil, err

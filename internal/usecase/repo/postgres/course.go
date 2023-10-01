@@ -2,63 +2,120 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/uptrace/bun"
 )
 
 type Course struct {
+	db *bun.DB
 }
 
 func NewCourseRepo(pg *postgres.Postgres) Course {
-	return Course{}
+	return Course{db: pg.DB}
 }
 
 func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {
-	panic("not implemented")
-}
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewInsert().Model(course).Exec(ctx)
+		if err != nil {
+			return err
+		}
 
-func (r Course) GetByName(ctx context.Context, name string) (*entity.Course, error) {
-	panic("not implemented")
+		var courseAuthor []*entity.CourseAuthor
+		for _, author := range course.Authors {
+			courseAuthor = append(courseAuthor, &entity.CourseAuthor{CourseId: course.Id, UserId: author.Id})
+		}
+		_, err = tx.NewInsert().Model(&courseAuthor).Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.NewInsert().Model(&course.Links).Exec(ctx)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return r.GetFullById(ctx, course.Id)
 }
 
 func (r Course) GetCourses(ctx context.Context) ([]*entity.Course, error) {
-	panic("not implemented")
-}
-
-// TODO: спросить про необходимость показывать курс полностью в списке всех курсов
-func (r Course) get(ctx context.Context, where ...any) ([]*entity.Course, error) {
-	panic("not implemented")
-}
-
-func (r Course) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
-	panic("not implemented")
+	var courses []*entity.Course
+	err := r.db.NewSelect().
+		Model(&courses).
+		Scan(ctx)
+	return courses, err
 }
 
 func (r Course) GetFullById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
-	panic("not implemented")
+	where := columnValue{column: "id", value: id}
+	return r.getFull(ctx, where)
 }
 
 func (r Course) GetFullBySlug(ctx context.Context, slug string) (*entity.Course, error) {
-	panic("not implemented")
+	where := columnValue{column: "slug", value: slug}
+	return r.getFull(ctx, where)
 }
 
-func (r Course) getFull(ctx context.Context, where ...any) (*entity.Course, error) {
-	panic("not implemented")
+func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course, error) {
+	var course = new(entity.Course)
+	err := r.db.NewSelect().
+		Model(course).
+		Where(where.column+" = ?", where.value).
+		Relation("Authors").
+		Relation("Authors.Roles").
+		Relation("Links").
+		Scan(ctx)
+	return course, err
 }
 
 func (r Course) Join(ctx context.Context, userId, courseId uuid.UUID) error {
-	panic("not implemented")
+	student := &entity.CourseStudent{CourseId: courseId, UserId: userId}
+	_, err := r.db.NewInsert().Model(student).Exec(ctx)
+	return err
 }
 
 func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.Course, error) {
-	panic("not implemented")
+	var user = new(entity.User)
+
+	err := r.db.NewSelect().
+		Model(user).
+		Where("id = ?", userId).
+		Relation("Courses").Relation("Courses.Authors").Relation("Courses.Links").
+		Relation("Courses.Authors.Roles").
+		Scan(ctx)
+
+	return user.Courses, err
 }
 
 func (r Course) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
-	panic("not implemented")
+	var query = r.db.NewDelete().
+		Model(&entity.Course{}).
+		Where("id = ?", id)
+	if !isSoft {
+		query = query.ForceDelete()
+	}
+	_, err := query.Exec(ctx)
+	return err
 }
 
 func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Course, error) {
-	panic("not implemented")
+	_, err := r.db.NewUpdate().
+		Model(course).
+		WherePK().
+		OmitZero().
+		Exec(ctx)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, repoerr.CourseNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return r.GetFullById(ctx, course.Id)
 }
