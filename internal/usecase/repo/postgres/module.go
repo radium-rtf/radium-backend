@@ -41,20 +41,26 @@ func (r Module) Update(ctx context.Context, module *entity.Module) (*entity.Modu
 		WherePK().
 		OmitZero().
 		Exec(ctx)
-
-	n, _ := info.RowsAffected()
-	if err == nil && n == 0 {
-		return nil, repoerr.ModuleNotFound
-	}
 	if err != nil {
 		return nil, err
+	}
+
+	n, _ := info.RowsAffected()
+	if n == 0 {
+		return nil, repoerr.ModuleNotFound
 	}
 	return r.GetById(ctx, module.Id)
 }
 
 func (r Module) GetById(ctx context.Context, id uuid.UUID) (*entity.Module, error) {
 	var module = new(entity.Module)
-	err := r.db.NewSelect().Model(module).Where("id = ?", id).Scan(ctx)
+	err := r.db.NewSelect().
+		Model(module).
+		Where("id = ?", id).
+		Relation("Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Scan(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return module, repoerr.ModuleNotFound
 	}

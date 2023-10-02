@@ -18,7 +18,7 @@ type (
 )
 
 func NewModule(module *entity.Module, answers map[uuid.UUID]*entity.Answer) *Module {
-	pages, score, maxScore := NewPages([]*entity.Page{}, answers)
+	pages, score, maxScore := NewPages(module.Pages, answers)
 
 	return &Module{
 		Id:       module.Id,

@@ -7,7 +7,7 @@ import (
 )
 
 type Page struct {
-	Name string `json:"name" validate:"required,min=1,max=20"`
+	Name string `json:"name" validate:"required,min=1,max=40"`
 }
 
 func (r Page) toPage(pageId uuid.UUID) *entity.Page {

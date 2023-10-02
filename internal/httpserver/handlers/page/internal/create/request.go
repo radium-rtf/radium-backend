@@ -8,7 +8,7 @@ import (
 
 type Page struct {
 	ModuleId uuid.UUID `json:"moduleId"`
-	Name     string    `json:"name" validate:"required,min=1,max=20"`
+	Name     string    `json:"name" validate:"required,min=1,max=40"`
 	Order    float64   `json:"order" validate:"numeric"`
 }
 

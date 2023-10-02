@@ -26,7 +26,7 @@ type answersGetter interface {
 func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ctx = r.Context()
-		userId, ok := ctx.Value("userId").(uuid.UUID)
+		_, ok := ctx.Value("userId").(uuid.UUID)
 
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
 		if err != nil {
@@ -46,21 +46,24 @@ func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 			render.JSON(w, r, model.NewPage(page, map[uuid.UUID]*entity.Answer{}))
 			return
 		}
+		panic("")
+		/*
+			sectionsIds := make([]uuid.UUID, 0, len(page.Sections))
+			for _, section := range page.Sections {
+				sectionsIds = append(sectionsIds, section.Id)
+			}
 
-		sectionsIds := make([]uuid.UUID, 0, len(page.Sections))
-		for _, section := range page.Sections {
-			sectionsIds = append(sectionsIds, section.Id)
-		}
+			answers, err := answersGetter.GetBySections(ctx, sectionsIds, userId)
+			if err != nil {
+				render.Status(r, http.StatusBadRequest)
+				render.JSON(w, r, err.Error())
+				return
+			}
 
-		answers, err := answersGetter.GetBySections(ctx, sectionsIds, userId)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
+			dto := model.NewPage(page, answers)
+			render.Status(r, http.StatusOK)
+			render.JSON(w, r, dto)
 
-		dto := model.NewPage(page, answers)
-		render.Status(r, http.StatusOK)
-		render.JSON(w, r, dto)
+		*/
 	}
 }

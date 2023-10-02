@@ -21,7 +21,7 @@ func (uc PageUseCase) Create(ctx context.Context, page *entity.Page) (*entity.Pa
 }
 
 func (uc PageUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
-	return uc.pageRepo.GetByID(ctx, id)
+	return uc.pageRepo.GetById(ctx, id)
 }
 
 func (uc PageUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {

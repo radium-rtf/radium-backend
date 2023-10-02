@@ -15,5 +15,7 @@ type (
 		Slug  string
 		Name  string
 		Order float64
+
+		Pages []*Page `bun:"rel:has-many,join:id=module_id"`
 	}
 )
