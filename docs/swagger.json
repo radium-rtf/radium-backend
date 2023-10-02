@@ -1402,7 +1402,7 @@
                     "$ref": "#/definitions/create.MultiChoiceSectionPost"
                 },
                 "order": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "pageId": {
                     "type": "string"
@@ -1435,11 +1435,11 @@
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 10
+                    "maxLength": 50
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 200
                 }
             }
         },
@@ -1496,6 +1496,27 @@
                     "type": "number"
                 }
             }
+        },
+        "entity.SectionType": {
+            "type": "string",
+            "enum": [
+                "choice",
+                "multiChoice",
+                "text",
+                "shortAnswer",
+                "answer",
+                "code",
+                "permutation"
+            ],
+            "x-enum-varnames": [
+                "ChoiceType",
+                "MultiChoiceType",
+                "TextType",
+                "ShortAnswerType",
+                "AnswerType",
+                "CodeType",
+                "PermutationType"
+            ]
         },
         "model.Course": {
             "type": "object",
@@ -1723,7 +1744,7 @@
                     "type": "integer"
                 },
                 "order": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "pageId": {
                     "type": "string"
@@ -1742,7 +1763,7 @@
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/model.SectionType"
+                            "$ref": "#/definitions/entity.SectionType"
                         }
                     ]
                 },
@@ -1766,27 +1787,6 @@
                     ]
                 }
             }
-        },
-        "model.SectionType": {
-            "type": "string",
-            "enum": [
-                "choice",
-                "multiChoice",
-                "text",
-                "shortAnswer",
-                "answer",
-                "code",
-                "permutation"
-            ],
-            "x-enum-varnames": [
-                "ChoiceType",
-                "MultiChoiceType",
-                "TextType",
-                "ShortAnswerType",
-                "AnswerType",
-                "CodeType",
-                "PermutationType"
-            ]
         },
         "model.Tokens": {
             "type": "object",

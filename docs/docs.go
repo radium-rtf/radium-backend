@@ -1409,7 +1409,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/create.MultiChoiceSectionPost"
                 },
                 "order": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "pageId": {
                     "type": "string"
@@ -1442,11 +1442,11 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 10
+                    "maxLength": 50
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 200
                 }
             }
         },
@@ -1503,6 +1503,27 @@ const docTemplate = `{
                     "type": "number"
                 }
             }
+        },
+        "entity.SectionType": {
+            "type": "string",
+            "enum": [
+                "choice",
+                "multiChoice",
+                "text",
+                "shortAnswer",
+                "answer",
+                "code",
+                "permutation"
+            ],
+            "x-enum-varnames": [
+                "ChoiceType",
+                "MultiChoiceType",
+                "TextType",
+                "ShortAnswerType",
+                "AnswerType",
+                "CodeType",
+                "PermutationType"
+            ]
         },
         "model.Course": {
             "type": "object",
@@ -1730,7 +1751,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "order": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "pageId": {
                     "type": "string"
@@ -1749,7 +1770,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/model.SectionType"
+                            "$ref": "#/definitions/entity.SectionType"
                         }
                     ]
                 },
@@ -1773,27 +1794,6 @@ const docTemplate = `{
                     ]
                 }
             }
-        },
-        "model.SectionType": {
-            "type": "string",
-            "enum": [
-                "choice",
-                "multiChoice",
-                "text",
-                "shortAnswer",
-                "answer",
-                "code",
-                "permutation"
-            ],
-            "x-enum-varnames": [
-                "ChoiceType",
-                "MultiChoiceType",
-                "TextType",
-                "ShortAnswerType",
-                "AnswerType",
-                "CodeType",
-                "PermutationType"
-            ]
         },
         "model.Tokens": {
             "type": "object",
