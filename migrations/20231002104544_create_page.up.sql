@@ -18,4 +18,4 @@ create table pages
     foreign key (module_id) references modules (id)
 );
 
-create index pages_module_id_idx on modules(course_id);
+create index pages_module_id_idx on modules(id);
