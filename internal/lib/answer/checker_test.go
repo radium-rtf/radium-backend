@@ -8,17 +8,17 @@ import (
 )
 
 func TestChoice(t *testing.T) {
-	defaultSection := &entity.ChoiceSection{
+	defaultSection := &entity.Section{
 		Answer:   "4",
 		Variants: []string{"3", "5", "не хочу отвечать на этот вопрос", "4"},
-		Question: "2 + 2 = ?",
+		Content:  "2 + 2 = ?",
 	}
 	tests := []struct {
 		name        string
 		expected    verdict.Type
 		expectedErr error
 		answer      *entity.ChoiceSectionAnswer
-		section     *entity.ChoiceSection
+		section     *entity.Section
 	}{
 		{
 			name:     "WA",
@@ -43,7 +43,7 @@ func TestChoice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			checker := Checker{}
-			section := &entity.Section{ChoiceSection: tt.section}
+			section := tt.section
 			answer := &entity.Answer{Choice: tt.answer}
 			ver, err := checker.Check(section, answer)
 
