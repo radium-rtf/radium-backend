@@ -17,7 +17,7 @@ func NewSectionUseCase(sectionRepo postgres.Section) SectionUseCase {
 }
 
 func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section) (*entity.Section, error) {
-	return uc.sectionRepo.CreateSection(ctx, section)
+	return uc.sectionRepo.Create(ctx, section)
 }
 
 func (uc SectionUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {

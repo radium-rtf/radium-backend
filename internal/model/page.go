@@ -18,7 +18,7 @@ type (
 )
 
 func NewPage(page *entity.Page, answers map[uuid.UUID]*entity.Answer) *Page {
-	sectionsDto, score, maxScore := NewSections([]*entity.Section{}, answers)
+	sectionsDto, score, maxScore := NewSections(page.Sections, answers)
 
 	return &Page{
 		Id:       page.Id,

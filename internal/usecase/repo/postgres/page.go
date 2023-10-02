@@ -26,7 +26,12 @@ func (r Page) Create(ctx context.Context, page *entity.Page) (*entity.Page, erro
 
 func (r Page) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	var page = new(entity.Page)
-	err := r.db.NewSelect().Model(page).Where("id = ?", id).Scan(ctx)
+	err := r.db.NewSelect().Model(page).
+		Where("id = ?", id).
+		Relation("Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Scan(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return page, repoerr.PageNotFound
 	}

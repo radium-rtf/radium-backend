@@ -15,5 +15,7 @@ type (
 		Name  string
 		Slug  string
 		Order float64
+
+		Sections []*Section `bun:"rel:has-many,join:id=page_id"`
 	}
 )

@@ -60,6 +60,9 @@ func (r Module) GetById(ctx context.Context, id uuid.UUID) (*entity.Module, erro
 		Relation("Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
 		}).
+		Relation("Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
 		Scan(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return module, repoerr.ModuleNotFound

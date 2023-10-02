@@ -1,6 +1,7 @@
 package create
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
@@ -8,7 +9,7 @@ import (
 type (
 	Section struct {
 		PageId   uuid.UUID `json:"pageId"`
-		Order    uint      `json:"order" validate:"number"`
+		Order    float64   `json:"order" validate:"number"`
 		MaxScore uint      `json:"maxScore,omitempty" validate:"min=0,max=300"`
 
 		TextSection        *TextSectionPost        `json:"text,omitempty"`
@@ -37,8 +38,8 @@ type (
 	}
 
 	ShortAnswerSectionPost struct {
-		Question string `validate:"required,max=100"`
-		Answer   string `validate:"required,max=10"`
+		Question string `validate:"required,max=200"`
+		Answer   string `validate:"required,max=50"`
 	}
 
 	AnswerSectionPost struct {
@@ -55,89 +56,38 @@ type (
 	}
 )
 
-func (r Section) toSection() *entity.Section {
-	if r.TextSection != nil {
-		r.MaxScore = 0
-	}
-	return &entity.Section{
-		PageId:             r.PageId,
-		Order:              r.Order,
-		MaxScore:           r.MaxScore,
-		TextSection:        r.postToText(r.TextSection),
-		ChoiceSection:      r.postToChoice(r.ChoiceSection),
-		MultiChoiceSection: r.postToMultiChoice(r.MultiChoiceSection),
-		ShortAnswerSection: r.postToShortAnswer(r.ShortAnswerSection),
-		AnswerSection:      r.postToAnswer(r.AnswerSection),
-		CodeSection:        r.postToCode(r.CodeSection),
-		PermutationSection: r.postToPermutation(r.PermutationSection),
-	}
-}
+func (r Section) toSection() (*entity.Section, error) {
+	// TODO: хз хз хз. хочется валидацию разную для разных секций и без вот этого
 
-func (r Section) postToText(post *TextSectionPost) *entity.TextSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.TextSection{
-		Content: post.Content,
-	}
-}
+	switch {
+	case r.PermutationSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.PermutationSection.Question,
+			"", []string{}, r.PermutationSection.Answer, entity.PermutationType)
 
-func (r Section) postToChoice(post *ChoiceSectionPost) *entity.ChoiceSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.ChoiceSection{
-		Answer:   post.Answer,
-		Variants: post.Variants,
-		Question: post.Question,
-	}
-}
+	case r.ChoiceSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.ChoiceSection.Question,
+			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType)
 
-func (r Section) postToMultiChoice(post *MultiChoiceSectionPost) *entity.MultiChoiceSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.MultiChoiceSection{
-		Answer:   post.Answer,
-		Variants: post.Variants,
-		Question: post.Question,
-	}
-}
+	case r.ShortAnswerSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.ShortAnswerSection.Question,
+			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType)
 
-func (r Section) postToShortAnswer(post *ShortAnswerSectionPost) *entity.ShortAnswerSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.ShortAnswerSection{
-		Answer:   post.Answer,
-		Question: post.Question,
-	}
-}
+	case r.MultiChoiceSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.MultiChoiceSection.Question,
+			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType)
 
-func (r Section) postToAnswer(post *AnswerSectionPost) *entity.AnswerSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.AnswerSection{
-		Question: post.Question,
-	}
-}
+	case r.TextSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.TextSection.Content,
+			"", []string{}, []string{}, entity.TextType)
 
-func (r Section) postToCode(post *CodeSection) *entity.CodeSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.CodeSection{
-		Question: post.Question,
-	}
-}
+	case r.CodeSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.CodeSection.Question,
+			"", []string{}, []string{}, entity.CodeType)
 
-func (r Section) postToPermutation(post *PermutationSection) *entity.PermutationSection {
-	if post == nil {
-		return nil
-	}
-	return &entity.PermutationSection{
-		Question: post.Question,
-		Answer:   post.Answer,
+	case r.AnswerSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.AnswerSection.Question,
+			"", []string{}, []string{}, entity.AnswerType)
+	default:
+		return nil, errors.New("не удалось создать секцию")
 	}
 }

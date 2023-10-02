@@ -3,44 +3,47 @@ package answer
 import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
-	"reflect"
-	"slices"
 )
 
 type Checker struct {
 }
 
 func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.Verdict, error) {
-	var verdictType verdict.Type
+	/*
+		var verdictType verdict.Type
 
-	isExists := func(v1, v2 any) bool {
-		return !reflect.ValueOf(v1).IsNil() && !reflect.ValueOf(v2).IsNil()
-	}
+		isExists := func(v1, v2 any) bool {
+			return !reflect.ValueOf(v1).IsNil() && !reflect.ValueOf(v2).IsNil()
+		}
 
-	switch {
-	case isExists(answer.MultiChoice, section.MultiChoiceSection):
-		verdictType = c.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
+		switch {
+		case isExists(answer.MultiChoice, section.MultiChoiceSection):
+			verdictType = c.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
 
-	case isExists(answer.Choice, section.ChoiceSection):
-		verdictType = c.choice(answer.Choice, section.ChoiceSection)
+		case isExists(answer.Choice, section.ChoiceSection):
+			verdictType = c.choice(answer.Choice, section.ChoiceSection)
 
-	case isExists(answer.ShortAnswer, section.ShortAnswerSection):
-		verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
+		case isExists(answer.ShortAnswer, section.ShortAnswerSection):
+			verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
 
-	case isExists(answer.Permutation, section.PermutationSection):
-		verdictType = c.permutation(answer.Permutation, section.PermutationSection)
+		case isExists(answer.Permutation, section.PermutationSection):
+			verdictType = c.permutation(answer.Permutation, section.PermutationSection)
 
-	case isExists(answer.Answer, section.AnswerSection) ||
-		isExists(answer.Code, section.CodeSection):
-		verdictType = verdict.WAIT
+		case isExists(answer.Answer, section.AnswerSection) ||
+			isExists(answer.Code, section.CodeSection):
+			verdictType = verdict.WAIT
 
-	default:
-		return verdict.Verdict{}, errChecker
-	}
+		default:
+			return verdict.Verdict{}, errChecker
+		}
 
-	return verdict.Verdict{Verdict: verdictType}, nil
+		return verdict.Verdict{Verdict: verdictType}, nil
+
+	*/
+	panic("not implemented")
 }
 
+/*
 func (c Checker) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) verdict.Type {
 	answerArr := []string(answer.Answer)
 	solutionArr := []string(section.Answer)
@@ -98,3 +101,4 @@ func (Checker) toCounter(arr []string) map[string]int {
 	}
 	return m
 }
+*/

@@ -73,6 +73,9 @@ func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course,
 		Relation("Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
 		}).
+		Relation("Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
 		Scan(ctx)
 	return course, err
 }

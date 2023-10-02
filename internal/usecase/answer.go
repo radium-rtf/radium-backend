@@ -20,7 +20,7 @@ func NewAnswerUseCase(sectionRepo postgres.Section, answerRepo postgres.Answer) 
 }
 
 func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
-	section, err := uc.sectionRepo.GetSectionById(ctx, answer.SectionId)
+	section, err := uc.sectionRepo.GetById(ctx, answer.SectionId)
 	if err != nil {
 		return nil, err
 	}

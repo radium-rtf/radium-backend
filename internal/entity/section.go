@@ -1,123 +1,96 @@
 package entity
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/uptrace/bun"
 	"math/rand"
+	"slices"
+)
+
+const (
+	ChoiceType      = SectionType("choice")
+	MultiChoiceType = SectionType("multiChoice")
+	TextType        = SectionType("text")
+	ShortAnswerType = SectionType("shortAnswer")
+	AnswerType      = SectionType("answer")
+	CodeType        = SectionType("code")
+	PermutationType = SectionType("permutation")
 )
 
 type (
+	SectionType string
+
 	Section struct {
+		bun.BaseModel `bun:"table:sections"`
 		DBModel
-		PageId   uuid.UUID `gorm:"type:uuid; not null"`
-		Order    uint      `gorm:"not null"`
-		MaxScore uint      `gorm:"not null; default:0"`
 
-		TextSection        *TextSection        `gorm:"polymorphic:Owner"`
-		ChoiceSection      *ChoiceSection      `gorm:"polymorphic:Owner"`
-		MultiChoiceSection *MultiChoiceSection `gorm:"polymorphic:Owner"`
-		ShortAnswerSection *ShortAnswerSection `gorm:"polymorphic:Owner"`
-		AnswerSection      *AnswerSection      `gorm:"polymorphic:Owner"`
-		CodeSection        *CodeSection        `gorm:"polymorphic:Owner"`
-		PermutationSection *PermutationSection `gorm:"polymorphic:Owner"`
-	}
+		PageId   uuid.UUID
+		Order    float64
+		MaxScore uint
+		Type     SectionType
 
-	TextSection struct {
-		DBModel
-		Content   string    `gorm:"type:text; not null"`
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-	}
+		Content  string
+		Variants pq.StringArray
 
-	AnswerSection struct {
-		DBModel
-		Question  string    `gorm:"type:text; not null"`
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-	}
-
-	ChoiceSection struct {
-		DBModel
-		Question  string         `gorm:"not null"`
-		Answer    string         `gorm:"not null"`
-		Variants  pq.StringArray `gorm:"type:text[]; not null"`
-		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
-		OwnerType string         `gorm:"not null"`
-	}
-
-	MultiChoiceSection struct {
-		DBModel
-		Question  string         `gorm:"not null"`
-		Answer    pq.StringArray `gorm:"type:text[]; not null"`
-		Variants  pq.StringArray `gorm:"type:text[]; not null"`
-		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
-		OwnerType string         `gorm:"not null"`
-	}
-
-	ShortAnswerSection struct {
-		DBModel
-		Question  string    `gorm:"not null"`
-		Answer    string    `gorm:"not null"`
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-	}
-
-	CodeSection struct {
-		DBModel
-		Question  string    `gorm:"not null"`
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-	}
-
-	PermutationSection struct {
-		DBModel
-		Question  string         `gorm:"not null"`
-		Answer    pq.StringArray `gorm:"type:text[]; not null"`
-		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
-		OwnerType string         `gorm:"not null"`
+		Answer  string
+		Answers pq.StringArray
 	}
 )
 
-func (s Section) Content() string {
-	switch {
-	case s.ChoiceSection != nil:
-		return s.ChoiceSection.Question
-	case s.ShortAnswerSection != nil:
-		return s.ShortAnswerSection.Question
-	case s.TextSection != nil:
-		return s.TextSection.Content
-	case s.AnswerSection != nil:
-		return s.AnswerSection.Question
-	case s.CodeSection != nil:
-		return s.CodeSection.Question
-	case s.PermutationSection != nil:
-		return s.PermutationSection.Question
-	case s.MultiChoiceSection != nil:
-		return s.MultiChoiceSection.Question
-	default:
-		panic("")
+func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
+	answer string, variants, answers []string, sectionType SectionType) (*Section, error) {
+	if sectionType == TextType {
+		maxScore = 0
 	}
+	section := &Section{
+		DBModel:  DBModel{Id: uuid.New()},
+		Order:    order,
+		MaxScore: maxScore,
+		PageId:   pageId,
+		Type:     sectionType,
+	}
+	section.Content = content
+	switch sectionType {
+	case PermutationType:
+		variants := slices.Clone(answers)
+		rand.Shuffle(len(variants), func(i, j int) {
+			variants[i], variants[j] = variants[j], variants[i]
+		})
+		section.Answers = answers
+		section.Variants = variants
+	case ChoiceType:
+		section.Answer = answer
+		section.Variants = variants
+	case ShortAnswerType:
+		section.Answer = answer
+	case MultiChoiceType:
+		section.Answers = answers
+		section.Variants = variants
+	case TextType:
+	case CodeType:
+	case AnswerType:
+	default:
+		return nil, errors.New("не удалось создать секцию")
+	}
+
+	return section, nil
 }
 
-func (s Section) Variants() []string {
-	if s.ChoiceSection != nil {
-		return s.ChoiceSection.Variants
-	}
-	if s.MultiChoiceSection != nil {
-		return s.MultiChoiceSection.Variants
-	}
-	if s.PermutationSection != nil {
-		variants := []string(s.PermutationSection.Answer)
+func (s Section) GetVariants() []string {
+	if s.Type == PermutationType {
+		variants := []string(s.Variants)
 		rand.Shuffle(len(variants), func(i, j int) {
 			variants[i], variants[j] = variants[j], variants[i]
 		})
 		return variants
 	}
-	return []string{}
+	return s.Variants
 }
 
 func (s Section) GetMaxScore() uint {
-	if s.TextSection != nil {
+	if s.Type == TextType {
 		return 0
 	}
 	return s.MaxScore
