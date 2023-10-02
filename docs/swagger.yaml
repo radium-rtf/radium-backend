@@ -157,7 +157,7 @@ definitions:
       moduleId:
         type: string
       name:
-        maxLength: 20
+        maxLength: 40
         minLength: 1
         type: string
       order:

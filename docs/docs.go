@@ -1328,7 +1328,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 20,
+                    "maxLength": 40,
                     "minLength": 1
                 },
                 "order": {
