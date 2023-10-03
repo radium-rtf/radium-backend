@@ -12,6 +12,7 @@ func TestChoice(t *testing.T) {
 		Answer:   "4",
 		Variants: []string{"3", "5", "не хочу отвечать на этот вопрос", "4"},
 		Content:  "2 + 2 = ?",
+		Type:     entity.ChoiceType,
 	}
 	tests := []struct {
 		name        string
@@ -25,6 +26,7 @@ func TestChoice(t *testing.T) {
 			expected: verdict.WA,
 			section:  defaultSection,
 			answer: &entity.Answer{
+				Type:   entity.ChoiceType,
 				Answer: "2",
 			},
 		},
@@ -33,6 +35,7 @@ func TestChoice(t *testing.T) {
 			expected: verdict.OK,
 			section:  defaultSection,
 			answer: &entity.Answer{
+				Type:   entity.ChoiceType,
 				Answer: "4",
 			},
 		},
