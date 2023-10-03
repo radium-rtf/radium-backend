@@ -14,7 +14,7 @@ type Group struct {
 
 func (r Group) toGroup() *entity.Group {
 	courses := make([]*entity.Course, 0, len(r.StudentsIds))
-	for _, id := range r.StudentsIds {
+	for _, id := range r.CoursesIds {
 		courses = append(courses, &entity.Course{DBModel: entity.DBModel{Id: id}})
 	}
 

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/dranikpg/dto-mapper"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
@@ -12,14 +11,20 @@ type (
 		Name       string    `json:"name"`
 		InviteCode string    `json:"inviteCode"`
 		Courses    []*Course `json:"courses"`
-		Students   []*User   `json:"students"`
+		Students   []User    `json:"students"`
 	}
 )
 
 func NewGroup(group *entity.Group) *Group {
-	groupDto := Group{}
-	dto.Map(&groupDto, group)
-	return &groupDto
+	courses := NewCourses(group.Courses)
+	students := NewUsers(group.Students)
+	return &Group{
+		Id:         group.Id,
+		InviteCode: group.InviteCode,
+		Name:       group.Name,
+		Students:   students,
+		Courses:    courses,
+	}
 }
 
 func NewGroups(groups []*entity.Group) []*Group {

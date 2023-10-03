@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
+	"github.com/uptrace/bun"
 
 	"github.com/google/uuid"
 
@@ -10,28 +11,81 @@ import (
 )
 
 type Group struct {
+	db *bun.DB
 }
 
 func NewGroupRepo(pg *postgres.Postgres) Group {
-	return Group{}
+	return Group{db: pg.DB}
 }
 
 func (r Group) Create(ctx context.Context, group *entity.Group) (*entity.Group, error) {
-	panic("not implemented")
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewInsert().Model(group).Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		var groupCourse []*entity.GroupCourse
+		for _, course := range group.Courses {
+			groupCourse = append(groupCourse, &entity.GroupCourse{CourseId: course.Id, GroupId: group.Id})
+		}
+
+		if len(groupCourse) != 0 {
+			_, err = tx.NewInsert().Model(&groupCourse).Exec(ctx)
+		}
+		if err != nil {
+			return err
+		}
+
+		var groupStudent []*entity.GroupStudent
+		for _, student := range group.Students {
+			groupStudent = append(groupStudent, &entity.GroupStudent{UserId: student.Id, GroupId: group.Id})
+		}
+		if len(groupStudent) != 0 {
+			_, err = tx.NewInsert().Model(&groupStudent).Exec(ctx)
+		}
+		if err != nil {
+			return err
+		}
+
+		return err
+	})
+
+	return group, err
 }
 
 func (r Group) GetById(ctx context.Context, id uuid.UUID) (*entity.Group, error) {
-	panic("not implemented")
+	return r.get(ctx, columnValue{column: "id", value: id})
 }
 
 func (r Group) GetByInviteCode(ctx context.Context, code string) (*entity.Group, error) {
-	panic("not implemented")
+	return r.get(ctx, columnValue{column: "invite_code", value: code})
+}
+
+func (r Group) get(ctx context.Context, where columnValue) (*entity.Group, error) {
+	var group = new(entity.Group)
+	err := r.db.NewSelect().
+		Model(group).
+		Where(where.column+" = ?", where.value).
+		Relation("Courses").Relation("Students").
+		Scan(ctx)
+	return group, err
 }
 
 func (r Group) JoinStudent(ctx context.Context, studentId uuid.UUID, code string) error {
-	panic("not implemented")
+	group, err := r.GetByInviteCode(ctx, code)
+	if err != nil {
+		return err
+	}
+	groupStudent := &entity.GroupStudent{UserId: studentId, GroupId: group.Id}
+	_, err = r.db.NewInsert().Model(groupStudent).Exec(ctx)
+	return err
 }
 
 func (r Group) Get(ctx context.Context) ([]*entity.Group, error) {
-	panic("not implemented")
+	var groups []*entity.Group
+	err := r.db.NewSelect().
+		Model(&groups).
+		Scan(ctx)
+	return groups, err
 }

@@ -8,4 +8,6 @@ import (
 func initDB(db *bun.DB) {
 	db.RegisterModel((*entity.CourseAuthor)(nil))
 	db.RegisterModel((*entity.CourseStudent)(nil))
+	db.RegisterModel((*entity.GroupStudent)(nil))
+	db.RegisterModel((*entity.GroupCourse)(nil))
 }

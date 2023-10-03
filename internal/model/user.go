@@ -25,3 +25,12 @@ func NewUser(user *entity.User) User {
 		Roles:  NewRoles(user.Roles),
 	}
 }
+
+func NewUsers(users []*entity.User) []User {
+	res := make([]User, 0, len(users))
+	for _, user := range users {
+
+		res = append(res, NewUser(user))
+	}
+	return res
+}
