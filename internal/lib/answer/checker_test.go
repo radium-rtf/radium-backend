@@ -17,14 +17,14 @@ func TestChoice(t *testing.T) {
 		name        string
 		expected    verdict.Type
 		expectedErr error
-		answer      *entity.ChoiceSectionAnswer
+		answer      *entity.Answer
 		section     *entity.Section
 	}{
 		{
 			name:     "WA",
 			expected: verdict.WA,
 			section:  defaultSection,
-			answer: &entity.ChoiceSectionAnswer{
+			answer: &entity.Answer{
 				Answer: "2",
 			},
 		},
@@ -32,7 +32,7 @@ func TestChoice(t *testing.T) {
 			name:     "OK",
 			expected: verdict.OK,
 			section:  defaultSection,
-			answer: &entity.ChoiceSectionAnswer{
+			answer: &entity.Answer{
 				Answer: "4",
 			},
 		},
@@ -43,9 +43,7 @@ func TestChoice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			checker := Checker{}
-			section := tt.section
-			answer := &entity.Answer{Choice: tt.answer}
-			ver, err := checker.Check(section, answer)
+			ver, err := checker.Check(tt.section, tt.answer)
 
 			require.Equal(t, tt.expectedErr, err)
 			require.Equal(t, tt.expected, ver.Verdict)

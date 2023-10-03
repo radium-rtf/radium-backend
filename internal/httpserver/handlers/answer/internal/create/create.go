@@ -29,15 +29,21 @@ func New(creator creator) http.HandlerFunc {
 		)
 
 		if err := decode.Json(r.Body, &request); err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
-		answer := request.ToAnswer(userId)
-		answer, err := creator.Create(ctx, answer)
+		answer, err := request.ToAnswer(userId)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		answer, err = creator.Create(ctx, answer)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}

@@ -38,8 +38,8 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 		if ok {
 			verdictType = answer.Verdict
 			score = answer.Score(section)
-			answerStr = answer.AnswerStr()
-			answersArr = answer.Answers()
+			answerStr = answer.Answer
+			answersArr = answer.Answers
 		}
 
 		sumMaxScore += section.GetMaxScore()

@@ -3,50 +3,46 @@ package answer
 import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
+	"slices"
 )
 
 type Checker struct {
 }
 
 func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.Verdict, error) {
-	/*
-		var verdictType verdict.Type
+	if section.Type != answer.Type {
+		return verdict.Verdict{}, ErrInvalidSectionId
+	}
 
-		isExists := func(v1, v2 any) bool {
-			return !reflect.ValueOf(v1).IsNil() && !reflect.ValueOf(v2).IsNil()
-		}
+	var verdictType verdict.Type
 
-		switch {
-		case isExists(answer.MultiChoice, section.MultiChoiceSection):
-			verdictType = c.multiChoice(answer.MultiChoice, section.MultiChoiceSection)
+	switch {
+	case answer.Type == entity.MultiChoiceType:
+		verdictType = c.multiChoice(answer, section)
 
-		case isExists(answer.Choice, section.ChoiceSection):
-			verdictType = c.choice(answer.Choice, section.ChoiceSection)
+	case answer.Type == entity.ChoiceType:
+		verdictType = c.choice(answer, section)
 
-		case isExists(answer.ShortAnswer, section.ShortAnswerSection):
-			verdictType = c.shortAnswer(answer.ShortAnswer, section.ShortAnswerSection)
+	case answer.Type == entity.ShortAnswerType:
+		verdictType = c.shortAnswer(answer, section)
 
-		case isExists(answer.Permutation, section.PermutationSection):
-			verdictType = c.permutation(answer.Permutation, section.PermutationSection)
+	case answer.Type == entity.PermutationType:
+		verdictType = c.permutation(answer, section)
 
-		case isExists(answer.Answer, section.AnswerSection) ||
-			isExists(answer.Code, section.CodeSection):
-			verdictType = verdict.WAIT
+	case answer.Type == entity.AnswerType ||
+		answer.Type == entity.CodeType:
+		verdictType = verdict.WAIT
 
-		default:
-			return verdict.Verdict{}, errChecker
-		}
+	default:
+		return verdict.Verdict{}, ErrNotImpl
+	}
 
-		return verdict.Verdict{Verdict: verdictType}, nil
-
-	*/
-	panic("not implemented")
+	return verdict.Verdict{Verdict: verdictType}, nil
 }
 
-/*
-func (c Checker) multiChoice(answer *entity.MultichoiceSectionAnswer, section *entity.MultiChoiceSection) verdict.Type {
-	answerArr := []string(answer.Answer)
-	solutionArr := []string(section.Answer)
+func (c Checker) multiChoice(answer *entity.Answer, section *entity.Section) verdict.Type {
+	answerArr := []string(answer.Answers)
+	solutionArr := []string(section.Answers)
 	if len(answerArr) != len(solutionArr) {
 		return verdict.WA
 	}
@@ -67,7 +63,7 @@ func (c Checker) multiChoice(answer *entity.MultichoiceSectionAnswer, section *e
 	return verdict.OK
 }
 
-func (c Checker) choice(answer *entity.ChoiceSectionAnswer, section *entity.ChoiceSection) verdict.Type {
+func (c Checker) choice(answer *entity.Answer, section *entity.Section) verdict.Type {
 	ok := answer.Answer == section.Answer
 	if !ok {
 		return verdict.WA
@@ -75,7 +71,7 @@ func (c Checker) choice(answer *entity.ChoiceSectionAnswer, section *entity.Choi
 	return verdict.OK
 }
 
-func (c Checker) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *entity.ShortAnswerSection) verdict.Type {
+func (c Checker) shortAnswer(answer *entity.Answer, section *entity.Section) verdict.Type {
 	ok := answer.Answer == section.Answer // TODO: (не)учитывать caps lock
 	if !ok {
 		return verdict.WA
@@ -83,8 +79,8 @@ func (c Checker) shortAnswer(answer *entity.ShortAnswerSectionAnswer, section *e
 	return verdict.OK
 }
 
-func (c Checker) permutation(permutation *entity.PermutationSectionAnswer, section *entity.PermutationSection) verdict.Type {
-	ok := slices.Equal(permutation.Answer, section.Answer)
+func (c Checker) permutation(permutation *entity.Answer, section *entity.Section) verdict.Type {
+	ok := slices.Equal(permutation.Answers, section.Answers)
 	if !ok {
 		return verdict.WA
 	}
@@ -101,4 +97,3 @@ func (Checker) toCounter(arr []string) map[string]int {
 	}
 	return m
 }
-*/

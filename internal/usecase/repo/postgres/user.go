@@ -37,6 +37,7 @@ func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) 
 	var user = new(entity.User)
 	err := r.db.NewSelect().Model(user).Relation("Roles").
 		Where(value.column+" = ?", value.value).
+		Limit(1).
 		Scan(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, repoerr.UserNotFound
@@ -50,6 +51,17 @@ func (r User) GetByEmail(ctx context.Context, email string) (*entity.User, error
 
 func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 	return r.get(ctx, columnValue{column: "id", value: id})
+}
+
+func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity.User, error) {
+	var users []*entity.User
+	err := r.db.NewSelect().Model(users).Relation("Roles").
+		Where("ids = (?)", bun.In(ids)).
+		Scan(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, repoerr.UserNotFound
+	}
+	return users, err
 }
 
 func (r User) GetByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*entity.User, error) {

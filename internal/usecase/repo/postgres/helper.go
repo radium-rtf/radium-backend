@@ -19,3 +19,8 @@ type columnValue struct {
 	column string
 	value  any
 }
+
+type columnValues struct {
+	column string
+	value  any
+}

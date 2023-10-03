@@ -47,5 +47,13 @@ type (
 )
 
 func (c Course) SectionsIds() []uuid.UUID {
-	panic("not implemented")
+	sectionsIds := make([]uuid.UUID, 0, 10)
+	for _, module := range c.Modules {
+		for _, page := range module.Pages {
+			for _, section := range page.Sections {
+				sectionsIds = append(sectionsIds, section.Id)
+			}
+		}
+	}
+	return sectionsIds
 }

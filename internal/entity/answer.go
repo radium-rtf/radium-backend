@@ -4,67 +4,23 @@ import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
-	"math"
+	"github.com/uptrace/bun"
 )
 
 type (
 	Answer struct {
+		bun.BaseModel `bun:"table:answers"`
 		DBModel
-		Verdict   verdict.Type `gorm:"not null"`
-		UserId    uuid.UUID    `gorm:"index:idx_userId_sectionId; type:uuid; not null"`
-		SectionId uuid.UUID    `gorm:"index:idx_userId_sectionId; type:uuid; not null"`
 
-		Choice      *ChoiceSectionAnswer      `gorm:"polymorphic:Owner"`
-		MultiChoice *MultichoiceSectionAnswer `gorm:"polymorphic:Owner"`
-		ShortAnswer *ShortAnswerSectionAnswer `gorm:"polymorphic:Owner"`
-		Answer      *AnswerSectionAnswer      `gorm:"polymorphic:Owner"`
-		Code        *CodeSectionAnswer        `gorm:"polymorphic:Owner"`
-		Permutation *PermutationSectionAnswer `gorm:"polymorphic:Owner"`
+		UserId    uuid.UUID
+		SectionId uuid.UUID
 
-		Review *Review
-	}
+		Type    SectionType
+		Verdict verdict.Type
+		Answer  string
+		Answers pq.StringArray
 
-	ChoiceSectionAnswer struct {
-		DBModel
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-		Answer    string    `gorm:"not null"`
-	}
-
-	MultichoiceSectionAnswer struct {
-		DBModel
-		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
-		OwnerType string         `gorm:"not null"`
-		Answer    pq.StringArray `gorm:"type:text[]; not null"`
-	}
-
-	ShortAnswerSectionAnswer struct {
-		DBModel
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-		Answer    string    `gorm:"not null"`
-	}
-
-	AnswerSectionAnswer struct {
-		DBModel
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-		Answer    string    `gorm:"not null"`
-	}
-
-	CodeSectionAnswer struct {
-		DBModel
-		OwnerID   uuid.UUID `gorm:"type:uuid; not null"`
-		OwnerType string    `gorm:"not null"`
-		Answer    string    `gorm:"not null"`
-		Language  string    `gorm:"not null"`
-	}
-
-	PermutationSectionAnswer struct {
-		DBModel
-		Answer    pq.StringArray `gorm:"type:text[]; not null"`
-		OwnerID   uuid.UUID      `gorm:"type:uuid; not null"`
-		OwnerType string         `gorm:"not null"`
+		Language string
 	}
 
 	UsersAnswersCollection struct {
@@ -79,12 +35,14 @@ type (
 
 func (a Answer) Score(section *Section) uint {
 	maxScore := section.MaxScore
-	if a.Answer != nil && a.Review != nil {
-		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
-	}
-	if a.Code != nil && a.Review != nil {
-		return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
-	}
+
+	/*
+
+		//if (a.Type == AnswerType || a.Type == CodeType) && a.Review != nil {
+		//	return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
+		//}
+
+	*/
 
 	if a.Verdict == verdict.OK {
 		return maxScore
@@ -92,30 +50,14 @@ func (a Answer) Score(section *Section) uint {
 	return 0
 }
 
-func (a Answer) Answers() []string {
-	if a.MultiChoice != nil {
-		return a.MultiChoice.Answer
-	}
-	if a.Permutation != nil {
-		return a.Permutation.Answer
-	}
-	return []string{}
-}
+func NewAnswersCollection(answers []*Answer) *AnswersCollection {
+	var answerBySectionId = make(map[uuid.UUID]*Answer, len(answers))
 
-func (a Answer) AnswerStr() string {
-	if a.ShortAnswer != nil {
-		return a.ShortAnswer.Answer
+	for _, answer := range answers {
+		answerBySectionId[answer.SectionId] = answer
 	}
-	if a.Choice != nil {
-		return a.Choice.Answer
-	}
-	if a.Answer != nil {
-		return a.Answer.Answer
-	}
-	if a.Code != nil {
-		return a.Code.Answer
-	}
-	return ""
+
+	return &AnswersCollection{AnswerBySectionId: answerBySectionId}
 }
 
 func NewUsersAnswersCollection(users []*User, answers []*Answer) *UsersAnswersCollection {

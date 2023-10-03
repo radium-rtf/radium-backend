@@ -40,7 +40,7 @@ func NewPages(pages []*entity.Page, answers map[uuid.UUID]*entity.Answer) ([]*Pa
 		maxScore += dto.MaxScore
 		score += dto.Score
 
-		dtos = append(dtos, NewPage(page, answers))
+		dtos = append(dtos, dto)
 	}
 
 	return dtos, score, maxScore

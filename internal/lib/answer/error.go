@@ -2,4 +2,5 @@ package answer
 
 import "errors"
 
-var errChecker = errors.New("empty answer, invalid id or not implemented")
+var ErrNotImpl = errors.New("not implemented")
+var ErrInvalidSectionId = errors.New("invalid section id")

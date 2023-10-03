@@ -15,7 +15,7 @@ type getter interface {
 }
 
 type answersGetter interface {
-	GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (map[uuid.UUID]*entity.Answer, error)
+	GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (*entity.AnswersCollection, error)
 }
 
 // @Tags course
@@ -55,7 +55,7 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, answers)
+		c := model.NewCourse(course, answers.AnswerBySectionId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}

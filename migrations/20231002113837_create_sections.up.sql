@@ -16,7 +16,7 @@ create table sections
     "order"    real             not null,
     variants   varchar(500)[],
 
-    answer     varchar(500)     not null,
+    answer     varchar(5000)     not null,
     answers    varchar(500)[],
 
     page_id    uuid             not null,

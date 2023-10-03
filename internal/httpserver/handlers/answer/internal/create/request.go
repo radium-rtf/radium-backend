@@ -1,9 +1,9 @@
 package create
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 )
 
 type (
@@ -43,40 +43,36 @@ type (
 	}
 )
 
-func (r *Answer) ToAnswer(userId uuid.UUID) *entity.Answer {
-	var (
-		choice      *entity.ChoiceSectionAnswer
-		multichoice *entity.MultichoiceSectionAnswer
-		shortAnswer *entity.ShortAnswerSectionAnswer
-		answer      *entity.AnswerSectionAnswer
-		code        *entity.CodeSectionAnswer
-		permutatuon *entity.PermutationSectionAnswer
-	)
+func (r *Answer) ToAnswer(userId uuid.UUID) (*entity.Answer, error) {
+	answer := &entity.Answer{
+		DBModel:   entity.DBModel{Id: uuid.New()},
+		SectionId: r.SectionId,
+		UserId:    userId,
+	}
 
 	switch {
 	case r.Choice != nil:
-		choice = &entity.ChoiceSectionAnswer{Answer: r.Choice.Answer}
+		answer.Answer = r.Choice.Answer
+		answer.Type = entity.ChoiceType
 	case r.MultiChoice != nil:
-		multichoice = &entity.MultichoiceSectionAnswer{Answer: r.MultiChoice.Answer}
+		answer.Answers = r.MultiChoice.Answer
+		answer.Type = entity.MultiChoiceType
 	case r.ShortAnswer != nil:
-		shortAnswer = &entity.ShortAnswerSectionAnswer{Answer: r.ShortAnswer.Answer}
+		answer.Answer = r.ShortAnswer.Answer
+		answer.Type = entity.ShortAnswerType
 	case r.Answer != nil:
-		answer = &entity.AnswerSectionAnswer{Answer: r.Answer.Answer}
+		answer.Answer = r.Answer.Answer
+		answer.Type = entity.AnswerType
 	case r.Code != nil:
-		code = &entity.CodeSectionAnswer{Answer: r.Code.Answer, Language: r.Code.Language}
+		answer.Answer = r.Code.Answer
+		answer.Type = entity.CodeType
+		answer.Language = r.Code.Language
 	case r.Permutation != nil:
-		permutatuon = &entity.PermutationSectionAnswer{Answer: r.Permutation.Answer}
+		answer.Type = entity.PermutationType
+		answer.Answers = r.Permutation.Answer
+	default:
+		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
 	}
 
-	return &entity.Answer{
-		Verdict:     verdict.EMPTY,
-		SectionId:   r.SectionId,
-		UserId:      userId,
-		Choice:      choice,
-		MultiChoice: multichoice,
-		ShortAnswer: shortAnswer,
-		Answer:      answer,
-		Code:        code,
-		Permutation: permutatuon,
-	}
+	return answer, nil
 }
