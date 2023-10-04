@@ -12,11 +12,11 @@ type (
 	}
 )
 
-func NewTeacherCourses(teacher *entity.Teacher) []*TeacherCourse {
+func NewTeacherCourses(teacher []*entity.TeacherCourseGroup) []*TeacherCourse {
 	courseGroups := make(map[uuid.UUID][]*Group)
 	courseById := make(map[uuid.UUID]*Course)
 
-	for _, course := range teacher.Courses {
+	for _, course := range teacher {
 		if _, ok := courseGroups[course.CourseId]; !ok {
 			courseGroups[course.CourseId] = make([]*Group, 0)
 		}

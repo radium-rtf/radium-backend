@@ -7,8 +7,8 @@ import (
 
 type (
 	Teacher struct {
-		TeacherId uuid.UUID        `json:"teacherId"`
-		Courses   []*TeacherCourse `json:"courses"`
+		UserId  uuid.UUID        `json:"userId"`
+		Courses []*TeacherCourse `json:"courses"`
 	}
 
 	TeacherCourse struct {
@@ -17,13 +17,17 @@ type (
 	}
 )
 
-func (r Teacher) toTeacher() *entity.Teacher {
-	teacher := &entity.Teacher{UserId: r.TeacherId, DBModel: entity.DBModel{Id: uuid.New()}}
-	courses := make([]*entity.TeacherCourse, 0, len(r.Courses))
+func (r Teacher) toCourses() []*entity.TeacherCourseGroup {
+	userId := r.UserId
+
+	courses := make([]*entity.TeacherCourseGroup, 0, len(r.Courses))
 	for _, coursePost := range r.Courses {
-		course := &entity.TeacherCourse{CourseId: coursePost.CourseId, GroupId: coursePost.GroupId}
+		course := &entity.TeacherCourseGroup{
+			UserId:   userId,
+			CourseId: coursePost.CourseId,
+			GroupId:  coursePost.GroupId,
+		}
 		courses = append(courses, course)
 	}
-	teacher.Courses = courses
-	return teacher
+	return courses
 }

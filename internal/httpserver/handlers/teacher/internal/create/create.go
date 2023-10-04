@@ -8,7 +8,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, teacher *entity.Teacher) (*entity.Teacher, error)
+	Create(ctx context.Context, teacher []*entity.TeacherCourseGroup) ([]*entity.TeacherCourseGroup, error)
 }
 
 // @Tags teacher
@@ -30,7 +30,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		teacher := request.toTeacher()
+		teacher := request.toCourses()
 		teacher, err = creator.Create(ctx, teacher)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

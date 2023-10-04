@@ -15,10 +15,10 @@ func NewTeacherUseCase(teacherRepo postgres.Teacher) TeacherUseCase {
 	return TeacherUseCase{teacher: teacherRepo}
 }
 
-func (uc TeacherUseCase) GetByUserId(ctx context.Context, id uuid.UUID) (*entity.Teacher, error) {
-	return uc.teacher.GetByUserId(ctx, id)
+func (uc TeacherUseCase) GetByUserId(ctx context.Context, id uuid.UUID) ([]*entity.TeacherCourseGroup, error) {
+	return uc.teacher.GetCoursesByTeacherId(ctx, id)
 }
 
-func (uc TeacherUseCase) Create(ctx context.Context, teacher *entity.Teacher) (*entity.Teacher, error) {
+func (uc TeacherUseCase) Create(ctx context.Context, teacher []*entity.TeacherCourseGroup) ([]*entity.TeacherCourseGroup, error) {
 	return uc.teacher.Create(ctx, teacher)
 }
