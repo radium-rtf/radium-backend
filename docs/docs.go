@@ -1459,7 +1459,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/create.TeacherCourse"
                     }
                 },
-                "teacherId": {
+                "userId": {
                     "type": "string"
                 }
             }

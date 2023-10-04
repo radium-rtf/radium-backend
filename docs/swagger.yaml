@@ -249,7 +249,7 @@ definitions:
         items:
           $ref: '#/definitions/create.TeacherCourse'
         type: array
-      teacherId:
+      userId:
         type: string
     type: object
   create.TeacherCourse:
