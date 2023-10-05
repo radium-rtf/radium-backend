@@ -34,10 +34,10 @@ func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uui
 		TableExpr("answers as a").
 		ColumnExpr("max(a.created_at)").
 		Where("a.user_id = answer.user_id and a.section_id = answer.section_id")
-
 	err := r.db.NewSelect().
 		Model(&answers).
-		Where("user_id = (?) and section_id in (?) and created_at = (?)", bun.In(usersIds), bun.In(sectionsIds), subq).
+		Where("user_id = (?) and section_id in (?) and answer.created_at = (?)", bun.In(usersIds), bun.In(sectionsIds), subq).
+		Relation("Review").
 		Scan(ctx)
 
 	return answers, err

@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -18,7 +19,7 @@ type creator interface {
 // @Security ApiKeyAuth
 // @Accept json
 // @Param request body Review true "score - от 0 до 1"
-// @Success 201 {object} entity.Review "created"
+// @Success 201 {object} model.Review "created"
 // @Router /v1/review [post]
 func NewReview(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +45,6 @@ func NewReview(creator creator) http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, review)
+		render.JSON(w, r, model.NewReview(review))
 	}
 }

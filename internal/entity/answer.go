@@ -5,6 +5,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/uptrace/bun"
+	"math"
 )
 
 type (
@@ -21,6 +22,8 @@ type (
 		Answers pq.StringArray
 
 		Language string
+
+		Review *Review `bun:"rel:has-one,join:id=answer_id"`
 	}
 
 	UsersAnswersCollection struct {
@@ -34,15 +37,11 @@ type (
 )
 
 func (a Answer) Score(section *Section) uint {
-	maxScore := section.MaxScore
+	maxScore := section.GetMaxScore()
 
-	/*
-
-		//if (a.Type == AnswerType || a.Type == CodeType) && a.Review != nil {
-		//	return uint(math.Round(float64(float32(maxScore) * a.Review.Score)))
-		//}
-
-	*/
+	if (a.Type == AnswerType || a.Type == CodeType) && a.Review != nil {
+		return uint(math.Round(float64(maxScore) * a.Review.Score))
+	}
 
 	if a.Verdict == verdict.OK {
 		return maxScore
