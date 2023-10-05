@@ -193,9 +193,6 @@ definitions:
     properties:
       answerId:
         type: string
-      comment:
-        maxLength: 400
-        type: string
       score:
         maximum: 1
         minimum: 0
@@ -266,17 +263,6 @@ definitions:
         type: string
     required:
     - content
-    type: object
-  entity.Review:
-    properties:
-      answerId:
-        type: string
-      comment:
-        type: string
-      reviewerId:
-        type: string
-      score:
-        type: number
     type: object
   entity.SectionType:
     enum:
@@ -422,6 +408,15 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  model.Review:
+    properties:
+      answerId:
+        type: string
+      reviewerId:
+        type: string
+      score:
+        type: number
     type: object
   model.Roles:
     properties:
@@ -1111,7 +1106,7 @@ paths:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/entity.Review'
+            $ref: '#/definitions/model.Review'
       security:
       - ApiKeyAuth: []
       tags:

@@ -873,7 +873,7 @@ const docTemplate = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/entity.Review"
+                            "$ref": "#/definitions/model.Review"
                         }
                     }
                 }
@@ -1377,10 +1377,6 @@ const docTemplate = `{
                 "answerId": {
                     "type": "string"
                 },
-                "comment": {
-                    "type": "string",
-                    "maxLength": 400
-                },
                 "score": {
                     "type": "number",
                     "maximum": 1,
@@ -1484,23 +1480,6 @@ const docTemplate = `{
                 "content": {
                     "type": "string",
                     "maxLength": 10000
-                }
-            }
-        },
-        "entity.Review": {
-            "type": "object",
-            "properties": {
-                "answerId": {
-                    "type": "string"
-                },
-                "comment": {
-                    "type": "string"
-                },
-                "reviewerId": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "number"
                 }
             }
         },
@@ -1715,6 +1694,20 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "model.Review": {
+            "type": "object",
+            "properties": {
+                "answerId": {
+                    "type": "string"
+                },
+                "reviewerId": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
                 }
             }
         },
