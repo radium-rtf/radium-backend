@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
+	"strings"
 )
 
 type signIn interface {
@@ -32,6 +33,7 @@ func New(in signIn) http.HandlerFunc {
 			return
 		}
 
+		request.Email = strings.ToLower(request.Email)
 		tokens, err := in.SignIn(ctx, request.Email, request.Password)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

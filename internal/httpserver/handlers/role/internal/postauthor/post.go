@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
+	"strings"
 )
 
 type creator interface {
@@ -31,7 +32,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		email := request.Email
+		email := strings.ToLower(request.Email)
 		err = creator.AddAuthor(ctx, email)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
