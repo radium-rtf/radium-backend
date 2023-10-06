@@ -55,8 +55,8 @@ func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 
 func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity.User, error) {
 	var users []*entity.User
-	err := r.db.NewSelect().Model(users).Relation("Roles").
-		Where("ids = (?)", bun.In(ids)).
+	err := r.db.NewSelect().Model(&users).Relation("Roles").
+		Where("id in (?)", bun.In(ids)).
 		Scan(ctx)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, repoerr.UserNotFound

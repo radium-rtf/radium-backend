@@ -30,13 +30,14 @@ func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UU
 func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uuid.UUID) ([]*entity.Answer, error) {
 	var answers []*entity.Answer
 
-	subq := r.db.NewSelect().
+	lastAnswer := r.db.NewSelect().
 		TableExpr("answers as a").
 		ColumnExpr("max(a.created_at)").
 		Where("a.user_id = answer.user_id and a.section_id = answer.section_id")
 	err := r.db.NewSelect().
 		Model(&answers).
-		Where("user_id = (?) and section_id in (?) and answer.created_at = (?)", bun.In(usersIds), bun.In(sectionsIds), subq).
+		Where("user_id in (?) and section_id in (?) and answer.created_at = (?)",
+			bun.In(usersIds), bun.In(sectionsIds), lastAnswer).
 		Relation("Review").
 		Scan(ctx)
 
