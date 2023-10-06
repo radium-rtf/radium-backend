@@ -15,7 +15,7 @@ services:
   minio:
     container_name: minio
     image: minio/minio:latest
-    command: server --console-address ":9001" /data/
+    command: server --console-address ":9001" /data/radium/minio
     environment:
       MINIO_ROOT_USER: useruseruser
       MINIO_ROOT_PASSWORD: useruseruser
@@ -23,7 +23,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio:/data
+      - radium_minio:/data/radium/minio
 
   postgres:
     container_name: postgres
@@ -32,15 +32,15 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
-      - PGDATA=/data/postgres
+      - PGDATA=/data/radium/postgres
     volumes:
-      - postgres:/data/postgres
+      - radium_pg:/data/radium/postgres
     ports:
       - "5432:5432"
     restart: "always"
 
 volumes:
-  postgres:
-    name: postgres
-  minio:
-    name: minio
+  radium_pg:
+    name: radium_pg
+  radium_minio:
+    name: radium_minio
