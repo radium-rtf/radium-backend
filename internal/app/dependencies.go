@@ -14,7 +14,7 @@ import (
 func newDependencies(storage filestorage.Storage, cfg *config.Config, db *postgres.Postgres) usecase.Dependencies {
 	repositories := pg.NewRepositories(db)
 	tokenManager := auth.NewManager(cfg.Auth.SigningKey)
-	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	passwordHasher := hash.NewPasswordHasher(cfg.Auth.PasswordSaltSha1, cfg.Auth.PasswordCostBcrypt)
 	return usecase.Dependencies{
 		Repos:          repositories,
 		TokenManager:   tokenManager,

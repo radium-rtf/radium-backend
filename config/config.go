@@ -32,10 +32,11 @@ type (
 	}
 
 	Auth struct {
-		SigningKey      string        `env-required:"true" yaml:"jwt_signing_key"`
-		PasswordSalt    string        `env-required:"true" yaml:"password_salt"`
-		AccessTokenTTL  time.Duration `env-required:"true" yaml:"access_token_ttl"`
-		RefreshTokenTTL time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
+		SigningKey         string        `env-required:"true" yaml:"jwt_signing_key"`
+		PasswordSaltSha1   string        `env-required:"true" yaml:"password_salt_sha1"`
+		PasswordCostBcrypt int           `env-required:"true" yaml:"password_cost_bcrypt"`
+		AccessTokenTTL     time.Duration `env-required:"true" yaml:"access_token_ttl"`
+		RefreshTokenTTL    time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
 	}
 
 	Storage struct {

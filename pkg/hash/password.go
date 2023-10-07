@@ -1,8 +1,8 @@
 package hash
 
 import (
-	"crypto/sha1"
-	"fmt"
+	"golang.org/x/crypto/bcrypt"
+	"strings"
 )
 
 type Hasher interface {
@@ -10,26 +10,29 @@ type Hasher interface {
 	Equals(hashed string, password string) bool
 }
 
-type SHA1Hasher struct {
-	salt string
+type PasswordHasher struct {
+	sha1 *SHA1Hasher
+	cost int
 }
 
-func NewSHA1Hasher(salt string) *SHA1Hasher {
-	return &SHA1Hasher{salt: salt}
+func NewPasswordHasher(sha1salt string, cost int) Hasher {
+	return &PasswordHasher{sha1: NewSHA1Hasher(sha1salt), cost: cost}
 }
 
-func (h *SHA1Hasher) Hash(password string) (string, error) {
-	hash := sha1.New()
-
-	if _, err := hash.Write([]byte(password)); err != nil {
+func (h *PasswordHasher) Hash(password string) (string, error) {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), h.cost)
+	if err != nil {
 		return "", err
 	}
-
-	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt))), nil
+	return string(hashed), err
 }
 
-func (h *SHA1Hasher) Equals(hashed string, password string) bool {
-	hash, err := h.Hash(password)
+func (h *PasswordHasher) Equals(hashed string, password string) bool {
+	if strings.Contains(hashed, "$") {
+		eq := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
+		return eq == nil
+	}
+	hash, err := h.sha1.Hash(password)
 	if err != nil {
 		return false
 	}

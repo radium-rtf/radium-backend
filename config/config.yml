@@ -16,7 +16,8 @@ postgres:
 
 auth:
   jwt_signing_key: wdkadwadwakpklrbjb
-  password_salt: ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ
+  password_salt_sha1: ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ
+  password_cost_bcrypt: 13
   access_token_ttl: 2h
   refresh_token_ttl: 720h
 
