@@ -25,8 +25,5 @@ func (h *SHA1Hasher) Hash(password string) (string, error) {
 
 func (h *SHA1Hasher) Equals(hashed string, password string) bool {
 	hash, err := h.Hash(password)
-	if err != nil {
-		return false
-	}
-	return hashed == hash
+	return hashed == hash && err == nil
 }
