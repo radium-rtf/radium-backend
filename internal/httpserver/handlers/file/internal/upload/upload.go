@@ -24,14 +24,14 @@ func New(uploader uploader) http.HandlerFunc {
 
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
 		file, header, err := r.FormFile("file")
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
@@ -40,7 +40,7 @@ func New(uploader uploader) http.HandlerFunc {
 
 		upload, err := uploader.UploadFile(ctx, file, header)
 		if err != nil {
-			render.Status(r, http.StatusCreated)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}

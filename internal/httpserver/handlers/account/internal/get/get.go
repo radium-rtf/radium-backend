@@ -28,7 +28,7 @@ func New(getter getter) http.HandlerFunc {
 
 		user, err := getter.GetUser(ctx, userId)
 		if err != nil {
-			render.Status(r, http.StatusOK)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, user)
 			return
 		}
