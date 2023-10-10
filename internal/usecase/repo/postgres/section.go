@@ -43,3 +43,31 @@ func (r Section) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 	_, err := query.Exec(ctx)
 	return err
 }
+
+func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.Section, error) {
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		info, err := r.db.NewUpdate().
+			Model(section).
+			WherePK().
+			OmitZero().
+			Exec(ctx)
+
+		n, _ := info.RowsAffected()
+		if err == nil && n == 0 {
+			return repoerr.SectionNotFound
+		}
+
+		if section.Answer == "" && len(section.Answers) == 0 {
+			return nil
+		}
+		_, err = r.db.NewDelete().
+			Model(&entity.Answer{}).
+			Where("section_id = ?", section.Id).
+			Exec(ctx)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return r.GetById(ctx, section.Id)
+}

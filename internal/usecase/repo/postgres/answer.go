@@ -57,3 +57,7 @@ func (r Answer) GetByUsers(ctx context.Context, usersIds []uuid.UUID, sectionsId
 
 	return entity.NewUsersAnswersCollection(users, answers), nil
 }
+
+func (r Answer) GetByUserIdAnsSectionId(ctx context.Context, userId, sectionId uuid.UUID) (*entity.AnswersCollection, error) {
+	return r.Get(ctx, userId, []uuid.UUID{sectionId})
+}

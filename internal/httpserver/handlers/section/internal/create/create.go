@@ -34,7 +34,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		section, err := create.toSection()
+		section, err := create.ToSection()
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

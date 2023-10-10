@@ -23,3 +23,7 @@ func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section) (*
 func (uc SectionUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 	return uc.sectionRepo.Delete(ctx, id, isSoft)
 }
+
+func (uc SectionUseCase) Update(ctx context.Context, section *entity.Section, userId uuid.UUID) (*entity.Section, error) {
+	return uc.sectionRepo.Update(ctx, section)
+}

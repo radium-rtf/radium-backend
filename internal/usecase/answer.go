@@ -34,6 +34,12 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	return answer, uc.answerRepo.Create(ctx, answer)
 }
 
-func (uc AnswerUseCase) GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (*entity.AnswersCollection, error) {
+func (uc AnswerUseCase) GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (
+	*entity.AnswersCollection, error) {
 	return uc.answerRepo.Get(ctx, userId, ids)
+}
+
+func (uc AnswerUseCase) GetByUserIdAndSectionId(ctx context.Context, userId, sectionsId uuid.UUID) (
+	*entity.AnswersCollection, error) {
+	return uc.answerRepo.GetByUserIdAnsSectionId(ctx, userId, sectionsId)
 }
