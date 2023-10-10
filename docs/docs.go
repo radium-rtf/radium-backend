@@ -976,6 +976,42 @@ const docTemplate = `{
             }
         },
         "/v1/section/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Информация для раздела",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/update.Section"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated",
+                        "schema": {
+                            "$ref": "#/definitions/model.Section"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -1099,7 +1135,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answer": {
-                    "$ref": "#/definitions/create.AnswerSection"
+                    "$ref": "#/definitions/internal_httpserver_handlers_answer_internal_create.AnswerSection"
                 },
                 "choice": {
                     "$ref": "#/definitions/create.Choice"
@@ -1121,26 +1157,6 @@ const docTemplate = `{
                 }
             }
         },
-        "create.AnswerSection": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                }
-            }
-        },
-        "create.AnswerSectionPost": {
-            "type": "object",
-            "required": [
-                "question"
-            ],
-            "properties": {
-                "question": {
-                    "type": "string",
-                    "maxLength": 3000
-                }
-            }
-        },
         "create.Choice": {
             "type": "object",
             "properties": {
@@ -1149,7 +1165,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.ChoiceSectionPost": {
+        "create.ChoiceSection": {
             "type": "object",
             "required": [
                 "answer",
@@ -1288,7 +1304,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.MultiChoiceSectionPost": {
+        "create.MultiChoiceSection": {
             "type": "object",
             "required": [
                 "answer",
@@ -1388,10 +1404,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answer": {
-                    "$ref": "#/definitions/create.AnswerSectionPost"
+                    "$ref": "#/definitions/internal_httpserver_handlers_section_internal_create.AnswerSection"
                 },
                 "choice": {
-                    "$ref": "#/definitions/create.ChoiceSectionPost"
+                    "$ref": "#/definitions/create.ChoiceSection"
                 },
                 "code": {
                     "$ref": "#/definitions/create.CodeSection"
@@ -1402,7 +1418,7 @@ const docTemplate = `{
                     "minimum": 0
                 },
                 "multichoice": {
-                    "$ref": "#/definitions/create.MultiChoiceSectionPost"
+                    "$ref": "#/definitions/create.MultiChoiceSection"
                 },
                 "order": {
                     "type": "number"
@@ -1414,10 +1430,10 @@ const docTemplate = `{
                     "$ref": "#/definitions/create.PermutationSection"
                 },
                 "shortanswer": {
-                    "$ref": "#/definitions/create.ShortAnswerSectionPost"
+                    "$ref": "#/definitions/create.ShortAnswerSection"
                 },
                 "text": {
-                    "$ref": "#/definitions/create.TextSectionPost"
+                    "$ref": "#/definitions/create.TextSection"
                 }
             }
         },
@@ -1429,7 +1445,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.ShortAnswerSectionPost": {
+        "create.ShortAnswerSection": {
             "type": "object",
             "required": [
                 "answer",
@@ -1471,7 +1487,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.TextSectionPost": {
+        "create.TextSection": {
             "type": "object",
             "required": [
                 "content"
@@ -1503,6 +1519,26 @@ const docTemplate = `{
                 "CodeType",
                 "PermutationType"
             ]
+        },
+        "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_httpserver_handlers_section_internal_create.AnswerSection": {
+            "type": "object",
+            "required": [
+                "question"
+            ],
+            "properties": {
+                "question": {
+                    "type": "string",
+                    "maxLength": 3000
+                }
+            }
         },
         "model.Course": {
             "type": "object",
@@ -1879,6 +1915,48 @@ const docTemplate = `{
                 }
             }
         },
+        "update.AnswerSection": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string",
+                    "maxLength": 3000
+                }
+            }
+        },
+        "update.ChoiceSection": {
+            "type": "object",
+            "required": [
+                "variants"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "variants": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "minItems": 2,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "update.CodeSection": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string",
+                    "maxLength": 5000
+                }
+            }
+        },
         "update.Course": {
             "type": "object",
             "properties": {
@@ -1912,6 +1990,110 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 40,
                     "minLength": 1
+                }
+            }
+        },
+        "update.MultiChoiceSection": {
+            "type": "object",
+            "required": [
+                "answer",
+                "variants"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "variants": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "minItems": 2,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "update.PermutationSection": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 500
+                }
+            }
+        },
+        "update.Section": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/update.AnswerSection"
+                },
+                "choice": {
+                    "$ref": "#/definitions/update.ChoiceSection"
+                },
+                "code": {
+                    "$ref": "#/definitions/update.CodeSection"
+                },
+                "maxScore": {
+                    "type": "integer",
+                    "maximum": 300,
+                    "minimum": 0
+                },
+                "multichoice": {
+                    "$ref": "#/definitions/update.MultiChoiceSection"
+                },
+                "permutation": {
+                    "$ref": "#/definitions/update.PermutationSection"
+                },
+                "shortanswer": {
+                    "$ref": "#/definitions/update.ShortAnswerSection"
+                },
+                "text": {
+                    "$ref": "#/definitions/update.TextSection"
+                }
+            }
+        },
+        "update.ShortAnswerSection": {
+            "type": "object",
+            "required": [
+                "answer",
+                "question"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 200
+                }
+            }
+        },
+        "update.TextSection": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "maxLength": 10000
                 }
             }
         },

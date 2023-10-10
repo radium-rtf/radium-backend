@@ -3,7 +3,7 @@ definitions:
   create.Answer:
     properties:
       answer:
-        $ref: '#/definitions/create.AnswerSection'
+        $ref: '#/definitions/internal_httpserver_handlers_answer_internal_create.AnswerSection'
       choice:
         $ref: '#/definitions/create.Choice'
       code:
@@ -17,25 +17,12 @@ definitions:
       shortAnswer:
         $ref: '#/definitions/create.ShortAnswer'
     type: object
-  create.AnswerSection:
-    properties:
-      answer:
-        type: string
-    type: object
-  create.AnswerSectionPost:
-    properties:
-      question:
-        maxLength: 3000
-        type: string
-    required:
-    - question
-    type: object
   create.Choice:
     properties:
       answer:
         type: string
     type: object
-  create.ChoiceSectionPost:
+  create.ChoiceSection:
     properties:
       answer:
         maxLength: 100
@@ -131,7 +118,7 @@ definitions:
           type: string
         type: array
     type: object
-  create.MultiChoiceSectionPost:
+  create.MultiChoiceSection:
     properties:
       answer:
         items:
@@ -201,9 +188,9 @@ definitions:
   create.Section:
     properties:
       answer:
-        $ref: '#/definitions/create.AnswerSectionPost'
+        $ref: '#/definitions/internal_httpserver_handlers_section_internal_create.AnswerSection'
       choice:
-        $ref: '#/definitions/create.ChoiceSectionPost'
+        $ref: '#/definitions/create.ChoiceSection'
       code:
         $ref: '#/definitions/create.CodeSection'
       maxScore:
@@ -211,7 +198,7 @@ definitions:
         minimum: 0
         type: integer
       multichoice:
-        $ref: '#/definitions/create.MultiChoiceSectionPost'
+        $ref: '#/definitions/create.MultiChoiceSection'
       order:
         type: number
       pageId:
@@ -219,16 +206,16 @@ definitions:
       permutation:
         $ref: '#/definitions/create.PermutationSection'
       shortanswer:
-        $ref: '#/definitions/create.ShortAnswerSectionPost'
+        $ref: '#/definitions/create.ShortAnswerSection'
       text:
-        $ref: '#/definitions/create.TextSectionPost'
+        $ref: '#/definitions/create.TextSection'
     type: object
   create.ShortAnswer:
     properties:
       answer:
         type: string
     type: object
-  create.ShortAnswerSectionPost:
+  create.ShortAnswerSection:
     properties:
       answer:
         maxLength: 50
@@ -256,7 +243,7 @@ definitions:
       groupId:
         type: string
     type: object
-  create.TextSectionPost:
+  create.TextSection:
     properties:
       content:
         maxLength: 10000
@@ -282,6 +269,19 @@ definitions:
     - AnswerType
     - CodeType
     - PermutationType
+  internal_httpserver_handlers_answer_internal_create.AnswerSection:
+    properties:
+      answer:
+        type: string
+    type: object
+  internal_httpserver_handlers_section_internal_create.AnswerSection:
+    properties:
+      question:
+        maxLength: 3000
+        type: string
+    required:
+    - question
+    type: object
   model.Course:
     properties:
       authors:
@@ -527,6 +527,35 @@ definitions:
     required:
     - name
     type: object
+  update.AnswerSection:
+    properties:
+      question:
+        maxLength: 3000
+        type: string
+    type: object
+  update.ChoiceSection:
+    properties:
+      answer:
+        maxLength: 100
+        type: string
+      question:
+        maxLength: 1000
+        type: string
+      variants:
+        items:
+          type: string
+        maxItems: 6
+        minItems: 2
+        type: array
+    required:
+    - variants
+    type: object
+  update.CodeSection:
+    properties:
+      question:
+        maxLength: 5000
+        type: string
+    type: object
   update.Course:
     properties:
       banner:
@@ -551,6 +580,78 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  update.MultiChoiceSection:
+    properties:
+      answer:
+        items:
+          type: string
+        maxItems: 6
+        type: array
+      question:
+        maxLength: 1000
+        type: string
+      variants:
+        items:
+          type: string
+        maxItems: 6
+        minItems: 2
+        type: array
+    required:
+    - answer
+    - variants
+    type: object
+  update.PermutationSection:
+    properties:
+      answer:
+        items:
+          type: string
+        maxItems: 8
+        type: array
+      question:
+        maxLength: 500
+        type: string
+    required:
+    - answer
+    type: object
+  update.Section:
+    properties:
+      answer:
+        $ref: '#/definitions/update.AnswerSection'
+      choice:
+        $ref: '#/definitions/update.ChoiceSection'
+      code:
+        $ref: '#/definitions/update.CodeSection'
+      maxScore:
+        maximum: 300
+        minimum: 0
+        type: integer
+      multichoice:
+        $ref: '#/definitions/update.MultiChoiceSection'
+      permutation:
+        $ref: '#/definitions/update.PermutationSection'
+      shortanswer:
+        $ref: '#/definitions/update.ShortAnswerSection'
+      text:
+        $ref: '#/definitions/update.TextSection'
+    type: object
+  update.ShortAnswerSection:
+    properties:
+      answer:
+        maxLength: 50
+        type: string
+      question:
+        maxLength: 200
+        type: string
+    required:
+    - answer
+    - question
+    type: object
+  update.TextSection:
+    properties:
+      content:
+        maxLength: 10000
+        type: string
     type: object
   update.User:
     properties:
@@ -1184,6 +1285,28 @@ paths:
       responses:
         "200":
           description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Информация для раздела
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/update.Section'
+      responses:
+        "200":
+          description: updated
+          schema:
+            $ref: '#/definitions/model.Section'
       security:
       - ApiKeyAuth: []
       tags:
