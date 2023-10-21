@@ -29,6 +29,9 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 	case answer.Type == entity.PermutationType:
 		verdictType = c.permutation(answer, section)
 
+	case answer.Type == entity.MappingType:
+		verdictType = c.mapping(answer, section)
+
 	case answer.Type == entity.AnswerType ||
 		answer.Type == entity.CodeType:
 		verdictType = verdict.WAIT
@@ -96,4 +99,12 @@ func (Checker) toCounter(arr []string) map[string]int {
 		m[v] += 1
 	}
 	return m
+}
+
+func (c Checker) mapping(answer *entity.Answer, section *entity.Section) verdict.Type {
+	ok := slices.Equal(answer.Answers, section.Answers)
+	if !ok {
+		return verdict.WA
+	}
+	return verdict.OK
 }

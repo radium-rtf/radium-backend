@@ -15,6 +15,7 @@ type (
 		Answer      *AnswerSection `json:"answer,omitempty"`
 		Code        *Code          `json:"code,omitempty"`
 		Permutation *Permutation   `json:"permutation,omitempty"`
+		Mapping     *Mapping       `json:"mapping,omitempty"`
 	}
 
 	MultiChoice struct {
@@ -40,6 +41,10 @@ type (
 
 	Permutation struct {
 		Answer []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
+	}
+
+	Mapping struct {
+		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
 	}
 )
 
@@ -70,6 +75,9 @@ func (r *Answer) ToAnswer(userId uuid.UUID) (*entity.Answer, error) {
 	case r.Permutation != nil:
 		answer.Type = entity.PermutationType
 		answer.Answers = r.Permutation.Answer
+	case r.Mapping != nil:
+		answer.Type = entity.MappingType
+		answer.Answers = r.Mapping.Answer
 	default:
 		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
 	}

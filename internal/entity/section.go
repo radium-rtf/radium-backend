@@ -17,6 +17,7 @@ const (
 	AnswerType      = SectionType("answer")
 	CodeType        = SectionType("code")
 	PermutationType = SectionType("permutation")
+	MappingType     = SectionType("mapping")
 )
 
 type (
@@ -36,11 +37,13 @@ type (
 
 		Answer  string
 		Answers pq.StringArray
+
+		Keys pq.StringArray
 	}
 )
 
 func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
-	answer string, variants, answers []string, sectionType SectionType) (*Section, error) {
+	answer string, variants, answers []string, sectionType SectionType, keys []string) (*Section, error) {
 	if sectionType == TextType {
 		maxScore = 0
 	}
@@ -51,8 +54,17 @@ func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
 		PageId:   pageId,
 		Type:     sectionType,
 	}
+
 	section.Content = content
 	switch sectionType {
+	case MappingType:
+		variants := slices.Clone(answers)
+		rand.Shuffle(len(variants), func(i, j int) {
+			variants[i], variants[j] = variants[j], variants[i]
+		})
+		section.Keys = keys
+		section.Answers = answers
+		section.Variants = variants
 	case PermutationType:
 		variants := slices.Clone(answers)
 		rand.Shuffle(len(variants), func(i, j int) {
@@ -79,7 +91,7 @@ func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
 }
 
 func (s Section) GetVariants() []string {
-	if s.Type == PermutationType {
+	if s.Type == PermutationType || s.Type == MappingType {
 		variants := []string(s.Variants)
 		rand.Shuffle(len(variants), func(i, j int) {
 			variants[i], variants[j] = variants[j], variants[i]

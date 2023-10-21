@@ -19,6 +19,7 @@ type (
 		AnswerSection      *AnswerSection      `json:"answer,omitempty"`
 		CodeSection        *CodeSection        `json:"code,omitempty"`
 		PermutationSection *PermutationSection `json:"permutation,omitempty"`
+		MappingSection     *MappingSection     `json:"mappingSection,omitempty"`
 	}
 
 	TextSection struct {
@@ -54,39 +55,49 @@ type (
 		Question string   `validate:"required,max=500"`
 		Answer   []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
 	}
+
+	MappingSection struct {
+		Question string `validate:"required,max=800"`
+
+		Keys   []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+	}
 )
 
 func (r Section) ToSection() (*entity.Section, error) {
 	// TODO: хз хз хз. хочется валидацию разную для разных секций и без вот этого
 
 	switch {
+	case r.MappingSection != nil:
+		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.MappingSection.Question,
+			"", []string{}, r.MappingSection.Answer, entity.MappingType, r.MappingSection.Keys)
 	case r.PermutationSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.PermutationSection.Question,
-			"", []string{}, r.PermutationSection.Answer, entity.PermutationType)
+			"", []string{}, r.PermutationSection.Answer, entity.PermutationType, []string{})
 
 	case r.ChoiceSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.ChoiceSection.Question,
-			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType)
+			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType, []string{})
 
 	case r.ShortAnswerSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.ShortAnswerSection.Question,
-			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType)
+			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType, []string{})
 
 	case r.MultiChoiceSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.MultiChoiceSection.Question,
-			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType)
+			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType, []string{})
 
 	case r.TextSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.TextSection.Content,
-			"", []string{}, []string{}, entity.TextType)
+			"", []string{}, []string{}, entity.TextType, []string{})
 
 	case r.CodeSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.CodeSection.Question,
-			"", []string{}, []string{}, entity.CodeType)
+			"", []string{}, []string{}, entity.CodeType, []string{})
 
 	case r.AnswerSection != nil:
 		return entity.NewSection(r.PageId, r.Order, r.MaxScore, r.AnswerSection.Question,
-			"", []string{}, []string{}, entity.AnswerType)
+			"", []string{}, []string{}, entity.AnswerType, []string{})
 	default:
 		return nil, errors.New("не удалось создать секцию")
 	}

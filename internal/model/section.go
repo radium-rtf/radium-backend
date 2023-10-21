@@ -19,6 +19,7 @@ type (
 		MaxScore uint               `json:"maxScore"`
 		Variants []string           `json:"variants"`
 		Verdict  verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
+		Keys     []string           `json:"keys"`
 	}
 )
 
@@ -66,5 +67,6 @@ func NewSection(section *entity.Section, verdict verdict.Type,
 		Score:    score,
 		Answers:  answers,
 		Answer:   answer,
+		Keys:     section.Keys,
 	}
 }

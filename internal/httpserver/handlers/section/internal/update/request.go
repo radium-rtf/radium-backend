@@ -64,31 +64,31 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 	switch {
 	case r.PermutationSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.PermutationSection.Question,
-			"", []string{}, r.PermutationSection.Answer, entity.PermutationType)
+			"", []string{}, r.PermutationSection.Answer, entity.PermutationType, []string{})
 
 	case r.ChoiceSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.ChoiceSection.Question,
-			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType)
+			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType, []string{})
 
 	case r.ShortAnswerSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.ShortAnswerSection.Question,
-			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType)
+			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType, []string{})
 
 	case r.MultiChoiceSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.MultiChoiceSection.Question,
-			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType)
+			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType, []string{})
 
 	case r.TextSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.TextSection.Content,
-			"", []string{}, []string{}, entity.TextType)
+			"", []string{}, []string{}, entity.TextType, []string{})
 
 	case r.CodeSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.CodeSection.Question,
-			"", []string{}, []string{}, entity.CodeType)
+			"", []string{}, []string{}, entity.CodeType, []string{})
 
 	case r.AnswerSection != nil:
 		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.AnswerSection.Question,
-			"", []string{}, []string{}, entity.AnswerType)
+			"", []string{}, []string{}, entity.AnswerType, []string{})
 	default:
 
 	}
