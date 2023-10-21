@@ -1146,6 +1146,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "mapping": {
+                    "$ref": "#/definitions/create.Mapping"
+                },
                 "multiChoice": {
                     "$ref": "#/definitions/create.MultiChoice"
                 },
@@ -1271,6 +1274,49 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "create.Mapping": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "create.MappingSection": {
+            "type": "object",
+            "required": [
+                "answer",
+                "keys",
+                "question"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "keys": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 800
                 }
             }
         },
@@ -1412,6 +1458,9 @@ const docTemplate = `{
                 "code": {
                     "$ref": "#/definitions/create.CodeSection"
                 },
+                "mappingSection": {
+                    "$ref": "#/definitions/create.MappingSection"
+                },
                 "maxScore": {
                     "type": "integer",
                     "maximum": 300,
@@ -1508,7 +1557,8 @@ const docTemplate = `{
                 "shortAnswer",
                 "answer",
                 "code",
-                "permutation"
+                "permutation",
+                "mapping"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -1517,7 +1567,8 @@ const docTemplate = `{
                 "ShortAnswerType",
                 "AnswerType",
                 "CodeType",
-                "PermutationType"
+                "PermutationType",
+                "MappingType"
             ]
         },
         "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
@@ -1775,6 +1826,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "maxScore": {
                     "type": "integer"

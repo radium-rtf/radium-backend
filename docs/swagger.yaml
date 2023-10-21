@@ -10,6 +10,8 @@ definitions:
         $ref: '#/definitions/create.Code'
       id:
         type: string
+      mapping:
+        $ref: '#/definitions/create.Mapping'
       multiChoice:
         $ref: '#/definitions/create.MultiChoice'
       permutation:
@@ -97,6 +99,36 @@ definitions:
         type: array
     required:
     - name
+    type: object
+  create.Mapping:
+    properties:
+      answer:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+    required:
+    - answer
+    type: object
+  create.MappingSection:
+    properties:
+      answer:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      keys:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      question:
+        maxLength: 800
+        type: string
+    required:
+    - answer
+    - keys
+    - question
     type: object
   create.Module:
     properties:
@@ -193,6 +225,8 @@ definitions:
         $ref: '#/definitions/create.ChoiceSection'
       code:
         $ref: '#/definitions/create.CodeSection'
+      mappingSection:
+        $ref: '#/definitions/create.MappingSection'
       maxScore:
         maximum: 300
         minimum: 0
@@ -260,6 +294,7 @@ definitions:
     - answer
     - code
     - permutation
+    - mapping
     type: string
     x-enum-varnames:
     - ChoiceType
@@ -269,6 +304,7 @@ definitions:
     - AnswerType
     - CodeType
     - PermutationType
+    - MappingType
   internal_httpserver_handlers_answer_internal_create.AnswerSection:
     properties:
       answer:
@@ -437,6 +473,10 @@ definitions:
         type: string
       id:
         type: string
+      keys:
+        items:
+          type: string
+        type: array
       maxScore:
         type: integer
       order:
