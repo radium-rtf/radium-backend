@@ -58,10 +58,6 @@ func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
 	section.Content = content
 	switch sectionType {
 	case MappingType:
-		variants := slices.Clone(answers)
-		rand.Shuffle(len(variants), func(i, j int) {
-			variants[i], variants[j] = variants[j], variants[i]
-		})
 		section.Keys = keys
 		section.Answers = answers
 		section.Variants = variants
@@ -91,7 +87,7 @@ func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
 }
 
 func (s Section) GetVariants() []string {
-	if s.Type == PermutationType || s.Type == MappingType {
+	if s.Type != MappingType {
 		variants := []string(s.Variants)
 		rand.Shuffle(len(variants), func(i, j int) {
 			variants[i], variants[j] = variants[j], variants[i]
