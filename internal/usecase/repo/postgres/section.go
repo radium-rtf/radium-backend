@@ -12,11 +12,12 @@ import (
 )
 
 type Section struct {
-	db *bun.DB
+	db     *bun.DB
+	answer Answer
 }
 
 func NewSectionRepo(pg *postgres.Postgres) Section {
-	return Section{db: pg.DB}
+	return Section{db: pg.DB, answer: NewAnswerRepo(pg)}
 }
 
 func (r Section) Create(ctx context.Context, section *entity.Section) (*entity.Section, error) {
@@ -70,4 +71,12 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 		return nil, err
 	}
 	return r.GetById(ctx, section.Id)
+}
+
+func (r Section) GetByAnswerId(ctx context.Context, id uuid.UUID) (*entity.Section, error) {
+	answer, err := r.answer.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return answer.Section, nil
 }

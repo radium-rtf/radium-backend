@@ -1,10 +1,11 @@
 package verdict
 
 const (
-	OK    = Type("OK")
-	EMPTY = Type("")
-	WA    = Type("WA")
-	WAIT  = Type("WAIT")
+	OK       = Type("OK")
+	EMPTY    = Type("")
+	WA       = Type("WA")
+	WAIT     = Type("WAIT")
+	REVIEWED = Type("REVIEWED")
 )
 
 type (

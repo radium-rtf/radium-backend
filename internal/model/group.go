@@ -13,6 +13,15 @@ type (
 		Courses    []*Course `json:"courses"`
 		Students   []User    `json:"students"`
 	}
+
+	GroupAnswers struct {
+		Id         uuid.UUID `json:"id"`
+		Name       string    `json:"name"`
+		InviteCode string    `json:"inviteCode"`
+		Courses    []*Course `json:"courses"`
+
+		UserAnswers []*UserAnswers `json:"students"`
+	}
 )
 
 func NewGroup(group *entity.Group) *Group {
@@ -33,4 +42,14 @@ func NewGroups(groups []*entity.Group) []*Group {
 		groupsDto = append(groupsDto, NewGroup(group))
 	}
 	return groupsDto
+}
+
+func NewGroupAnswers(group *entity.Group) GroupAnswers {
+	return GroupAnswers{
+		Id:          group.Id,
+		Name:        group.Name,
+		InviteCode:  group.InviteCode,
+		Courses:     NewCourses(group.Courses),
+		UserAnswers: NewUserAnswers(group.Students),
+	}
 }

@@ -27,6 +27,17 @@ func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UU
 	return entity.NewAnswersCollection(answers), err
 }
 
+func (r Answer) GetById(ctx context.Context, id uuid.UUID) (*entity.Answer, error) {
+	var answer = new(entity.Answer)
+	err := r.db.NewSelect().
+		Model(answer).
+		Where("answer.id = ?", id).
+		Relation("Section").
+		Limit(1).
+		Scan(ctx)
+	return answer, err
+}
+
 func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uuid.UUID) ([]*entity.Answer, error) {
 	var answers []*entity.Answer
 

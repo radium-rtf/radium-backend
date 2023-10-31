@@ -15,6 +15,9 @@ type (
 )
 
 func NewReview(review *entity.Review) *Review {
+	if review == nil {
+		return nil
+	}
 	return &Review{
 		AnswerId:   review.AnswerId,
 		ReviewerId: review.ReviewerId,

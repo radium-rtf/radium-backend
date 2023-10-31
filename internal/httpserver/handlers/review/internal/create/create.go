@@ -18,7 +18,7 @@ type creator interface {
 // @Tags review
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body Review true "score - от 0 до 1"
+// @Param request body Review true " "
 // @Success 201 {object} model.Review "created"
 // @Router /v1/review [post]
 func NewReview(creator creator) http.HandlerFunc {

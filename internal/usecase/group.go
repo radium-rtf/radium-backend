@@ -39,6 +39,22 @@ func (uc GroupUseCase) Get(ctx context.Context) ([]*entity.Group, error) {
 	return uc.group.Get(ctx)
 }
 
+func (uc GroupUseCase) GetWithAnswers(ctx context.Context, teacherId, groupId, courseId uuid.UUID) (*entity.Group, error) {
+	courses, err := uc.teacher.GetCoursesByTeacherId(ctx, teacherId)
+	if err != nil {
+		return nil, err
+	}
+
+	contains := slices.ContainsFunc(courses, func(group *entity.TeacherCourseGroup) bool {
+		return group.GroupId == groupId && group.CourseId == courseId
+	})
+	if !contains {
+		return nil, errors.New("преподаватель может получать ответы только своих студентов")
+	}
+
+	return uc.group.GetWithAnswers(ctx, groupId, courseId)
+}
+
 func (uc GroupUseCase) GetReportByCourse(ctx context.Context, userId, courseId, groupId uuid.UUID) (
 	*model.Report, error) {
 	group, err := uc.group.GetById(ctx, groupId)

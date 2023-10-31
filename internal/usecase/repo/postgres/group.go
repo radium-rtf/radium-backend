@@ -89,3 +89,35 @@ func (r Group) Get(ctx context.Context) ([]*entity.Group, error) {
 		Scan(ctx)
 	return groups, err
 }
+
+func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error) {
+	var group = new(entity.Group)
+	sectionsIds := r.db.NewSelect().
+		Model(&entity.Course{}).
+		ColumnExpr("sections.id").
+		Join("join modules on course.id = modules.course_id").
+		Join("join pages on pages.module_id = modules.id").
+		Join("join sections on sections.page_id = pages.id").
+		Where("course.id = ?", courseId)
+
+	err := r.db.NewSelect().
+		Model(group).
+		Where("id = ?", groupId).
+		Relation("Courses", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("course.id = ?", courseId)
+		}).
+		Relation("Students").
+		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.
+				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds)
+
+		}).
+		Relation("Students.Answers.Section").
+		Relation("Students.Answers.Review", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("review.created_at desc")
+		}).
+		Limit(1).
+		Scan(ctx)
+
+	return group, err
+}

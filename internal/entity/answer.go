@@ -13,11 +13,14 @@ type (
 		bun.BaseModel `bun:"table:answers"`
 		DBModel
 
-		UserId    uuid.UUID
+		UserId uuid.UUID
+
 		SectionId uuid.UUID
+		Section   *Section `bun:"rel:belongs-to,join:section_id=id"`
 
 		Type    SectionType
 		Verdict verdict.Type
+
 		Answer  string
 		Answers pq.StringArray
 

@@ -48,7 +48,7 @@ func NewUseCases(deps Dependencies) UseCases {
 		Group:   NewGroupUseCase(repos.Group, repos.Course, repos.Answer, repos.Teacher),
 		Module:  NewModuleUseCase(repos.Module),
 		Page:    NewPageUseCase(repos.Page),
-		Review:  NewReviewUseCase(repos.Review),
+		Review:  NewReviewUseCase(repos.Review, repos.Section),
 		Section: NewSectionUseCase(repos.Section),
 		Teacher: NewTeacherUseCase(repos.Teacher),
 		Role:    NewRoleUseCase(repos.Role),

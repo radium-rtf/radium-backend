@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
 )
@@ -16,10 +17,22 @@ func NewReviewRepo(pg *postgres.Postgres) Review {
 }
 
 func (r Review) Create(ctx context.Context, review *entity.Review) (*entity.Review, error) {
-	_, err := r.db.NewInsert().
-		On("conflict (answer_id) do update").
-		Set("score = excluded.score, updated_at = excluded.updated_at").
-		Model(review).
-		Exec(ctx)
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewInsert().
+			On("conflict (answer_id) do update").
+			Set("score = excluded.score, updated_at = excluded.updated_at").
+			Model(review).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.NewUpdate().
+			Model(&entity.Answer{}).
+			Where("id = ?", review.AnswerId).Set("verdict = ?", verdict.REVIEWED).
+			Exec(ctx)
+
+		return err
+	})
 	return review, err
 }
