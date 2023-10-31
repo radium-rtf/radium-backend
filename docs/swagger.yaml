@@ -958,6 +958,17 @@ paths:
             $ref: '#/definitions/model.Tokens'
       tags:
       - auth
+  /v1/author/courses:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - author
   /v1/course:
     get:
       responses:

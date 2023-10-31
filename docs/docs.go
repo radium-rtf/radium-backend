@@ -293,6 +293,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/author/courses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "author"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.Course"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/course": {
             "get": {
                 "security": [
