@@ -158,6 +158,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/answers/group/{groupId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "answer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "groupId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "course_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.GroupAnswers"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/refresh": {
             "post": {
                 "consumes": [
@@ -860,7 +899,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "score - от 0 до 1",
+                        "description": " ",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1440,8 +1479,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "score": {
-                    "type": "number",
-                    "maximum": 1,
+                    "type": "integer",
                     "minimum": 0
                 }
             }
@@ -1591,6 +1629,41 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "review": {
+                    "$ref": "#/definitions/model.Review"
+                },
+                "section": {
+                    "$ref": "#/definitions/model.Section"
+                },
+                "type": {
+                    "$ref": "#/definitions/entity.SectionType"
+                },
+                "verdict": {
+                    "$ref": "#/definitions/verdict.Type"
+                }
+            }
+        },
         "model.Course": {
             "type": "object",
             "properties": {
@@ -1647,6 +1720,32 @@ const docTemplate = `{
             "properties": {
                 "location": {
                     "type": "string"
+                }
+            }
+        },
+        "model.GroupAnswers": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Course"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inviteCode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.UserAnswers"
+                    }
                 }
             }
         },
@@ -1918,6 +2017,23 @@ const docTemplate = `{
                 }
             }
         },
+        "model.UserAnswers": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Answer"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "withoutReview": {
+                    "type": "integer"
+                }
+            }
+        },
         "postauthor.Email": {
             "type": "object",
             "properties": {
@@ -2186,13 +2302,15 @@ const docTemplate = `{
                 "OK",
                 "",
                 "WA",
-                "WAIT"
+                "WAIT",
+                "REVIEWED"
             ],
             "x-enum-varnames": [
                 "OK",
                 "EMPTY",
                 "WA",
-                "WAIT"
+                "WAIT",
+                "REVIEWED"
             ]
         },
         "verdict.Verdict": {

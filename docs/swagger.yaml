@@ -213,9 +213,8 @@ definitions:
       answerId:
         type: string
       score:
-        maximum: 1
         minimum: 0
-        type: number
+        type: integer
     type: object
   create.Section:
     properties:
@@ -318,6 +317,29 @@ definitions:
     required:
     - question
     type: object
+  model.Answer:
+    properties:
+      answer:
+        type: string
+      answers:
+        items:
+          type: string
+        type: array
+      createdAt:
+        type: string
+      id:
+        type: string
+      language:
+        type: string
+      review:
+        $ref: '#/definitions/model.Review'
+      section:
+        $ref: '#/definitions/model.Section'
+      type:
+        $ref: '#/definitions/entity.SectionType'
+      verdict:
+        $ref: '#/definitions/verdict.Type'
+    type: object
   model.Course:
     properties:
       authors:
@@ -356,6 +378,23 @@ definitions:
     properties:
       location:
         type: string
+    type: object
+  model.GroupAnswers:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/model.Course'
+        type: array
+      id:
+        type: string
+      inviteCode:
+        type: string
+      name:
+        type: string
+      students:
+        items:
+          $ref: '#/definitions/model.UserAnswers'
+        type: array
     type: object
   model.Link:
     properties:
@@ -531,6 +570,17 @@ definitions:
         type: string
       roles:
         $ref: '#/definitions/model.Roles'
+    type: object
+  model.UserAnswers:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/model.Answer'
+        type: array
+      user:
+        $ref: '#/definitions/model.User'
+      withoutReview:
+        type: integer
     type: object
   postauthor.Email:
     properties:
@@ -716,12 +766,14 @@ definitions:
     - ""
     - WA
     - WAIT
+    - REVIEWED
     type: string
     x-enum-varnames:
     - OK
     - EMPTY
     - WA
     - WAIT
+    - REVIEWED
   verdict.Verdict:
     properties:
       verdict:
@@ -818,6 +870,30 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/verdict.Verdict'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - answer
+  /v1/answers/group/{groupId}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: groupId
+        required: true
+        type: string
+      - description: ' '
+        in: query
+        name: course_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/model.GroupAnswers'
       security:
       - ApiKeyAuth: []
       tags:
@@ -1237,7 +1313,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: score - от 0 до 1
+      - description: ' '
         in: body
         name: request
         required: true
