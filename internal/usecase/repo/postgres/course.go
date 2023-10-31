@@ -126,3 +126,18 @@ func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Cour
 	}
 	return r.GetFullById(ctx, course.Id)
 }
+
+func (r Course) GetCoursesByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
+	coursesIds := r.db.NewSelect().
+		Column("course_id").
+		Model(&entity.CourseAuthor{}).
+		Where("user_id = ?", id)
+
+	var courses []*entity.Course
+	err := r.db.NewSelect().
+		Model(&courses).
+		Where("id in (?)", coursesIds).
+		Scan(ctx)
+
+	return courses, err
+}
