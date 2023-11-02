@@ -577,6 +577,10 @@ definitions:
         items:
           $ref: '#/definitions/model.Answer'
         type: array
+      maxScore:
+        type: integer
+      score:
+        type: integer
       user:
         $ref: '#/definitions/model.User'
       withoutReview:

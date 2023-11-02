@@ -2046,6 +2046,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.Answer"
                     }
                 },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "score": {
+                    "type": "integer"
+                },
                 "user": {
                     "$ref": "#/definitions/model.User"
                 },

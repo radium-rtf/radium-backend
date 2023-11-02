@@ -27,9 +27,13 @@ type (
 	}
 
 	UserAnswers struct {
-		User          User     `json:"user"`
-		WithoutReview uint     `json:"withoutReview"`
-		Answers       []Answer `json:"answers"`
+		User          User `json:"user"`
+		WithoutReview uint `json:"withoutReview"`
+
+		MaxScore uint `json:"maxScore"`
+		Score    uint `json:"score"`
+
+		Answers []Answer `json:"answers"`
 	}
 )
 
