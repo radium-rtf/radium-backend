@@ -8,6 +8,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/getbyid"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/getbyslug"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/join"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/publish"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/update"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/middleware/role"
@@ -36,6 +37,7 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 				r.Use(role.Author(tokenManager))
 				r.Post("/", create.New(useCase))
 				r.Put("/{courseId}", update.New(useCase))
+				r.Patch("/publish/{id}", publish.New(useCase))
 				r.Delete("/{id}", destroy.New(useCase))
 			})
 		})

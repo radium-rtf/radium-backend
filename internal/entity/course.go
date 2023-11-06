@@ -10,17 +10,18 @@ type (
 		bun.BaseModel `bun:"table:courses"`
 		DBModel
 
-		Name             string
+		Name             string `validate:"required,min=1,max=45"`
 		Slug             string
-		ShortDescription string
-		Description      string
-		Logo             string
-		Banner           string
+		ShortDescription string `validate:"required,min=1,max=400"`
+		Description      string `validate:"required,max=3000"`
+		Logo             string `validate:"required,url"`
+		Banner           string `validate:"required,url"`
+		IsPublished      bool
 
 		Students []User `bun:"m2m:course_student,join:Course=User"`
 
 		Authors []User `bun:"m2m:course_author,join:Course=User"`
-		Links   []Link `bun:"rel:has-many,join:id=course_id"`
+		Links   []Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
 
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 	}

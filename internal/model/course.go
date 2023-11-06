@@ -18,6 +18,8 @@ type (
 		Authors          []User `json:"authors"`
 		Links            []Link `json:"links"`
 
+		IsPublished bool `json:"isPublished"`
+
 		Score    uint      `json:"score"`
 		MaxScore uint      `json:"maxScore"`
 		Modules  []*Module `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
@@ -55,6 +57,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Cou
 		Banner:           course.Banner,
 		Authors:          authors,
 		Links:            links,
+		IsPublished:      course.IsPublished,
 		MaxScore:         maxScore,
 		Score:            score,
 		Modules:          modules,

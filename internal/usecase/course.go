@@ -2,7 +2,10 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/validator"
+	"slices"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -25,7 +28,7 @@ func (uc CourseUseCase) Create(ctx context.Context, course *entity.Course) (*ent
 }
 
 func (uc CourseUseCase) GetCourses(ctx context.Context) ([]*entity.Course, error) {
-	return uc.courseRepo.GetCourses(ctx)
+	return uc.courseRepo.Get(ctx)
 }
 
 func (uc CourseUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
@@ -50,4 +53,25 @@ func (uc CourseUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) e
 
 func (uc CourseUseCase) Update(ctx context.Context, course *entity.Course, userId uuid.UUID) (*entity.Course, error) {
 	return uc.courseRepo.Update(ctx, course)
+}
+
+func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Course, error) {
+	course, err := uc.courseRepo.GetFullById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if !course.IsPublished && validator.Struct(course) != nil {
+		return nil, errors.New("курс ещё не готов к публикации")
+	}
+	isAuthor := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
+		return user.Id == userId
+	})
+	if !isAuthor {
+		return nil, errors.New("пубилковать и снимать с публикации курс могут только авторы")
+	}
+
+	course.IsPublished = !course.IsPublished
+	course, err = uc.courseRepo.Update(ctx, course)
+
+	return course, err
 }

@@ -33,7 +33,9 @@ func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Cour
 			return err
 		}
 
-		_, err = tx.NewInsert().Model(&course.Links).Exec(ctx)
+		if len(course.Links) != 0 {
+			_, err = tx.NewInsert().Model(&course.Links).Exec(ctx)
+		}
 		return err
 	})
 	if err != nil {
@@ -42,9 +44,10 @@ func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Cour
 	return r.GetFullById(ctx, course.Id)
 }
 
-func (r Course) GetCourses(ctx context.Context) ([]*entity.Course, error) {
+func (r Course) Get(ctx context.Context) ([]*entity.Course, error) {
 	var courses []*entity.Course
 	err := r.db.NewSelect().
+		Where("is_published = ?", true).
 		Model(&courses).
 		Scan(ctx)
 	return courses, err
@@ -91,7 +94,7 @@ func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.C
 
 	err := r.db.NewSelect().
 		Model(user).
-		Where("id = ?", userId).
+		Where("id = ? and is_published = ?", userId, true).
 		Relation("Courses").Relation("Courses.Authors").Relation("Courses.Links").
 		Relation("Courses.Authors.Roles").
 		Scan(ctx)
@@ -127,7 +130,7 @@ func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Cour
 	return r.GetFullById(ctx, course.Id)
 }
 
-func (r Course) GetCoursesByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
+func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
 	coursesIds := r.db.NewSelect().
 		Column("course_id").
 		Model(&entity.CourseAuthor{}).

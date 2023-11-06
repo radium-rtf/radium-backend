@@ -9,7 +9,7 @@ import (
 
 type Course struct {
 	Name             string       `json:"name" validate:"required,min=1,max=45"`
-	ShortDescription string       `json:"shortDescription" validate:"required,min=1,max=400"`
+	ShortDescription string       `json:"shortDescription" validate:"max=400"`
 	Description      string       `json:"description" validate:"max=3000"`
 	Logo             string       `json:"logo" validate:"url"`
 	Banner           string       `json:"banner" validate:"url"`
