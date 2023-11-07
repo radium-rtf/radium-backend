@@ -30,7 +30,7 @@ type (
 )
 
 func NewGroupReport(answersCollection *entity.UsersAnswersCollection, course *entity.Course) *Report {
-	c := NewCourse(course, map[uuid.UUID]*entity.Answer{})
+	c := NewCourse(course, map[uuid.UUID]*entity.Answer{}, uuid.UUID{})
 	headerValues := make([]ReportHeaderValue, 0, len(c.Modules)*3)
 	reportRows := make([]ReportRow, 0, len(c.Modules))
 
@@ -50,7 +50,7 @@ func NewGroupReport(answersCollection *entity.UsersAnswersCollection, course *en
 		}
 
 		row := ReportRow{User: NewUser(user)}
-		c := NewCourse(course, answers.AnswerBySectionId)
+		c := NewCourse(course, answers.AnswerBySectionId, user.Id)
 		row.Score = c.Score
 
 		for _, m := range c.Modules {

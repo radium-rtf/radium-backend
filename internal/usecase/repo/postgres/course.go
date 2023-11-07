@@ -47,8 +47,9 @@ func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Cour
 func (r Course) Get(ctx context.Context) ([]*entity.Course, error) {
 	var courses []*entity.Course
 	err := r.db.NewSelect().
-		Where("is_published = ?", true).
 		Model(&courses).
+		Relation("Students").
+		Where("is_published = ?", true).
 		Scan(ctx)
 	return courses, err
 }
@@ -68,8 +69,10 @@ func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course,
 	err := r.db.NewSelect().
 		Model(course).
 		Where(where.column+" = ?", where.value).
-		Relation("Authors").Relation("Authors.Roles").
+		Relation("Authors").
+		Relation("Authors.Roles").
 		Relation("Links").
+		Relation("Students").
 		Relation("Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
 		}).
@@ -94,9 +97,12 @@ func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.C
 
 	err := r.db.NewSelect().
 		Model(user).
-		Where("id = ? and is_published = ?", userId, true).
-		Relation("Courses").Relation("Courses.Authors").Relation("Courses.Links").
+		Where("id = ?", userId).
+		Relation("Courses", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("is_published = ?", true)
+		}).Relation("Courses.Authors").Relation("Courses.Links").
 		Relation("Courses.Authors.Roles").
+		Relation("Courses.Students").
 		Scan(ctx)
 
 	return user.Courses, err
@@ -139,6 +145,7 @@ func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Cour
 	var courses []*entity.Course
 	err := r.db.NewSelect().
 		Model(&courses).
+		Relation("Students").
 		Where("id in (?)", coursesIds).
 		Scan(ctx)
 

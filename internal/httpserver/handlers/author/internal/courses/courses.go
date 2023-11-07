@@ -31,7 +31,7 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourses(courses)
+		c := model.NewCourses(courses, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}

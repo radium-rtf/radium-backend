@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"slices"
 )
 
 type (
@@ -19,6 +20,7 @@ type (
 		Links            []Link `json:"links"`
 
 		IsPublished bool `json:"isPublished"`
+		IsStudent   bool `json:"isStudent"`
 
 		Score    uint      `json:"score"`
 		MaxScore uint      `json:"maxScore"`
@@ -26,15 +28,15 @@ type (
 	}
 )
 
-func NewCourses(courses []*entity.Course) []*Course {
+func NewCourses(courses []*entity.Course, userId uuid.UUID) []*Course {
 	c := make([]*Course, 0, len(courses))
 	for _, course := range courses {
-		c = append(c, NewCourse(course, map[uuid.UUID]*entity.Answer{}))
+		c = append(c, NewCourse(course, map[uuid.UUID]*entity.Answer{}, userId))
 	}
 	return c
 }
 
-func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Course {
+func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer, userId uuid.UUID) *Course {
 	links := make([]Link, 0, len(course.Links))
 	for _, link := range course.Links {
 		links = append(links, Link{Name: link.Name, Link: link.Link})
@@ -47,6 +49,9 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Cou
 
 	modules, score, maxScore := NewModules(course.Modules, answers)
 
+	isStudent := slices.ContainsFunc(course.Students, func(user entity.User) bool {
+		return user.Id == userId
+	})
 	return &Course{
 		Id:               course.Id,
 		Name:             course.Name,
@@ -58,6 +63,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer) *Cou
 		Authors:          authors,
 		Links:            links,
 		IsPublished:      course.IsPublished,
+		IsStudent:        isStudent,
 		MaxScore:         maxScore,
 		Score:            score,
 		Modules:          modules,

@@ -41,6 +41,6 @@ func New(connector connector) http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, model.NewCourse(course, nil))
+		render.JSON(w, r, model.NewCourse(course, nil, userId))
 	}
 }

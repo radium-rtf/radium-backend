@@ -40,7 +40,7 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 
 		if !ok {
 			render.Status(r, http.StatusOK)
-			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID]*entity.Answer{}))
+			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID]*entity.Answer{}, userId))
 			return
 		}
 
@@ -52,7 +52,7 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, answers.AnswerBySectionId)
+		c := model.NewCourse(course, answers.AnswerBySectionId, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}

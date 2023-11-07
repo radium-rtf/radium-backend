@@ -25,7 +25,7 @@ type (
 )
 
 func NewGroup(group *entity.Group) *Group {
-	courses := NewCourses(group.Courses)
+	courses := NewCourses(group.Courses, uuid.UUID{})
 	students := NewUsers(group.Students)
 	return &Group{
 		Id:         group.Id,
@@ -49,7 +49,7 @@ func NewGroupAnswers(group *entity.Group) GroupAnswers {
 		Id:          group.Id,
 		Name:        group.Name,
 		InviteCode:  group.InviteCode,
-		Courses:     NewCourses(group.Courses),
+		Courses:     NewCourses(group.Courses, uuid.UUID{}),
 		UserAnswers: NewUserAnswers(group.Students),
 	}
 }
