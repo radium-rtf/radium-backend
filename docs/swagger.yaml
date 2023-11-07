@@ -77,11 +77,9 @@ definitions:
         type: string
       shortDescription:
         maxLength: 400
-        minLength: 1
         type: string
     required:
     - name
-    - shortDescription
     type: object
   create.Group:
     properties:
@@ -352,6 +350,10 @@ definitions:
         type: string
       id:
         type: string
+      isPublished:
+        type: boolean
+      isStudent:
+        type: boolean
       links:
         items:
           $ref: '#/definitions/model.Link'
@@ -1076,6 +1078,25 @@ paths:
       responses:
         "201":
           description: created
+          schema:
+            $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
+  /v1/course/publish/{id}:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: опубликовать или снять с публикации
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
           schema:
             $ref: '#/definitions/model.Course'
       security:

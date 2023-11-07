@@ -394,6 +394,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/course/publish/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "опубликовать или снять с публикации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Course"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/course/slug/{slug}": {
             "get": {
                 "security": [
@@ -1279,8 +1311,7 @@ const docTemplate = `{
         "create.Course": {
             "type": "object",
             "required": [
-                "name",
-                "shortDescription"
+                "name"
             ],
             "properties": {
                 "banner": {
@@ -1306,8 +1337,7 @@ const docTemplate = `{
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400,
-                    "minLength": 1
+                    "maxLength": 400
                 }
             }
         },
@@ -1701,6 +1731,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "isPublished": {
+                    "type": "boolean"
+                },
+                "isStudent": {
+                    "type": "boolean"
                 },
                 "links": {
                     "type": "array",
