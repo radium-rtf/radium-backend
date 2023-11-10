@@ -17,7 +17,7 @@ type (
 	}
 )
 
-func NewModule(module *entity.Module, answers map[uuid.UUID]*entity.Answer) *Module {
+func NewModule(module *entity.Module, answers map[uuid.UUID][]*entity.Answer) *Module {
 	pages, score, maxScore := NewPages(module.Pages, answers)
 
 	return &Module{
@@ -31,7 +31,7 @@ func NewModule(module *entity.Module, answers map[uuid.UUID]*entity.Answer) *Mod
 	}
 }
 
-func NewModules(modules []*entity.Module, answers map[uuid.UUID]*entity.Answer) ([]*Module, uint, uint) {
+func NewModules(modules []*entity.Module, answers map[uuid.UUID][]*entity.Answer) ([]*Module, uint, uint) {
 	dtos := make([]*Module, 0, len(modules))
 	var score, maxScore uint = 0, 0
 

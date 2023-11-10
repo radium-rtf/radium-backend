@@ -41,7 +41,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewModule(module, map[uuid.UUID]*entity.Answer{})
+		dto := model.NewModule(module, map[uuid.UUID][]*entity.Answer{})
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}

@@ -1,13 +1,15 @@
 package update
 
 import (
+	"database/sql"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
 
 type (
 	Section struct {
-		MaxScore uint `json:"maxScore,omitempty" validate:"min=0,max=300"`
+		MaxScore    uint  `json:"maxScore,omitempty" validate:"min=0,max=300"`
+		MaxAttempts int16 `json:"maxAttempts"`
 
 		TextSection        *TextSection        `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSection      `json:"choice,omitempty"`
@@ -60,37 +62,37 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 		pageId  uuid.UUID
 		err     error
 	)
+	maxAttempts := sql.NullInt16{Int16: r.MaxAttempts, Valid: r.MaxAttempts != 0}
 
 	switch {
 	case r.PermutationSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.PermutationSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.PermutationSection.Question,
 			"", []string{}, r.PermutationSection.Answer, entity.PermutationType, []string{})
 
 	case r.ChoiceSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.ChoiceSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.ChoiceSection.Question,
 			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType, []string{})
 
 	case r.ShortAnswerSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.ShortAnswerSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.ShortAnswerSection.Question,
 			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType, []string{})
 
 	case r.MultiChoiceSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.MultiChoiceSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.MultiChoiceSection.Question,
 			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType, []string{})
 
 	case r.TextSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.TextSection.Content,
+		section, err = entity.NewSection(sql.NullInt16{}, pageId, 0, r.MaxScore, r.TextSection.Content,
 			"", []string{}, []string{}, entity.TextType, []string{})
 
 	case r.CodeSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.CodeSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.CodeSection.Question,
 			"", []string{}, []string{}, entity.CodeType, []string{})
 
 	case r.AnswerSection != nil:
-		section, err = entity.NewSection(pageId, 0, r.MaxScore, r.AnswerSection.Question,
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.AnswerSection.Question,
 			"", []string{}, []string{}, entity.AnswerType, []string{})
 	default:
-
 	}
 	section.Id = sectionId
 	section.MaxScore = r.MaxScore

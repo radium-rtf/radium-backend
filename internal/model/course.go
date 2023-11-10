@@ -31,12 +31,12 @@ type (
 func NewCourses(courses []*entity.Course, userId uuid.UUID) []*Course {
 	c := make([]*Course, 0, len(courses))
 	for _, course := range courses {
-		c = append(c, NewCourse(course, map[uuid.UUID]*entity.Answer{}, userId))
+		c = append(c, NewCourse(course, map[uuid.UUID][]*entity.Answer{}, userId))
 	}
 	return c
 }
 
-func NewCourse(course *entity.Course, answers map[uuid.UUID]*entity.Answer, userId uuid.UUID) *Course {
+func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, userId uuid.UUID) *Course {
 	links := make([]Link, 0, len(course.Links))
 	for _, link := range course.Links {
 		links = append(links, Link{Name: link.Name, Link: link.Link})

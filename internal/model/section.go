@@ -20,10 +20,12 @@ type (
 		Variants []string           `json:"variants"`
 		Verdict  verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
 		Keys     []string           `json:"keys"`
+
+		Attempts int `json:"attempts"`
 	}
 )
 
-func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answer) ([]*Section, uint, uint) {
+func NewSections(sections []*entity.Section, answers map[uuid.UUID][]*entity.Answer) ([]*Section, uint, uint) {
 	dtos := make([]*Section, 0, len(sections))
 	var sumMaxScore, sumScore uint = 0, 0
 
@@ -33,10 +35,13 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 			score       = uint(0)
 			answerStr   = ""
 			answersArr  []string
+			attempts    = int(section.MaxAttempts.Int16)
 		)
 
-		answer, ok := answers[section.Id]
-		if ok {
+		answers, ok := answers[section.Id]
+		if ok && len(answers) >= 1 {
+			answer := answers[0]
+			attempts = max(int(section.MaxAttempts.Int16)-len(answers), 0)
 			verdictType = answer.Verdict
 			score = answer.Score(section)
 			answerStr = answer.Answer
@@ -46,15 +51,14 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID]*entity.Answe
 		sumMaxScore += section.GetMaxScore()
 		sumScore += score
 
-		dto := NewSection(section, verdictType, score, answerStr, answersArr)
+		dto := NewSection(section, verdictType, score, answerStr, answersArr, attempts)
 		dtos = append(dtos, dto)
 	}
 
 	return dtos, sumScore, sumMaxScore
 }
 
-func NewSection(section *entity.Section, verdict verdict.Type,
-	score uint, answer string, answers []string) *Section {
+func NewSection(section *entity.Section, verdict verdict.Type, score uint, answer string, answers []string, attempts int) *Section {
 	return &Section{
 		Id:       section.Id,
 		PageId:   section.PageId,
@@ -68,5 +72,6 @@ func NewSection(section *entity.Section, verdict verdict.Type,
 		Answers:  answers,
 		Answer:   answer,
 		Keys:     section.Keys,
+		Attempts: attempts,
 	}
 }

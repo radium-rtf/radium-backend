@@ -109,9 +109,8 @@ func NewAnswers(answers []*entity.Answer) []Answer {
 
 func NewAnswer(answer *entity.Answer) Answer {
 	return Answer{
-		Id: answer.Id,
-		Section: NewSection(answer.Section, answer.Verdict,
-			answer.Score(answer.Section), answer.Section.Answer, answer.Section.Answers),
+		Id:      answer.Id,
+		Section: NewSection(answer.Section, answer.Verdict, answer.Score(answer.Section), answer.Section.Answer, answer.Section.Answers, 0),
 
 		Type:    answer.Type,
 		Verdict: answer.Verdict,

@@ -48,7 +48,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewSection(section, verdict.EMPTY, 0, "", nil)
+		dto := model.NewSection(section, verdict.EMPTY, 0, "", nil, 0)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}

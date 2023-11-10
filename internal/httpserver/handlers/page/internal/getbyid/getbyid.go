@@ -43,7 +43,7 @@ func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 		}
 
 		if !ok {
-			render.JSON(w, r, model.NewPage(page, map[uuid.UUID]*entity.Answer{}))
+			render.JSON(w, r, model.NewPage(page, map[uuid.UUID][]*entity.Answer{}))
 			return
 		}
 

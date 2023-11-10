@@ -35,7 +35,7 @@ type (
 	}
 
 	AnswersCollection struct {
-		AnswerBySectionId map[uuid.UUID]*Answer
+		AnswerBySectionId map[uuid.UUID][]*Answer
 	}
 )
 
@@ -53,10 +53,10 @@ func (a Answer) Score(section *Section) uint {
 }
 
 func NewAnswersCollection(answers []*Answer) *AnswersCollection {
-	var answerBySectionId = make(map[uuid.UUID]*Answer, len(answers))
+	var answerBySectionId = make(map[uuid.UUID][]*Answer, len(answers))
 
 	for _, answer := range answers {
-		answerBySectionId[answer.SectionId] = answer
+		answerBySectionId[answer.SectionId] = append(answerBySectionId[answer.SectionId], answer)
 	}
 
 	return &AnswersCollection{AnswerBySectionId: answerBySectionId}
@@ -71,10 +71,11 @@ func NewUsersAnswersCollection(users []*User, answers []*Answer) *UsersAnswersCo
 	for _, answer := range answers {
 		if _, ok := result.AnswersByUserId[answer.UserId]; !ok {
 			result.AnswersByUserId[answer.UserId] = &AnswersCollection{
-				AnswerBySectionId: make(map[uuid.UUID]*Answer),
+				AnswerBySectionId: make(map[uuid.UUID][]*Answer),
 			}
 		}
-		result.AnswersByUserId[answer.UserId].AnswerBySectionId[answer.SectionId] = answer
+		result.AnswersByUserId[answer.UserId].AnswerBySectionId[answer.SectionId] = append(
+			result.AnswersByUserId[answer.UserId].AnswerBySectionId[answer.SectionId], answer)
 	}
 
 	return result

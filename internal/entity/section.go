@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -39,20 +40,22 @@ type (
 		Answers pq.StringArray
 
 		Keys pq.StringArray
+
+		MaxAttempts sql.NullInt16
 	}
 )
 
-func NewSection(pageId uuid.UUID, order float64, maxScore uint, content,
-	answer string, variants, answers []string, sectionType SectionType, keys []string) (*Section, error) {
+func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxScore uint, content string, answer string, variants []string, answers []string, sectionType SectionType, keys []string) (*Section, error) {
 	if sectionType == TextType {
 		maxScore = 0
 	}
 	section := &Section{
-		DBModel:  DBModel{Id: uuid.New()},
-		Order:    order,
-		MaxScore: maxScore,
-		PageId:   pageId,
-		Type:     sectionType,
+		DBModel:     DBModel{Id: uuid.New()},
+		Order:       order,
+		MaxScore:    maxScore,
+		PageId:      pageId,
+		Type:        sectionType,
+		MaxAttempts: maxAttempts,
 	}
 
 	section.Content = content

@@ -43,7 +43,7 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 		}
 
 		if !ok {
-			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID]*entity.Answer{}, uuid.UUID{}))
+			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, uuid.UUID{}))
 			return
 		}
 

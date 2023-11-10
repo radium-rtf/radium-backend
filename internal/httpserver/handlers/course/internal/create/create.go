@@ -43,7 +43,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, map[uuid.UUID]*entity.Answer{}, userId)
+		c := model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, userId)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, c)
 	}

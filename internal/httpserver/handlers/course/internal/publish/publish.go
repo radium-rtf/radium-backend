@@ -41,7 +41,7 @@ func New(publisher publisher) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, map[uuid.UUID]*entity.Answer{}, userId)
+		c := model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}

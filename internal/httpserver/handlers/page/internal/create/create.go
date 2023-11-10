@@ -41,7 +41,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		m := model.NewPage(page, map[uuid.UUID]*entity.Answer{})
+		m := model.NewPage(page, map[uuid.UUID][]*entity.Answer{})
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, m)
 	}

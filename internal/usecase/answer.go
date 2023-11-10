@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
@@ -24,7 +25,23 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	if err != nil {
 		return nil, err
 	}
+	if !section.MaxAttempts.Valid {
+		return uc.createAnswer(ctx, section, answer)
+	}
 
+	count, err := uc.answerRepo.GetCountBySectionAndUserId(ctx, answer.UserId, section.Id)
+	if err != nil {
+		return nil, err
+	}
+	if int(section.MaxAttempts.Int16) == count {
+		return nil, errors.New("достигнуто масимальное количество попыток")
+	}
+
+	return uc.createAnswer(ctx, section, answer)
+}
+
+func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Section, answer *entity.Answer) (
+	*entity.Answer, error) {
 	verdict, err := uc.checker.Check(section, answer)
 	if err != nil {
 		return nil, err

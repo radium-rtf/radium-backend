@@ -17,7 +17,7 @@ type (
 	}
 )
 
-func NewPage(page *entity.Page, answers map[uuid.UUID]*entity.Answer) *Page {
+func NewPage(page *entity.Page, answers map[uuid.UUID][]*entity.Answer) *Page {
 	sectionsDto, score, maxScore := NewSections(page.Sections, answers)
 
 	return &Page{
@@ -31,7 +31,7 @@ func NewPage(page *entity.Page, answers map[uuid.UUID]*entity.Answer) *Page {
 	}
 }
 
-func NewPages(pages []*entity.Page, answers map[uuid.UUID]*entity.Answer) ([]*Page, uint, uint) {
+func NewPages(pages []*entity.Page, answers map[uuid.UUID][]*entity.Answer) ([]*Page, uint, uint) {
 	dtos := make([]*Page, 0, len(pages))
 	var maxScore, score uint = 0, 0
 

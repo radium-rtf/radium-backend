@@ -40,16 +40,12 @@ func (r Answer) GetById(ctx context.Context, id uuid.UUID) (*entity.Answer, erro
 
 func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uuid.UUID) ([]*entity.Answer, error) {
 	var answers []*entity.Answer
-
-	lastAnswer := r.db.NewSelect().
-		TableExpr("answers as a").
-		ColumnExpr("max(a.created_at)").
-		Where("a.user_id = answer.user_id and a.section_id = answer.section_id")
 	err := r.db.NewSelect().
 		Model(&answers).
-		Where("user_id in (?) and section_id in (?) and answer.created_at = (?)",
-			bun.In(usersIds), bun.In(sectionsIds), lastAnswer).
+		Where("user_id in (?) and section_id in (?)",
+			bun.In(usersIds), bun.In(sectionsIds)).
 		Relation("Review").
+		Order("answer.created_at desc").
 		Scan(ctx)
 
 	return answers, err
@@ -71,4 +67,11 @@ func (r Answer) GetByUsers(ctx context.Context, usersIds []uuid.UUID, sectionsId
 
 func (r Answer) GetByUserIdAnsSectionId(ctx context.Context, userId, sectionId uuid.UUID) (*entity.AnswersCollection, error) {
 	return r.Get(ctx, userId, []uuid.UUID{sectionId})
+}
+
+func (r Answer) GetCountBySectionAndUserId(ctx context.Context, userId uuid.UUID, sectionId uuid.UUID) (int, error) {
+	return r.db.NewSelect().
+		Model(&entity.Answer{}).
+		Where("section_id = ? and user_id = ?", sectionId, userId).
+		Count(ctx)
 }
