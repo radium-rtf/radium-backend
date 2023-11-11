@@ -1303,9 +1303,6 @@
         },
         "create.Course": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "banner": {
                     "type": "string"
@@ -1325,8 +1322,7 @@
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 45,
-                    "minLength": 1
+                    "maxLength": 45
                 },
                 "shortDescription": {
                     "type": "string",
@@ -1541,6 +1537,11 @@
                 },
                 "mappingSection": {
                     "$ref": "#/definitions/create.MappingSection"
+                },
+                "maxAttempts": {
+                    "type": "integer",
+                    "maximum": 200,
+                    "minimum": 0
                 },
                 "maxScore": {
                     "type": "integer",
@@ -1969,6 +1970,9 @@
                         "type": "string"
                     }
                 },
+                "attempts": {
+                    "type": "integer"
+                },
                 "content": {
                     "type": "string"
                 },
@@ -2279,6 +2283,11 @@
                 },
                 "code": {
                     "$ref": "#/definitions/update.CodeSection"
+                },
+                "maxAttempts": {
+                    "type": "integer",
+                    "maximum": 200,
+                    "minimum": 0
                 },
                 "maxScore": {
                     "type": "integer",

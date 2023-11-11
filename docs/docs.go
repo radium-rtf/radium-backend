@@ -1310,9 +1310,6 @@ const docTemplate = `{
         },
         "create.Course": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "banner": {
                     "type": "string"
@@ -1332,8 +1329,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 45,
-                    "minLength": 1
+                    "maxLength": 45
                 },
                 "shortDescription": {
                     "type": "string",
@@ -1548,6 +1544,11 @@ const docTemplate = `{
                 },
                 "mappingSection": {
                     "$ref": "#/definitions/create.MappingSection"
+                },
+                "maxAttempts": {
+                    "type": "integer",
+                    "maximum": 200,
+                    "minimum": 0
                 },
                 "maxScore": {
                     "type": "integer",
@@ -1976,6 +1977,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "attempts": {
+                    "type": "integer"
+                },
                 "content": {
                     "type": "string"
                 },
@@ -2286,6 +2290,11 @@ const docTemplate = `{
                 },
                 "code": {
                     "$ref": "#/definitions/update.CodeSection"
+                },
+                "maxAttempts": {
+                    "type": "integer",
+                    "maximum": 200,
+                    "minimum": 0
                 },
                 "maxScore": {
                     "type": "integer",
