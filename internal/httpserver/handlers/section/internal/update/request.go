@@ -9,7 +9,7 @@ import (
 type (
 	Section struct {
 		MaxScore    uint  `json:"maxScore,omitempty" validate:"min=0,max=300"`
-		MaxAttempts int16 `json:"maxAttempts"`
+		MaxAttempts uint8 `json:"maxAttempts,omitempty" validate:"min=0,max=200"`
 
 		TextSection        *TextSection        `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSection      `json:"choice,omitempty"`
@@ -62,7 +62,7 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 		pageId  uuid.UUID
 		err     error
 	)
-	maxAttempts := sql.NullInt16{Int16: r.MaxAttempts, Valid: r.MaxAttempts != 0}
+	maxAttempts := sql.NullInt16{Int16: int16(r.MaxAttempts), Valid: r.MaxAttempts != 0}
 
 	switch {
 	case r.PermutationSection != nil:

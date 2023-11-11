@@ -8,7 +8,7 @@ import (
 )
 
 type Course struct {
-	Name             string       `json:"name" validate:"required,min=1,max=45"`
+	Name             string       `json:"name" validate:"max=45"`
 	ShortDescription string       `json:"shortDescription" validate:"max=400"`
 	Description      string       `json:"description" validate:"max=3000"`
 	Logo             string       `json:"logo" validate:"url"`
@@ -32,11 +32,16 @@ func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
 		links = append(links, link)
 	}
 
+	slug := translit.Make(r.Name)
+	if slug == "" {
+		slug = courseId.String()
+	}
+
 	return &entity.Course{
 		DBModel:          entity.DBModel{Id: courseId},
 		Name:             r.Name,
 		Banner:           r.Banner,
-		Slug:             translit.Make(r.Name),
+		Slug:             slug,
 		ShortDescription: r.ShortDescription,
 		Description:      r.Description,
 		Logo:             r.Logo,

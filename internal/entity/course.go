@@ -11,7 +11,7 @@ type (
 		DBModel
 
 		Name             string `validate:"required,min=1,max=45"`
-		Slug             string
+		Slug             string `validate:"required,min=1,max=45"`
 		ShortDescription string `validate:"required,min=1,max=400"`
 		Description      string `validate:"required,max=3000"`
 		Logo             string `validate:"required,url"`
