@@ -347,6 +347,10 @@ definitions:
         type: array
       banner:
         type: string
+      coauthors:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
       description:
         type: string
       id:
@@ -500,6 +504,8 @@ definitions:
     properties:
       isAuthor:
         type: boolean
+      isCoauthor:
+        type: boolean
       isTeacher:
         type: boolean
     type: object
@@ -593,6 +599,13 @@ definitions:
     type: object
   postauthor.Email:
     properties:
+      email:
+        type: string
+    type: object
+  postcoauthor.Request:
+    properties:
+      courseId:
+        type: string
       email:
         type: string
     type: object
@@ -1382,6 +1395,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/postauthor.Email'
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
+  /v1/role/coauthor:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: почта и курс
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/postcoauthor.Request'
       responses:
         "201":
           description: Created

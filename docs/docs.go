@@ -1001,6 +1001,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/role/coauthor": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "parameters": [
+                    {
+                        "description": "почта и курс",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/postcoauthor.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
         "/v1/role/teacher": {
             "post": {
                 "security": [
@@ -1727,6 +1758,12 @@ const docTemplate = `{
                 "banner": {
                     "type": "string"
                 },
+                "coauthors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },
@@ -1960,6 +1997,9 @@ const docTemplate = `{
                 "isAuthor": {
                     "type": "boolean"
                 },
+                "isCoauthor": {
+                    "type": "boolean"
+                },
                 "isTeacher": {
                     "type": "boolean"
                 }
@@ -2103,6 +2143,17 @@ const docTemplate = `{
         "postauthor.Email": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "postcoauthor.Request": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 }
