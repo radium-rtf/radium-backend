@@ -71,6 +71,8 @@ func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course,
 		Where(where.column+" = ?", where.value).
 		Relation("Authors").
 		Relation("Authors.Roles").
+		Relation("Coauthors").
+		Relation("Coauthors.Roles").
 		Relation("Links").
 		Relation("Students").
 		Relation("Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
@@ -103,6 +105,8 @@ func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.C
 		}).Relation("Courses.Authors").Relation("Courses.Links").
 		Relation("Courses.Authors.Roles").
 		Relation("Courses.Students").
+		Relation("Courses.Coauthors").
+		Relation("Courses.Coauthors.Roles").
 		Scan(ctx)
 
 	return user.Courses, err

@@ -11,5 +11,6 @@ type (
 		UserId        uuid.UUID
 		IsAuthor      bool
 		IsTeacher     bool
+		IsCoauthor    bool
 	}
 )

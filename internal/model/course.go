@@ -17,6 +17,7 @@ type (
 		Logo             string `json:"logo"`
 		Banner           string `json:"banner"`
 		Authors          []User `json:"authors"`
+		Coauthors        []User `json:"coauthors"`
 		Links            []Link `json:"links"`
 
 		IsPublished bool `json:"isPublished"`
@@ -46,6 +47,10 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 	for _, author := range course.Authors {
 		authors = append(authors, NewUser(&author))
 	}
+	coauthors := make([]User, 0, len(course.Coauthors))
+	for _, coauthor := range course.Coauthors {
+		coauthors = append(coauthors, NewUser(&coauthor))
+	}
 
 	modules, score, maxScore := NewModules(course.Modules, answers)
 
@@ -61,6 +66,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 		Logo:             course.Logo,
 		Banner:           course.Banner,
 		Authors:          authors,
+		Coauthors:        coauthors,
 		Links:            links,
 		IsPublished:      course.IsPublished,
 		IsStudent:        isStudent,

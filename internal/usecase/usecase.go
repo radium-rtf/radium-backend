@@ -53,6 +53,6 @@ func NewUseCases(deps Dependencies) UseCases {
 		Section: NewSectionUseCase(repos.Section),
 		Teacher: NewTeacherUseCase(repos.Teacher),
 		Author:  NewAuthorUseCase(repos.Course),
-		Role:    NewRoleUseCase(repos.Role),
+		Role:    NewRoleUseCase(repos.Role, repos.Course),
 	}
 }

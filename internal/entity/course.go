@@ -20,14 +20,26 @@ type (
 
 		Students []User `bun:"m2m:course_student,join:Course=User"`
 
-		Authors []User `bun:"m2m:course_author,join:Course=User"`
-		Links   []Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
+		Authors   []User `bun:"m2m:course_author,join:Course=User"`
+		Coauthors []User `bun:"m2m:course_coauthor,join:Course=User"`
+
+		Links []Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
 
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 	}
 
 	CourseAuthor struct {
 		bun.BaseModel `bun:"table:course_author"`
+
+		CourseId uuid.UUID `bun:",pk"`
+		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`
+
+		UserId uuid.UUID `bun:",pk"`
+		User   *User     `bun:"rel:belongs-to,join:user_id=id"`
+	}
+
+	CourseCoauthor struct {
+		bun.BaseModel `bun:"table:course_coauthor"`
 
 		CourseId uuid.UUID `bun:",pk"`
 		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`

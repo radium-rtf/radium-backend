@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
 )
@@ -37,5 +39,24 @@ func (r Role) setRole(ctx context.Context, set columnValue, email string) error 
 		Where("user_id = ?", user.Id).
 		Set(set.column+" = ?", set.value).
 		Exec(ctx)
+	return err
+}
+
+func (r Role) AddCoauthor(ctx context.Context, email string, courseId uuid.UUID) error {
+	user, err := r.user.GetByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	err = r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err = tx.NewUpdate().
+			Table("roles").
+			Where("user_id = ?", user.Id).
+			Set("is_coauthor = ?", true).
+			Exec(ctx)
+		courseCoauthor := &entity.CourseCoauthor{UserId: user.Id, CourseId: courseId}
+		_, err = tx.NewInsert().Model(courseCoauthor).Exec(ctx)
+		return err
+	})
 	return err
 }

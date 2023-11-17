@@ -15,8 +15,10 @@ type TokenManager struct {
 }
 
 const (
-	isTeacher = "isTeacher"
-	isAuthor  = "isAuthor"
+	isTeacher     = "isTeacher"
+	isAuthor      = "isAuthor"
+	isCoauthor    = "isCoauthor"
+	canEditCourse = "canEditCourse"
 )
 
 func NewManager(signingKey string) TokenManager {
@@ -25,10 +27,12 @@ func NewManager(signingKey string) TokenManager {
 
 func (m TokenManager) NewJWT(user model.User, expiresAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":     jwt.NewNumericDate(expiresAt),
-		"sub":     user.Id.String(),
-		isTeacher: user.Roles.IsTeacher,
-		isAuthor:  user.Roles.IsAuthor,
+		"exp":         jwt.NewNumericDate(expiresAt),
+		"sub":         user.Id.String(),
+		isTeacher:     user.Roles.IsTeacher,
+		isAuthor:      user.Roles.IsAuthor,
+		isCoauthor:    user.Roles.IsCoauthor,
+		canEditCourse: user.Roles.IsAuthor || user.Roles.IsCoauthor,
 	})
 
 	return token.SignedString([]byte(m.signingKey))
@@ -113,6 +117,26 @@ func (m TokenManager) ExtractIsAuthor(tokenHeader []string) (bool, error) {
 		return false, err
 	}
 	return claim.(bool), nil
+}
+
+func (m TokenManager) ExtractIsCoauthor(tokenHeader []string) (bool, error) {
+	claim, err := m.extractClaim(tokenHeader, isCoauthor)
+	if err != nil {
+		return false, err
+	}
+	return claim.(bool), nil
+}
+
+func (m TokenManager) ExtractCanEditCourse(tokenHeader []string) (bool, error) {
+	isCoauthorClaim, err := m.ExtractIsCoauthor(tokenHeader)
+	if err != nil {
+		return false, err
+	}
+	isAuthorClaim, err := m.ExtractIsAuthor(tokenHeader)
+	if err != nil {
+		return false, err
+	}
+	return isCoauthorClaim || isAuthorClaim, nil
 }
 
 func (m TokenManager) getToken(tokenHeader []string) (string, error) {
