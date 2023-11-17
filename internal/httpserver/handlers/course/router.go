@@ -30,14 +30,19 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.Required(tokenManager))
+
 			r.Patch("/join/{courseId}", join.New(useCase))
 
 			r.Group(func(r chi.Router) {
 				r.Use(role.Author(tokenManager))
 				r.Post("/", create.New(useCase))
-				r.Put("/{courseId}", update.New(useCase))
 				r.Patch("/publish/{id}", publish.New(useCase))
 				r.Delete("/{id}", destroy.New(useCase))
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Use(role.CanEditCourse(tokenManager))
+				r.Put("/{courseId}", update.New(useCase))
 			})
 		})
 	})

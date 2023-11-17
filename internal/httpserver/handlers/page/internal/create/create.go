@@ -11,7 +11,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, page *entity.Page) (*entity.Page, error)
+	Create(ctx context.Context, page *entity.Page, editorId uuid.UUID) (*entity.Page, error)
 }
 
 // @Tags page
@@ -24,6 +24,7 @@ func New(creator creator) http.HandlerFunc {
 		var (
 			request Page
 			ctx     = r.Context()
+			userId  = r.Context().Value("userId").(uuid.UUID)
 		)
 
 		err := decode.Json(r.Body, &request)
@@ -34,7 +35,7 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		page := request.toPage()
-		page, err = creator.Create(ctx, page)
+		page, err = creator.Create(ctx, page, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

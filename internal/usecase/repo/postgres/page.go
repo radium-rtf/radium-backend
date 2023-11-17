@@ -65,3 +65,18 @@ func (r Page) Update(ctx context.Context, page *entity.Page) (*entity.Page, erro
 	}
 	return r.GetById(ctx, page.Id)
 }
+
+func (r Page) GetCourseByPageId(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	var page = new(entity.Page)
+	err := r.db.NewSelect().Model(page).
+		Where("page.id = ?", id).
+		Relation("Module").
+		Relation("Module.Course").
+		Relation("Module.Course.Authors").
+		Relation("Module.Course.Coauthors").
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return page.Module.Course, nil
+}

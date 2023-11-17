@@ -3,6 +3,7 @@ package create
 import (
 	"context"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
@@ -11,7 +12,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, section *entity.Section) (*entity.Section, error)
+	Create(ctx context.Context, section *entity.Section, editorId uuid.UUID) (*entity.Section, error)
 }
 
 // @Tags section
@@ -25,6 +26,7 @@ func New(creator creator) http.HandlerFunc {
 		var (
 			create Section
 			ctx    = r.Context()
+			userId = r.Context().Value("userId").(uuid.UUID)
 		)
 
 		err := decode.Json(r.Body, &create)
@@ -41,7 +43,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		section, err = creator.Create(ctx, section)
+		section, err = creator.Create(ctx, section, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

@@ -11,7 +11,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, module *entity.Module) (*entity.Module, error)
+	Create(ctx context.Context, module *entity.Module, editorId uuid.UUID) (*entity.Module, error)
 }
 
 // @Tags module
@@ -24,6 +24,7 @@ func New(creator creator) http.HandlerFunc {
 		var (
 			request Module
 			ctx     = r.Context()
+			userId  = r.Context().Value("userId").(uuid.UUID)
 		)
 
 		err := decode.Json(r.Body, &request)
@@ -34,7 +35,7 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		module := request.toModule()
-		module, err = creator.Create(ctx, module)
+		module, err = creator.Create(ctx, module, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

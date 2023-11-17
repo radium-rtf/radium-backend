@@ -69,3 +69,21 @@ func (r Module) GetById(ctx context.Context, id uuid.UUID) (*entity.Module, erro
 	}
 	return module, err
 }
+
+func (r Module) GetCourseByModuleId(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	var module = new(entity.Module)
+	err := r.db.NewSelect().
+		Model(module).
+		Where("module.id = ?", id).
+		Relation("Course").
+		Relation("Course.Authors").
+		Relation("Course.Coauthors").
+		Scan(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, repoerr.ModuleNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return module.Course, nil
+}

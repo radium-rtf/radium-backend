@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
+	"slices"
 )
 
 type (
@@ -69,4 +70,14 @@ func (c Course) SectionsIds() []uuid.UUID {
 		}
 	}
 	return sectionsIds
+}
+
+func (c Course) CanEdit(editorId uuid.UUID) bool {
+	canEdit := slices.ContainsFunc(c.Authors, func(user User) bool {
+		return editorId == user.Id
+	})
+	canEdit = canEdit || slices.ContainsFunc(c.Coauthors, func(user User) bool {
+		return editorId == user.Id
+	})
+	return canEdit
 }

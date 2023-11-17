@@ -11,6 +11,7 @@ type (
 		DBModel
 
 		CourseId uuid.UUID
+		Course   *Course `bun:"rel:belongs-to,join:course_id=id"`
 
 		Slug  string
 		Name  string

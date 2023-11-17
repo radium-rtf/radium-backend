@@ -13,18 +13,24 @@ import (
 
 type CourseUseCase struct {
 	courseRepo postgres.Course
+	user       postgres.User
 }
 
-func NewCourseUseCase(courseRepo postgres.Course) CourseUseCase {
-	return CourseUseCase{courseRepo: courseRepo}
+func NewCourseUseCase(courseRepo postgres.Course, user postgres.User) CourseUseCase {
+	return CourseUseCase{courseRepo: courseRepo, user: user}
 }
 
-func (uc CourseUseCase) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {
-	course, err := uc.courseRepo.Create(ctx, course)
+func (uc CourseUseCase) Create(ctx context.Context, course *entity.Course, creatorId uuid.UUID) (*entity.Course, error) {
+	creator, err := uc.user.GetById(ctx, creatorId)
 	if err != nil {
-		return &entity.Course{}, err
+		return nil, err
 	}
-	return course, nil
+
+	if creator.Roles.IsAuthor {
+		return nil, errors.New("только автор может созавать курсы")
+	}
+
+	return uc.courseRepo.Create(ctx, course)
 }
 
 func (uc CourseUseCase) GetCourses(ctx context.Context) ([]*entity.Course, error) {
@@ -47,12 +53,36 @@ func (uc CourseUseCase) Join(ctx context.Context, userId uuid.UUID, courseId uui
 	return uc.courseRepo.GetFullById(ctx, courseId)
 }
 
-func (uc CourseUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
+func (uc CourseUseCase) Delete(ctx context.Context, id, deleterId uuid.UUID, isSoft bool) error {
+	course, err := uc.courseRepo.GetFullById(ctx, id)
+	if err != nil {
+		return err
+	}
+	canDelete := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
+		return user.Id == id
+	})
+	if !canDelete {
+		return errors.New("только автор курса может его удалить")
+	}
 	return uc.courseRepo.Delete(ctx, id, isSoft)
 }
 
-func (uc CourseUseCase) Update(ctx context.Context, course *entity.Course, userId uuid.UUID) (*entity.Course, error) {
-	return uc.courseRepo.Update(ctx, course)
+func (uc CourseUseCase) Update(ctx context.Context, update *entity.Course, editorId uuid.UUID) (*entity.Course, error) {
+	course, err := uc.courseRepo.GetFullById(ctx, update.Id)
+	if err != nil {
+		return nil, err
+	}
+	canEdit := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
+		return editorId == user.Id
+	})
+	canEdit = canEdit || slices.ContainsFunc(course.Coauthors, func(user entity.User) bool {
+		return editorId == user.Id
+	})
+	if !canEdit {
+		return nil, cantEditCourse
+	}
+
+	return uc.courseRepo.Update(ctx, update)
 }
 
 func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Course, error) {

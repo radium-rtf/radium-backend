@@ -9,21 +9,50 @@ import (
 )
 
 type SectionUseCase struct {
-	sectionRepo postgres.Section
+	section postgres.Section
+	page    postgres.Page
 }
 
-func NewSectionUseCase(sectionRepo postgres.Section) SectionUseCase {
-	return SectionUseCase{sectionRepo: sectionRepo}
+func NewSectionUseCase(sectionRepo postgres.Section, page postgres.Page) SectionUseCase {
+	return SectionUseCase{section: sectionRepo, page: page}
 }
 
-func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section) (*entity.Section, error) {
-	return uc.sectionRepo.Create(ctx, section)
+func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section, editorId uuid.UUID) (*entity.Section, error) {
+	course, err := uc.page.GetCourseByPageId(ctx, section.PageId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !course.CanEdit(editorId) {
+		return nil, cantEditCourse
+	}
+	return uc.section.Create(ctx, section)
 }
 
-func (uc SectionUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
-	return uc.sectionRepo.Delete(ctx, id, isSoft)
+func (uc SectionUseCase) Delete(ctx context.Context, id, editorId uuid.UUID, isSoft bool) error {
+	canEditErr := uc.canEdit(ctx, id, editorId)
+	if canEditErr != nil {
+		return canEditErr
+	}
+	return uc.section.Delete(ctx, id, isSoft)
 }
 
-func (uc SectionUseCase) Update(ctx context.Context, section *entity.Section, userId uuid.UUID) (*entity.Section, error) {
-	return uc.sectionRepo.Update(ctx, section)
+func (uc SectionUseCase) Update(ctx context.Context, section *entity.Section, editorId uuid.UUID) (*entity.Section, error) {
+	canEditErr := uc.canEdit(ctx, section.Id, editorId)
+	if canEditErr != nil {
+		return nil, canEditErr
+	}
+	return uc.section.Update(ctx, section)
+}
+
+func (uc SectionUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
+	course, err := uc.section.GetCourseBySectionId(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if !course.CanEdit(editorId) {
+		return cantEditCourse
+	}
+	return nil
 }

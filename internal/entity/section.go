@@ -28,7 +28,9 @@ type (
 		bun.BaseModel `bun:"table:sections"`
 		DBModel
 
-		PageId   uuid.UUID
+		PageId uuid.UUID
+		Page   Page `bun:"rel:belongs-to,join:page_id=id"`
+
 		Order    float64
 		MaxScore uint
 		Type     SectionType
@@ -56,6 +58,7 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxS
 		PageId:      pageId,
 		Type:        sectionType,
 		MaxAttempts: maxAttempts,
+		Keys:        []string{},
 	}
 
 	section.Content = content

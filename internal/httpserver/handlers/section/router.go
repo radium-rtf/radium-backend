@@ -17,11 +17,15 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 	r.Route("/v1/section", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.Required(tokenManager))
-			r.Delete("/{id}", destroy.New(useCase))
 
 			r.Group(func(r chi.Router) {
 				r.Use(role.Author(tokenManager))
 				r.Post("/", create.New(useCase))
+				r.Delete("/{id}", destroy.New(useCase))
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Use(role.CanEditCourse(tokenManager))
 				r.Put("/{id}", update.New(useCase, useCases.Answer))
 			})
 		})

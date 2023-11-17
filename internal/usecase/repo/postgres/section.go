@@ -80,3 +80,23 @@ func (r Section) GetByAnswerId(ctx context.Context, id uuid.UUID) (*entity.Secti
 	}
 	return answer.Section, nil
 }
+
+func (r Section) GetCourseBySectionId(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	var section = new(entity.Section)
+	err := r.db.NewSelect().
+		Model(section).
+		Where("section.id = ?", id).
+		Relation("Page").
+		Relation("Page.Module").
+		Relation("Page.Module.Course").
+		Relation("Page.Module.Course.Authors").
+		Relation("Page.Module.Course.Coauthors").
+		Scan(ctx)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, repoerr.SectionNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return section.Page.Module.Course, err
+}

@@ -9,25 +9,53 @@ import (
 )
 
 type ModuleUseCase struct {
-	moduleRepo postgres.Module
+	module postgres.Module
+	course postgres.Course
 }
 
-func NewModuleUseCase(moduleRepo postgres.Module) ModuleUseCase {
-	return ModuleUseCase{moduleRepo: moduleRepo}
+func NewModuleUseCase(moduleRepo postgres.Module, courseRepo postgres.Course) ModuleUseCase {
+	return ModuleUseCase{module: moduleRepo, course: courseRepo}
 }
 
-func (uc ModuleUseCase) Create(ctx context.Context, moduleRequest *entity.Module) (*entity.Module, error) {
-	return uc.moduleRepo.Create(ctx, moduleRequest)
+func (uc ModuleUseCase) Create(ctx context.Context, module *entity.Module, editorId uuid.UUID) (*entity.Module, error) {
+	course, err := uc.course.GetFullById(ctx, module.CourseId)
+	if err != nil {
+		return nil, err
+	}
+	if !course.CanEdit(editorId) {
+		return nil, cantEditCourse
+	}
+	return uc.module.Create(ctx, module)
 }
 
-func (uc ModuleUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
-	return uc.moduleRepo.Delete(ctx, id, isSoft)
+func (uc ModuleUseCase) Delete(ctx context.Context, id, editorId uuid.UUID, isSoft bool) error {
+	canEditErr := uc.canEdit(ctx, id, editorId)
+	if canEditErr != nil {
+		return canEditErr
+	}
+	return uc.module.Delete(ctx, id, isSoft)
 }
 
-func (uc ModuleUseCase) Update(ctx context.Context, module *entity.Module, userId uuid.UUID) (*entity.Module, error) {
-	return uc.moduleRepo.Update(ctx, module)
+func (uc ModuleUseCase) Update(ctx context.Context, module *entity.Module, editorId uuid.UUID) (*entity.Module, error) {
+	canEditErr := uc.canEdit(ctx, module.Id, editorId)
+	if canEditErr != nil {
+		return nil, canEditErr
+	}
+	return uc.module.Update(ctx, module)
+}
+
+func (uc ModuleUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
+	course, err := uc.module.GetCourseByModuleId(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if !course.CanEdit(editorId) {
+		return cantEditCourse
+	}
+	return nil
 }
 
 // func (uc ModuleUseCase) GetCourseModules(ctx context.Context, courseId int) (entity.CourseModules, error) {
-// 	return uc.moduleRepo.GetModules(ctx, courseId)
+// 	return uc.module.GetModules(ctx, courseId)
 // }

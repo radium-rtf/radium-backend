@@ -11,6 +11,7 @@ type (
 		DBModel
 
 		ModuleId uuid.UUID
+		Module   *Module `bun:"rel:belongs-to,join:module_id=id"`
 
 		Name  string
 		Slug  string

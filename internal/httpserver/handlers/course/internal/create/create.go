@@ -11,7 +11,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, course *entity.Course) (*entity.Course, error)
+	Create(ctx context.Context, course *entity.Course, editorId uuid.UUID) (*entity.Course, error)
 }
 
 // @Tags course
@@ -36,7 +36,7 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		course := request.toCourse(userId)
-		course, err = creator.Create(ctx, course)
+		course, err = creator.Create(ctx, course, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

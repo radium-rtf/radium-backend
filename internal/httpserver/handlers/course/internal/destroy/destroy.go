@@ -11,7 +11,7 @@ import (
 )
 
 type deleter interface {
-	Delete(ctx context.Context, id uuid.UUID, isSoft bool) error
+	Delete(ctx context.Context, id, editorId uuid.UUID, isSoft bool) error
 }
 
 // @Tags course
@@ -27,6 +27,7 @@ func New(deleter deleter) http.HandlerFunc {
 			id     uuid.UUID
 			isSoft bool
 			ctx    = r.Context()
+			userId = r.Context().Value("userId").(uuid.UUID)
 		)
 
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -41,7 +42,7 @@ func New(deleter deleter) http.HandlerFunc {
 			isSoft = true
 		}
 
-		err = deleter.Delete(ctx, id, isSoft)
+		err = deleter.Delete(ctx, id, userId, isSoft)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
