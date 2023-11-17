@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -28,7 +28,7 @@ func (r Section) Create(ctx context.Context, section *entity.Section) (*entity.S
 func (r Section) GetById(ctx context.Context, id uuid.UUID) (*entity.Section, error) {
 	var section = new(entity.Section)
 	err := r.db.NewSelect().Model(section).Where("id = ?", id).Scan(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.SectionNotFound
 	}
 	return section, err
@@ -92,7 +92,7 @@ func (r Section) GetCourseBySectionId(ctx context.Context, id uuid.UUID) (*entit
 		Relation("Page.Module.Course.Authors").
 		Relation("Page.Module.Course.Coauthors").
 		Scan(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.SectionNotFound
 	}
 	if err != nil {
@@ -108,7 +108,8 @@ func (r Section) GetLastSection(ctx context.Context, pageId uuid.UUID) (*entity.
 		Order("order desc").
 		Limit(1).
 		Scan(ctx)
-	if errors.As(err, &pgx.ErrNoRows) {
+
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.SectionNotFound
 	}
 	return section, err

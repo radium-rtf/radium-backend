@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -32,7 +32,7 @@ func (r Page) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 			return query.Order("order")
 		}).
 		Scan(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return page, repoerr.PageNotFound
 	}
 	return page, err
@@ -88,7 +88,7 @@ func (r Page) GetLastPage(ctx context.Context, moduleId uuid.UUID) (*entity.Page
 		Order("order desc").
 		Limit(1).
 		Scan(ctx)
-	if errors.As(err, &pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.PageNotFound
 	}
 	return page, err

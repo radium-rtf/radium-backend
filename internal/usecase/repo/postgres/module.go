@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -64,7 +64,7 @@ func (r Module) GetById(ctx context.Context, id uuid.UUID) (*entity.Module, erro
 			return query.Order("order")
 		}).
 		Scan(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return module, repoerr.ModuleNotFound
 	}
 	return module, err
@@ -79,7 +79,7 @@ func (r Module) GetCourseByModuleId(ctx context.Context, id uuid.UUID) (*entity.
 		Relation("Course.Authors").
 		Relation("Course.Coauthors").
 		Scan(ctx)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.ModuleNotFound
 	}
 	if err != nil {
@@ -95,7 +95,7 @@ func (r Module) GetLastModule(ctx context.Context, courseId uuid.UUID) (*entity.
 		Order("order desc").
 		Limit(1).
 		Scan(ctx)
-	if errors.As(err, &pgx.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.ModuleNotFound
 	}
 	return module, err
