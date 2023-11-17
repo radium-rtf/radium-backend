@@ -87,3 +87,16 @@ func (r Module) GetCourseByModuleId(ctx context.Context, id uuid.UUID) (*entity.
 	}
 	return module.Course, nil
 }
+
+func (r Module) GetLastModule(ctx context.Context, courseId uuid.UUID) (*entity.Module, error) {
+	var module = new(entity.Module)
+	err := r.db.NewSelect().Model(module).
+		Where("course_id = ?", courseId).
+		Order("order desc").
+		Limit(1).
+		Scan(ctx)
+	if errors.As(err, &pgx.ErrNoRows) {
+		return nil, repoerr.ModuleNotFound
+	}
+	return module, err
+}

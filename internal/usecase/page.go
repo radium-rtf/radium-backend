@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -25,6 +27,17 @@ func (uc PageUseCase) Create(ctx context.Context, page *entity.Page, editorId uu
 	if !course.CanEdit(editorId) {
 		return nil, cantEditCourse
 	}
+
+	last, err := uc.page.GetLastPage(ctx, page.ModuleId)
+	if err != nil && !errors.Is(err, repoerr.PageNotFound) {
+		return nil, err
+	}
+
+	page.Order = 1
+	if !errors.Is(err, repoerr.PageNotFound) {
+		page.Order = last.Order + 1
+	}
+
 	return uc.page.Create(ctx, page)
 }
 

@@ -80,3 +80,16 @@ func (r Page) GetCourseByPageId(ctx context.Context, id uuid.UUID) (*entity.Cour
 	}
 	return page.Module.Course, nil
 }
+
+func (r Page) GetLastPage(ctx context.Context, moduleId uuid.UUID) (*entity.Page, error) {
+	var page = new(entity.Page)
+	err := r.db.NewSelect().Model(page).
+		Where("module_id = ?", moduleId).
+		Order("order desc").
+		Limit(1).
+		Scan(ctx)
+	if errors.As(err, &pgx.ErrNoRows) {
+		return nil, repoerr.PageNotFound
+	}
+	return page, err
+}

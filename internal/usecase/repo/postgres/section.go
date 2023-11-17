@@ -100,3 +100,16 @@ func (r Section) GetCourseBySectionId(ctx context.Context, id uuid.UUID) (*entit
 	}
 	return section.Page.Module.Course, err
 }
+
+func (r Section) GetLastSection(ctx context.Context, pageId uuid.UUID) (*entity.Section, error) {
+	var section = new(entity.Section)
+	err := r.db.NewSelect().Model(section).
+		Where("page_id = ?", pageId).
+		Order("order desc").
+		Limit(1).
+		Scan(ctx)
+	if errors.As(err, &pgx.ErrNoRows) {
+		return nil, repoerr.SectionNotFound
+	}
+	return section, err
+}

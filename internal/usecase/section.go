@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
@@ -26,6 +28,17 @@ func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section, ed
 	if !course.CanEdit(editorId) {
 		return nil, cantEditCourse
 	}
+
+	last, err := uc.section.GetLastSection(ctx, section.PageId)
+	if err != nil && !errors.Is(err, repoerr.SectionNotFound) {
+		return nil, err
+	}
+
+	section.Order = 1
+	if !errors.Is(err, repoerr.SectionNotFound) {
+		section.Order = last.Order + 1
+	}
+
 	return uc.section.Create(ctx, section)
 }
 

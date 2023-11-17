@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 
 	"github.com/radium-rtf/radium-backend/internal/entity"
 )
@@ -25,6 +27,17 @@ func (uc ModuleUseCase) Create(ctx context.Context, module *entity.Module, edito
 	if !course.CanEdit(editorId) {
 		return nil, cantEditCourse
 	}
+
+	last, err := uc.module.GetLastModule(ctx, module.CourseId)
+	if err != nil && !errors.Is(err, repoerr.ModuleNotFound) {
+		return nil, err
+	}
+
+	module.Order = 1
+	if !errors.Is(err, repoerr.ModuleNotFound) {
+		module.Order = last.Order + 1
+	}
+
 	return uc.module.Create(ctx, module)
 }
 
