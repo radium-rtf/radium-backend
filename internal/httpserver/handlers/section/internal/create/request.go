@@ -21,7 +21,7 @@ type (
 		AnswerSection      *AnswerSection      `json:"answer,omitempty"`
 		CodeSection        *CodeSection        `json:"code,omitempty"`
 		PermutationSection *PermutationSection `json:"permutation,omitempty"`
-		MappingSection     *MappingSection     `json:"mappingSection,omitempty"`
+		MappingSection     *MappingSection     `json:"mapping,omitempty"`
 	}
 
 	TextSection struct {
@@ -73,7 +73,7 @@ func (r Section) ToSection() (*entity.Section, error) {
 	switch {
 	case r.MappingSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.MappingSection.Question,
-			"", []string{}, r.MappingSection.Answer, entity.MappingType, r.MappingSection.Keys)
+			"", r.MappingSection.Answer, r.MappingSection.Answer, entity.MappingType, r.MappingSection.Keys)
 
 	case r.PermutationSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.PermutationSection.Question,

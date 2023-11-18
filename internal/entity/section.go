@@ -47,7 +47,7 @@ type (
 	}
 )
 
-func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxScore uint, content string, answer string, variants []string, answers []string, sectionType SectionType, keys []string) (*Section, error) {
+func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxScore uint, content, answer string, variants, answers []string, sectionType SectionType, keys []string) (*Section, error) {
 	if sectionType == TextType {
 		maxScore = 0
 	}
@@ -93,14 +93,11 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxS
 }
 
 func (s Section) GetVariants() []string {
-	if s.Type != MappingType {
-		variants := []string(s.Variants)
-		rand.Shuffle(len(variants), func(i, j int) {
-			variants[i], variants[j] = variants[j], variants[i]
-		})
-		return variants
-	}
-	return s.Variants
+	variants := []string(s.Variants)
+	rand.Shuffle(len(variants), func(i, j int) {
+		variants[i], variants[j] = variants[j], variants[i]
+	})
+	return variants
 }
 
 func (s Section) GetMaxScore() uint {

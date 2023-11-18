@@ -1573,7 +1573,7 @@ const docTemplate = `{
                 "code": {
                     "$ref": "#/definitions/create.CodeSection"
                 },
-                "mappingSection": {
+                "mapping": {
                     "$ref": "#/definitions/create.MappingSection"
                 },
                 "maxAttempts": {
