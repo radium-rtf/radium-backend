@@ -57,6 +57,10 @@ func (uc ModuleUseCase) Update(ctx context.Context, module *entity.Module, edito
 	return uc.module.Update(ctx, module)
 }
 
+func (uc ModuleUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Module, error) {
+	//TODO implement me
+	panic("implement me")
+}
 func (uc ModuleUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
 	course, err := uc.module.GetCourseByModuleId(ctx, id)
 	if err != nil {

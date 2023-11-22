@@ -58,6 +58,11 @@ func (uc SectionUseCase) Update(ctx context.Context, section *entity.Section, ed
 	return uc.section.Update(ctx, section)
 }
 
+func (uc SectionUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Section, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (uc SectionUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
 	course, err := uc.section.GetCourseBySectionId(ctx, id)
 	if err != nil {

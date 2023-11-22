@@ -61,6 +61,11 @@ func (uc PageUseCase) Update(ctx context.Context, page *entity.Page, editorId uu
 	return uc.page.Update(ctx, page)
 }
 
+func (p PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Page, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (uc PageUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
 	course, err := uc.page.GetCourseByPageId(ctx, id)
 	if err != nil {
