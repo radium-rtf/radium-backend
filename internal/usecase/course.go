@@ -26,7 +26,7 @@ func (uc CourseUseCase) Create(ctx context.Context, course *entity.Course, creat
 		return nil, err
 	}
 
-	if creator.Roles.IsAuthor {
+	if !creator.Roles.IsAuthor {
 		return nil, errors.New("только автор может созавать курсы")
 	}
 
