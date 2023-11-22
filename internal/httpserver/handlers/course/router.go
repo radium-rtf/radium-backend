@@ -3,7 +3,9 @@ package course
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/create"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/createlink"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/destroy"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/destroylink"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/get"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/getbyid"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/course/internal/getbyslug"
@@ -43,6 +45,8 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 			r.Group(func(r chi.Router) {
 				r.Use(role.CanEditCourse(tokenManager))
 				r.Put("/{courseId}", update.New(useCase))
+				r.Delete("/link/{id}", destroylink.New(useCase))
+				r.Post("/link/{courseId}", createlink.New(useCase))
 			})
 		})
 	})

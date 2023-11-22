@@ -58,8 +58,8 @@ func (uc CourseUseCase) Delete(ctx context.Context, id, deleterId uuid.UUID, isS
 	if err != nil {
 		return err
 	}
-	canDelete := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
-		return user.Id == id
+	canDelete := slices.ContainsFunc(course.Authors, func(user *entity.User) bool {
+		return user.Id == deleterId
 	})
 	if !canDelete {
 		return errors.New("только автор курса может его удалить")
@@ -72,13 +72,7 @@ func (uc CourseUseCase) Update(ctx context.Context, update *entity.Course, edito
 	if err != nil {
 		return nil, err
 	}
-	canEdit := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
-		return editorId == user.Id
-	})
-	canEdit = canEdit || slices.ContainsFunc(course.Coauthors, func(user entity.User) bool {
-		return editorId == user.Id
-	})
-	if !canEdit {
+	if !course.CanEdit(editorId) {
 		return nil, cantEditCourse
 	}
 
@@ -93,7 +87,7 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 	if !course.IsPublished && validator.Struct(course) != nil {
 		return nil, errors.New("курс ещё не готов к публикации")
 	}
-	isAuthor := slices.ContainsFunc(course.Authors, func(user entity.User) bool {
+	isAuthor := slices.ContainsFunc(course.Authors, func(user *entity.User) bool {
 		return user.Id == userId
 	})
 	if !isAuthor {
@@ -104,4 +98,28 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 	course, err = uc.courseRepo.Update(ctx, course)
 
 	return course, err
+}
+
+func (c CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) error {
+	link, err := c.courseRepo.GetLinkById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	course := link.Course
+	if !course.CanEdit(editorId) {
+		return cantEditCourse
+	}
+	return c.courseRepo.DeleteLink(ctx, id)
+}
+
+func (c CourseUseCase) CreateLink(ctx context.Context, link *entity.Link, editorId uuid.UUID) (*entity.Link, error) {
+	course, err := c.courseRepo.GetFullById(ctx, link.CourseId)
+	if err != nil {
+		return nil, err
+	}
+	if !course.CanEdit(editorId) {
+		return nil, cantEditCourse
+	}
+	return link, c.courseRepo.CreateLink(ctx, link)
 }

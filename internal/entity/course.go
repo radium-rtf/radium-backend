@@ -21,10 +21,10 @@ type (
 
 		Students []User `bun:"m2m:course_student,join:Course=User"`
 
-		Authors   []User `bun:"m2m:course_author,join:Course=User"`
-		Coauthors []User `bun:"m2m:course_coauthor,join:Course=User"`
+		Authors   []*User `bun:"m2m:course_author,join:Course=User"`
+		Coauthors []*User `bun:"m2m:course_coauthor,join:Course=User"`
 
-		Links []Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
+		Links []*Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
 
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 	}
@@ -73,10 +73,10 @@ func (c Course) SectionsIds() []uuid.UUID {
 }
 
 func (c Course) CanEdit(editorId uuid.UUID) bool {
-	canEdit := slices.ContainsFunc(c.Authors, func(user User) bool {
+	canEdit := slices.ContainsFunc(c.Authors, func(user *User) bool {
 		return editorId == user.Id
 	})
-	canEdit = canEdit || slices.ContainsFunc(c.Coauthors, func(user User) bool {
+	canEdit = canEdit || slices.ContainsFunc(c.Coauthors, func(user *User) bool {
 		return editorId == user.Id
 	})
 	return canEdit

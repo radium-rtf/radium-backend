@@ -155,3 +155,29 @@ func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Cour
 
 	return courses, err
 }
+
+func (r Course) GetLinkById(ctx context.Context, id uuid.UUID) (*entity.Link, error) {
+	var link = new(entity.Link)
+
+	err := r.db.NewSelect().Model(link).
+		Where("link.id = ?", id).
+		Relation("Course").
+		Relation("Course.Authors").
+		Relation("Course.Coauthors").
+		Scan(ctx)
+
+	return link, err
+}
+
+func (r Course) DeleteLink(ctx context.Context, id uuid.UUID) error {
+	_, err := r.db.NewDelete().
+		Model(&entity.Link{}).
+		Where("id = ?", id).
+		Exec(ctx)
+	return err
+}
+
+func (r Course) CreateLink(ctx context.Context, link *entity.Link) error {
+	_, err := r.db.NewInsert().Model(link).Exec(ctx)
+	return err
+}

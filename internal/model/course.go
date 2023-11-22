@@ -38,22 +38,7 @@ func NewCourses(courses []*entity.Course, userId uuid.UUID) []*Course {
 }
 
 func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, userId uuid.UUID) *Course {
-	links := make([]Link, 0, len(course.Links))
-	for _, link := range course.Links {
-		links = append(links, Link{Name: link.Name, Link: link.Link})
-	}
-
-	authors := make([]User, 0, len(course.Authors))
-	for _, author := range course.Authors {
-		authors = append(authors, NewUser(&author))
-	}
-	coauthors := make([]User, 0, len(course.Coauthors))
-	for _, coauthor := range course.Coauthors {
-		coauthors = append(coauthors, NewUser(&coauthor))
-	}
-
 	modules, score, maxScore := NewModules(course.Modules, answers)
-
 	isStudent := slices.ContainsFunc(course.Students, func(user entity.User) bool {
 		return user.Id == userId
 	})
@@ -65,9 +50,9 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 		Description:      course.Description,
 		Logo:             course.Logo,
 		Banner:           course.Banner,
-		Authors:          authors,
-		Coauthors:        coauthors,
-		Links:            links,
+		Authors:          NewUsers(course.Authors),
+		Coauthors:        NewUsers(course.Coauthors),
+		Links:            NewLinks(course.Links),
 		IsPublished:      course.IsPublished,
 		IsStudent:        isStudent,
 		MaxScore:         maxScore,
