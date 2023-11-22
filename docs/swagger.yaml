@@ -286,6 +286,18 @@ definitions:
     required:
     - content
     type: object
+  createlink.Link:
+    properties:
+      link:
+        type: string
+      name:
+        maxLength: 15
+        minLength: 1
+        type: string
+    required:
+    - link
+    - name
+    type: object
   entity.SectionType:
     enum:
     - choice
@@ -423,6 +435,8 @@ definitions:
     type: object
   model.Link:
     properties:
+      id:
+        type: string
       link:
         type: string
       name:
@@ -1124,6 +1138,48 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
+  /v1/course/link/{courseId}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о ссылке
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/createlink.Link'
+      - description: id
+        in: path
+        name: courseId
+        required: true
+        type: string
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Link'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course-link
+  /v1/course/link/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course-link
   /v1/course/publish/{id}:
     patch:
       consumes:

@@ -394,6 +394,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/course/link/{courseId}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course-link"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные о ссылке",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createlink.Link"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Link"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/course/link/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course-link"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/v1/course/publish/{id}": {
             "patch": {
                 "security": [
@@ -1774,6 +1844,23 @@ const docTemplate = `{
                 }
             }
         },
+        "createlink.Link": {
+            "type": "object",
+            "required": [
+                "link",
+                "name"
+            ],
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 1
+                }
+            }
+        },
         "entity.SectionType": {
             "type": "string",
             "enum": [
@@ -1980,6 +2067,9 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "id": {
+                    "type": "string"
+                },
                 "link": {
                     "type": "string"
                 },
