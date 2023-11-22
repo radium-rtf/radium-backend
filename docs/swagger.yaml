@@ -207,6 +207,9 @@ definitions:
     properties:
       answerId:
         type: string
+      comment:
+        maxLength: 500
+        type: string
       score:
         minimum: 0
         type: integer
@@ -308,6 +311,16 @@ definitions:
       answer:
         type: string
     type: object
+  internal_httpserver_handlers_module_internal_order.Order:
+    properties:
+      order:
+        type: integer
+    type: object
+  internal_httpserver_handlers_page_internal_order.Order:
+    properties:
+      order:
+        type: integer
+    type: object
   internal_httpserver_handlers_section_internal_create.AnswerSection:
     properties:
       question:
@@ -315,6 +328,11 @@ definitions:
         type: string
     required:
     - question
+    type: object
+  internal_httpserver_handlers_section_internal_order.Order:
+    properties:
+      order:
+        type: integer
     type: object
   model.Answer:
     properties:
@@ -494,6 +512,8 @@ definitions:
   model.Review:
     properties:
       answerId:
+        type: string
+      comment:
         type: string
       reviewerId:
         type: string
@@ -1263,6 +1283,26 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /v1/module/{id}/order:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_httpserver_handlers_module_internal_order.Order'
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Module'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - module
   /v1/module/{moduleId}:
     put:
       parameters:
@@ -1335,6 +1375,26 @@ paths:
       responses:
         "200":
           description: ok
+          schema:
+            $ref: '#/definitions/model.Page'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - page
+  /v1/page/{id}/order:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_httpserver_handlers_page_internal_order.Order'
+      responses:
+        "200":
+          description: ' '
           schema:
             $ref: '#/definitions/model.Page'
       security:
@@ -1495,6 +1555,26 @@ paths:
       responses:
         "200":
           description: updated
+          schema:
+            $ref: '#/definitions/model.Section'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /v1/section/{id}/order:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_httpserver_handlers_section_internal_order.Order'
+      responses:
+        "200":
+          description: ' '
           schema:
             $ref: '#/definitions/model.Section'
       security:

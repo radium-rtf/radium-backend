@@ -767,6 +767,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/module/{id}/order": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "module"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_httpserver_handlers_module_internal_order.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Module"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/module/{moduleId}": {
             "put": {
                 "security": [
@@ -894,6 +928,40 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                }
+            }
+        },
+        "/v1/page/{id}/order": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_httpserver_handlers_page_internal_order.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Page"
+                        }
                     }
                 }
             }
@@ -1164,6 +1232,40 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                }
+            }
+        },
+        "/v1/section/{id}/order": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_httpserver_handlers_section_internal_order.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Section"
+                        }
                     }
                 }
             }
@@ -1555,6 +1657,10 @@ const docTemplate = `{
                 "answerId": {
                     "type": "string"
                 },
+                "comment": {
+                    "type": "string",
+                    "maxLength": 500
+                },
                 "score": {
                     "type": "integer",
                     "minimum": 0
@@ -1699,6 +1805,22 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_httpserver_handlers_module_internal_order.Order": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_httpserver_handlers_page_internal_order.Order": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_httpserver_handlers_section_internal_create.AnswerSection": {
             "type": "object",
             "required": [
@@ -1708,6 +1830,14 @@ const docTemplate = `{
                 "question": {
                     "type": "string",
                     "maxLength": 3000
+                }
+            }
+        },
+        "internal_httpserver_handlers_section_internal_order.Order": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -1981,6 +2111,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answerId": {
+                    "type": "string"
+                },
+                "comment": {
                     "type": "string"
                 },
                 "reviewerId": {
