@@ -140,6 +140,23 @@ func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Cour
 	return r.GetFullById(ctx, course.Id)
 }
 
+func (r Course) UpdatePublish(ctx context.Context, id uuid.UUID, status bool) (*entity.Course, error) {
+	info, err := r.db.NewUpdate().
+		Model(&entity.Course{}).
+		Where("id = ?", id).
+		Set("is_published = ?", status).
+		Exec(ctx)
+
+	n, _ := info.RowsAffected()
+	if err == nil && n == 0 {
+		return nil, repoerr.CourseNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return r.GetFullById(ctx, id)
+}
+
 func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
 	coursesIds := r.db.NewSelect().
 		Column("course_id").

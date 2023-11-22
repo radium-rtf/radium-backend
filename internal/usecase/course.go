@@ -94,10 +94,7 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 		return nil, errors.New("пубилковать и снимать с публикации курс могут только авторы")
 	}
 
-	course.IsPublished = !course.IsPublished
-	course, err = uc.courseRepo.Update(ctx, course)
-
-	return course, err
+	return uc.courseRepo.UpdatePublish(ctx, course.Id, !course.IsPublished)
 }
 
 func (c CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) error {
