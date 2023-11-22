@@ -19,6 +19,7 @@ type (
 		UpdatedAt time.Time `bun:",nullzero"`
 		CreatedAt time.Time `bun:",nullzero"`
 		DeletedAt time.Time `bun:",soft_delete,nullzero"`
+		Comment   string
 	}
 
 	ReviewComment struct { // несколько преподавателей оставили комментарий

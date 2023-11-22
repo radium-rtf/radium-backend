@@ -10,7 +10,8 @@ type (
 		AnswerId   uuid.UUID `json:"answerId"`
 		ReviewerId uuid.UUID `json:"reviewerId"`
 
-		Score float64 `json:"score"`
+		Score   float64 `json:"score"`
+		Comment string  `json:"comment"`
 	}
 )
 
@@ -22,5 +23,6 @@ func NewReview(review *entity.Review) *Review {
 		AnswerId:   review.AnswerId,
 		ReviewerId: review.ReviewerId,
 		Score:      review.Score,
+		Comment:    review.Comment,
 	}
 }
