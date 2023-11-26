@@ -1,5 +1,16 @@
 basePath: /
 definitions:
+  courses.Courses:
+    properties:
+      my:
+        items:
+          $ref: '#/definitions/model.Course'
+        type: array
+      recommendations:
+        items:
+          $ref: '#/definitions/model.Course'
+        type: array
+    type: object
   create.Answer:
     properties:
       answer:
@@ -474,8 +485,12 @@ definitions:
         type: integer
       name:
         type: string
+      next:
+        type: string
       order:
         type: number
+      previous:
+        type: string
       score:
         type: integer
       sections:
@@ -891,7 +906,7 @@ paths:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: '#/definitions/courses.Courses'
       security:
       - ApiKeyAuth: []
       tags:

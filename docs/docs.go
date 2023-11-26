@@ -87,7 +87,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/model.Course"
+                            "$ref": "#/definitions/courses.Courses"
                         }
                     }
                 }
@@ -1425,6 +1425,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "courses.Courses": {
+            "type": "object",
+            "properties": {
+                "my": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Course"
+                    }
+                },
+                "recommendations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Course"
+                    }
+                }
+            }
+        },
         "create.Answer": {
             "type": "object",
             "properties": {
@@ -2121,8 +2138,14 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "next": {
+                    "type": "string"
+                },
                 "order": {
                     "type": "number"
+                },
+                "previous": {
+                    "type": "string"
                 },
                 "score": {
                     "type": "integer"
