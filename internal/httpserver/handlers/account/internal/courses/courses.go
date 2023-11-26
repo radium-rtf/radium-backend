@@ -11,11 +11,12 @@ import (
 
 type getter interface {
 	GetStudentCourses(ctx context.Context, id uuid.UUID) ([]*entity.Course, error)
+	GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error)
 }
 
 // @Tags account
 // @Security ApiKeyAuth
-// @Success      200   {object} model.Course "ok"
+// @Success      200   {object} Courses "ok"
 // @Router       /v1/account/courses [get]
 func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -31,8 +32,19 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourses(courses, userId)
+		recommendations, err := getter.GetRecommendations(ctx, userId, 10)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		response := Courses{
+			My:              model.NewCourses(courses, userId),
+			Recommendations: model.NewCourses(recommendations, userId),
+		}
+
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, c)
+		render.JSON(w, r, response)
 	}
 }

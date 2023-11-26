@@ -198,3 +198,19 @@ func (r Course) CreateLink(ctx context.Context, link *entity.Link) error {
 	_, err := r.db.NewInsert().Model(link).Exec(ctx)
 	return err
 }
+
+func (r Course) GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error) {
+	coursesIds := r.db.NewSelect().
+		Column("course_id").
+		Model(&entity.CourseStudent{}).
+		Where("user_id = ?", userId)
+
+	var courses []*entity.Course
+	err := r.db.NewSelect().
+		Model(&courses).
+		Where("id not in (?) and is_published", coursesIds).
+		Limit(limit).
+		Scan(ctx)
+
+	return courses, err
+}

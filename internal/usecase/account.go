@@ -48,3 +48,7 @@ func (uc AccountUseCase) UpdatePassword(ctx context.Context, userId uuid.UUID, c
 func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId uuid.UUID) ([]*entity.Course, error) {
 	return uc.courseRepo.GetByStudent(ctx, studentId)
 }
+
+func (c AccountUseCase) GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error) {
+	return c.courseRepo.GetRecommendations(ctx, userId, limit)
+}
