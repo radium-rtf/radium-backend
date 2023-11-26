@@ -10,7 +10,8 @@ import (
 	"net/http"
 )
 
-type creator interface {
+type useCase interface {
+	GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error)
 	Create(ctx context.Context, page *entity.Page, editorId uuid.UUID) (*entity.Page, error)
 }
 
@@ -19,7 +20,7 @@ type creator interface {
 // @Param       request body Page true "создание"
 // @Success      201   {object} model.Page "ok"
 // @Router      /v1/page [post]
-func New(creator creator) http.HandlerFunc {
+func New(useCase useCase) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			request Page
@@ -35,14 +36,21 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		page := request.toPage()
-		page, err = creator.Create(ctx, page, userId)
+		page, err = useCase.Create(ctx, page, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
-		m := model.NewPage(page, map[uuid.UUID][]*entity.Answer{})
+		nextAnsPrevious, err := useCase.GetNextAndPrevious(ctx, page)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
+		m := model.NewPage(page, map[uuid.UUID][]*entity.Answer{}, nextAnsPrevious)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, m)
 	}

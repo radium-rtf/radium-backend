@@ -93,3 +93,22 @@ func (r Page) GetLastPage(ctx context.Context, moduleId uuid.UUID) (*entity.Page
 	}
 	return page, err
 }
+
+func (r Page) GetModulesByPageId(ctx context.Context, id uuid.UUID) ([]*entity.Module, error) {
+	var page = new(entity.Page)
+	err := r.db.NewSelect().Model(page).
+		Where("page.id = ?", id).
+		Relation("Module").
+		Relation("Module.Course").
+		Relation("Module.Course.Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Module.Course.Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return page.Module.Course.Modules, nil
+}

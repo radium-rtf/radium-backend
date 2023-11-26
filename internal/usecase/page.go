@@ -3,8 +3,10 @@ package usecase
 import (
 	"context"
 	"errors"
+	"github.com/radium-rtf/radium-backend/internal/model"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
+	"slices"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -64,6 +66,22 @@ func (uc PageUseCase) Update(ctx context.Context, page *entity.Page, editorId uu
 func (p PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Page, error) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error) {
+	modules, err := uc.page.GetModulesByPageId(ctx, page.Id)
+	if err != nil {
+		return nil, err
+	}
+	moduleIndex := slices.IndexFunc(modules, func(module *entity.Module) bool {
+		return module.Id == page.ModuleId
+	})
+	pageIndex := slices.IndexFunc(modules[moduleIndex].Pages, func(p *entity.Page) bool {
+		return p.Id == page.Id
+	})
+
+	var nextAndPrevious = model.GetNextAndPreviousPage(moduleIndex, pageIndex, modules)
+	return nextAndPrevious, nil
 }
 
 func (uc PageUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {

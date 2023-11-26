@@ -51,7 +51,7 @@ func New(updater updater) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewPage(page, map[uuid.UUID][]*entity.Answer{})
+		dto := model.NewPage(page, map[uuid.UUID][]*entity.Answer{}, nil)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}

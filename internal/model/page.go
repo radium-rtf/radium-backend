@@ -14,11 +14,24 @@ type (
 		Score    uint       `json:"score"`
 		MaxScore uint       `json:"maxScore"`
 		Sections []*Section `json:"sections"`
+		Next     *uuid.UUID `json:"next"`
+		Previous *uuid.UUID `json:"previous"`
+	}
+
+	NextAndPreviousPage struct {
+		Next     *uuid.UUID `json:"next"`
+		Previous *uuid.UUID `json:"previous"`
 	}
 )
 
-func NewPage(page *entity.Page, answers map[uuid.UUID][]*entity.Answer) *Page {
+func NewPage(page *entity.Page, answers map[uuid.UUID][]*entity.Answer, nextAndPrevious *NextAndPreviousPage) *Page {
 	sectionsDto, score, maxScore := NewSections(page.Sections, answers)
+
+	var next, previous *uuid.UUID
+	if nextAndPrevious != nil {
+		previous = nextAndPrevious.Previous
+		next = nextAndPrevious.Next
+	}
 
 	return &Page{
 		Id:       page.Id,
@@ -28,6 +41,8 @@ func NewPage(page *entity.Page, answers map[uuid.UUID][]*entity.Answer) *Page {
 		Score:    score,
 		MaxScore: maxScore,
 		Sections: sectionsDto,
+		Next:     next,
+		Previous: previous,
 	}
 }
 
@@ -36,7 +51,7 @@ func NewPages(pages []*entity.Page, answers map[uuid.UUID][]*entity.Answer) ([]*
 	var maxScore, score uint = 0, 0
 
 	for _, page := range pages {
-		dto := NewPage(page, answers)
+		dto := NewPage(page, answers, nil)
 		maxScore += dto.MaxScore
 		score += dto.Score
 
@@ -44,4 +59,31 @@ func NewPages(pages []*entity.Page, answers map[uuid.UUID][]*entity.Answer) ([]*
 	}
 
 	return dtos, score, maxScore
+}
+
+func GetNextAndPreviousPage(moduleIndex, pageIndex int, modules []*entity.Module) *NextAndPreviousPage {
+	var prev *uuid.UUID
+	for module := moduleIndex; module >= 0; module-- {
+		page := len(modules[module].Pages) - 1
+		if module == moduleIndex {
+			page = pageIndex - 1
+		}
+		if page >= 0 {
+			prev = &modules[module].Pages[page].Id
+			break
+		}
+	}
+
+	var next *uuid.UUID
+	for module := moduleIndex; module < len(modules); module++ {
+		page := 0
+		if module == moduleIndex {
+			page = pageIndex + 1
+		}
+		if page < len(modules[module].Pages) {
+			next = &modules[module].Pages[page].Id
+			break
+		}
+	}
+	return &NextAndPreviousPage{Next: next, Previous: prev}
 }

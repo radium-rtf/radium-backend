@@ -12,6 +12,7 @@ import (
 
 type pageGetter interface {
 	GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error)
+	GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error)
 }
 
 type answersGetter interface {
@@ -42,8 +43,15 @@ func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
+		nextAnsPrevious, err := pageGetter.GetNextAndPrevious(ctx, page)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
+			return
+		}
+
 		if !ok {
-			render.JSON(w, r, model.NewPage(page, map[uuid.UUID][]*entity.Answer{}))
+			render.JSON(w, r, model.NewPage(page, map[uuid.UUID][]*entity.Answer{}, nextAnsPrevious))
 			return
 		}
 
@@ -59,7 +67,7 @@ func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewPage(page, answers.AnswerBySectionId)
+		dto := model.NewPage(page, answers.AnswerBySectionId, nextAnsPrevious)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, dto)
 
