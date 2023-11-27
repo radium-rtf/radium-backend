@@ -35,10 +35,16 @@ func NewModules(modules []*entity.Module, answers map[uuid.UUID][]*entity.Answer
 	dtos := make([]*Module, 0, len(modules))
 	var score, maxScore uint = 0, 0
 
-	for _, module := range modules {
+	for moduleIdx, module := range modules {
 		dto := NewModule(module, answers)
 		score += dto.Score
 		maxScore += dto.MaxScore
+
+		for pageIdx := range module.Pages {
+			prevAndNext := GetNextAndPreviousPage(moduleIdx, pageIdx, modules)
+			dto.Pages[pageIdx].Previous = prevAndNext.Previous
+			dto.Pages[pageIdx].Next = prevAndNext.Next
+		}
 
 		dtos = append(dtos, dto)
 	}
