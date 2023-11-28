@@ -852,6 +852,13 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": " ",
                         "name": "request",
                         "in": "body",
@@ -1016,6 +1023,13 @@ const docTemplate = `{
                     "page"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "page id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": " ",
                         "name": "request",
@@ -1320,6 +1334,13 @@ const docTemplate = `{
                     "section"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "section id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": " ",
                         "name": "request",
@@ -1913,7 +1934,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "order": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
@@ -1921,7 +1943,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "order": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
@@ -1941,7 +1964,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "order": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },

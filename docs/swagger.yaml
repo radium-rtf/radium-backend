@@ -337,11 +337,13 @@ definitions:
   internal_httpserver_handlers_module_internal_order.Order:
     properties:
       order:
+        minimum: 1
         type: integer
     type: object
   internal_httpserver_handlers_page_internal_order.Order:
     properties:
       order:
+        minimum: 1
         type: integer
     type: object
   internal_httpserver_handlers_section_internal_create.AnswerSection:
@@ -355,6 +357,7 @@ definitions:
   internal_httpserver_handlers_section_internal_order.Order:
     properties:
       order:
+        minimum: 1
         type: integer
     type: object
   model.Answer:
@@ -1359,6 +1362,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: ' '
         in: body
         name: request
@@ -1457,6 +1465,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: page id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: ' '
         in: body
         name: request
@@ -1637,6 +1650,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: section id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: ' '
         in: body
         name: request
