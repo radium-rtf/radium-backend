@@ -47,7 +47,7 @@ func (r Section) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 
 func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.Section, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		info, err := r.db.NewUpdate().
+		info, err := tx.NewUpdate().
 			Model(section).
 			WherePK().
 			OmitZero().
@@ -61,7 +61,7 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 		if section.Answer == "" && len(section.Answers) == 0 {
 			return nil
 		}
-		_, err = r.db.NewDelete().
+		_, err = tx.NewDelete().
 			Model(&entity.Answer{}).
 			Where("section_id = ?", section.Id).
 			Exec(ctx)
@@ -112,5 +112,34 @@ func (r Section) GetLastSection(ctx context.Context, pageId uuid.UUID) (*entity.
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repoerr.SectionNotFound
 	}
+	return section, err
+}
+
+func (r Section) UpdateOrder(ctx context.Context, section *entity.Section, order uint) (*entity.Section, error) {
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		where := "section.order >= ? and section.order <= ?"
+		set := "\"order\" = section.order + 1"
+		if section.Order < float64(order) {
+			where = "section.order <= ? and section.order >= ?"
+			set = "\"order\" = section.order - 1"
+		}
+		_, err := tx.NewUpdate().
+			Model(&entity.Section{}).
+			Where(where, order, section.Order).
+			Set(set).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewUpdate().
+			Model(&entity.Section{}).
+			Where("uuid_eq(section.id, ?)", section.Id).
+			Set("\"order\" = ?", order).
+			Exec(ctx)
+
+		return err
+	})
+
+	section.Order = float64(order)
 	return section, err
 }

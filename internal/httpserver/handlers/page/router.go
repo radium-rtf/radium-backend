@@ -35,7 +35,7 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 				r.Use(role.CanEditCourse(tokenManager))
 				r.Delete("/{id}", destroy.New(useCase))
 				r.Put("/{pageId}", update.New(useCase))
-				r.Patch("/{id}", order.New(useCase))
+				r.Patch("/{id}/order", order.New(useCase))
 			})
 		})
 	})

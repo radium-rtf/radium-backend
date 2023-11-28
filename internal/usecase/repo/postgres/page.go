@@ -112,3 +112,33 @@ func (r Page) GetModulesByPageId(ctx context.Context, id uuid.UUID) ([]*entity.M
 	}
 	return page.Module.Course.Modules, nil
 }
+
+func (r Page) UpdateOrder(ctx context.Context, page *entity.Page, order uint) (*entity.Page, error) {
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		where := "page.order >= ? and page.order <= ?"
+		set := "\"order\" = page.order + 1"
+		if page.Order < float64(order) {
+			where = "page.order <= ? and page.order >= ?"
+			set = "\"order\" = page.order - 1"
+		}
+
+		_, err := tx.NewUpdate().
+			Model(&entity.Page{}).
+			Where(where, order, page.Order).
+			Set(set).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewUpdate().
+			Model(&entity.Page{}).
+			Where("uuid_eq(page.id, ?)", page.Id).
+			Set("\"order\" = ?", order).
+			Exec(ctx)
+
+		return err
+	})
+
+	page.Order = float64(order)
+	return page, err
+}

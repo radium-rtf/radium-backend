@@ -19,6 +19,7 @@ type updater interface {
 // @Tags module
 // @Security ApiKeyAuth
 // @Accept json
+// @Param        id   path     string  true  "module id"
 // @Param request body Order true " "
 // @Success 200 {object} model.Module " "
 // @Router /v1/module/{id}/order [patch]

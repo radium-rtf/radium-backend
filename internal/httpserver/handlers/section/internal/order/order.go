@@ -20,6 +20,7 @@ type updater interface {
 // @Tags section
 // @Security ApiKeyAuth
 // @Accept json
+// @Param        id   path     string  true  "section id"
 // @Param request body Order true " "
 // @Success 200 {object} model.Section " "
 // @Router /v1/section/{id}/order [patch]

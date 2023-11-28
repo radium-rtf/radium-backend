@@ -63,9 +63,20 @@ func (uc PageUseCase) Update(ctx context.Context, page *entity.Page, editorId uu
 	return uc.page.Update(ctx, page)
 }
 
-func (p PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Page, error) {
-	//TODO implement me
-	panic("implement me")
+func (uc PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Page, error) {
+	canEditErr := uc.canEdit(ctx, id, editorId)
+	if canEditErr != nil {
+		return nil, canEditErr
+	}
+	page, err := uc.page.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	last, err := uc.page.GetLastPage(ctx, page.ModuleId)
+	if float64(order) > last.Order {
+		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+	}
+	return uc.page.UpdateOrder(ctx, page, order)
 }
 
 func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error) {

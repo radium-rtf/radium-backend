@@ -58,8 +58,19 @@ func (uc ModuleUseCase) Update(ctx context.Context, module *entity.Module, edito
 }
 
 func (uc ModuleUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Module, error) {
-	//TODO implement me
-	panic("implement me")
+	canEditErr := uc.canEdit(ctx, id, editorId)
+	if canEditErr != nil {
+		return nil, canEditErr
+	}
+	module, err := uc.module.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	last, err := uc.module.GetLastModule(ctx, module.CourseId)
+	if float64(order) > last.Order {
+		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+	}
+	return uc.module.UpdateOrder(ctx, module, order)
 }
 func (uc ModuleUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {
 	course, err := uc.module.GetCourseByModuleId(ctx, id)

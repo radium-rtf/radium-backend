@@ -59,8 +59,19 @@ func (uc SectionUseCase) Update(ctx context.Context, section *entity.Section, ed
 }
 
 func (uc SectionUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Section, error) {
-	//TODO implement me
-	panic("implement me")
+	canEditErr := uc.canEdit(ctx, id, editorId)
+	if canEditErr != nil {
+		return nil, canEditErr
+	}
+	section, err := uc.section.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	last, err := uc.section.GetLastSection(ctx, section.PageId)
+	if float64(order) > last.Order {
+		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+	}
+	return uc.section.UpdateOrder(ctx, section, order)
 }
 
 func (uc SectionUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {

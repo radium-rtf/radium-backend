@@ -100,3 +100,33 @@ func (r Module) GetLastModule(ctx context.Context, courseId uuid.UUID) (*entity.
 	}
 	return module, err
 }
+
+func (r Module) UpdateOrder(ctx context.Context, module *entity.Module, order uint) (*entity.Module, error) {
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		where := "module.order >= ? and module.order <= ?"
+		set := "\"order\" = module.order + 1"
+		if module.Order < float64(order) {
+			where = "module.order <= ? and module.order >= ?"
+			set = "\"order\" = module.order - 1"
+		}
+
+		_, err := tx.NewUpdate().
+			Model(&entity.Module{}).
+			Where(where, order, module.Order).
+			Set(set).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewUpdate().
+			Model(&entity.Module{}).
+			Where("uuid_eq(module.id, ?)", module.Id).
+			Set("\"order\" = ?", order).
+			Exec(ctx)
+
+		return err
+	})
+
+	module.Order = float64(order)
+	return module, err
+}

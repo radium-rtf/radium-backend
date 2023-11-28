@@ -19,6 +19,7 @@ type updater interface {
 // @Tags page
 // @Security ApiKeyAuth
 // @Accept json
+// @Param        id   path     string  true  "page id"
 // @Param request body Order true " "
 // @Success 200 {object} model.Page " "
 // @Router /v1/page/{id}/order [patch]
@@ -52,7 +53,7 @@ func New(updater updater) http.HandlerFunc {
 		}
 
 		dto := model.NewPage(page, map[uuid.UUID][]*entity.Answer{}, nil)
-		render.Status(r, http.StatusCreated)
+		render.Status(r, http.StatusOK)
 		render.JSON(w, r, dto)
 	}
 }
