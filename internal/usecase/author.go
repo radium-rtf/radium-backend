@@ -15,6 +15,6 @@ func NewAuthorUseCase(courseRepo postgres.Course) AuthorUseCase {
 	return AuthorUseCase{course: courseRepo}
 }
 
-func (uc AuthorUseCase) GetCoursesByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
-	return uc.course.GetByAuthorId(ctx, id)
+func (uc AuthorUseCase) GetCoursesByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
+	return uc.course.GetByAuthorOrCoauthorId(ctx, id)
 }

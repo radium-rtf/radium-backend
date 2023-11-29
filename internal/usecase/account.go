@@ -49,6 +49,6 @@ func (uc AccountUseCase) GetStudentCourses(ctx context.Context, studentId uuid.U
 	return uc.courseRepo.GetByStudent(ctx, studentId)
 }
 
-func (c AccountUseCase) GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error) {
-	return c.courseRepo.GetRecommendations(ctx, userId, limit)
+func (uc AccountUseCase) GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error) {
+	return uc.courseRepo.GetRecommendations(ctx, userId, limit)
 }

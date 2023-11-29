@@ -13,7 +13,10 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 
 	r.Route("/v1/author", func(r chi.Router) {
 		r.Use(mwAuth.Required(useCases.Deps.TokenManager))
-		r.Use(role.Author(useCases.Deps.TokenManager))
-		r.Get("/courses", courses.New(useCase))
+
+		r.Group(func(r chi.Router) {
+			r.Use(role.CanEditCourse(useCases.Deps.TokenManager))
+			r.Get("/courses", courses.New(useCase))
+		})
 	})
 }

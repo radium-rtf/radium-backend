@@ -10,7 +10,7 @@ import (
 )
 
 type getter interface {
-	GetCoursesByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error)
+	GetCoursesByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error)
 }
 
 // @Tags author
@@ -24,7 +24,7 @@ func New(getter getter) http.HandlerFunc {
 			userId = ctx.Value("userId").(uuid.UUID)
 		)
 
-		courses, err := getter.GetCoursesByAuthorId(ctx, userId)
+		courses, err := getter.GetCoursesByAuthorOrCoauthorId(ctx, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())

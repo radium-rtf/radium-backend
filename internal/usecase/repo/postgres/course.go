@@ -173,6 +173,33 @@ func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Cour
 	return courses, err
 }
 
+func (r Course) GetByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
+	coAutorCoursesIds := r.db.NewSelect().
+		Column("course_id").
+		Model(&entity.CourseCoauthor{}).
+		Where("user_id = ?", id)
+
+	coAuthorCourses := r.db.NewSelect().
+		Model(&entity.Course{}).
+		Relation("Students").
+		Where("id in (?)", coAutorCoursesIds)
+
+	var courses []*entity.Course
+	authorCoursesIds := r.db.NewSelect().
+		Column("course_id").
+		Model(&entity.CourseAuthor{}).
+		Where("user_id = ?", id)
+
+	err := r.db.NewSelect().
+		Model(&courses).
+		Relation("Students").
+		Where("id in (?)", authorCoursesIds).
+		Union(coAuthorCourses).
+		Scan(ctx)
+
+	return courses, err
+}
+
 func (r Course) GetLinkById(ctx context.Context, id uuid.UUID) (*entity.Link, error) {
 	var link = new(entity.Link)
 
