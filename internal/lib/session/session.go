@@ -17,7 +17,7 @@ func New(tokenManager auth.TokenManager, accessTTL, refreshTTL time.Duration) Se
 	return Session{tokenManager: tokenManager, accessTTL: accessTTL, refreshTTL: refreshTTL}
 }
 
-func (s Session) Create(user model.User) (entity.Session, model.Tokens, error) {
+func (s Session) Create(user *model.User) (entity.Session, model.Tokens, error) {
 	var (
 		tokens  = model.Tokens{User: user}
 		session entity.Session
@@ -45,7 +45,7 @@ func (s Session) Create(user model.User) (entity.Session, model.Tokens, error) {
 	return session, tokens, err
 }
 
-func (s Session) Refresh(user model.User, refreshToken uuid.UUID) (model.Tokens, time.Time, error) {
+func (s Session) Refresh(user *model.User, refreshToken uuid.UUID) (model.Tokens, time.Time, error) {
 	var (
 		tokens model.Tokens
 		err    error

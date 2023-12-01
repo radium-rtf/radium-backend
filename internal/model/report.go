@@ -12,7 +12,7 @@ type (
 	}
 
 	ReportRow struct {
-		User   User  `json:"user"`
+		User   *User `json:"user"`
 		Score  uint  `json:"score"`
 		Values []int `json:"values"`
 	}

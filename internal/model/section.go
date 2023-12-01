@@ -20,8 +20,8 @@ type (
 		Variants []string           `json:"variants"`
 		Verdict  verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
 		Keys     []string           `json:"keys"`
-
-		Attempts int `json:"attempts"`
+		Review   *Review            `json:"review"`
+		Attempts int                `json:"attempts"`
 	}
 )
 
@@ -31,34 +31,45 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID][]*entity.Ans
 
 	for _, section := range sections {
 		var (
-			verdictType = verdict.EMPTY
-			score       = uint(0)
-			answerStr   = ""
-			answersArr  []string
-			attempts    = int(section.MaxAttempts.Int16)
+			attempts = int(section.MaxAttempts.Int16)
+			answer   *entity.Answer
+			score    uint
 		)
 
 		answers, ok := answers[section.Id]
 		if ok && len(answers) >= 1 {
-			answer := answers[0]
+			answer = answers[0]
 			attempts = max(int(section.MaxAttempts.Int16)-len(answers), 0)
-			verdictType = answer.Verdict
 			score = answer.Score(section)
-			answerStr = answer.Answer
-			answersArr = answer.Answers
 		}
 
 		sumMaxScore += section.GetMaxScore()
 		sumScore += score
 
-		dto := NewSection(section, verdictType, score, answerStr, answersArr, attempts)
+		dto := NewSection(section, answer, attempts)
 		dtos = append(dtos, dto)
 	}
 
 	return dtos, sumScore, sumMaxScore
 }
 
-func NewSection(section *entity.Section, verdict verdict.Type, score uint, answer string, answers []string, attempts int) *Section {
+func NewSection(section *entity.Section, answer *entity.Answer, attempts int) *Section {
+	var (
+		verdict   = verdict.EMPTY
+		score     = uint(0)
+		answerStr = ""
+		answers   []string
+		review    *Review
+	)
+
+	if answer != nil {
+		verdict = answer.Verdict
+		score = answer.Score(section)
+		answerStr = answer.Answer
+		answers = answer.Answers
+		review = NewReview(answer.Review)
+	}
+
 	return &Section{
 		Id:       section.Id,
 		PageId:   section.PageId,
@@ -70,8 +81,9 @@ func NewSection(section *entity.Section, verdict verdict.Type, score uint, answe
 		Type:     section.Type,
 		Score:    score,
 		Answers:  answers,
-		Answer:   answer,
+		Answer:   answerStr,
 		Keys:     section.Keys,
 		Attempts: attempts,
+		Review:   review,
 	}
 }

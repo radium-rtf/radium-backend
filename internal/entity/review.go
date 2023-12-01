@@ -14,6 +14,7 @@ type (
 		AnswerId uuid.UUID `bun:",pk"`
 
 		ReviewerId uuid.UUID
+		Reviewer   *User `bun:"rel:belongs-to,join:reviewer_id=id"`
 		Score      float64
 
 		UpdatedAt time.Time `bun:",nullzero"`

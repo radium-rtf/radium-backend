@@ -25,7 +25,7 @@ func NewManager(signingKey string) TokenManager {
 	return TokenManager{signingKey: signingKey}
 }
 
-func (m TokenManager) NewJWT(user model.User, expiresAt time.Time) (string, error) {
+func (m TokenManager) NewJWT(user *model.User, expiresAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":         jwt.NewNumericDate(expiresAt),
 		"sub":         user.Id.String(),

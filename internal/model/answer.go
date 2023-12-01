@@ -27,8 +27,8 @@ type (
 	}
 
 	UserAnswers struct {
-		User          User `json:"user"`
-		WithoutReview uint `json:"withoutReview"`
+		User          *User `json:"user"`
+		WithoutReview uint  `json:"withoutReview"`
 
 		MaxScore uint `json:"maxScore"`
 		Score    uint `json:"score"`
@@ -102,15 +102,16 @@ func NewAnswers(answers []*entity.Answer) []Answer {
 	var dtos = make([]Answer, 0, len(answers))
 
 	for _, answer := range answers {
-		dtos = append(dtos, NewAnswer(answer))
+		attempts := max(int(answer.Section.MaxAttempts.Int16)-len(answers), 0)
+		dtos = append(dtos, NewAnswer(answer, attempts))
 	}
 	return dtos
 }
 
-func NewAnswer(answer *entity.Answer) Answer {
+func NewAnswer(answer *entity.Answer, attempts int) Answer {
 	return Answer{
 		Id:      answer.Id,
-		Section: NewSection(answer.Section, answer.Verdict, answer.Score(answer.Section), answer.Section.Answer, answer.Section.Answers, 0),
+		Section: NewSection(answer.Section, answer, attempts),
 
 		Type:    answer.Type,
 		Verdict: answer.Verdict,

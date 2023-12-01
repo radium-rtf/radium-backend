@@ -11,7 +11,7 @@ type (
 		Name       string    `json:"name"`
 		InviteCode string    `json:"inviteCode"`
 		Courses    []*Course `json:"courses"`
-		Students   []User    `json:"students"`
+		Students   []*User   `json:"students"`
 	}
 
 	GroupAnswers struct {

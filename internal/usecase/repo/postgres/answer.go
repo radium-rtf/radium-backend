@@ -45,6 +45,7 @@ func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uui
 		Where("user_id in (?) and section_id in (?)",
 			bun.In(usersIds), bun.In(sectionsIds)).
 		Relation("Review").
+		Relation("Review.Reviewer").
 		Order("answer.created_at desc").
 		Scan(ctx)
 

@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
@@ -53,7 +52,7 @@ func New(updater updater) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewSection(section, verdict.EMPTY, 0, "", nil, 0)
+		dto := model.NewSection(section, nil, 0)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, dto)
 	}

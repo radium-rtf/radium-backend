@@ -7,7 +7,7 @@ import (
 
 type (
 	Tokens struct {
-		User         User      `json:"user"`
+		User         *User     `json:"user"`
 		AccessToken  string    `json:"accessToken"`
 		RefreshToken uuid.UUID `json:"refreshToken"`
 		ExpiresIn    time.Time `json:"expiresIn"`

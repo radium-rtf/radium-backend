@@ -12,13 +12,13 @@ type (
 		Name string    `json:"name"`
 		Slug string    `json:"slug"`
 
-		ShortDescription string `json:"shortDescription"`
-		Description      string `json:"description"`
-		Logo             string `json:"logo"`
-		Banner           string `json:"banner"`
-		Authors          []User `json:"authors"`
-		Coauthors        []User `json:"coauthors"`
-		Links            []Link `json:"links"`
+		ShortDescription string  `json:"shortDescription"`
+		Description      string  `json:"description"`
+		Logo             string  `json:"logo"`
+		Banner           string  `json:"banner"`
+		Authors          []*User `json:"authors"`
+		Coauthors        []*User `json:"coauthors"`
+		Links            []Link  `json:"links"`
 
 		IsPublished bool `json:"isPublished"`
 		IsStudent   bool `json:"isStudent"`

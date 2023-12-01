@@ -16,8 +16,11 @@ type (
 	}
 )
 
-func NewUser(user *entity.User) User {
-	return User{
+func NewUser(user *entity.User) *User {
+	if user == nil {
+		return nil
+	}
+	return &User{
 		Id:     user.Id,
 		Email:  user.Email,
 		Name:   user.Name,
@@ -26,8 +29,8 @@ func NewUser(user *entity.User) User {
 	}
 }
 
-func NewUsers(users []*entity.User) []User {
-	res := make([]User, 0, len(users))
+func NewUsers(users []*entity.User) []*User {
+	res := make([]*User, 0, len(users))
 	for _, user := range users {
 
 		res = append(res, NewUser(user))

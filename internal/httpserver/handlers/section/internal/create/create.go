@@ -5,7 +5,6 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
@@ -50,7 +49,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		dto := model.NewSection(section, verdict.EMPTY, 0, "", nil, 0)
+		dto := model.NewSection(section, nil, int(section.MaxAttempts.Int16))
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, dto)
 	}
