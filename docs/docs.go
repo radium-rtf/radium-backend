@@ -2253,8 +2253,8 @@ const docTemplate = `{
                 "comment": {
                     "type": "string"
                 },
-                "reviewerId": {
-                    "type": "string"
+                "reviewer": {
+                    "$ref": "#/definitions/model.User"
                 },
                 "score": {
                     "type": "number"
@@ -2310,6 +2310,9 @@ const docTemplate = `{
                 },
                 "pageId": {
                     "type": "string"
+                },
+                "review": {
+                    "$ref": "#/definitions/model.Review"
                 },
                 "score": {
                     "type": "integer"
