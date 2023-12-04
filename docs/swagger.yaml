@@ -19,6 +19,8 @@ definitions:
         $ref: '#/definitions/create.Choice'
       code:
         $ref: '#/definitions/create.Code'
+      file:
+        $ref: '#/definitions/create.File'
       id:
         type: string
       mapping:
@@ -88,6 +90,27 @@ definitions:
       shortDescription:
         maxLength: 400
         type: string
+    type: object
+  create.File:
+    properties:
+      answer:
+        type: string
+    required:
+    - answer
+    type: object
+  create.FileSection:
+    properties:
+      fileTypes:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      question:
+        maxLength: 5000
+        type: string
+    required:
+    - fileTypes
+    - question
     type: object
   create.Group:
     properties:
@@ -233,6 +256,8 @@ definitions:
         $ref: '#/definitions/create.ChoiceSection'
       code:
         $ref: '#/definitions/create.CodeSection'
+      file:
+        $ref: '#/definitions/create.FileSection'
       mapping:
         $ref: '#/definitions/create.MappingSection'
       maxAttempts:
@@ -319,6 +344,7 @@ definitions:
     - code
     - permutation
     - mapping
+    - file
     type: string
     x-enum-varnames:
     - ChoiceType
@@ -329,6 +355,7 @@ definitions:
     - CodeType
     - PermutationType
     - MappingType
+    - FileType
   internal_httpserver_handlers_answer_internal_create.AnswerSection:
     properties:
       answer:
@@ -370,6 +397,8 @@ definitions:
         type: array
       createdAt:
         type: string
+      file:
+        $ref: '#/definitions/model.File'
       id:
         type: string
       language:
@@ -429,6 +458,10 @@ definitions:
     properties:
       location:
         type: string
+      name:
+        type: string
+      sizeInKiB:
+        type: number
     type: object
   model.GroupAnswers:
     properties:
@@ -573,6 +606,12 @@ definitions:
         type: integer
       content:
         type: string
+      file:
+        $ref: '#/definitions/model.File'
+      fileTypes:
+        items:
+          type: string
+        type: array
       id:
         type: string
       keys:

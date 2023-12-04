@@ -1475,6 +1475,9 @@ const docTemplate = `{
                 "code": {
                     "$ref": "#/definitions/create.Code"
                 },
+                "file": {
+                    "$ref": "#/definitions/create.File"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -1575,6 +1578,37 @@ const docTemplate = `{
                 "shortDescription": {
                     "type": "string",
                     "maxLength": 400
+                }
+            }
+        },
+        "create.File": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.FileSection": {
+            "type": "object",
+            "required": [
+                "fileTypes",
+                "question"
+            ],
+            "properties": {
+                "fileTypes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 5000
                 }
             }
         },
@@ -1787,6 +1821,9 @@ const docTemplate = `{
                 "code": {
                     "$ref": "#/definitions/create.CodeSection"
                 },
+                "file": {
+                    "$ref": "#/definitions/create.FileSection"
+                },
                 "mapping": {
                     "$ref": "#/definitions/create.MappingSection"
                 },
@@ -1909,7 +1946,8 @@ const docTemplate = `{
                 "answer",
                 "code",
                 "permutation",
-                "mapping"
+                "mapping",
+                "file"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -1919,7 +1957,8 @@ const docTemplate = `{
                 "AnswerType",
                 "CodeType",
                 "PermutationType",
-                "MappingType"
+                "MappingType",
+                "FileType"
             ]
         },
         "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
@@ -1983,6 +2022,9 @@ const docTemplate = `{
                 },
                 "createdAt": {
                     "type": "string"
+                },
+                "file": {
+                    "$ref": "#/definitions/model.File"
                 },
                 "id": {
                     "type": "string"
@@ -2072,6 +2114,12 @@ const docTemplate = `{
             "properties": {
                 "location": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sizeInKiB": {
+                    "type": "number"
                 }
             }
         },
@@ -2292,6 +2340,15 @@ const docTemplate = `{
                 },
                 "content": {
                     "type": "string"
+                },
+                "file": {
+                    "$ref": "#/definitions/model.File"
+                },
+                "fileTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "id": {
                     "type": "string"

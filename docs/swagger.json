@@ -1468,6 +1468,9 @@
                 "code": {
                     "$ref": "#/definitions/create.Code"
                 },
+                "file": {
+                    "$ref": "#/definitions/create.File"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -1568,6 +1571,37 @@
                 "shortDescription": {
                     "type": "string",
                     "maxLength": 400
+                }
+            }
+        },
+        "create.File": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.FileSection": {
+            "type": "object",
+            "required": [
+                "fileTypes",
+                "question"
+            ],
+            "properties": {
+                "fileTypes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 5000
                 }
             }
         },
@@ -1780,6 +1814,9 @@
                 "code": {
                     "$ref": "#/definitions/create.CodeSection"
                 },
+                "file": {
+                    "$ref": "#/definitions/create.FileSection"
+                },
                 "mapping": {
                     "$ref": "#/definitions/create.MappingSection"
                 },
@@ -1902,7 +1939,8 @@
                 "answer",
                 "code",
                 "permutation",
-                "mapping"
+                "mapping",
+                "file"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -1912,7 +1950,8 @@
                 "AnswerType",
                 "CodeType",
                 "PermutationType",
-                "MappingType"
+                "MappingType",
+                "FileType"
             ]
         },
         "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
@@ -1976,6 +2015,9 @@
                 },
                 "createdAt": {
                     "type": "string"
+                },
+                "file": {
+                    "$ref": "#/definitions/model.File"
                 },
                 "id": {
                     "type": "string"
@@ -2065,6 +2107,12 @@
             "properties": {
                 "location": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sizeInKiB": {
+                    "type": "number"
                 }
             }
         },
@@ -2285,6 +2333,15 @@
                 },
                 "content": {
                     "type": "string"
+                },
+                "file": {
+                    "$ref": "#/definitions/model.File"
+                },
+                "fileTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "id": {
                     "type": "string"
