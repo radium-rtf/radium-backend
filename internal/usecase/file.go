@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 	"mime/multipart"
 
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
@@ -10,18 +12,23 @@ import (
 
 type FileUseCase struct {
 	storage filestorage.Storage
+	file    postgres.File
 }
 
-func NewFileUseCase(storage filestorage.Storage) FileUseCase {
-	return FileUseCase{storage: storage}
+func NewFileUseCase(storage filestorage.Storage, file postgres.File) FileUseCase {
+	return FileUseCase{storage: storage, file: file}
 }
 
-func (uc FileUseCase) UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader) (model.File, error) {
+func (uc FileUseCase) UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader) (*model.File, error) {
 	contentType := header.Header.Get("Content-Type")
 	info, err := uc.storage.PutImage(ctx, file, header.Size, contentType)
 	if err != nil {
-		return model.File{}, err
+		return nil, err
 	}
-
-	return model.File{Location: info.Location}, err
+	fileEntity := &entity.File{Url: info.Location, Name: header.Filename, Type: contentType, Size: header.Size}
+	err = uc.file.Create(ctx, fileEntity)
+	if err != nil {
+		return nil, err
+	}
+	return model.NewFile(fileEntity), err
 }

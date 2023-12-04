@@ -109,13 +109,14 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 		Relation("Students").
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.
-				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds)
-
+				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds).
+				Order("answer.created_at desc")
 		}).
 		Relation("Students.Answers.Section").
 		Relation("Students.Answers.Review", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("review.created_at desc")
 		}).
+		Relation("Students.Answers.File").
 		Limit(1).
 		Scan(ctx)
 

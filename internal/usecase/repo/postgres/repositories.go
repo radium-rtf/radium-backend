@@ -16,6 +16,7 @@ type Repositories struct {
 	Teacher
 	User
 	Role
+	File
 }
 
 func NewRepositories(pg *postgres.Postgres) Repositories {
@@ -31,5 +32,6 @@ func NewRepositories(pg *postgres.Postgres) Repositories {
 		Teacher: NewTeacherRepo(pg),
 		User:    NewUserRepo(pg),
 		Role:    NewRoleRepo(pg),
+		File:    NewFileRepo(pg),
 	}
 }

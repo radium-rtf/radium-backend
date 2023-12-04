@@ -8,20 +8,22 @@ import (
 
 type (
 	Section struct {
-		Id       uuid.UUID          `json:"id"`
-		PageId   uuid.UUID          `json:"pageId"`
-		Order    float64            `json:"order"`
-		Type     entity.SectionType `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
-		Score    uint               `json:"score"`
-		Answer   string             `json:"answer"`
-		Answers  []string           `json:"answers" swaggertype:"array,string"`
-		Content  string             `json:"content"`
-		MaxScore uint               `json:"maxScore"`
-		Variants []string           `json:"variants"`
-		Verdict  verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
-		Keys     []string           `json:"keys"`
-		Review   *Review            `json:"review"`
-		Attempts int                `json:"attempts"`
+		Id        uuid.UUID          `json:"id"`
+		PageId    uuid.UUID          `json:"pageId"`
+		Order     float64            `json:"order"`
+		Type      entity.SectionType `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
+		Score     uint               `json:"score"`
+		Answer    string             `json:"answer"`
+		Answers   []string           `json:"answers" swaggertype:"array,string"`
+		Content   string             `json:"content"`
+		MaxScore  uint               `json:"maxScore"`
+		Variants  []string           `json:"variants"`
+		Verdict   verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
+		Keys      []string           `json:"keys"`
+		Review    *Review            `json:"review"`
+		Attempts  int                `json:"attempts"`
+		FileTypes []string           `json:"fileTypes"`
+		File      *File              `json:"file"`
 	}
 )
 
@@ -60,6 +62,7 @@ func NewSection(section *entity.Section, answer *entity.Answer, attempts int) *S
 		answerStr = ""
 		answers   []string
 		review    *Review
+		file      *File
 	)
 
 	if answer != nil {
@@ -68,22 +71,25 @@ func NewSection(section *entity.Section, answer *entity.Answer, attempts int) *S
 		answerStr = answer.Answer
 		answers = answer.Answers
 		review = NewReview(answer.Review)
+		file = NewFile(answer.File)
 	}
 
 	return &Section{
-		Id:       section.Id,
-		PageId:   section.PageId,
-		Order:    section.Order,
-		Content:  section.Content,
-		MaxScore: section.GetMaxScore(),
-		Verdict:  verdict,
-		Variants: section.GetVariants(),
-		Type:     section.Type,
-		Score:    score,
-		Answers:  answers,
-		Answer:   answerStr,
-		Keys:     section.Keys,
-		Attempts: attempts,
-		Review:   review,
+		Id:        section.Id,
+		PageId:    section.PageId,
+		Order:     section.Order,
+		Content:   section.Content,
+		MaxScore:  section.GetMaxScore(),
+		Verdict:   verdict,
+		Variants:  section.GetVariants(),
+		Type:      section.Type,
+		Score:     score,
+		Answers:   answers,
+		Answer:    answerStr,
+		Keys:      section.Keys,
+		Attempts:  attempts,
+		Review:    review,
+		FileTypes: section.FileTypes,
+		File:      file,
 	}
 }

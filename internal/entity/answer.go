@@ -24,6 +24,9 @@ type (
 		Answer  string
 		Answers pq.StringArray
 
+		FileUrl string
+		File    *File `bun:"rel:belongs-to,join:file_url=url"`
+
 		Language string
 
 		Review *Review `bun:"rel:has-one,join:id=answer_id"`

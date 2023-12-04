@@ -19,6 +19,7 @@ const (
 	CodeType        = SectionType("code")
 	PermutationType = SectionType("permutation")
 	MappingType     = SectionType("mapping")
+	FileType        = SectionType("file")
 )
 
 type (
@@ -41,13 +42,16 @@ type (
 		Answer  string
 		Answers pq.StringArray
 
-		Keys pq.StringArray
+		Keys      pq.StringArray
+		FileTypes pq.StringArray
 
 		MaxAttempts sql.NullInt16
 	}
 )
 
-func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxScore uint, content, answer string, variants, answers []string, sectionType SectionType, keys []string) (*Section, error) {
+func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64,
+	maxScore uint, content, answer string,
+	variants, answers, keys, types []string, sectionType SectionType) (*Section, error) {
 	if sectionType == TextType {
 		maxScore = 0
 	}
@@ -57,31 +61,26 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxS
 		MaxScore:    maxScore,
 		PageId:      pageId,
 		Type:        sectionType,
+		Content:     content,
+		Variants:    variants,
+		Answer:      answer,
+		Answers:     answers,
+		Keys:        keys,
+		FileTypes:   types,
 		MaxAttempts: maxAttempts,
-		Keys:        []string{},
 	}
 
-	section.Content = content
 	switch sectionType {
-	case MappingType:
-		section.Keys = keys
-		section.Answers = answers
-		section.Variants = variants
 	case PermutationType:
 		variants := slices.Clone(answers)
 		rand.Shuffle(len(variants), func(i, j int) {
 			variants[i], variants[j] = variants[j], variants[i]
 		})
-		section.Answers = answers
 		section.Variants = variants
 	case ChoiceType:
-		section.Answer = answer
-		section.Variants = variants
 	case ShortAnswerType:
-		section.Answer = answer
 	case MultiChoiceType:
-		section.Answers = answers
-		section.Variants = variants
+	case FileType:
 	case TextType:
 	case CodeType:
 	case AnswerType:

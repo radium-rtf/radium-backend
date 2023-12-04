@@ -22,6 +22,7 @@ type (
 		CodeSection        *CodeSection        `json:"code,omitempty"`
 		PermutationSection *PermutationSection `json:"permutation,omitempty"`
 		MappingSection     *MappingSection     `json:"mapping,omitempty"`
+		FileSection        *FileSection        `json:"file,omitempty"`
 	}
 
 	TextSection struct {
@@ -64,6 +65,11 @@ type (
 		Keys   []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
 		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
 	}
+
+	FileSection struct {
+		Question  string   `validate:"required,max=5000"`
+		FileTypes []string `validate:"required,min=1,dive,startswith=."`
+	}
 )
 
 func (r Section) ToSection() (*entity.Section, error) {
@@ -73,35 +79,38 @@ func (r Section) ToSection() (*entity.Section, error) {
 	switch {
 	case r.MappingSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.MappingSection.Question,
-			"", r.MappingSection.Answer, r.MappingSection.Answer, entity.MappingType, r.MappingSection.Keys)
+			"", r.MappingSection.Answer, r.MappingSection.Answer, r.MappingSection.Keys, nil, entity.MappingType)
 
 	case r.PermutationSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.PermutationSection.Question,
-			"", []string{}, r.PermutationSection.Answer, entity.PermutationType, []string{})
+			"", []string{}, r.PermutationSection.Answer, []string{}, nil, entity.PermutationType)
 
 	case r.ChoiceSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.ChoiceSection.Question,
-			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType, []string{})
+			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, []string{}, nil, entity.ChoiceType)
 
 	case r.ShortAnswerSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.ShortAnswerSection.Question,
-			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType, []string{})
+			r.ShortAnswerSection.Answer, []string{}, []string{}, []string{}, nil, entity.ShortAnswerType)
 
 	case r.MultiChoiceSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.MultiChoiceSection.Question,
-			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType, []string{})
+			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, []string{}, nil, entity.MultiChoiceType)
 
 	case r.TextSection != nil:
 		return entity.NewSection(sql.NullInt16{}, r.PageId, r.Order, r.MaxScore, r.TextSection.Content,
-			"", []string{}, []string{}, entity.TextType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.TextType)
 
 	case r.CodeSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.CodeSection.Question,
-			"", []string{}, []string{}, entity.CodeType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.CodeType)
 
 	case r.AnswerSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.AnswerSection.Question,
-			"", []string{}, []string{}, entity.AnswerType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.AnswerType)
+	case r.FileSection != nil:
+		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.FileSection.Question,
+			"", []string{}, []string{}, []string{}, r.FileSection.FileTypes, entity.FileType)
 	default:
 		return nil, errors.New("не удалось создать секцию")
 	}

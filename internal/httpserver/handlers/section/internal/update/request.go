@@ -67,31 +67,31 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 	switch {
 	case r.PermutationSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.PermutationSection.Question,
-			"", []string{}, r.PermutationSection.Answer, entity.PermutationType, []string{})
+			"", []string{}, r.PermutationSection.Answer, []string{}, nil, entity.PermutationType)
 
 	case r.ChoiceSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.ChoiceSection.Question,
-			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, entity.ChoiceType, []string{})
+			r.ChoiceSection.Answer, r.ChoiceSection.Variants, []string{}, []string{}, nil, entity.ChoiceType)
 
 	case r.ShortAnswerSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.ShortAnswerSection.Question,
-			r.ShortAnswerSection.Answer, []string{}, []string{}, entity.ShortAnswerType, []string{})
+			r.ShortAnswerSection.Answer, []string{}, []string{}, []string{}, nil, entity.ShortAnswerType)
 
 	case r.MultiChoiceSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.MultiChoiceSection.Question,
-			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, entity.MultiChoiceType, []string{})
+			"", r.MultiChoiceSection.Variants, r.MultiChoiceSection.Answer, []string{}, nil, entity.MultiChoiceType)
 
 	case r.TextSection != nil:
 		section, err = entity.NewSection(sql.NullInt16{}, pageId, 0, r.MaxScore, r.TextSection.Content,
-			"", []string{}, []string{}, entity.TextType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.TextType)
 
 	case r.CodeSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.CodeSection.Question,
-			"", []string{}, []string{}, entity.CodeType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.CodeType)
 
 	case r.AnswerSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.AnswerSection.Question,
-			"", []string{}, []string{}, entity.AnswerType, []string{})
+			"", []string{}, []string{}, []string{}, nil, entity.AnswerType)
 	default:
 	}
 	section.Id = sectionId

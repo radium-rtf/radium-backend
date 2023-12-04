@@ -33,7 +33,8 @@ func (c Checker) Check(section *entity.Section, answer *entity.Answer) (verdict.
 		verdictType = c.mapping(answer, section)
 
 	case answer.Type == entity.AnswerType ||
-		answer.Type == entity.CodeType:
+		answer.Type == entity.CodeType ||
+		answer.Type == entity.FileType:
 		verdictType = verdict.WAIT
 
 	default:

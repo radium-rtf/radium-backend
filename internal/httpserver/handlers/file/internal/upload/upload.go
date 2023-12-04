@@ -9,7 +9,7 @@ import (
 )
 
 type uploader interface {
-	UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader) (model.File, error)
+	UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader) (*model.File, error)
 }
 
 // @Tags file

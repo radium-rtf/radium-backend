@@ -6,22 +6,25 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
+	"slices"
+	"strings"
 
 	ans "github.com/radium-rtf/radium-backend/internal/lib/answer"
 )
 
 type AnswerUseCase struct {
-	sectionRepo postgres.Section
-	answerRepo  postgres.Answer
-	checker     ans.Checker
+	section postgres.Section
+	answer  postgres.Answer
+	file    postgres.File
+	checker ans.Checker
 }
 
-func NewAnswerUseCase(sectionRepo postgres.Section, answerRepo postgres.Answer) AnswerUseCase {
-	return AnswerUseCase{sectionRepo: sectionRepo, answerRepo: answerRepo}
+func NewAnswerUseCase(section postgres.Section, answer postgres.Answer, file postgres.File) AnswerUseCase {
+	return AnswerUseCase{section: section, answer: answer, file: file}
 }
 
 func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
-	section, err := uc.sectionRepo.GetById(ctx, answer.SectionId)
+	section, err := uc.section.GetById(ctx, answer.SectionId)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +32,7 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 		return uc.createAnswer(ctx, section, answer)
 	}
 
-	count, err := uc.answerRepo.GetCountBySectionAndUserId(ctx, answer.UserId, section.Id)
+	count, err := uc.answer.GetCountBySectionAndUserId(ctx, answer.UserId, section.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -47,16 +50,30 @@ func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Sectio
 		return nil, err
 	}
 	answer.Verdict = verdict.Verdict
+	if answer.Type != entity.FileType {
+		return answer, uc.answer.Create(ctx, answer)
+	}
 
-	return answer, uc.answerRepo.Create(ctx, answer)
+	file, err := uc.file.Get(ctx, answer.FileUrl)
+	if err != nil {
+		return nil, err
+	}
+	isCorrectType := slices.ContainsFunc(section.FileTypes, func(s string) bool {
+		return strings.HasSuffix(file.Name, s)
+	})
+	if !isCorrectType {
+		return nil, errors.New("неверный тип файла")
+	}
+	return answer, uc.answer.Create(ctx, answer)
+
 }
 
 func (uc AnswerUseCase) GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (
 	*entity.AnswersCollection, error) {
-	return uc.answerRepo.Get(ctx, userId, ids)
+	return uc.answer.Get(ctx, userId, ids)
 }
 
 func (uc AnswerUseCase) GetByUserIdAndSectionId(ctx context.Context, userId, sectionsId uuid.UUID) (
 	*entity.AnswersCollection, error) {
-	return uc.answerRepo.GetByUserIdAnsSectionId(ctx, userId, sectionsId)
+	return uc.answer.GetByUserIdAnsSectionId(ctx, userId, sectionsId)
 }

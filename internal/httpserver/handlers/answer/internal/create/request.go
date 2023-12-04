@@ -16,6 +16,7 @@ type (
 		Code        *Code          `json:"code,omitempty"`
 		Permutation *Permutation   `json:"permutation,omitempty"`
 		Mapping     *Mapping       `json:"mapping,omitempty"`
+		File        *File          `json:"file,omitempty"`
 	}
 
 	MultiChoice struct {
@@ -32,6 +33,10 @@ type (
 
 	ShortAnswer struct {
 		Answer string `json:"answer"`
+	}
+
+	File struct {
+		Answer string `json:"answer" validate:"required,url"`
 	}
 
 	Code struct {
@@ -78,6 +83,9 @@ func (r *Answer) ToAnswer(userId uuid.UUID) (*entity.Answer, error) {
 	case r.Mapping != nil:
 		answer.Type = entity.MappingType
 		answer.Answers = r.Mapping.Answer
+	case r.File != nil:
+		answer.Type = entity.FileType
+		answer.FileUrl = r.File.Answer
 	default:
 		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
 	}

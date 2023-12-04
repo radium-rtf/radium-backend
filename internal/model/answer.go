@@ -18,6 +18,7 @@ type (
 
 		Answer  string   `json:"answer"`
 		Answers []string `json:"answers"`
+		File    *File    `json:"file"`
 
 		Language string `json:"language"`
 
@@ -122,6 +123,7 @@ func NewAnswer(answer *entity.Answer, attempts int) Answer {
 		Language: answer.Language,
 
 		Review: NewReview(answer.Review),
+		File:   NewFile(answer.File),
 
 		CreatedAt: answer.CreatedAt,
 	}

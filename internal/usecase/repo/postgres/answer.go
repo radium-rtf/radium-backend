@@ -33,6 +33,9 @@ func (r Answer) GetById(ctx context.Context, id uuid.UUID) (*entity.Answer, erro
 		Model(answer).
 		Where("answer.id = ?", id).
 		Relation("Section").
+		Relation("Review").
+		Relation("Review.Reviewer").
+		Relation("File").
 		Limit(1).
 		Scan(ctx)
 	return answer, err
@@ -46,13 +49,14 @@ func (r Answer) get(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uui
 			bun.In(usersIds), bun.In(sectionsIds)).
 		Relation("Review").
 		Relation("Review.Reviewer").
+		Relation("File").
 		Order("answer.created_at desc").
 		Scan(ctx)
 
 	return answers, err
 }
 
-func (r Answer) GetByUsers(ctx context.Context, usersIds []uuid.UUID, sectionsIds []uuid.UUID) (
+func (r Answer) GetByUsers(ctx context.Context, usersIds, sectionsIds []uuid.UUID) (
 	*entity.UsersAnswersCollection, error) {
 	answers, err := r.get(ctx, usersIds, sectionsIds)
 	if err != nil {
