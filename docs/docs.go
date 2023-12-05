@@ -1449,6 +1449,12 @@ const docTemplate = `{
         "courses.Courses": {
             "type": "object",
             "properties": {
+                "authorship": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Course"
+                    }
+                },
                 "my": {
                     "type": "array",
                     "items": {

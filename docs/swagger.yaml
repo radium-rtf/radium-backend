@@ -2,6 +2,10 @@ basePath: /
 definitions:
   courses.Courses:
     properties:
+      authorship:
+        items:
+          $ref: '#/definitions/model.Course'
+        type: array
       my:
         items:
           $ref: '#/definitions/model.Course'
