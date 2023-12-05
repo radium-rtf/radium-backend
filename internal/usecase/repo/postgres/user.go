@@ -35,8 +35,25 @@ func (r User) Create(ctx context.Context, user *entity.User) error {
 
 func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) {
 	var user = new(entity.User)
-	err := r.db.NewSelect().Model(user).Relation("Roles").
+	err := r.db.NewSelect().Model(user).
+		Relation("Roles").
 		Where(value.column+" = ?", value.value).
+		Limit(1).
+		Scan(ctx)
+	if errors.Is(sql.ErrNoRows, err) {
+		return nil, repoerr.UserNotFound
+	}
+	return user, err
+}
+
+func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+	var user = new(entity.User)
+	err := r.db.NewSelect().Model(user).
+		Relation("Roles").
+		Relation("Author").
+		Relation("Coauthor").
+		Relation("Courses").
+		Where("id = ?", id).
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {

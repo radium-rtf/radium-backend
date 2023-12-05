@@ -15,6 +15,10 @@ type AccountUseCase struct {
 	courseRepo     postgres.Course
 }
 
+func (uc AccountUseCase) GetFullUser(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+	return uc.userRepo.GetFull(ctx, id)
+}
+
 func (uc AccountUseCase) GetUser(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 	return uc.userRepo.GetById(ctx, id)
 }

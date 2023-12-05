@@ -10,7 +10,7 @@ import (
 )
 
 type getter interface {
-	GetStudentCourses(ctx context.Context, id uuid.UUID) ([]*entity.Course, error)
+	GetFullUser(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error)
 }
 
@@ -25,7 +25,7 @@ func New(getter getter) http.HandlerFunc {
 			userId = ctx.Value("userId").(uuid.UUID)
 		)
 
-		courses, err := getter.GetStudentCourses(ctx, userId)
+		user, err := getter.GetFullUser(ctx, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
@@ -39,8 +39,11 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
+		authorship := append([]*entity.Course{}, user.Author...)
+		authorship = append(authorship, user.Coauthor...)
 		response := Courses{
-			My:              model.NewCourses(courses, userId),
+			Authorship:      model.NewCourses(authorship, userId),
+			My:              model.NewCourses(user.Courses, userId),
 			Recommendations: model.NewCourses(recommendations, userId),
 		}
 
