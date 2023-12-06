@@ -14,3 +14,12 @@ type (
 		IsCoauthor    bool
 	}
 )
+
+func GetAllRoles(userId uuid.UUID) *Roles {
+	return &Roles{
+		UserId:     userId,
+		IsAuthor:   true,
+		IsCoauthor: true,
+		IsTeacher:  true,
+	}
+}

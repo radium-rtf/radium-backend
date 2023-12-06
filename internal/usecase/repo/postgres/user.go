@@ -27,7 +27,7 @@ func (r User) Create(ctx context.Context, user *entity.User) error {
 			return err
 		}
 
-		roles := &entity.Roles{UserId: user.Id}
+		roles := entity.GetAllRoles(user.Id)
 		_, err = tx.NewInsert().Model(roles).Exec(ctx)
 		return err
 	})
