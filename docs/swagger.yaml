@@ -802,6 +802,36 @@ definitions:
         maxLength: 400
         type: string
     type: object
+  update.FileSection:
+    properties:
+      fileTypes:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      question:
+        maxLength: 5000
+        type: string
+    type: object
+  update.MappingSection:
+    properties:
+      answer:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      keys:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      question:
+        maxLength: 800
+        type: string
+    required:
+    - answer
+    - keys
+    type: object
   update.Module:
     properties:
       name:
@@ -852,6 +882,10 @@ definitions:
         $ref: '#/definitions/update.ChoiceSection'
       code:
         $ref: '#/definitions/update.CodeSection'
+      file:
+        $ref: '#/definitions/update.FileSection'
+      mapping:
+        $ref: '#/definitions/update.MappingSection'
       maxAttempts:
         maximum: 200
         minimum: 0
@@ -867,7 +901,7 @@ definitions:
       shortanswer:
         $ref: '#/definitions/update.ShortAnswerSection'
       text:
-        $ref: '#/definitions/update.TextSection'
+        $ref: '#/definitions/create.TextSection'
     type: object
   update.ShortAnswerSection:
     properties:
@@ -876,15 +910,6 @@ definitions:
         type: string
       question:
         maxLength: 200
-        type: string
-    required:
-    - answer
-    - question
-    type: object
-  update.TextSection:
-    properties:
-      content:
-        maxLength: 10000
         type: string
     type: object
   update.User:

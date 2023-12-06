@@ -2638,6 +2638,49 @@ const docTemplate = `{
                 }
             }
         },
+        "update.FileSection": {
+            "type": "object",
+            "properties": {
+                "fileTypes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 5000
+                }
+            }
+        },
+        "update.MappingSection": {
+            "type": "object",
+            "required": [
+                "answer",
+                "keys"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "keys": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string",
+                    "maxLength": 800
+                }
+            }
+        },
         "update.Module": {
             "type": "object",
             "required": [
@@ -2710,6 +2753,12 @@ const docTemplate = `{
                 "code": {
                     "$ref": "#/definitions/update.CodeSection"
                 },
+                "file": {
+                    "$ref": "#/definitions/update.FileSection"
+                },
+                "mapping": {
+                    "$ref": "#/definitions/update.MappingSection"
+                },
                 "maxAttempts": {
                     "type": "integer",
                     "maximum": 200,
@@ -2730,16 +2779,12 @@ const docTemplate = `{
                     "$ref": "#/definitions/update.ShortAnswerSection"
                 },
                 "text": {
-                    "$ref": "#/definitions/update.TextSection"
+                    "$ref": "#/definitions/create.TextSection"
                 }
             }
         },
         "update.ShortAnswerSection": {
             "type": "object",
-            "required": [
-                "answer",
-                "question"
-            ],
             "properties": {
                 "answer": {
                     "type": "string",
@@ -2748,15 +2793,6 @@ const docTemplate = `{
                 "question": {
                     "type": "string",
                     "maxLength": 200
-                }
-            }
-        },
-        "update.TextSection": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string",
-                    "maxLength": 10000
                 }
             }
         },
