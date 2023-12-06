@@ -26,6 +26,7 @@ type (
 		Score    uint      `json:"score"`
 		MaxScore uint      `json:"maxScore"`
 		Modules  []*Module `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
+		Groups   []*Group  `json:"groups"`
 	}
 )
 
@@ -59,4 +60,21 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 		Score:            score,
 		Modules:          modules,
 	}
+}
+
+func NewCourseWithUserGroups(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, userId uuid.UUID) *Course {
+	groups := make([]*Group, 0, len(course.Groups))
+	for _, group := range course.Groups {
+		isStudent := slices.ContainsFunc(group.Students, func(user *entity.User) bool {
+			return user.Id == userId
+		})
+		if isStudent {
+			group.Students = make([]*entity.User, 0)
+			groups = append(groups, NewGroup(group))
+		}
+	}
+
+	c := NewCourse(course, answers, userId)
+	c.Groups = groups
+	return c
 }

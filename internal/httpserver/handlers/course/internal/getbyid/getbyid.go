@@ -12,6 +12,7 @@ import (
 
 type getter interface {
 	GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error)
+	GetByIdAndUser(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Course, error)
 }
 
 type answersGetter interface {
@@ -35,15 +36,15 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		course, err := getter.GetById(ctx, courseId)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+		if !ok {
+			responseIfNotAuthorized(getter, courseId, w, r)
 			return
 		}
 
-		if !ok {
-			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, uuid.UUID{}))
+		course, err := getter.GetByIdAndUser(ctx, courseId, userId)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
 			return
 		}
 
@@ -55,8 +56,21 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, answers.AnswerBySectionId, userId)
+		c := model.NewCourseWithUserGroups(course, answers.AnswerBySectionId, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}
+}
+
+func responseIfNotAuthorized(getter getter, courseId uuid.UUID, w http.ResponseWriter, r *http.Request) {
+	course, err := getter.GetById(r.Context(), courseId)
+	if err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, err.Error())
+		return
+	}
+
+	c := model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, uuid.UUID{})
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, c)
 }

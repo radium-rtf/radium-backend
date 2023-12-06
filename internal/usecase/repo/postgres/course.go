@@ -66,24 +66,8 @@ func (r Course) GetFullBySlug(ctx context.Context, slug string) (*entity.Course,
 
 func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course, error) {
 	var course = new(entity.Course)
-	err := r.db.NewSelect().
-		Model(course).
+	err := r.getCourseQuery(course).
 		Where(where.column+" = ?", where.value).
-		Relation("Authors").
-		Relation("Authors.Roles").
-		Relation("Coauthors").
-		Relation("Coauthors.Roles").
-		Relation("Links").
-		Relation("Students").
-		Relation("Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
-		}).
-		Relation("Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
-		}).
-		Relation("Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
-		}).
 		Scan(ctx)
 	return course, err
 }
@@ -240,4 +224,46 @@ func (r Course) GetRecommendations(ctx context.Context, userId uuid.UUID, limit 
 		Scan(ctx)
 
 	return courses, err
+}
+
+func (r Course) GetFullByIdAndUser(ctx context.Context, id, userId uuid.UUID) (*entity.Course, error) {
+	return r.getFullWithUser(ctx, columnValue{column: "id", value: id}, userId)
+}
+
+func (r Course) GetFullBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity.Course, error) {
+	return r.getFullWithUser(ctx, columnValue{column: "slug", value: slug}, userId)
+}
+
+func (r Course) getCourseQuery(course *entity.Course) *bun.SelectQuery {
+	return r.db.NewSelect().
+		Model(course).
+		Relation("Authors").
+		Relation("Authors.Roles").
+		Relation("Coauthors").
+		Relation("Coauthors.Roles").
+		Relation("Links").
+		Relation("Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		})
+}
+
+func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId uuid.UUID) (*entity.Course, error) {
+	var course = new(entity.Course)
+	err := r.getCourseQuery(course).
+		Where(where.column+" = ?", where.value).
+		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("course_student.user_id = ?", userId).Limit(1)
+		}).
+		Relation("Groups").
+		Relation("Groups.Students", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("group_student.user_id = ?", userId)
+		}).
+		Scan(ctx)
+	return course, err
 }

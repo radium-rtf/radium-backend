@@ -12,6 +12,7 @@ import (
 
 type getter interface {
 	GetBySlug(ctx context.Context, slug string) (*entity.Course, error)
+	GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity.Course, error)
 }
 
 type answersGetter interface {
@@ -31,16 +32,15 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 		)
 		userId, ok := ctx.Value("userId").(uuid.UUID)
 
-		course, err := getter.GetBySlug(ctx, slug)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+		if !ok {
+			responseIfNotAuthorized(getter, slug, w, r)
 			return
 		}
 
-		if !ok {
-			render.Status(r, http.StatusOK)
-			render.JSON(w, r, model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, userId))
+		course, err := getter.GetBySlugAndUser(ctx, slug, userId)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, err.Error())
 			return
 		}
 
@@ -52,8 +52,21 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourse(course, answers.AnswerBySectionId, userId)
+		c := model.NewCourseWithUserGroups(course, answers.AnswerBySectionId, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}
+}
+
+func responseIfNotAuthorized(getter getter, slug string, w http.ResponseWriter, r *http.Request) {
+	course, err := getter.GetBySlug(r.Context(), slug)
+	if err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, err.Error())
+		return
+	}
+
+	c := model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, uuid.UUID{})
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, c)
 }

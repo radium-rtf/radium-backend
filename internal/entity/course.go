@@ -27,6 +27,8 @@ type (
 		Links []*Link `bun:"rel:has-many,join:id=course_id" validate:"dive"`
 
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
+
+		Groups []*Group `bun:"m2m:group_course,join:Course=Group"`
 	}
 
 	CourseAuthor struct {
@@ -61,6 +63,7 @@ type (
 )
 
 func (c Course) SectionsIds() []uuid.UUID {
+	// todo: должно быть подзапросом
 	sectionsIds := make([]uuid.UUID, 0, 10)
 	for _, module := range c.Modules {
 		for _, page := range module.Pages {

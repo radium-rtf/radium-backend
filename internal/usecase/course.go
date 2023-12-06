@@ -41,6 +41,14 @@ func (uc CourseUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Cour
 	return uc.courseRepo.GetFullById(ctx, id)
 }
 
+func (uc CourseUseCase) GetByIdAndUser(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Course, error) {
+	return uc.courseRepo.GetFullByIdAndUser(ctx, id, userId)
+}
+
+func (c CourseUseCase) GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity.Course, error) {
+	return c.courseRepo.GetFullBySlugAndUser(ctx, slug, userId)
+}
+
 func (uc CourseUseCase) GetBySlug(ctx context.Context, slug string) (*entity.Course, error) {
 	return uc.courseRepo.GetFullBySlug(ctx, slug)
 }
