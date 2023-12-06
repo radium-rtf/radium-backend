@@ -1,6 +1,7 @@
 package create
 
 import (
+	"database/sql"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
@@ -85,7 +86,7 @@ func (r *Answer) ToAnswer(userId uuid.UUID) (*entity.Answer, error) {
 		answer.Answers = r.Mapping.Answer
 	case r.File != nil:
 		answer.Type = entity.FileType
-		answer.FileUrl = r.File.Answer
+		answer.FileUrl = sql.NullString{String: r.File.Answer, Valid: r.File.Answer == ""}
 	default:
 		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
 	}

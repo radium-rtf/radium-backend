@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
@@ -24,7 +25,7 @@ type (
 		Answer  string
 		Answers pq.StringArray
 
-		FileUrl string
+		FileUrl sql.NullString
 		File    *File `bun:"rel:belongs-to,join:file_url=url"`
 
 		Language string

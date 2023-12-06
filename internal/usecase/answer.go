@@ -54,7 +54,7 @@ func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Sectio
 		return answer, uc.answer.Create(ctx, answer)
 	}
 
-	file, err := uc.file.Get(ctx, answer.FileUrl)
+	file, err := uc.file.Get(ctx, answer.FileUrl.String)
 	if err != nil {
 		return nil, err
 	}
