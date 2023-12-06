@@ -430,6 +430,10 @@ definitions:
         type: array
       description:
         type: string
+      groups:
+        items:
+          $ref: '#/definitions/model.Group'
+        type: array
       id:
         type: string
       isPublished:
@@ -466,6 +470,23 @@ definitions:
         type: string
       sizeInKiB:
         type: number
+    type: object
+  model.Group:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/model.Course'
+        type: array
+      id:
+        type: string
+      inviteCode:
+        type: string
+      name:
+        type: string
+      students:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
     type: object
   model.GroupAnswers:
     properties:

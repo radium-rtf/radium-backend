@@ -2073,6 +2073,12 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Group"
+                    }
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2126,6 +2132,32 @@ const docTemplate = `{
                 },
                 "sizeInKiB": {
                     "type": "number"
+                }
+            }
+        },
+        "model.Group": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Course"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inviteCode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
                 }
             }
         },
