@@ -45,7 +45,7 @@ type (
 func (a Answer) Score(section *Section) uint {
 	maxScore := section.GetMaxScore()
 
-	if (a.Type == AnswerType || a.Type == CodeType) && a.Review != nil {
+	if a.Review != nil {
 		return uint(math.Round(float64(maxScore) * a.Review.Score))
 	}
 
