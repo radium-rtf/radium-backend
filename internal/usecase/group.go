@@ -67,18 +67,22 @@ func (uc GroupUseCase) GetReportByCourse(ctx context.Context, userId, courseId, 
 		return nil, err
 	}
 
-	contains := slices.ContainsFunc(group.Courses, func(course *entity.Course) bool {
+	containsCourse := slices.ContainsFunc(group.Courses, func(course *entity.Course) bool {
 		return course.Id == courseId
 	})
-	if !contains {
+	if !containsCourse {
 		return nil, errors.New("такой курс не назначен группе")
 	}
 
-	contains = slices.ContainsFunc(teacherCourses, func(course *entity.TeacherCourseGroup) bool {
+	isTeacher := slices.ContainsFunc(teacherCourses, func(course *entity.TeacherCourseGroup) bool {
 		return course.CourseId == courseId && course.GroupId == groupId
 	})
-	if !contains {
-		return nil, errors.New("только преподаватели имеют доступ к ведомости")
+	canViewReport := isTeacher || slices.ContainsFunc(group.Students, func(user *entity.User) bool {
+		return user.Id == userId
+	})
+
+	if !canViewReport {
+		return nil, errors.New("только преподаватели и студенты имеют доступ к ведомости")
 	}
 
 	return uc.newReport(ctx, courseId, group)
