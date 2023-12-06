@@ -78,8 +78,13 @@ func (r Section) ToSection() (*entity.Section, error) {
 
 	switch {
 	case r.MappingSection != nil:
+		keys := r.MappingSection.Keys
+		answer := r.MappingSection.Answer
+		if len(keys) != len(answer) {
+			return nil, errors.New("секция с сопоставлением должна иметь одинаковое колиество строк и обоих столбцах")
+		}
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.MappingSection.Question,
-			"", r.MappingSection.Answer, r.MappingSection.Answer, r.MappingSection.Keys, nil, entity.MappingType)
+			"", answer, answer, keys, nil, entity.MappingType)
 
 	case r.PermutationSection != nil:
 		return entity.NewSection(maxAttempts, r.PageId, r.Order, r.MaxScore, r.PermutationSection.Question,

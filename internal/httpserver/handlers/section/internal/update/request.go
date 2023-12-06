@@ -2,8 +2,10 @@ package update
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section/internal/create"
 )
 
 type (
@@ -11,17 +13,15 @@ type (
 		MaxScore    uint  `json:"maxScore,omitempty" validate:"min=0,max=300"`
 		MaxAttempts uint8 `json:"maxAttempts,omitempty" validate:"min=0,max=200"`
 
-		TextSection        *TextSection        `json:"text,omitempty"`
+		TextSection        *create.TextSection `json:"text,omitempty"`
 		ChoiceSection      *ChoiceSection      `json:"choice,omitempty"`
 		MultiChoiceSection *MultiChoiceSection `json:"multichoice,omitempty"`
 		ShortAnswerSection *ShortAnswerSection `json:"shortanswer,omitempty"`
 		AnswerSection      *AnswerSection      `json:"answer,omitempty"`
 		CodeSection        *CodeSection        `json:"code,omitempty"`
 		PermutationSection *PermutationSection `json:"permutation,omitempty"`
-	}
-
-	TextSection struct {
-		Content string `validate:"max=10000"`
+		MappingSection     *MappingSection     `json:"mapping,omitempty"`
+		FileSection        *FileSection        `json:"file,omitempty"`
 	}
 
 	ChoiceSection struct {
@@ -37,8 +37,8 @@ type (
 	}
 
 	ShortAnswerSection struct {
-		Question string `validate:"required,max=200"`
-		Answer   string `validate:"required,max=50"`
+		Question string `validate:"max=200"`
+		Answer   string `validate:"max=50"`
 	}
 
 	AnswerSection struct {
@@ -52,6 +52,18 @@ type (
 	PermutationSection struct {
 		Question string   `validate:"max=500"`
 		Answer   []string `swaggertype:"array,string" validate:"max=8,dive,required,max=100"`
+	}
+
+	MappingSection struct {
+		Question string `validate:"max=800"`
+
+		Keys   []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+	}
+
+	FileSection struct {
+		Question  string   `validate:"max=5000"`
+		FileTypes []string `validate:"min=1,dive,startswith=."`
 	}
 )
 
@@ -92,6 +104,19 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 	case r.AnswerSection != nil:
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.AnswerSection.Question,
 			"", []string{}, []string{}, []string{}, nil, entity.AnswerType)
+
+	case r.MappingSection != nil:
+		keys := r.MappingSection.Keys
+		answer := r.MappingSection.Answer
+		if len(keys) != len(answer) {
+			return nil, errors.New("секция с сопоставлением должна иметь одинаковое колиество строк и обоих столбцах")
+		}
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.MappingSection.Question,
+			"", answer, answer, keys, nil, entity.MappingType)
+
+	case r.FileSection != nil:
+		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.FileSection.Question,
+			"", []string{}, []string{}, []string{}, r.FileSection.FileTypes, entity.FileType)
 	default:
 	}
 	section.Id = sectionId

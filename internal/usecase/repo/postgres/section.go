@@ -9,6 +9,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
+	"slices"
 )
 
 type Section struct {
@@ -46,7 +47,11 @@ func (r Section) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
 }
 
 func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.Section, error) {
-	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+	before, err := r.GetById(ctx, section.Id)
+	if err != nil {
+		return nil, err
+	}
+	err = r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		info, err := tx.NewUpdate().
 			Model(section).
 			WherePK().
@@ -58,7 +63,10 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 			return repoerr.SectionNotFound
 		}
 
-		if section.Answer == "" && len(section.Answers) == 0 {
+		if section.Answer == "" && section.Answers == nil {
+			return nil
+		}
+		if slices.Equal(before.Answers, section.Answers) {
 			return nil
 		}
 		_, err = tx.NewDelete().
