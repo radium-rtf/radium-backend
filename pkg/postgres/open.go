@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/uptrace/bun"
@@ -25,6 +26,7 @@ func open(url string) (*sql.DB, error) {
 		if err = sqldb.Ping(); err == nil {
 			return sqldb, nil
 		}
+		fmt.Println(err.Error())
 	}
 
 	return nil, err

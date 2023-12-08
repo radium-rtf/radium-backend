@@ -7,7 +7,6 @@ http:
 
 
 postgres:
-  pg_url: postgres://user:password@postgres:5432/postgres?sslmode=disable
   max_open_conns: 5
   max_idle_conns: 2
   conn_max_idle_time: 5m
@@ -15,16 +14,6 @@ postgres:
 
 
 auth:
-  jwt_signing_key: wdkadwadwakpklrbjb
-  password_salt_sha1: ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ
   password_cost_bcrypt: 13
   access_token_ttl: 2h
   refresh_token_ttl: 720h
-
-
-storage:
-  private_endpoint: minio:9000
-  endpoint: localhost:9000
-  id: useruseruser
-  secret: useruseruser
-  region: RU

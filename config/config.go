@@ -24,7 +24,7 @@ type (
 	}
 
 	PG struct {
-		URL             string        `env-required:"true" yaml:"pg_url"`
+		URL             string        `env:"PG_URL" env-default:"postgres://user:password@postgres:5432/postgres?sslmode=disable"`
 		MaxOpenConns    int           `env-required:"true" yaml:"max_open_conns"`
 		MaxIdleConns    int           `env-required:"true" yaml:"max_idle_conns"`
 		ConnMaxIdleTime time.Duration `env-required:"true" yaml:"conn_max_idle_time"`
@@ -32,19 +32,19 @@ type (
 	}
 
 	Auth struct {
-		SigningKey         string        `env-required:"true" yaml:"jwt_signing_key"`
-		PasswordSaltSha1   string        `env-required:"true" yaml:"password_salt_sha1"`
+		SigningKey         string        `env:"JWT_SIGNING_KEY" env-default:"wdkadwadwakpklrbjb"`
+		PasswordSaltSha1   string        `env:"PASSWORD_SALT_SHA1" env-default:"ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ"`
 		PasswordCostBcrypt int           `env-required:"true" yaml:"password_cost_bcrypt"`
 		AccessTokenTTL     time.Duration `env-required:"true" yaml:"access_token_ttl"`
 		RefreshTokenTTL    time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
 	}
 
 	Storage struct {
-		PrivateEndpoint string `env-required:"true" yaml:"private_endpoint"`
-		Endpoint        string `env-required:"true" yaml:"endpoint"`
-		Id              string `env-required:"true" yaml:"id"`
-		Secret          string `env-required:"true" yaml:"secret"`
-		Region          string `env-required:"true" yaml:"region"`
+		PrivateEndpoint string `env:"STORAGE_PRIVATE_ENDPOINT" env-default:"minio:9000"`
+		Endpoint        string `env:"STORAGE_ENDPOINT" env-default:"localhost:9000"`
+		Id              string `env:"STORAGE_ID" env-default:"useruseruser"`
+		Secret          string `env:"STORAGE_SECRET" env-default:"useruseruser"`
+		Region          string `env:"STORAGE_REGION" env-default:"RU"`
 	}
 )
 

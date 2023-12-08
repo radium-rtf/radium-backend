@@ -1,0 +1,15 @@
+[Unit]
+Description=radium
+After=network.target
+
+[Service]
+User=radium
+WorkingDirectory=/home/radium/radium-backend
+ExecStart=/home/radium/radium-backend/radium
+Restart=always
+RestartSec=4
+StandardOutput=inherit
+EnvironmentFile=/home/radium/radium-backend/config.env
+
+[Install]
+WantedBy=multi-user.target

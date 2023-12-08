@@ -19,10 +19,7 @@ func Run(cfg *config.Config) {
 	}
 	defer db.Close()
 
-	storage, err := filestorage.New(cfg.Storage)
-	if err != nil {
-		log.Fatal(err)
-	}
+	storage := filestorage.Storage{}
 
 	dependencies := newDependencies(storage, cfg, db)
 
