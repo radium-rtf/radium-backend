@@ -13,11 +13,14 @@ import (
 )
 
 type User struct {
-	db *bun.DB
+	db             *bun.DB
+	defaultGroupId uuid.UUID
 }
 
 func NewUserRepo(pg *postgres.Postgres) User {
-	return User{db: pg.DB}
+	defaultGroupId := uuid.MustParse("81af02da-bf9e-4769-aa07-36903517733d")
+
+	return User{db: pg.DB, defaultGroupId: defaultGroupId}
 }
 
 func (r User) Create(ctx context.Context, user *entity.User) error {
@@ -29,6 +32,12 @@ func (r User) Create(ctx context.Context, user *entity.User) error {
 
 		roles := entity.GetAllRoles(user.Id)
 		_, err = tx.NewInsert().Model(roles).Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		studentGroup := &entity.GroupStudent{GroupId: r.defaultGroupId, UserId: user.Id}
+		_, err = tx.NewInsert().Model(studentGroup).Exec(ctx)
 		return err
 	})
 }

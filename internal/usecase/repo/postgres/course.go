@@ -10,11 +10,15 @@ import (
 )
 
 type Course struct {
-	db *bun.DB
+	db             *bun.DB
+	defaultGroupId uuid.UUID
 }
 
 func NewCourseRepo(pg *postgres.Postgres) Course {
-	return Course{db: pg.DB}
+	// todo: потом либо убрать либо перенести в мб конфиг
+	defaultGroupId := uuid.MustParse("81af02da-bf9e-4769-aa07-36903517733d")
+
+	return Course{db: pg.DB, defaultGroupId: defaultGroupId}
 }
 
 func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Course, error) {
@@ -36,6 +40,15 @@ func (r Course) Create(ctx context.Context, course *entity.Course) (*entity.Cour
 		if len(course.Links) != 0 {
 			_, err = tx.NewInsert().Model(&course.Links).Exec(ctx)
 		}
+		if err != nil {
+			return err
+		}
+
+		groupCourse := &entity.GroupCourse{GroupId: r.defaultGroupId, CourseId: course.Id}
+		_, err = tx.NewInsert().
+			Model(groupCourse).
+			Exec(ctx)
+
 		return err
 	})
 	if err != nil {
