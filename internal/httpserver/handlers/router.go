@@ -20,7 +20,6 @@ import (
 
 // @title       без юлерна
 // @version     1.0
-// @host        :8080
 // @BasePath    /
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header

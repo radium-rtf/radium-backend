@@ -954,7 +954,6 @@ definitions:
         - WAIT
         - ""
     type: object
-host: :8080
 info:
   contact: {}
   title: без юлерна
