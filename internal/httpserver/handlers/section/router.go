@@ -2,6 +2,7 @@ package section
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section/internal/answer"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section/internal/create"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section/internal/destroy"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section/internal/order"
@@ -29,6 +30,7 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 				r.Delete("/{id}", destroy.New(useCase))
 				r.Put("/{id}", update.New(useCase, useCases.Answer))
 				r.Patch("/{id}/order", order.New(useCase))
+				r.Get("/{id}/answer", answer.New(useCase))
 			})
 		})
 	})
