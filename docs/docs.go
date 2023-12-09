@@ -1320,6 +1320,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/section/{id}/answer": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "section"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "section id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/answer.Answer"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/section/{id}/order": {
             "patch": {
                 "security": [
@@ -1446,6 +1478,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "answer.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "courses.Courses": {
             "type": "object",
             "properties": {

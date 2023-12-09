@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  answer.Answer:
+    properties:
+      answer:
+        type: string
+      answers:
+        items:
+          type: string
+        type: array
+    type: object
   courses.Courses:
     properties:
       authorship:
@@ -1733,6 +1742,25 @@ paths:
           description: updated
           schema:
             $ref: '#/definitions/model.Section'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - section
+  /v1/section/{id}/answer:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: section id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/answer.Answer'
       security:
       - ApiKeyAuth: []
       tags:
