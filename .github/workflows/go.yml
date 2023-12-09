@@ -43,14 +43,16 @@ jobs:
         run: |
           echo "Listing deployment folder contents:"
           ls -la ${{ github.workspace }}/deployment
+
       - name: Create environment file on server
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
           touch ${{ env.ENV_FILE_PATH }} && \
           > ${{ env.ENV_FILE_PATH }} && \
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
-          echo 'JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}' >> ${{ env.ENV_FILE_PATH }}"
+          echo 'JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}' >> ${{ env.ENV_FILE_PATH }}" && \
           echo 'PG_URL=${{ secrets.PG_URL }}' >> ${{ env.ENV_FILE_PATH }}"
+
       - name: Copy systemd service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/radium.service ${{ env.HOST }}:/tmp/radium.service
