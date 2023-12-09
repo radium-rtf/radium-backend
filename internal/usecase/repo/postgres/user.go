@@ -53,6 +53,20 @@ func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 		Relation("Author").
 		Relation("Coauthor").
 		Relation("Courses").
+		Relation("Courses.Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Courses.Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Courses.Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("order")
+		}).
+		Relation("Courses.Modules.Pages.Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("answer.created_at desc").Where("user_id = ?", id)
+		}).
+		Relation("Courses.Modules.Pages.Sections.UsersAnswers.Review").
+		Relation("Courses.Modules.Pages.Sections.UsersAnswers.File").
 		Where("id = ?", id).
 		Limit(1).
 		Scan(ctx)

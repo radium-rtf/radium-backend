@@ -46,6 +46,8 @@ type (
 		FileTypes pq.StringArray
 
 		MaxAttempts sql.NullInt16
+
+		UsersAnswers []*Answer `bun:"rel:has-many,join:id=section_id"`
 	}
 )
 

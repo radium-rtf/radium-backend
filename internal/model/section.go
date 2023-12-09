@@ -37,10 +37,13 @@ func NewSections(sections []*entity.Section, answers map[uuid.UUID][]*entity.Ans
 			answer   *entity.Answer
 			score    uint
 		)
+		sectionAnswers := section.UsersAnswers
+		if len(sectionAnswers) < 1 {
+			sectionAnswers = answers[section.Id]
+		}
 
-		answers, ok := answers[section.Id]
-		if ok && len(answers) >= 1 {
-			answer = answers[0]
+		if len(sectionAnswers) >= 1 {
+			answer = sectionAnswers[0]
 			attempts = max(int(section.MaxAttempts.Int16)-len(answers), 0)
 			score = answer.Score(section)
 		}
