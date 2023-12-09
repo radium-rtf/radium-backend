@@ -643,6 +643,8 @@ definitions:
         items:
           type: string
         type: array
+      maxAttempts:
+        type: integer
       maxScore:
         type: integer
       order:
@@ -956,7 +958,7 @@ definitions:
     type: object
 info:
   contact: {}
-  title: без юлерна
+  title: radium
   version: "1.0"
 paths:
   /v1/account:

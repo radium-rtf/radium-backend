@@ -18,7 +18,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
-// @title       без юлерна
+// @title       radium
 // @version     1.0
 // @BasePath    /
 // @securityDefinitions.apikey ApiKeyAuth

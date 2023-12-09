@@ -8,22 +8,23 @@ import (
 
 type (
 	Section struct {
-		Id        uuid.UUID          `json:"id"`
-		PageId    uuid.UUID          `json:"pageId"`
-		Order     float64            `json:"order"`
-		Type      entity.SectionType `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
-		Score     uint               `json:"score"`
-		Answer    string             `json:"answer"`
-		Answers   []string           `json:"answers" swaggertype:"array,string"`
-		Content   string             `json:"content"`
-		MaxScore  uint               `json:"maxScore"`
-		Variants  []string           `json:"variants"`
-		Verdict   verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
-		Keys      []string           `json:"keys"`
-		Review    *Review            `json:"review"`
-		Attempts  int                `json:"attempts"`
-		FileTypes []string           `json:"fileTypes"`
-		File      *File              `json:"file"`
+		Id          uuid.UUID          `json:"id"`
+		PageId      uuid.UUID          `json:"pageId"`
+		Order       float64            `json:"order"`
+		Type        entity.SectionType `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
+		Score       uint               `json:"score"`
+		Answer      string             `json:"answer"`
+		Answers     []string           `json:"answers" swaggertype:"array,string"`
+		Content     string             `json:"content"`
+		MaxScore    uint               `json:"maxScore"`
+		Variants    []string           `json:"variants"`
+		Verdict     verdict.Type       `json:"verdict" enums:"OK,WA,WAIT,"`
+		Keys        []string           `json:"keys"`
+		Review      *Review            `json:"review"`
+		Attempts    int                `json:"attempts"`
+		MaxAttempts int                `json:"maxAttempts"`
+		FileTypes   []string           `json:"fileTypes"`
+		File        *File              `json:"file"`
 	}
 )
 
@@ -78,21 +79,22 @@ func NewSection(section *entity.Section, answer *entity.Answer, attempts int) *S
 	}
 
 	return &Section{
-		Id:        section.Id,
-		PageId:    section.PageId,
-		Order:     section.Order,
-		Content:   section.Content,
-		MaxScore:  section.GetMaxScore(),
-		Verdict:   verdict,
-		Variants:  section.GetVariants(),
-		Type:      section.Type,
-		Score:     score,
-		Answers:   answers,
-		Answer:    answerStr,
-		Keys:      section.Keys,
-		Attempts:  attempts,
-		Review:    review,
-		FileTypes: section.FileTypes,
-		File:      file,
+		Id:          section.Id,
+		PageId:      section.PageId,
+		Order:       section.Order,
+		Content:     section.Content,
+		MaxScore:    section.GetMaxScore(),
+		Verdict:     verdict,
+		Variants:    section.GetVariants(),
+		Type:        section.Type,
+		Score:       score,
+		Answers:     answers,
+		Answer:      answerStr,
+		Keys:        section.Keys,
+		Attempts:    attempts,
+		Review:      review,
+		FileTypes:   section.FileTypes,
+		File:        file,
+		MaxAttempts: int(section.MaxAttempts.Int16),
 	}
 }

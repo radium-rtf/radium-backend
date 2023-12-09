@@ -2397,6 +2397,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "maxAttempts": {
+                    "type": "integer"
+                },
                 "maxScore": {
                     "type": "integer"
                 },
@@ -2873,7 +2876,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "без юлерна",
+	Title:            "radium",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

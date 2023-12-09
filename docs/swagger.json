@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "без юлерна",
+        "title": "radium",
         "contact": {},
         "version": "1.0"
     },
@@ -2388,6 +2388,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "maxAttempts": {
+                    "type": "integer"
                 },
                 "maxScore": {
                     "type": "integer"
