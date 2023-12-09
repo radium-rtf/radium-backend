@@ -46,7 +46,7 @@ jobs:
 
       - name: Create environment file on server
         run: |
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} " && \
           touch ${{ env.ENV_FILE_PATH }} && \
           > ${{ env.ENV_FILE_PATH }} && \
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
