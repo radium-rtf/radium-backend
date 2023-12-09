@@ -49,7 +49,7 @@ jobs:
           touch ${{ env.ENV_FILE_PATH }} && \
           > ${{ env.ENV_FILE_PATH }} && \
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
-          
+          echo 'JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}' >> ${{ env.ENV_FILE_PATH }}"
           echo 'PG_URL=${{ secrets.PG_URL }}' >> ${{ env.ENV_FILE_PATH }}"
       - name: Copy systemd service file
         run: |
