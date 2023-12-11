@@ -37,7 +37,7 @@ func New(verify verify) http.HandlerFunc {
 			render.JSON(w, r, err.Error())
 		}
 
-		render.Status(r, http.StatusOK)
+		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, tokens)
 	}
 }
