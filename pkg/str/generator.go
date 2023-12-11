@@ -21,6 +21,5 @@ func Random(length int) string {
 		bytes[i] = chars[rand.Int()%len(chars)]
 	}
 	result := string(bytes)
-	println(string(chars))
 	return result
 }
