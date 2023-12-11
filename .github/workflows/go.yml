@@ -3,7 +3,7 @@ name: Go package
 on: [push]
 
 env:
-  HOST: radium@51.250.27.179
+  HOST: radium@158.160.64.105
   DEPLOY_DIRECTORY: /home/radium/radium-backend
   ENV_FILE_PATH: /home/radium/radium-backend/config.env
 
