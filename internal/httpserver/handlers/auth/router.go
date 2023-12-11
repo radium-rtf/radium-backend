@@ -5,6 +5,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth/internal/refresh"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth/internal/signin"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth/internal/signup"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth/internal/verify"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
@@ -15,5 +16,6 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 		r.Post("/signin", signin.New(useCase))
 		r.Post("/signup", signup.New(useCase))
 		r.Post("/refresh", refresh.New(useCase))
+		r.Post("/verify", verify.New(useCase))
 	})
 }

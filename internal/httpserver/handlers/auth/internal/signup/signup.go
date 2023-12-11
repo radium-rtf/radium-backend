@@ -5,12 +5,11 @@ import (
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
-	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
 
 type signUp interface {
-	SignUp(ctx context.Context, user *entity.User) (model.Tokens, error)
+	SignUp(ctx context.Context, user *entity.User) (*entity.UnverifiedUser, error)
 }
 
 // @Tags  	    auth
@@ -34,14 +33,18 @@ func New(signUp signUp) http.HandlerFunc {
 		}
 
 		user := request.toUser()
-		tokens, err := signUp.SignUp(ctx, user)
+		unverifiedUser, err := signUp.SignUp(ctx, user)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
+		response := Response{
+			Email:     unverifiedUser.Email,
+			ExpiresAt: unverifiedUser.ExpiresAt,
+		}
 		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, tokens)
+		render.JSON(w, r, response)
 	}
 }

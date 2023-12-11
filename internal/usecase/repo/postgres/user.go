@@ -31,6 +31,7 @@ func (r User) Create(ctx context.Context, user *entity.User) error {
 		}
 
 		roles := entity.GetAllRoles(user.Id)
+		user.Roles = roles
 		_, err = tx.NewInsert().Model(roles).Exec(ctx)
 		if err != nil {
 			return err
@@ -161,4 +162,22 @@ func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, erro
 		return nil, err
 	}
 	return r.GetById(ctx, user.Id)
+}
+
+func (r User) CreateUnverifiedUser(ctx context.Context, user *entity.UnverifiedUser) error {
+	_, err := r.db.NewInsert().Model(user).Exec(ctx)
+	return err
+}
+
+func (r User) GetUnverifiedUser(ctx context.Context, email, verificationCode string) (*entity.UnverifiedUser, error) {
+	var user = new(entity.UnverifiedUser)
+	err := r.db.NewSelect().
+		Model(user).
+		Where("email = ? and verification_code = ?", email, verificationCode).
+		Limit(1).
+		Scan(ctx)
+	if errors.Is(sql.ErrNoRows, err) {
+		return nil, repoerr.UserNotFound
+	}
+	return user, err
 }

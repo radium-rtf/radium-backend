@@ -4,6 +4,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/lib/session"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/auth"
+	"github.com/radium-rtf/radium-backend/pkg/email"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
 )
@@ -12,9 +13,11 @@ type Dependencies struct {
 	Repos   postgres.Repositories
 	Storage filestorage.Storage
 
-	PasswordHasher hash.Hasher
-	TokenManager   auth.TokenManager
-	Session        session.Session
+	PasswordHasher         hash.Hasher
+	TokenManager           auth.TokenManager
+	Session                session.Session
+	Smtp                   *email.SMTPSender
+	LengthVerificationCode int
 }
 
 type UseCases struct {
@@ -43,7 +46,7 @@ func NewUseCases(deps Dependencies) UseCases {
 
 		Account: NewAccountUseCase(repos.User, repos.Course, deps.PasswordHasher),
 		Answer:  NewAnswerUseCase(repos.Section, repos.Answer, repos.File),
-		Auth:    NewAuthUseCase(repos.User, repos.Session, deps.PasswordHasher, deps.Session),
+		Auth:    NewAuthUseCase(repos.User, repos.Session, deps.PasswordHasher, deps.Session, deps.Smtp, deps.LengthVerificationCode),
 		Course:  NewCourseUseCase(repos.Course, repos.User),
 		File:    NewFileUseCase(deps.Storage, repos.File),
 		Group:   NewGroupUseCase(repos.Group, repos.Course, repos.Answer, repos.Teacher),

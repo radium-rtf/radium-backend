@@ -965,6 +965,13 @@ definitions:
         - WAIT
         - ""
     type: object
+  verify.Request:
+    properties:
+      email:
+        type: string
+      verificationCode:
+        type: string
+    type: object
 info:
   contact: {}
   title: radium
@@ -1128,6 +1135,26 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/signup.SignUp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Tokens'
+      tags:
+      - auth
+  /v1/auth/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/verify.Request'
       produces:
       - application/json
       responses:

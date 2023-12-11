@@ -293,6 +293,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/verify": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/verify.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Tokens"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/author/courses": {
             "get": {
                 "security": [
@@ -2903,6 +2935,17 @@ const docTemplate = `{
                             "$ref": "#/definitions/verdict.Type"
                         }
                     ]
+                }
+            }
+        },
+        "verify.Request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "verificationCode": {
+                    "type": "string"
                 }
             }
         }

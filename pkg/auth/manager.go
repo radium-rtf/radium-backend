@@ -26,13 +26,18 @@ func NewManager(signingKey string) TokenManager {
 }
 
 func (m TokenManager) NewJWT(user *model.User, expiresAt time.Time) (string, error) {
+	roles := user.Roles
+	if roles == nil {
+		roles = new(model.Roles)
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":         jwt.NewNumericDate(expiresAt),
 		"sub":         user.Id.String(),
-		isTeacher:     user.Roles.IsTeacher,
-		isAuthor:      user.Roles.IsAuthor,
-		isCoauthor:    user.Roles.IsCoauthor,
-		canEditCourse: user.Roles.IsAuthor || user.Roles.IsCoauthor,
+		isTeacher:     roles.IsTeacher,
+		isAuthor:      roles.IsAuthor,
+		isCoauthor:    roles.IsCoauthor,
+		canEditCourse: roles.IsAuthor || roles.IsCoauthor,
 	})
 
 	return token.SignedString([]byte(m.signingKey))

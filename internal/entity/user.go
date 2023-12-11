@@ -2,7 +2,9 @@ package entity
 
 import (
 	"database/sql"
+	"github.com/google/uuid"
 	"github.com/uptrace/bun"
+	"time"
 )
 
 type (
@@ -21,5 +23,16 @@ type (
 
 		Author   []*Course `bun:"m2m:course_author,join:User=Course"`
 		Coauthor []*Course `bun:"m2m:course_coauthor,join:User=Course"`
+	}
+
+	UnverifiedUser struct {
+		Id       uuid.UUID `bun:",pk"`
+		Avatar   sql.NullString
+		Email    string
+		Name     string
+		Password string
+
+		VerificationCode string
+		ExpiresAt        time.Time
 	}
 )

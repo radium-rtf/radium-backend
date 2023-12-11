@@ -2,37 +2,42 @@ package verify
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
 
 type verify interface {
-	VerifyEmail(ctx context.Context, verificationCode string) (bool, error)
+	VerifyEmail(ctx context.Context, email, verificationCode string) (model.Tokens, error)
 }
 
+// @Tags  	    auth
+// @Accept      json
+// @Produce     json
+// @Param       request body Request true " "
+// @Success     201 {object} model.Tokens
+// @Router      /v1/auth/verify [post]
 func New(verify verify) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request  VerificationCode
-			response Success
-			ctx      = r.Context()
+			request Request
+			ctx     = r.Context()
 		)
 
-		err := json.NewDecoder(r.Body).Decode(&request)
+		err := decode.Json(r.Body, &request)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 		}
 
-		success, err := verify.VerifyEmail(ctx, request.VerificationCode)
+		tokens, err := verify.VerifyEmail(ctx, request.Email, request.VerificationCode)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 		}
 
-		response.Success = success
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, response)
+		render.JSON(w, r, tokens)
 	}
 }

@@ -1,63 +1,50 @@
 package email
 
 import (
-	"bytes"
 	"errors"
-	"html/template"
-	"log"
-	"regexp"
+	"fmt"
+	"github.com/radium-rtf/radium-backend/pkg/otp"
+
+	"github.com/go-gomail/gomail"
 )
 
-type SendEmailInput struct {
-	To      string
-	Subject string
-	Body    string
+type SMTPSender struct {
+	dialer                 *gomail.Dialer
+	bodyGenerator          emailBodyGenerator
+	verificationCodeLength int
+	isAvailable            bool
+	otp                    *otp.OTPGenerator
+	from                   string
 }
 
-// type Sender interface {
-// 	Send(input SendEmailInput) error
-// }
+func NewSMTPSender(username, pass, host string, port int, templatePath string,
+	verificationCodeLength int, from string) *SMTPSender {
+	dialer := gomail.NewDialer(host, port, username, pass)
 
-func (e *SendEmailInput) GenerateEmailBodyFromHTML(templatePath string, data interface{}) error {
-	t, err := template.ParseFiles(templatePath)
-	if err != nil {
-		// ЭЭЭЭЭ ну хз мб стоит сделать кастомный логгер еще хзхзхз
-		log.Printf("Failed to read template file %s:%s", templatePath, err.Error())
-
-		return err
+	bodyGenerator, err := newEmailBodyGenerator(templatePath)
+	return &SMTPSender{
+		dialer:                 dialer,
+		bodyGenerator:          bodyGenerator,
+		isAvailable:            err == nil,
+		verificationCodeLength: verificationCodeLength,
+		otp:                    otp.NewOTPGenerator(),
+		from:                   from,
 	}
-
-	buffer := new(bytes.Buffer)
-	if err := t.Execute(buffer, data); err != nil {
-		return err
-	}
-
-	e.Body = buffer.String()
-
-	return nil
 }
 
-func (e *SendEmailInput) ValidateEmail() error {
-	var emailRegex = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
-
-	if !emailRegex.MatchString(e.To) {
-		return errors.New("invalid email")
+func (s *SMTPSender) SendVerificationEmail(email, code string) error {
+	if !s.isAvailable {
+		return errors.New("отправка сообщений недоступна")
 	}
 
-	return nil
-}
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", s.from)
+	msg.SetHeader("To", email)
+	msg.SetHeader("Subject", "Поддтверждение почты радиум")
+	msg.SetBody("text/html", code)
 
-func (e *SendEmailInput) ValidateEmailDataBeforeSend() error {
-	if e.To == "" {
-		return errors.New("email has no recipients")
-	}
-
-	if e.Subject == "" || e.Body == "" {
-		return errors.New("email has no subject/body")
-	}
-
-	if !ValidateEmail(e.To) {
-		return errors.New("email is invalid")
+	if err := s.dialer.DialAndSend(msg); err != nil {
+		return fmt.Errorf("error while sending email: %s", err.Error())
 	}
 
 	return nil
