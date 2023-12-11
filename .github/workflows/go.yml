@@ -54,7 +54,7 @@ jobs:
           echo 'SMTP_PORT=${{ secrets.SMTP_PORT }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_HOST=${{ secrets.SMTP_HOST }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_EMAIL=${{ secrets.SMTP_EMAIL }}' >> ${{ env.ENV_FILE_PATH }} && \
-          echo 'SMTP_PASSWORD${{ secrets.SMTP_PASSWORD }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'PG_URL=${{ secrets.PG_URL }}' >> ${{ env.ENV_FILE_PATH }}"
 
