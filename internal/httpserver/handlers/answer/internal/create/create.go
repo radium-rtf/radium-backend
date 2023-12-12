@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	verdict2 "github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"net/http"
 
@@ -18,7 +17,7 @@ type creator interface {
 // @Tags answer
 // @Security ApiKeyAuth
 // @Param       request body Answer true " "
-// @Success      201   {object} verdict.Verdict "ok"
+// @Success      201   {object} Response "ok"
 // @Router      /v1/answer [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +47,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		verdict := verdict2.Verdict{Verdict: answer.Verdict}
+		verdict := Response{Verdict: answer.Verdict, PageId: answer.Section.PageId}
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, verdict)
 	}

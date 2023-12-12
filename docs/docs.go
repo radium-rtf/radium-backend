@@ -152,7 +152,7 @@ const docTemplate = `{
                     "201": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/verdict.Verdict"
+                            "$ref": "#/definitions/create.Response"
                         }
                     }
                 }
@@ -1877,6 +1877,17 @@ const docTemplate = `{
                 }
             }
         },
+        "create.Response": {
+            "type": "object",
+            "properties": {
+                "pageId": {
+                    "type": "string"
+                },
+                "verdict": {
+                    "type": "string"
+                }
+            }
+        },
         "create.Review": {
             "type": "object",
             "properties": {
@@ -2919,24 +2930,6 @@ const docTemplate = `{
                 "WAIT",
                 "REVIEWED"
             ]
-        },
-        "verdict.Verdict": {
-            "type": "object",
-            "properties": {
-                "verdict": {
-                    "enum": [
-                        "OK",
-                        "WA",
-                        "WAIT",
-                        ""
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/verdict.Type"
-                        }
-                    ]
-                }
-            }
         },
         "verify.Request": {
             "type": "object",

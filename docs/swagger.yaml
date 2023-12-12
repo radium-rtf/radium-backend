@@ -250,6 +250,13 @@ definitions:
     - answer
     - question
     type: object
+  create.Response:
+    properties:
+      pageId:
+        type: string
+      verdict:
+        type: string
+    type: object
   create.Review:
     properties:
       answerId:
@@ -954,17 +961,6 @@ definitions:
     - WA
     - WAIT
     - REVIEWED
-  verdict.Verdict:
-    properties:
-      verdict:
-        allOf:
-        - $ref: '#/definitions/verdict.Type'
-        enum:
-        - OK
-        - WA
-        - WAIT
-        - ""
-    type: object
   verify.Request:
     properties:
       email:
@@ -1055,7 +1051,7 @@ paths:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/verdict.Verdict'
+            $ref: '#/definitions/create.Response'
       security:
       - ApiKeyAuth: []
       tags:

@@ -28,9 +28,11 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	if err != nil {
 		return nil, err
 	}
+
 	if !section.MaxAttempts.Valid {
 		return uc.createAnswer(ctx, section, answer)
 	}
+	answer.Section = section
 
 	count, err := uc.answer.GetCountBySectionAndUserId(ctx, answer.UserId, section.Id)
 	if err != nil {
