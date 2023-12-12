@@ -41,9 +41,23 @@ func New(getter getter) http.HandlerFunc {
 
 		authorship := append([]*entity.Course{}, user.Author...)
 		authorship = append(authorship, user.Coauthor...)
+
+		my := make([]*entity.Course, 0, len(user.Courses))
+		authorshipSet := make(map[uuid.UUID]bool, len(authorship))
+		for _, c := range authorship {
+			authorshipSet[c.Id] = true
+		}
+
+		for _, c := range user.Courses {
+			if authorshipSet[c.Id] {
+				continue
+			}
+			my = append(my, c)
+		}
+
 		response := Courses{
 			Authorship:      model.NewCourses(authorship, userId),
-			My:              model.NewCourses(user.Courses, userId),
+			My:              model.NewCourses(my, userId),
 			Recommendations: model.NewCourses(recommendations, userId),
 		}
 

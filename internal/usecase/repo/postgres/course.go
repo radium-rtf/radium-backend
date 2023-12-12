@@ -170,11 +170,22 @@ func (r Course) GetByAuthorId(ctx context.Context, id uuid.UUID) ([]*entity.Cour
 	return courses, err
 }
 
-func (r Course) GetByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
-	coAutorCoursesIds := r.db.NewSelect().
+func (r Course) getIdsByCoauthorQuery(id uuid.UUID) *bun.SelectQuery {
+	return r.db.NewSelect().
 		Column("course_id").
 		Model(&entity.CourseCoauthor{}).
 		Where("user_id = ?", id)
+}
+
+func (r Course) getIdsByAuthorQuery(id uuid.UUID) *bun.SelectQuery {
+	return r.db.NewSelect().
+		Column("course_id").
+		Model(&entity.CourseAuthor{}).
+		Where("user_id = ?", id)
+}
+
+func (r Course) GetByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*entity.Course, error) {
+	coAutorCoursesIds := r.getIdsByCoauthorQuery(id)
 
 	coAuthorCourses := r.db.NewSelect().
 		Model(&entity.Course{}).
@@ -182,10 +193,7 @@ func (r Course) GetByAuthorOrCoauthorId(ctx context.Context, id uuid.UUID) ([]*e
 		Where("id in (?)", coAutorCoursesIds)
 
 	var courses []*entity.Course
-	authorCoursesIds := r.db.NewSelect().
-		Column("course_id").
-		Model(&entity.CourseAuthor{}).
-		Where("user_id = ?", id)
+	authorCoursesIds := r.getIdsByAuthorQuery(id)
 
 	err := r.db.NewSelect().
 		Model(&courses).
@@ -224,15 +232,17 @@ func (r Course) CreateLink(ctx context.Context, link *entity.Link) error {
 }
 
 func (r Course) GetRecommendations(ctx context.Context, userId uuid.UUID, limit int) ([]*entity.Course, error) {
-	coursesIds := r.db.NewSelect().
+	studentIds := r.db.NewSelect().
 		Column("course_id").
 		Model(&entity.CourseStudent{}).
 		Where("user_id = ?", userId)
 
+	coauthorIds := r.getIdsByCoauthorQuery(userId)
+	authorIds := r.getIdsByAuthorQuery(userId)
 	var courses []*entity.Course
 	err := r.db.NewSelect().
 		Model(&courses).
-		Where("id not in (?) and is_published", coursesIds).
+		Where("id not in (?) and is_published", studentIds.Union(coauthorIds).Union(authorIds)).
 		Limit(limit).
 		Scan(ctx)
 
