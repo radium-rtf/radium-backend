@@ -50,12 +50,21 @@ jobs:
           touch ${{ env.ENV_FILE_PATH }} && \
           > ${{ env.ENV_FILE_PATH }} && \
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
+          
+          echo 'STORAGE_REGION=${{ secrets.STORAGE_REGION }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'STORAGE_SECRET=${{ secrets.STORAGE_SECRET }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'STORAGE_ID=${{ secrets.STORAGE_ID }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'STORAGE_ENDPOINT=${{ secrets.STORAGE_ENDPOINT }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'STORAGE_PRIVATE_ENDPOINT=${{ secrets.STORAGE_PRIVATE_ENDPOINT }}' >> ${{ env.ENV_FILE_PATH }} && \
+          
           echo 'JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}' >> ${{ env.ENV_FILE_PATH }} && \
+          
           echo 'SMTP_PORT=${{ secrets.SMTP_PORT }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_HOST=${{ secrets.SMTP_HOST }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_EMAIL=${{ secrets.SMTP_EMAIL }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}' >> ${{ env.ENV_FILE_PATH }} && \
           echo 'SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}' >> ${{ env.ENV_FILE_PATH }} && \
+          
           echo 'PG_URL=${{ secrets.PG_URL }}' >> ${{ env.ENV_FILE_PATH }}"
 
       - name: Copy systemd service file
