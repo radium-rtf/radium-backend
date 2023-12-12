@@ -19,7 +19,7 @@ func Run(cfg *config.Config) {
 	}
 	defer db.Close()
 
-	storage := filestorage.Storage{}
+	storage := filestorage.New(cfg.Storage)
 
 	dependencies := newDependencies(storage, cfg, db)
 

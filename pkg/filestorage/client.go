@@ -2,6 +2,7 @@ package filestorage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
@@ -31,30 +32,31 @@ var policy = `{
 }`
 
 type Storage struct {
-	client   *minio.Client
-	endpoint string
+	client      *minio.Client
+	endpoint    string
+	isAvailable bool
 }
 
-func New(cfg config.Storage) (Storage, error) {
+func New(cfg config.Storage) Storage {
 	creds := credentials.NewStaticV4(cfg.Id, cfg.Secret, "")
 	client, err := open(creds, cfg.PrivateEndpoint, cfg.Region)
 	if err != nil {
-		return Storage{}, err
+		return Storage{}
 	}
 
 	storage := Storage{client: client, endpoint: cfg.Endpoint}
 
-	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
-	if err != nil {
-		return Storage{}, err
+	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})if err != nil {
+		return Storage{}
 	}
 
 	err = storage.client.SetBucketPolicy(context.Background(), bucket, policy)
 	if err != nil {
-		return Storage{}, err
+		return Storage{}
 	}
 
-	return storage, err
+	storage.isAvailable = true
+	return storage
 }
 
 func (s Storage) makeBucket(ctx context.Context, bucketName string, options minio.MakeBucketOptions) error {
@@ -75,6 +77,10 @@ func (s Storage) makeBucket(ctx context.Context, bucketName string, options mini
 }
 
 func (s Storage) PutImage(ctx context.Context, reader io.Reader, objectSize int64, contentType string) (minio.UploadInfo, error) {
+	if !s.isAvailable {
+		return minio.UploadInfo{}, errors.New("сервис загрузки файлов недоступен")
+	}
+
 	opts := minio.PutObjectOptions{ContentType: contentType}
 	name := uuid.New().String()
 	out, err := s.client.PutObject(ctx, bucket, name, reader, objectSize, opts)
