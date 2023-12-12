@@ -46,7 +46,8 @@ func New(cfg config.Storage) Storage {
 
 	storage := Storage{client: client, endpoint: cfg.Endpoint}
 
-	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})if err != nil {
+	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
+	if err != nil {
 		return Storage{}
 	}
 
