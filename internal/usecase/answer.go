@@ -40,13 +40,7 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	if int(section.MaxAttempts.Int16) == count {
 		return nil, errors.New("достигнуто масимальное количество попыток")
 	}
-
-	answer, err = uc.createAnswer(ctx, section, answer)
-	if err != nil {
-		return nil, err
-	}
-	answer.Section = section
-	return answer, nil
+	return uc.createAnswer(ctx, section, answer)
 }
 
 func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Section, answer *entity.Answer) (
@@ -57,7 +51,7 @@ func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Sectio
 	}
 	answer.Verdict = verdict.Verdict
 	if answer.Type != entity.FileType {
-		return answer, uc.answer.Create(ctx, answer)
+		return uc.answer.Create(ctx, answer)
 	}
 
 	file, err := uc.file.Get(ctx, answer.FileUrl.String)
@@ -70,7 +64,7 @@ func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Sectio
 	if !isCorrectType {
 		return nil, errors.New("неверный тип файла")
 	}
-	return answer, uc.answer.Create(ctx, answer)
+	return uc.answer.Create(ctx, answer)
 
 }
 

@@ -17,9 +17,12 @@ func NewAnswerRepo(pg *postgres.Postgres) Answer {
 	return Answer{db: pg.DB, users: NewUserRepo(pg)}
 }
 
-func (r Answer) Create(ctx context.Context, answer *entity.Answer) error {
+func (r Answer) Create(ctx context.Context, answer *entity.Answer) (*entity.Answer, error) {
 	_, err := r.db.NewInsert().Model(answer).Exec(ctx)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return r.GetById(ctx, answer.Id)
 }
 
 func (r Answer) Get(ctx context.Context, userId uuid.UUID, sectionsIds []uuid.UUID) (*entity.AnswersCollection, error) {
