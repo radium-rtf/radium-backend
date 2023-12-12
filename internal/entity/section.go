@@ -72,14 +72,15 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64,
 		MaxAttempts: maxAttempts,
 	}
 
+	shuffledAnswers := slices.Clone(answers)
+	rand.Shuffle(len(shuffledAnswers), func(i, j int) {
+		shuffledAnswers[i], shuffledAnswers[j] = shuffledAnswers[j], shuffledAnswers[i]
+	})
 	switch sectionType {
 	case PermutationType:
+		section.Variants = shuffledAnswers
 	case MappingType:
-		variants := slices.Clone(answers)
-		rand.Shuffle(len(variants), func(i, j int) {
-			variants[i], variants[j] = variants[j], variants[i]
-		})
-		section.Variants = variants
+		section.Variants = shuffledAnswers
 	case ChoiceType:
 	case ShortAnswerType:
 	case MultiChoiceType:
