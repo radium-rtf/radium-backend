@@ -255,7 +255,7 @@ definitions:
       pageId:
         type: string
       verdict:
-        type: string
+        $ref: '#/definitions/verdict.Type'
     type: object
   create.Review:
     properties:

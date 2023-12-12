@@ -1884,7 +1884,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "verdict": {
-                    "type": "string"
+                    "$ref": "#/definitions/verdict.Type"
                 }
             }
         },

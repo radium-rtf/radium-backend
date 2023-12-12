@@ -1,8 +1,11 @@
 package create
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
+)
 
 type Response struct {
-	Verdict string    `json:"verdict"`
-	PageId  uuid.UUID `json:"pageId"`
+	Verdict verdict.Type `json:"verdict"`
+	PageId  uuid.UUID    `json:"pageId"`
 }
