@@ -62,10 +62,11 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (*entity.Un
 
 	code := str.Random(uc.lengthVerificationCode)
 	unverifiedUser = &entity.UnverifiedUser{
-		Id:     user.Id,
-		Name:   user.Name,
-		Email:  user.Email,
-		Avatar: user.Avatar,
+		Id:       user.Id,
+		Name:     user.Name,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+		Password: user.Password,
 
 		ExpiresAt:        time.Now().Add(time.Hour * 100),
 		VerificationCode: code,
