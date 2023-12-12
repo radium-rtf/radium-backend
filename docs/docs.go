@@ -2428,6 +2428,9 @@ const docTemplate = `{
                 "comment": {
                     "type": "string"
                 },
+                "createdAt": {
+                    "type": "string"
+                },
                 "reviewer": {
                     "$ref": "#/definitions/model.User"
                 },
