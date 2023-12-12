@@ -32,7 +32,6 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 	if !section.MaxAttempts.Valid {
 		return uc.createAnswer(ctx, section, answer)
 	}
-	answer.Section = section
 
 	count, err := uc.answer.GetCountBySectionAndUserId(ctx, answer.UserId, section.Id)
 	if err != nil {
@@ -42,7 +41,12 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity.Answer) (*ent
 		return nil, errors.New("достигнуто масимальное количество попыток")
 	}
 
-	return uc.createAnswer(ctx, section, answer)
+	answer, err = uc.createAnswer(ctx, section, answer)
+	if err != nil {
+		return nil, err
+	}
+	answer.Section = section
+	return answer, nil
 }
 
 func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Section, answer *entity.Answer) (
