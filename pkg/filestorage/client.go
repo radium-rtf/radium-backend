@@ -44,11 +44,15 @@ func New(cfg config.Storage) Storage {
 		return Storage{}
 	}
 
-	storage := Storage{client: client, endpoint: cfg.Endpoint}
+	storage := Storage{client: client, endpoint: cfg.Endpoint, isAvailable: true}
 
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
 		return Storage{}
+	}
+
+	if cfg.PrivateEndpoint != "storage.yandexcloud.net" {
+		return storage
 	}
 
 	err = storage.client.SetBucketPolicy(context.Background(), bucket, policy)
@@ -56,7 +60,6 @@ func New(cfg config.Storage) Storage {
 		return Storage{}
 	}
 
-	storage.isAvailable = true
 	return storage
 }
 
