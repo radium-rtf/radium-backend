@@ -16,6 +16,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/section"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/teacher"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
+	"net/http"
 )
 
 // @title       radium
@@ -25,6 +26,11 @@ import (
 // @in header
 // @name Authorization
 func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
+	h.Get("/", func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Add("Location", "/swagger/index.html")
+		writer.WriteHeader(http.StatusPermanentRedirect)
+	})
+
 	course.New(h, useCases)
 	module.New(h, useCases)
 	page.New(h, useCases)
