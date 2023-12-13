@@ -87,8 +87,15 @@ func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course,
 
 func (r Course) Join(ctx context.Context, userId, courseId uuid.UUID) error {
 	student := &entity.CourseStudent{CourseId: courseId, UserId: userId}
-	_, err := r.db.NewInsert().Model(student).Exec(ctx)
-	return err
+	teacherCourseGroup := &entity.TeacherCourseGroup{CourseId: courseId, UserId: userId, GroupId: r.defaultGroupId}
+	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewInsert().Model(student).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewInsert().Model(teacherCourseGroup).Exec(ctx)
+		return err
+	})
 }
 
 func (r Course) GetByStudent(ctx context.Context, userId uuid.UUID) ([]*entity.Course, error) {
