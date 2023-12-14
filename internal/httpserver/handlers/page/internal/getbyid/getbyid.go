@@ -13,10 +13,7 @@ import (
 type pageGetter interface {
 	GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error)
 	GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error)
-}
-
-type answersGetter interface {
-	GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (*entity.AnswersCollection, error)
+	GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) (*entity.Page, error)
 }
 
 // @Tags page
@@ -24,7 +21,7 @@ type answersGetter interface {
 // @Param        id   path     string  true  "page id"
 // @Success 200 {object} model.Page "ok"
 // @Router /v1/page/{id} [get]
-func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
+func New(pageGetter pageGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ctx = r.Context()
 		userId, ok := ctx.Value("userId").(uuid.UUID)
@@ -55,19 +52,14 @@ func New(pageGetter pageGetter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		sectionsIds := make([]uuid.UUID, 0, len(page.Sections))
-		for _, section := range page.Sections {
-			sectionsIds = append(sectionsIds, section.Id)
-		}
-
-		answers, err := answersGetter.GetBySections(ctx, sectionsIds, userId)
+		page, err = pageGetter.GetByIdWithUserAnswers(ctx, page.Id, userId)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
 			return
 		}
 
-		dto := model.NewPage(page, answers.AnswerBySectionId, nextAnsPrevious)
+		dto := model.NewPage(page, map[uuid.UUID][]*entity.Answer{}, nextAnsPrevious)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, dto)
 

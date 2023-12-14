@@ -47,6 +47,10 @@ func (uc PageUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, 
 	return uc.page.GetById(ctx, id)
 }
 
+func (uc PageUseCase) GetByIdWithUserAnswers(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Page, error) {
+	return uc.page.GetByIdWithUserAnswers(ctx, id, userId)
+}
+
 func (uc PageUseCase) Delete(ctx context.Context, id, editorId uuid.UUID, isSoft bool) error {
 	canEditErr := uc.canEdit(ctx, id, editorId)
 	if canEditErr != nil {

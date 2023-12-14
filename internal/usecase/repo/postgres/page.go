@@ -26,10 +26,28 @@ func (r Page) Create(ctx context.Context, page *entity.Page) (*entity.Page, erro
 
 func (r Page) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	var page = new(entity.Page)
-	err := r.db.NewSelect().Model(page).
+	err := r.getPageByIdQuery(page).
 		Where("id = ?", id).
+		Scan(ctx)
+	if errors.Is(err, sql.ErrNoRows) {
+		return page, repoerr.PageNotFound
+	}
+	return page, err
+}
+
+func (r Page) getPageByIdQuery(page *entity.Page) *bun.SelectQuery {
+	return r.db.NewSelect().Model(page).
 		Relation("Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
+		})
+}
+
+func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) (*entity.Page, error) {
+	var page = new(entity.Page)
+	err := r.getPageByIdQuery(page).
+		Where("id = ?", id).
+		Relation("Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("answer.user_id = ?", userId)
 		}).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {

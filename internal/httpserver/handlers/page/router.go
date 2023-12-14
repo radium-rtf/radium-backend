@@ -14,13 +14,12 @@ import (
 
 func New(r *chi.Mux, useCases usecase.UseCases) {
 	useCase := useCases.Page
-	answerUseCase := useCases.Answer
 	tokenManager := useCases.Deps.TokenManager
 
 	r.Route("/v1/page", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.UserId(tokenManager))
-			r.Get("/{id}", getbyid.New(useCase, answerUseCase))
+			r.Get("/{id}", getbyid.New(useCase))
 		})
 
 		r.Group(func(r chi.Router) {
