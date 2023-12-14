@@ -268,6 +268,7 @@ func (r Course) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, erro
 	var course = new(entity.Course)
 	err := r.db.NewSelect().
 		Model(course).
+		Where("id = ?", id).
 		Relation("Authors").
 		Relation("Coauthors").
 		Scan(ctx)
@@ -299,6 +300,9 @@ func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId u
 		Where(where.column+" = ?", where.value).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("course_student.user_id = ?", userId).Limit(1)
+		}).
+		Relation("Modules.Pages.Sections.UserAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("user_id = ?", userId).Order("answer.created_at desc")
 		}).
 		Relation("Groups").
 		Relation("Groups.Students", func(query *bun.SelectQuery) *bun.SelectQuery {

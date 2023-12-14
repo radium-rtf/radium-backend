@@ -15,16 +15,12 @@ type getter interface {
 	GetByIdAndUser(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Course, error)
 }
 
-type answersGetter interface {
-	GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (*entity.AnswersCollection, error)
-}
-
 // @Tags course
 // @Security ApiKeyAuth
 // @Param        courseId   path     string  true  "course id"
 // @Success      200   {object} model.Course  "ok"
 // @Router       /v1/course/{courseId} [get]
-func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
+func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ctx = r.Context()
 		userId, ok := ctx.Value("userId").(uuid.UUID)
@@ -48,15 +44,7 @@ func New(getter getter, answersGetter answersGetter) http.HandlerFunc {
 			return
 		}
 
-		sectionsIds := course.SectionsIds()
-		answers, err := answersGetter.GetBySections(ctx, sectionsIds, userId)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
-			return
-		}
-
-		c := model.NewCourseWithUserGroups(course, answers.AnswerBySectionId, userId)
+		c := model.NewCourseWithUserGroups(course, map[uuid.UUID][]*entity.Answer{}, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}
