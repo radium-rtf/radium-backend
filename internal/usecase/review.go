@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 )
