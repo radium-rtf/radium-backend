@@ -1690,6 +1690,28 @@ paths:
       - ApiKeyAuth: []
       tags:
       - role
+  /v1/role/coauthor/{id}/{courseId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: courseId
+        in: path
+        name: courseId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
   /v1/role/teacher:
     post:
       consumes:

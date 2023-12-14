@@ -60,3 +60,11 @@ func (r Role) AddCoauthor(ctx context.Context, email string, courseId uuid.UUID)
 	})
 	return err
 }
+
+func (r Role) DeleteCoauthor(ctx context.Context, id uuid.UUID, courseId uuid.UUID) error {
+	_, err := r.db.NewDelete().
+		Model(&entity.CourseCoauthor{}).
+		Where("user_id = ? and course_id = ?", id, courseId).
+		Exec(ctx)
+	return err
+}

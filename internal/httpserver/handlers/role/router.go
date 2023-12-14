@@ -2,6 +2,7 @@ package role
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/role/internal/deletecoauthor"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
 
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/role/internal/postauthor"
@@ -23,6 +24,7 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 		r.Group(func(r chi.Router) {
 			r.Use(role.Author(useCases.Deps.TokenManager))
 			r.Post("/coauthor", postcoauthor.New(useCase))
+			r.Delete("/coauthor/{id}/{courseId}", deletecoauthor.New(useCase))
 		})
 	})
 }

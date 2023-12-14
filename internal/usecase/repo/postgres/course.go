@@ -79,7 +79,7 @@ func (r Course) GetFullBySlug(ctx context.Context, slug string) (*entity.Course,
 
 func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course, error) {
 	var course = new(entity.Course)
-	err := r.getCourseQuery(course).
+	err := r.getFullCourseQuery(course).
 		Where(where.column+" = ?", where.value).
 		Scan(ctx)
 	return course, err
@@ -264,7 +264,17 @@ func (r Course) GetFullBySlugAndUser(ctx context.Context, slug string, userId uu
 	return r.getFullWithUser(ctx, columnValue{column: "slug", value: slug}, userId)
 }
 
-func (r Course) getCourseQuery(course *entity.Course) *bun.SelectQuery {
+func (r Course) GetById(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	var course = new(entity.Course)
+	err := r.db.NewSelect().
+		Model(course).
+		Relation("Authors").
+		Relation("Coauthors").
+		Scan(ctx)
+	return course, err
+}
+
+func (r Course) getFullCourseQuery(course *entity.Course) *bun.SelectQuery {
 	return r.db.NewSelect().
 		Model(course).
 		Relation("Authors").
@@ -285,7 +295,7 @@ func (r Course) getCourseQuery(course *entity.Course) *bun.SelectQuery {
 
 func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId uuid.UUID) (*entity.Course, error) {
 	var course = new(entity.Course)
-	err := r.getCourseQuery(course).
+	err := r.getFullCourseQuery(course).
 		Where(where.column+" = ?", where.value).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("course_student.user_id = ?", userId).Limit(1)
