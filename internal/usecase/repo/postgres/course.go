@@ -297,17 +297,17 @@ func (r Course) getFullCourseQuery(course *entity.Course) *bun.SelectQuery {
 func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId uuid.UUID) (*entity.Course, error) {
 	var course = new(entity.Course)
 	err := r.getFullCourseQuery(course).
-		Where(where.column+" = ?", where.value).
+		Relation("Modules.Pages.Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("answer.user_id = ?", userId).Order("answer.created_at desc")
+		}).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("course_student.user_id = ?", userId).Limit(1)
-		}).
-		Relation("Modules.Pages.Sections.UserAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Where("user_id = ?", userId).Order("answer.created_at desc")
 		}).
 		Relation("Groups").
 		Relation("Groups.Students", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("group_student.user_id = ?", userId)
 		}).
+		Where(where.column+" = ?", where.value).
 		Scan(ctx)
 	return course, err
 }
