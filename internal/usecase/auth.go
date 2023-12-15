@@ -54,6 +54,11 @@ func (uc AuthUseCase) SignIn(ctx context.Context, email, password string) (model
 func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (*entity.UnverifiedUser, error) {
 	var unverifiedUser *entity.UnverifiedUser
 
+	_, err := uc.user.GetByEmail(ctx, user.Email)
+	if err == nil {
+		return nil, errors.New("пользователь с такой почтой уже существует")
+	}
+
 	password, err := uc.hasher.Hash(user.Password)
 	if err != nil {
 		return unverifiedUser, err
