@@ -11,7 +11,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
-func New(r *chi.Mux, useCases usecase.UseCases) {
+func New(r chi.Router, useCases usecase.UseCases) {
 	useCase := useCases.Module
 	tokenManager := useCases.Deps.TokenManager
 	r.Route("/v1/module", func(r chi.Router) {

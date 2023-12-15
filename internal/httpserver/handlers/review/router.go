@@ -8,7 +8,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
-func New(r *chi.Mux, useCases usecase.UseCases) {
+func New(r chi.Router, useCases usecase.UseCases) {
 	useCase := useCases.Review
 	tokenManager := useCases.Deps.TokenManager
 

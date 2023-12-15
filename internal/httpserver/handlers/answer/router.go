@@ -9,7 +9,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
-func New(r *chi.Mux, useCases usecase.UseCases) {
+func New(r chi.Router, useCases usecase.UseCases) {
 	r.Route("/v1/answer", func(r chi.Router) {
 		r.Use(mwAuth.Required(useCases.Deps.TokenManager))
 		r.Post("/", create.New(useCases.Answer))
