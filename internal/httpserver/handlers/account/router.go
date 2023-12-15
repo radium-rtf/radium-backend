@@ -7,6 +7,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/account/internal/update"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/account/internal/updatepass"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/middleware/user"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 )
 
@@ -17,7 +18,11 @@ func New(r *chi.Mux, useCases usecase.UseCases) {
 		r.Use(mwAuth.Required(useCases.Deps.TokenManager))
 		r.Get("/", get.New(useCase))
 		r.Patch("/", update.New(useCase))
-		r.Patch("/password", updatepass.New(useCase))
 		r.Get("/courses", courses.New(useCase))
+
+		r.Group(func(r chi.Router) {
+			r.Use(user.IsReal())
+			r.Patch("/password", updatepass.New(useCase))
+		})
 	})
 }
