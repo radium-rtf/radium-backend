@@ -29,10 +29,12 @@ import (
 // @in header
 // @name Authorization
 func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
-	h.Use(middleware.Recoverer)
-	h.Use(middleware.RequestID)
+	log := newLogger()
 
 	h.Use(cors.AllowAll().Handler)
+	h.Use(middleware.Recoverer)
+	h.Use(middleware.RequestID)
+	h.Use(newHandlerLogger(log))
 
 	h.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 	h.Get("/", func(writer http.ResponseWriter, request *http.Request) {

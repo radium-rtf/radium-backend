@@ -29,12 +29,14 @@ func New(verify verify) http.HandlerFunc {
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
+			return
 		}
 
 		tokens, err := verify.VerifyEmail(ctx, request.Email, request.VerificationCode)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
+			return
 		}
 
 		render.Status(r, http.StatusCreated)

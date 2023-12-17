@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"github.com/go-chi/httplog/v2"
 	"github.com/radium-rtf/radium-backend/pkg/auth"
+	"log/slog"
 	"net/http"
 	"strings"
 )
@@ -18,6 +20,8 @@ func Required(manager auth.TokenManager) func(http.Handler) http.Handler {
 				writer.Write([]byte(err.Error()))
 				return
 			}
+
+			httplog.LogEntrySetField(request.Context(), "user", slog.StringValue(userId.String()))
 
 			ctx := context.WithValue(request.Context(), "userId", userId)
 			next.ServeHTTP(writer, request.WithContext(ctx))

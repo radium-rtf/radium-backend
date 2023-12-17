@@ -24,7 +24,7 @@ func New(url string, opts ...Option) (*Postgres, error) {
 		connMaxIdleTimeDB(options.connMaxIdleTime),
 		connMaxLifetimeDB(options.connMaxLifetime),
 	)
-	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(false)))
 
 	initDB(db)
 	err = migrate(db)
