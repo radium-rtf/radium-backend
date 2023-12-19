@@ -133,13 +133,13 @@ func (r Course) Update(ctx context.Context, course *entity.Course) (*entity.Cour
 		WherePK().
 		OmitZero().
 		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	n, _ := info.RowsAffected()
 	if err == nil && n == 0 {
 		return nil, repoerr.CourseNotFound
-	}
-	if err != nil {
-		return nil, err
 	}
 	return r.GetFullById(ctx, course.Id)
 }
@@ -150,13 +150,13 @@ func (r Course) UpdatePublish(ctx context.Context, id uuid.UUID, status bool) (*
 		Where("id = ?", id).
 		Set("is_published = ?", status).
 		Exec(ctx)
-
-	n, _ := info.RowsAffected()
-	if err == nil && n == 0 {
-		return nil, repoerr.CourseNotFound
-	}
 	if err != nil {
 		return nil, err
+	}
+
+	n, _ := info.RowsAffected()
+	if n == 0 {
+		return nil, repoerr.CourseNotFound
 	}
 	return r.GetFullById(ctx, id)
 }

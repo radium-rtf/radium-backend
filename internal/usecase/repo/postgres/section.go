@@ -57,9 +57,12 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 			WherePK().
 			OmitZero().
 			Exec(ctx)
+		if err != nil {
+			return err
+		}
 
 		n, _ := info.RowsAffected()
-		if err == nil && n == 0 {
+		if n == 0 {
 			return repoerr.SectionNotFound
 		}
 

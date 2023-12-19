@@ -28,10 +28,14 @@ func (r Session) Update(ctx context.Context, refreshToken uuid.UUID, expiresIn t
 	exec, err := r.db.NewUpdate().
 		Table("sessions").
 		Where("refresh_token = ?", refreshToken).
-		Set("expires_in = ?", expiresIn).Exec(ctx)
+		Set("expires_in = ?", expiresIn).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
 
 	rowsAffected, _ := exec.RowsAffected()
-	if err == nil && rowsAffected == 0 {
+	if rowsAffected == 0 {
 		return repoerr.SessionNotFound
 	}
 	return err

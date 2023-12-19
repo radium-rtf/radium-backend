@@ -133,9 +133,12 @@ func (r User) updateColumn(ctx context.Context, value columnValue, where columnV
 		Table("users").
 		Where(where.column+" = ?", where.value).
 		Set(value.column+" = ?", value.value).Exec(ctx)
+	if err != nil {
+		return err
+	}
 
 	rowsAffected, _ := exec.RowsAffected()
-	if err == nil && rowsAffected == 0 {
+	if rowsAffected == 0 {
 		return repoerr.UserNotFound
 	}
 	return err
@@ -153,14 +156,15 @@ func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, erro
 		WherePK().
 		OmitZero().
 		Exec(ctx)
-
-	rowsAffected, _ := exec.RowsAffected()
-	if err == nil && rowsAffected == 0 {
-		return nil, repoerr.UserNotFound
-	}
 	if err != nil {
 		return nil, err
 	}
+
+	rowsAffected, _ := exec.RowsAffected()
+	if rowsAffected == 0 {
+		return nil, repoerr.UserNotFound
+	}
+
 	return r.GetById(ctx, user.Id)
 }
 
