@@ -8,7 +8,7 @@ import (
 )
 
 type Course struct {
-	Name             string       `json:"name" validate:"max=45"`
+	Name             string       `json:"name" validate:"max=128"`
 	ShortDescription string       `json:"shortDescription" validate:"max=400"`
 	Description      string       `json:"description" validate:"max=3000"`
 	Logo             string       `json:"logo" validate:"url"`
