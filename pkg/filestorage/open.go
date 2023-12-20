@@ -6,7 +6,9 @@ import (
 )
 
 func open(creds *credentials.Credentials, endpoint, region string) (*minio.Client, error) {
+	secure := endpoint == "storage.radium-rtf.ru"
 	options := &minio.Options{
+		Secure: secure,
 		Region: region,
 		Creds:  creds,
 	}
