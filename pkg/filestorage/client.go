@@ -36,6 +36,7 @@ type Storage struct {
 	client      *minio.Client
 	endpoint    string
 	isAvailable bool
+	secure      bool
 }
 
 func New(cfg config.Storage) Storage {
@@ -46,7 +47,12 @@ func New(cfg config.Storage) Storage {
 		return Storage{}
 	}
 
-	storage := Storage{client: client, endpoint: cfg.Endpoint, isAvailable: true}
+	storage := Storage{
+		client:      client,
+		endpoint:    cfg.Endpoint,
+		isAvailable: true,
+		secure:      cfg.Endpoint == "storage.radium-rtf.ru",
+	}
 
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
@@ -95,7 +101,12 @@ func (s Storage) PutImage(ctx context.Context, reader io.Reader, objectSize int6
 	if err != nil {
 		return minio.UploadInfo{}, err
 	}
-	location := fmt.Sprintf("http://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
-	out.Location = location
+
+	if s.secure {
+		out.Location = fmt.Sprintf("https://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
+	} else {
+		out.Location = fmt.Sprintf("http://%s/%s/%s", s.endpoint, out.Bucket, out.Key)
+	}
+
 	return out, err
 }
