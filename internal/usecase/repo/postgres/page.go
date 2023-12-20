@@ -50,6 +50,7 @@ func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) 
 			return query.Where("answer.user_id = ?", userId).Order("answer.created_at desc")
 		}).
 		Relation("Sections.UsersAnswers.Review").
+		Relation("Sections.UsersAnswers.Review.Reviewer").
 		Relation("Sections.UsersAnswers.File").
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
