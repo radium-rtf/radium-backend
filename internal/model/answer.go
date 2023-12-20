@@ -103,6 +103,10 @@ func NewAnswers(answers []*entity.Answer) []Answer {
 	var dtos = make([]Answer, 0, len(answers))
 
 	for _, answer := range answers {
+		// todo: ПРИ УДАЛЕНИИ СЕКЦИИ УДАЛЯТЬ ОТВЕТЫ убрать if
+		if answer.Section == nil {
+			continue
+		}
 		attempts := max(int(answer.Section.MaxAttempts.Int16)-len(answers), 0)
 		dtos = append(dtos, NewAnswer(answer, attempts))
 	}
