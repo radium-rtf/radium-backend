@@ -39,11 +39,6 @@ jobs:
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "sudo rm -f /etc/systemd/system/radium.service"
 
-      - name: List workspace contents
-        run: |
-          echo "Listing deployment folder contents:"
-          ls -la ${{ github.workspace }}/deployment
-
       - name: Create environment file on server
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\

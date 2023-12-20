@@ -9,6 +9,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/radium-rtf/radium-backend/config"
 	"io"
+	"log"
 )
 
 const (
@@ -41,6 +42,7 @@ func New(cfg config.Storage) Storage {
 	creds := credentials.NewStaticV4(cfg.Id, cfg.Secret, "")
 	client, err := open(creds, cfg.PrivateEndpoint, cfg.Region)
 	if err != nil {
+		log.Println(err.Error())
 		return Storage{}
 	}
 
@@ -48,6 +50,7 @@ func New(cfg config.Storage) Storage {
 
 	err = storage.makeBucket(context.Background(), bucket, minio.MakeBucketOptions{Region: cfg.Region})
 	if err != nil {
+		log.Println(err.Error())
 		return Storage{}
 	}
 
@@ -57,6 +60,7 @@ func New(cfg config.Storage) Storage {
 
 	err = storage.client.SetBucketPolicy(context.Background(), bucket, policy)
 	if err != nil {
+		log.Println(err.Error())
 		return Storage{}
 	}
 
