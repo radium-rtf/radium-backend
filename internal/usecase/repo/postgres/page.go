@@ -49,6 +49,8 @@ func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) 
 		Relation("Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("answer.user_id = ?", userId).Order("answer.created_at desc")
 		}).
+		Relation("Sections.UsersAnswers.Review").
+		Relation("Sections.UsersAnswers.File").
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
 		return page, repoerr.PageNotFound
