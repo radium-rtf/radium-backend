@@ -15,11 +15,6 @@ type getter interface {
 	GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity.Course, error)
 }
 
-// @Tags course
-// @Security ApiKeyAuth
-// @Param        slug   path     string  true  "course slug"
-// @Success      200   {object} model.Course  "ok"
-// @Router       /v1/course/slug/{slug} [get]
 func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

@@ -98,7 +98,7 @@ definitions:
       logo:
         type: string
       name:
-        maxLength: 45
+        maxLength: 128
         type: string
       shortDescription:
         maxLength: 400
@@ -794,7 +794,7 @@ definitions:
       variants:
         items:
           type: string
-        maxItems: 6
+        maxItems: 26
         minItems: 2
         type: array
     required:
@@ -816,7 +816,7 @@ definitions:
       logo:
         type: string
       name:
-        maxLength: 45
+        maxLength: 128
         type: string
       shortDescription:
         maxLength: 400
@@ -838,12 +838,12 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 10
+        maxItems: 26
         type: array
       keys:
         items:
           type: string
-        maxItems: 10
+        maxItems: 26
         type: array
       question:
         maxLength: 800
@@ -866,7 +866,7 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 6
+        maxItems: 26
         type: array
       question:
         maxLength: 1000
@@ -874,7 +874,7 @@ definitions:
       variants:
         items:
           type: string
-        maxItems: 6
+        maxItems: 26
         minItems: 2
         type: array
     required:
@@ -886,7 +886,7 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 8
+        maxItems: 26
         type: array
       question:
         maxLength: 500
@@ -1337,23 +1337,6 @@ paths:
       responses:
         "200":
           description: ' '
-          schema:
-            $ref: '#/definitions/model.Course'
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - course
-  /v1/course/slug/{slug}:
-    get:
-      parameters:
-      - description: course slug
-        in: path
-        name: slug
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ok
           schema:
             $ref: '#/definitions/model.Course'
       security:

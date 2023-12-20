@@ -528,35 +528,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/course/slug/{slug}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "course"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "course slug",
-                        "name": "slug",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/model.Course"
-                        }
-                    }
-                }
-            }
-        },
         "/v1/course/{courseId}": {
             "get": {
                 "security": [
@@ -1693,7 +1664,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 45
+                    "maxLength": 128
                 },
                 "shortDescription": {
                     "type": "string",
@@ -2729,7 +2700,7 @@ const docTemplate = `{
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
+                    "maxItems": 26,
                     "minItems": 2,
                     "items": {
                         "type": "string"
@@ -2761,7 +2732,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 45
+                    "maxLength": 128
                 },
                 "shortDescription": {
                     "type": "string",
@@ -2794,14 +2765,14 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 10,
+                    "maxItems": 26,
                     "items": {
                         "type": "string"
                     }
                 },
                 "keys": {
                     "type": "array",
-                    "maxItems": 10,
+                    "maxItems": 26,
                     "items": {
                         "type": "string"
                     }
@@ -2834,7 +2805,7 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 6,
+                    "maxItems": 26,
                     "items": {
                         "type": "string"
                     }
@@ -2845,7 +2816,7 @@ const docTemplate = `{
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
+                    "maxItems": 26,
                     "minItems": 2,
                     "items": {
                         "type": "string"
@@ -2861,7 +2832,7 @@ const docTemplate = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 8,
+                    "maxItems": 26,
                     "items": {
                         "type": "string"
                     }
