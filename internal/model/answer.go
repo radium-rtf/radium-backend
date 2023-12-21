@@ -5,6 +5,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
 	"slices"
+	"sort"
 	"time"
 )
 
@@ -96,6 +97,9 @@ func NewUserAnswers(students []*entity.User) []*UserAnswers {
 		userAnswers = append(userAnswers, userAnswer)
 	}
 
+	sort.Slice(userAnswers, func(i, j int) bool {
+		return userAnswers[i].WithoutReview > userAnswers[j].WithoutReview
+	})
 	return userAnswers
 }
 
