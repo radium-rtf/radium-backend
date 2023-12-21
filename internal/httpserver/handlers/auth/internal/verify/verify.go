@@ -6,6 +6,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
+	"strings"
 )
 
 type verify interface {
@@ -32,6 +33,7 @@ func New(verify verify) http.HandlerFunc {
 			return
 		}
 
+		request.Email = strings.ToLower(request.Email)
 		tokens, err := verify.VerifyEmail(ctx, request.Email, request.VerificationCode)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
