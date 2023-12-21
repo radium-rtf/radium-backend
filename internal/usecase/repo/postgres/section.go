@@ -128,15 +128,15 @@ func (r Section) GetLastSection(ctx context.Context, pageId uuid.UUID) (*entity.
 
 func (r Section) UpdateOrder(ctx context.Context, section *entity.Section, order uint) (*entity.Section, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		where := "section.order >= ? and section.order <= ?"
+		where := "section.order >= ? and section.order < ? and section.page_id = ?"
 		set := "\"order\" = section.order + 1"
 		if section.Order < float64(order) {
-			where = "section.order <= ? and section.order >= ?"
+			where = "section.order <= ? and section.order > ? and section.page_id = ?"
 			set = "\"order\" = section.order - 1"
 		}
 		_, err := tx.NewUpdate().
 			Model(&entity.Section{}).
-			Where(where, order, section.Order).
+			Where(where, order, section.Order, section.PageId).
 			Set(set).
 			Exec(ctx)
 		if err != nil {

@@ -103,16 +103,16 @@ func (r Module) GetLastModule(ctx context.Context, courseId uuid.UUID) (*entity.
 
 func (r Module) UpdateOrder(ctx context.Context, module *entity.Module, order uint) (*entity.Module, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		where := "module.order >= ? and module.order <= ?"
+		where := "module.order >= ? and module.order < ? and module.course_id = ?"
 		set := "\"order\" = module.order + 1"
 		if module.Order < float64(order) {
-			where = "module.order <= ? and module.order >= ?"
+			where = "module.order <= ? and module.order > ? and module.course_id = ?"
 			set = "\"order\" = module.order - 1"
 		}
 
 		_, err := tx.NewUpdate().
 			Model(&entity.Module{}).
-			Where(where, order, module.Order).
+			Where(where, order, module.Order, module.CourseId).
 			Set(set).
 			Exec(ctx)
 		if err != nil {

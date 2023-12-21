@@ -136,16 +136,16 @@ func (r Page) GetModulesByPageId(ctx context.Context, id uuid.UUID) ([]*entity.M
 
 func (r Page) UpdateOrder(ctx context.Context, page *entity.Page, order uint) (*entity.Page, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		where := "page.order >= ? and page.order <= ?"
+		where := "page.order >= ? and page.order < ? and page.module_id = ?"
 		set := "\"order\" = page.order + 1"
 		if page.Order < float64(order) {
-			where = "page.order <= ? and page.order >= ?"
+			where = "page.order <= ? and page.order > and page.module_id = ?"
 			set = "\"order\" = page.order - 1"
 		}
 
 		_, err := tx.NewUpdate().
 			Model(&entity.Page{}).
-			Where(where, order, page.Order).
+			Where(where, order, page.Order, page.ModuleId).
 			Set(set).
 			Exec(ctx)
 		if err != nil {
