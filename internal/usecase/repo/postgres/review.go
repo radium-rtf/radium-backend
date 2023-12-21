@@ -19,9 +19,10 @@ func NewReviewRepo(pg *postgres.Postgres) Review {
 
 func (r Review) Create(ctx context.Context, review *entity.Review) (*entity.Review, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		onConflict := "score = excluded.score, updated_at = excluded.updated_at, comment = excluded.comment"
 		_, err := tx.NewInsert().
 			On("conflict (answer_id) do update").
-			Set("score = excluded.score, updated_at = excluded.updated_at").
+			Set(onConflict).
 			Model(review).
 			Exec(ctx)
 		if err != nil {
