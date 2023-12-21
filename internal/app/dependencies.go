@@ -17,7 +17,7 @@ func newDependencies(storage filestorage.Storage, cfg *config.Config, db *postgr
 	tokenManager := auth.NewManager(cfg.Auth.SigningKey)
 	passwordHasher := hash.NewPasswordHasher(cfg.Auth.PasswordSaltSha1, cfg.Auth.PasswordCostBcrypt)
 	smtp := email.NewSMTPSender(cfg.Email, cfg.Password, cfg.Smtp.Host, cfg.Smtp.Port,
-		"pkg/email/verification.html", cfg.Smtp.LengthVerificationCode, cfg.Smtp.Username)
+		cfg.Smtp.LengthVerificationCode, cfg.Smtp.Username)
 	return usecase.Dependencies{
 		Repos:                  repositories,
 		TokenManager:           tokenManager,

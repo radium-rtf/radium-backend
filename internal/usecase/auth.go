@@ -81,7 +81,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity.User) (*entity.Un
 	if err != nil {
 		return unverifiedUser, err
 	}
-	err = uc.emailSender.SendVerificationEmail(user.Email, code)
+	err = uc.emailSender.SendVerificationEmail(user.Email, user.Name, code)
 	return unverifiedUser, err
 }
 

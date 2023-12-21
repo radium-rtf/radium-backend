@@ -17,31 +17,38 @@ type SMTPSender struct {
 	from                   string
 }
 
-func NewSMTPSender(username, pass, host string, port int, templatePath string,
+func NewSMTPSender(username, pass, host string, port int,
 	verificationCodeLength int, from string) *SMTPSender {
 	dialer := gomail.NewDialer(host, port, username, pass)
 
-	bodyGenerator, err := newEmailBodyGenerator(templatePath)
 	return &SMTPSender{
 		dialer:                 dialer,
-		bodyGenerator:          bodyGenerator,
-		isAvailable:            err == nil,
+		isAvailable:            true,
 		verificationCodeLength: verificationCodeLength,
 		otp:                    otp.NewOTPGenerator(),
 		from:                   from,
 	}
 }
 
-func (s *SMTPSender) SendVerificationEmail(email, code string) error {
+type verificationData struct {
+	Name, Code string
+}
+
+func (s *SMTPSender) SendVerificationEmail(email, name, code string) error {
 	if !s.isAvailable {
 		return errors.New("отправка сообщений недоступна")
+	}
+
+	body, err := generateVerificationEmail(verificationData{name, code})
+	if err != nil {
+		return err
 	}
 
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", s.from)
 	msg.SetHeader("To", email)
 	msg.SetHeader("Subject", "Поддтверждение почты радиум")
-	msg.SetBody("text/html", code)
+	msg.SetBody("text/html", body)
 
 	if err := s.dialer.DialAndSend(msg); err != nil {
 		return fmt.Errorf("error while sending email: %s", err.Error())
