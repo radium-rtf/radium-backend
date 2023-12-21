@@ -65,7 +65,6 @@ func (uc AnswerUseCase) createAnswer(ctx context.Context, section *entity.Sectio
 		return nil, errors.New("неверный тип файла")
 	}
 	return uc.answer.Create(ctx, answer)
-
 }
 
 func (uc AnswerUseCase) GetBySections(ctx context.Context, ids []uuid.UUID, userId uuid.UUID) (

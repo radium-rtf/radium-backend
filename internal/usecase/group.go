@@ -90,11 +90,12 @@ func (uc GroupUseCase) GetReportByCourse(ctx context.Context, userId, courseId, 
 
 func (uc GroupUseCase) newReport(ctx context.Context, courseId uuid.UUID, group *entity.Group) (
 	*model.Report, error) {
-	course, err := uc.course.GetFullById(ctx, courseId)
+	course, err := uc.course.GetFullWithStudents(ctx, courseId)
 	if err != nil {
 		return nil, err
 	}
 
+	// todo: убрать !!!!
 	sectionsIds := course.SectionsIds()
 	usersIds := make([]uuid.UUID, 0, len(group.Students))
 	for _, user := range group.Students {

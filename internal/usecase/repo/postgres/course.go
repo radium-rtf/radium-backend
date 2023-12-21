@@ -311,3 +311,12 @@ func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId u
 		Scan(ctx)
 	return course, err
 }
+
+func (r Course) GetFullWithStudents(ctx context.Context, id uuid.UUID) (*entity.Course, error) {
+	var course = new(entity.Course)
+	err := r.getFullCourseQuery(course).
+		Relation("Students").
+		Where("id = ?", id).
+		Scan(ctx)
+	return course, err
+}

@@ -100,13 +100,20 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 		Join("join sections on sections.page_id = pages.id").
 		Where("course.id = ?", courseId)
 
+	students := r.db.NewSelect().
+		ColumnExpr("user_id").
+		Model(&entity.CourseStudent{}).
+		Where("course_id = ?", courseId)
+
 	err := r.db.NewSelect().
 		Model(group).
 		Where("id = ?", groupId).
 		Relation("Courses", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("course.id = ?", courseId)
 		}).
-		Relation("Students").
+		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("group_student.user_id in (?)", students)
+		}).
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.
 				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds).
