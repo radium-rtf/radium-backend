@@ -49,7 +49,7 @@ func NewGroupReport(answersCollection *entity.UsersAnswersCollection, course *en
 			answers = &entity.AnswersCollection{AnswerBySectionId: make(map[uuid.UUID][]*entity.Answer)}
 		}
 
-		row := ReportRow{User: NewUser(user)}
+		row := ReportRow{User: NewUser(user), Values: []int{}}
 		c := NewCourse(course, answers.AnswerBySectionId, user.Id)
 		row.Score = c.Score
 
