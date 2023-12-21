@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/account"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/answer"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/auth"
@@ -20,6 +21,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
+	"time"
 )
 
 // @title       radium
@@ -31,6 +33,7 @@ import (
 func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 	log := newLogger()
 
+	h.Use(httprate.Limit(100, time.Second))
 	h.Use(cors.AllowAll().Handler)
 	h.Use(middleware.Recoverer)
 	h.Use(middleware.RequestID)
