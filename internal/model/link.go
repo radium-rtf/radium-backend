@@ -8,7 +8,7 @@ import (
 type (
 	Link struct {
 		Id   uuid.UUID `json:"id"`
-		Name string    `json:"name" validate:"required,min=1,max=15"`
+		Name string    `json:"name" validate:"required,min=1,max=32"`
 		Link string    `json:"link" validate:"required,url"`
 	}
 )
