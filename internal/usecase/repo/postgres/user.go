@@ -61,6 +61,7 @@ func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 	err := r.db.NewSelect().Model(user).
 		Relation("Roles").
 		Relation("Author").
+		Relation("Author.Authors").
 		Relation("Coauthor").
 		Relation("Courses").
 		Relation("Courses.Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
