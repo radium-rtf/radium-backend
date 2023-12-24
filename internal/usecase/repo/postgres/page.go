@@ -139,7 +139,7 @@ func (r Page) UpdateOrder(ctx context.Context, page *entity.Page, order uint) (*
 		where := "page.order >= ? and page.order < ? and page.module_id = ?"
 		set := "\"order\" = page.order + 1"
 		if page.Order < float64(order) {
-			where = "page.order <= ? and page.order > and page.module_id = ?"
+			where = "page.order <= ? and page.order > ? and page.module_id = ?"
 			set = "\"order\" = page.order - 1"
 		}
 
