@@ -300,6 +300,7 @@ func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId u
 		Relation("Modules.Pages.Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("answer.user_id = ?", userId).Order("answer.created_at desc")
 		}).
+		Relation("Modules.Pages.Sections.UsersAnswers.Review").
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("course_student.user_id = ?", userId).Limit(1)
 		}).
