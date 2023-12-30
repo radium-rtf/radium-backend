@@ -1,14 +1,25 @@
 package validator
 
-import "fmt"
+type ValidationError struct {
+	Tag     string `json:"tag"`
+	Param   string `json:"param"`
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
 
-func (v *validate) newValidationError(field string, tag string, err error) error {
+func (err ValidationError) Error() string {
+	return err.Message
+}
+
+func (v *validate) newValidationError(field, tag, param string, err error) error {
+	validationErr := ValidationError{Tag: tag, Field: field, Message: err.Error(), Param: param}
+
 	switch tag {
-	case "email":
-		return fmt.Errorf("field %s must be a valid email address: pattern - %s", field, emailRegexp.String())
 	case "password":
-		return v.passwdErr
+		validationErr.Message = v.passwdErr.Error()
 	default:
-		return err
+		validationErr.Message = err.Error()
 	}
+
+	return validationErr
 }

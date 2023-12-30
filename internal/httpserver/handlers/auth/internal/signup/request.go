@@ -7,7 +7,7 @@ import (
 )
 
 type SignUp struct {
-	Email    string `json:"email"`
+	Email    string `json:"email" validate:"email"`
 	Password string `json:"password" validate:"password"`
 	Name     string `json:"name" validate:"required,min=1,max=30"`
 }

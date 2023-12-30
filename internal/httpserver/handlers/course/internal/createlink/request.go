@@ -7,7 +7,7 @@ import (
 
 type Link struct {
 	Name string `json:"name" validate:"required,min=1,max=32"`
-	Link string `json:"link" validate:"required,url"`
+	Link string `json:"link" validate:"required,uri"`
 }
 
 func (r Link) toLink(courseId uuid.UUID) *entity.Link {

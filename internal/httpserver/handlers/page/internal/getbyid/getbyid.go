@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
@@ -28,22 +29,19 @@ func New(pageGetter pageGetter) http.HandlerFunc {
 
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		page, err := pageGetter.GetById(ctx, id)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		nextAnsPrevious, err := pageGetter.GetNextAndPrevious(ctx, page)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
@@ -54,8 +52,7 @@ func New(pageGetter pageGetter) http.HandlerFunc {
 
 		page, err = pageGetter.GetByIdWithUserAnswers(ctx, page.Id, userId)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

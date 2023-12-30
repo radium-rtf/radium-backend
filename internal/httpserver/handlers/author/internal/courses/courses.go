@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
@@ -26,8 +27,7 @@ func New(getter getter) http.HandlerFunc {
 
 		courses, err := getter.GetCoursesByAuthorOrCoauthorId(ctx, userId)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

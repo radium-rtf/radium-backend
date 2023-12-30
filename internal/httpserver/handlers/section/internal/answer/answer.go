@@ -5,8 +5,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"net/http"
 )
 
@@ -29,15 +29,13 @@ func New(getter getter) http.HandlerFunc {
 
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, errors.Wrap(err, "parse id").Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		section, err := getter.GetFullSectionById(ctx, id, userId)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

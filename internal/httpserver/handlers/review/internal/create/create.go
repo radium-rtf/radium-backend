@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 
@@ -31,16 +32,14 @@ func NewReview(creator creator) http.HandlerFunc {
 
 		err := decode.Json(r.Body, &request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		review := request.toReview(userId)
 		review, err = creator.Create(ctx, review)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

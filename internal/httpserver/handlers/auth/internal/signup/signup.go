@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"net/http"
 )
 
@@ -27,16 +28,14 @@ func New(signUp signUp) http.HandlerFunc {
 
 		err := decode.Json(r.Body, &request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		user := request.toUser()
 		unverifiedUser, err := signUp.SignUp(ctx, user)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 	"strings"
@@ -28,16 +29,14 @@ func New(in signIn) http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		request.Email = strings.ToLower(request.Email)
 		tokens, err := in.SignIn(ctx, request.Email, request.Password)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

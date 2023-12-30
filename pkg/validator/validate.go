@@ -2,6 +2,7 @@ package validator
 
 import (
 	"github.com/go-playground/validator/v10"
+	"strings"
 )
 
 type validate struct {
@@ -12,17 +13,7 @@ type validate struct {
 func newValidate() (*validate, error) {
 	v := validate{v: validator.New(validator.WithRequiredStructEnabled())}
 
-	err := v.v.RegisterValidation("email", v.emailValidate)
-	if err != nil {
-		return nil, err
-	}
-
-	err = v.v.RegisterValidation("url", v.urlValidate)
-	if err != nil {
-		return nil, err
-	}
-
-	err = v.v.RegisterValidation("password", v.passwordValidate)
+	err := v.v.RegisterValidation("password", v.passwordValidate)
 	if err != nil {
 		return nil, err
 	}
@@ -42,5 +33,5 @@ func Struct(i any) error {
 	}
 
 	fieldErr := err.(validator.ValidationErrors)[0]
-	return v.newValidationError(fieldErr.Field(), fieldErr.Tag(), err)
+	return v.newValidationError(strings.ToLower(fieldErr.Field()), fieldErr.Tag(), fieldErr.Param(), err)
 }

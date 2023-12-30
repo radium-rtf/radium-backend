@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 	"strings"
@@ -28,16 +29,14 @@ func New(verify verify) http.HandlerFunc {
 
 		err := decode.Json(r.Body, &request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		request.Email = strings.ToLower(request.Email)
 		tokens, err := verify.VerifyEmail(ctx, request.Email, request.VerificationCode)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

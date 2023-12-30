@@ -3,8 +3,8 @@ package invite
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"net/http"
 )
 
@@ -26,8 +26,7 @@ func New(connector connector) http.HandlerFunc {
 
 		err := connector.Join(ctx, userId, inviteCode)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
@@ -30,8 +31,7 @@ func New(getter getter) http.HandlerFunc {
 
 		course, err := getter.GetBySlugAndUser(ctx, slug, userId)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
@@ -44,8 +44,7 @@ func New(getter getter) http.HandlerFunc {
 func responseIfNotAuthorized(getter getter, slug string, w http.ResponseWriter, r *http.Request) {
 	course, err := getter.GetBySlug(r.Context(), slug)
 	if err != nil {
-		render.Status(r, http.StatusBadRequest)
-		render.JSON(w, r, err.Error())
+		resp.Error(r, w, err)
 		return
 	}
 

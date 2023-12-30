@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"net/http"
 )
 
@@ -25,16 +26,14 @@ func New(creator creator) http.HandlerFunc {
 
 		err := render.DecodeJSON(r.Body, &request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		teacher := request.toCourses()
 		teacher, err = creator.Create(ctx, teacher)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

@@ -3,6 +3,7 @@ package upload
 import (
 	"context"
 	"github.com/go-chi/render"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"mime/multipart"
 	"net/http"
@@ -24,15 +25,13 @@ func New(uploader uploader) http.HandlerFunc {
 
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		file, header, err := r.FormFile("file")
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
@@ -40,8 +39,7 @@ func New(uploader uploader) http.HandlerFunc {
 
 		upload, err := uploader.UploadFile(ctx, file, header)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 

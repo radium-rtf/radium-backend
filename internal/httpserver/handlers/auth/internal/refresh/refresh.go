@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/lib/resp"
 	"github.com/radium-rtf/radium-backend/internal/model"
 	"net/http"
 )
@@ -28,15 +29,13 @@ func New(refresh refresh) http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&request)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
 		token, err := refresh.RefreshToken(ctx, request.RefreshToken)
 		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, err.Error())
+			resp.Error(r, w, err)
 			return
 		}
 
