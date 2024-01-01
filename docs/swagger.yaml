@@ -347,7 +347,7 @@ definitions:
       link:
         type: string
       name:
-        maxLength: 15
+        maxLength: 32
         minLength: 1
         type: string
     required:
@@ -528,7 +528,7 @@ definitions:
       link:
         type: string
       name:
-        maxLength: 15
+        maxLength: 32
         minLength: 1
         type: string
     required:
@@ -1343,6 +1343,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
+  /v1/course/slug/{slug}:
+    get:
+      parameters:
+      - description: slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/model.Course'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
   /v1/group:
     get:
       responses:
@@ -1611,6 +1628,23 @@ paths:
       responses:
         "201":
           description: created
+          schema:
+            $ref: '#/definitions/model.Page'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - page
+  /v1/page/slug/{slug}:
+    get:
+      parameters:
+      - description: slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
           schema:
             $ref: '#/definitions/model.Page'
       security:

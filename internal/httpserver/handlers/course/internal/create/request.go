@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/model"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
+	"github.com/radium-rtf/radium-backend/pkg/str"
 )
 
 type Course struct {
@@ -32,10 +32,7 @@ func (r Course) toCourse(authorId uuid.UUID) *entity.Course {
 		links = append(links, link)
 	}
 
-	slug := translit.Make(r.Name)
-	if slug == "" {
-		slug = courseId.String()
-	}
+	slug := str.Random(11)
 
 	return &entity.Course{
 		DBModel:          entity.DBModel{Id: courseId},

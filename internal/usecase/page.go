@@ -31,12 +31,13 @@ func (uc PageUseCase) Create(ctx context.Context, page *entity.Page, editorId uu
 	}
 
 	last, err := uc.page.GetLastPage(ctx, page.ModuleId)
-	if err != nil && !errors.Is(err, repoerr.PageNotFound) {
+	if err != nil && !errors.Is(err, repoerr.NotFound) {
 		return nil, err
 	}
 
 	page.Order = 1
-	if !errors.Is(err, repoerr.PageNotFound) {
+
+	if !errors.Is(err, repoerr.NotFound) {
 		page.Order = last.Order + 1
 	}
 
@@ -97,6 +98,10 @@ func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity.Page)
 
 	var nextAndPrevious = model.GetNextAndPreviousPage(moduleIndex, pageIndex, modules)
 	return nextAndPrevious, nil
+}
+
+func (uc PageUseCase) GetBySlug(ctx context.Context, slug string) (*entity.Page, error) {
+	return uc.page.GetBySlug(ctx, slug)
 }
 
 func (uc PageUseCase) canEdit(ctx context.Context, id, editorId uuid.UUID) error {

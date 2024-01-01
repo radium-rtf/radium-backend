@@ -3,7 +3,7 @@ package create
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
+	"github.com/radium-rtf/radium-backend/pkg/str"
 )
 
 type Page struct {
@@ -18,6 +18,6 @@ func (r Page) toPage() *entity.Page {
 		Name:     r.Name,
 		ModuleId: r.ModuleId,
 		Order:    r.Order,
-		Slug:     translit.Make(r.Name),
+		Slug:     str.Random(11),
 	}
 }

@@ -3,7 +3,7 @@ package create
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
+	"github.com/radium-rtf/radium-backend/pkg/str"
 )
 
 type Module struct {
@@ -18,6 +18,6 @@ func (m Module) toModule() *entity.Module {
 		Name:     m.Name,
 		CourseId: m.CourseId,
 		Order:    m.Order,
-		Slug:     translit.Make(m.Name),
+		Slug:     str.Random(11),
 	}
 }

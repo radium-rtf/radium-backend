@@ -528,6 +528,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/course/slug/{slug}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.Course"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/course/{courseId}": {
             "get": {
                 "security": [
@@ -942,6 +971,35 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.Page"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/page/slug/{slug}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "page"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
                         "description": "ok",
                         "schema": {
                             "$ref": "#/definitions/model.Page"
@@ -2033,7 +2091,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 15,
+                    "maxLength": 32,
                     "minLength": 1
                 }
             }
@@ -2298,7 +2356,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 15,
+                    "maxLength": 32,
                     "minLength": 1
                 }
             }

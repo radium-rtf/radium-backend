@@ -5,6 +5,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/create"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/destroy"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/getbyid"
+	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/getbyslug"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/order"
 	"github.com/radium-rtf/radium-backend/internal/httpserver/handlers/page/internal/update"
 	mwAuth "github.com/radium-rtf/radium-backend/internal/httpserver/middleware/auth"
@@ -20,6 +21,7 @@ func New(r chi.Router, useCases usecase.UseCases) {
 		r.Group(func(r chi.Router) {
 			r.Use(mwAuth.UserId(tokenManager))
 			r.Get("/{id}", getbyid.New(useCase))
+			r.Get("/slug/{slug}", getbyslug.New(useCase))
 		})
 
 		r.Group(func(r chi.Router) {

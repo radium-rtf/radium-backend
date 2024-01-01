@@ -3,7 +3,6 @@ package update
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
 type Course struct {
@@ -18,7 +17,6 @@ func (c Course) toCourse(id uuid.UUID) *entity.Course {
 	return &entity.Course{
 		DBModel:          entity.DBModel{Id: id},
 		Name:             c.Name,
-		Slug:             translit.Make(c.Name),
 		ShortDescription: c.ShortDescription,
 		Description:      c.Description,
 		Logo:             c.Logo,

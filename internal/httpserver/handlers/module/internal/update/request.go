@@ -3,7 +3,6 @@ package update
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/translit"
 )
 
 type Module struct {
@@ -13,7 +12,6 @@ type Module struct {
 func (m Module) toModule(moduleId uuid.UUID) *entity.Module {
 	return &entity.Module{
 		Name:    m.Name,
-		Slug:    translit.Make(m.Name),
 		DBModel: entity.DBModel{Id: moduleId},
 	}
 }

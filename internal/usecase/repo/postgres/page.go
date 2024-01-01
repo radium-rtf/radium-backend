@@ -25,17 +25,26 @@ func (r Page) Create(ctx context.Context, page *entity.Page) (*entity.Page, erro
 }
 
 func (r Page) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
+	return r.get(ctx, columnValue{column: "id", value: id})
+}
+
+func (r Page) GetBySlug(ctx context.Context, slug string) (*entity.Page, error) {
+	return r.get(ctx, columnValue{column: "slug", value: slug})
+}
+
+func (r Page) get(ctx context.Context, where columnValue) (*entity.Page, error) {
 	var page = new(entity.Page)
-	err := r.getPageByIdQuery(page).
-		Where("id = ?", id).
+	err := r.getPageQuery(page).
+		Where(where.column+" = ?", where.value).
 		Scan(ctx)
+
 	if errors.Is(err, sql.ErrNoRows) {
-		return page, repoerr.PageNotFound
+		return page, repoerr.NotFound
 	}
 	return page, err
 }
 
-func (r Page) getPageByIdQuery(page *entity.Page) *bun.SelectQuery {
+func (r Page) getPageQuery(page *entity.Page) *bun.SelectQuery {
 	return r.db.NewSelect().Model(page).
 		Relation("Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
@@ -44,7 +53,7 @@ func (r Page) getPageByIdQuery(page *entity.Page) *bun.SelectQuery {
 
 func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) (*entity.Page, error) {
 	var page = new(entity.Page)
-	err := r.getPageByIdQuery(page).
+	err := r.getPageQuery(page).
 		Where("id = ?", id).
 		Relation("Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Where("answer.user_id = ?", userId).Order("answer.created_at desc")
@@ -54,7 +63,7 @@ func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) 
 		Relation("Sections.UsersAnswers.File").
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return page, repoerr.PageNotFound
+		return page, repoerr.NotFound
 	}
 	return page, err
 }
@@ -82,7 +91,7 @@ func (r Page) Update(ctx context.Context, page *entity.Page) (*entity.Page, erro
 
 	n, _ := info.RowsAffected()
 	if n == 0 {
-		return nil, repoerr.PageNotFound
+		return nil, repoerr.NotFound
 	}
 	return r.GetById(ctx, page.Id)
 }
@@ -110,7 +119,7 @@ func (r Page) GetLastPage(ctx context.Context, moduleId uuid.UUID) (*entity.Page
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.PageNotFound
+		return nil, repoerr.NotFound
 	}
 	return page, err
 }
