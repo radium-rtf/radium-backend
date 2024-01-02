@@ -291,7 +291,8 @@ func (r Course) getFullCourseQuery(course *entity.Course) *bun.SelectQuery {
 		}).
 		Relation("Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
-		})
+		}).
+		Relation("Modules.Pages.Sections.File")
 }
 
 func (r Course) getFullWithUser(ctx context.Context, where columnValue, userId uuid.UUID) (*entity.Course, error) {

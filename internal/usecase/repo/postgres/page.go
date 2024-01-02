@@ -48,7 +48,8 @@ func (r Page) getPageQuery(page *entity.Page) *bun.SelectQuery {
 	return r.db.NewSelect().Model(page).
 		Relation("Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.Order("order")
-		})
+		}).
+		Relation("Sections.File")
 }
 
 func (r Page) GetByIdWithUserAnswers(ctx context.Context, id, userId uuid.UUID) (*entity.Page, error) {

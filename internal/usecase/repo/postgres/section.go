@@ -15,14 +15,25 @@ import (
 type Section struct {
 	db     *bun.DB
 	answer Answer
+	file   File
 }
 
 func NewSectionRepo(pg *postgres.Postgres) Section {
-	return Section{db: pg.DB, answer: NewAnswerRepo(pg)}
+	return Section{db: pg.DB, answer: NewAnswerRepo(pg), file: NewFileRepo(pg)}
 }
 
 func (r Section) Create(ctx context.Context, section *entity.Section) (*entity.Section, error) {
-	_, err := r.db.NewInsert().Model(section).Exec(ctx)
+	if section.Type != entity.MediaType {
+		_, err := r.db.NewInsert().Model(section).Exec(ctx)
+		return section, err
+	}
+
+	_, err := r.db.NewInsert().Model(section.File).On("conflict (url) do nothing").Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	_, err = r.db.NewInsert().Model(section).Exec(ctx)
+
 	return section, err
 }
 
@@ -52,6 +63,14 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 		return nil, err
 	}
 	err = r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		var err error
+		if section.Type == entity.MediaType {
+			_, err = tx.NewInsert().Model(section.File).On("conflict (url) do nothing").Exec(ctx)
+		}
+		if err != nil {
+			return err
+		}
+
 		info, err := tx.NewUpdate().
 			Model(section).
 			WherePK().

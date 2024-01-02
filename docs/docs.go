@@ -1829,6 +1829,17 @@ const docTemplate = `{
                 }
             }
         },
+        "create.MediaSection": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "create.Module": {
             "type": "object",
             "required": [
@@ -1997,6 +2008,9 @@ const docTemplate = `{
                     "maximum": 300,
                     "minimum": 0
                 },
+                "media": {
+                    "$ref": "#/definitions/create.MediaSection"
+                },
                 "multichoice": {
                     "$ref": "#/definitions/create.MultiChoiceSection"
                 },
@@ -2107,7 +2121,8 @@ const docTemplate = `{
                 "code",
                 "permutation",
                 "mapping",
-                "file"
+                "file",
+                "media"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -2118,7 +2133,8 @@ const docTemplate = `{
                 "CodeType",
                 "PermutationType",
                 "MappingType",
-                "FileType"
+                "FileType",
+                "MediaType"
             ]
         },
         "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
@@ -2286,6 +2302,9 @@ const docTemplate = `{
                 },
                 "sizeInKiB": {
                     "type": "number"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -2841,6 +2860,17 @@ const docTemplate = `{
                 }
             }
         },
+        "update.MediaSection": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "update.Module": {
             "type": "object",
             "required": [
@@ -2928,6 +2958,9 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 300,
                     "minimum": 0
+                },
+                "media": {
+                    "$ref": "#/definitions/update.MediaSection"
                 },
                 "multichoice": {
                     "$ref": "#/definitions/update.MultiChoiceSection"

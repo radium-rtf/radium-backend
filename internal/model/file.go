@@ -7,6 +7,7 @@ type (
 		Location  string  `json:"location"`
 		Name      string  `json:"name"`
 		SizeInKiB float64 `json:"sizeInKiB"`
+		Type      string  `json:"type"`
 	}
 )
 
@@ -15,6 +16,7 @@ func NewFile(file *entity.File) *File {
 		return nil
 	}
 	return &File{
+		Type:      file.Type,
 		Location:  file.Url,
 		Name:      file.Name,
 		SizeInKiB: float64(file.Size) / 1024,

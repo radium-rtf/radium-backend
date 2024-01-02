@@ -172,6 +172,13 @@ definitions:
     - keys
     - question
     type: object
+  create.MediaSection:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
   create.Module:
     properties:
       courseId:
@@ -288,6 +295,8 @@ definitions:
         maximum: 300
         minimum: 0
         type: integer
+      media:
+        $ref: '#/definitions/create.MediaSection'
       multichoice:
         $ref: '#/definitions/create.MultiChoiceSection'
       order:
@@ -365,6 +374,7 @@ definitions:
     - permutation
     - mapping
     - file
+    - media
     type: string
     x-enum-varnames:
     - ChoiceType
@@ -376,6 +386,7 @@ definitions:
     - PermutationType
     - MappingType
     - FileType
+    - MediaType
   internal_httpserver_handlers_answer_internal_create.AnswerSection:
     properties:
       answer:
@@ -486,6 +497,8 @@ definitions:
         type: string
       sizeInKiB:
         type: number
+      type:
+        type: string
     type: object
   model.Group:
     properties:
@@ -852,6 +865,13 @@ definitions:
     - answer
     - keys
     type: object
+  update.MediaSection:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
   update.Module:
     properties:
       name:
@@ -914,6 +934,8 @@ definitions:
         maximum: 300
         minimum: 0
         type: integer
+      media:
+        $ref: '#/definitions/update.MediaSection'
       multichoice:
         $ref: '#/definitions/update.MultiChoiceSection'
       permutation:

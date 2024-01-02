@@ -5,9 +5,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/radium-rtf/radium-backend/internal/lib/http"
 	"github.com/uptrace/bun"
 	"math/rand"
 	"slices"
+	"strings"
 )
 
 const (
@@ -20,6 +22,7 @@ const (
 	PermutationType = SectionType("permutation")
 	MappingType     = SectionType("mapping")
 	FileType        = SectionType("file")
+	MediaType       = SectionType("media")
 )
 
 type (
@@ -42,6 +45,9 @@ type (
 		Answer  string
 		Answers pq.StringArray
 
+		Url  sql.NullString
+		File *File `bun:"rel:belongs-to,join:url=url"`
+
 		Keys      pq.StringArray
 		FileTypes pq.StringArray
 
@@ -51,11 +57,10 @@ type (
 	}
 )
 
-func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64,
-	maxScore uint, content, answer string,
-	variants, answers, keys, types []string, sectionType SectionType) (*Section, error) {
-	if sectionType == TextType {
+func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64, maxScore uint, content, answer string, variants, answers, keys, types []string, sectionType SectionType, url string) (*Section, error) {
+	if sectionType == TextType || sectionType == MediaType {
 		maxScore = 0
+		maxAttempts = sql.NullInt16{}
 	}
 	section := &Section{
 		DBModel:     DBModel{Id: uuid.New()},
@@ -70,6 +75,7 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64,
 		Keys:        keys,
 		FileTypes:   types,
 		MaxAttempts: maxAttempts,
+		Url:         sql.NullString{String: url, Valid: len(url) != 0},
 	}
 
 	shuffledAnswers := slices.Clone(answers)
@@ -88,6 +94,27 @@ func NewSection(maxAttempts sql.NullInt16, pageId uuid.UUID, order float64,
 	case TextType:
 	case CodeType:
 	case AnswerType:
+	case MediaType:
+		file, err := http.NewFileFromUrl(section.Url.String)
+		if err != nil {
+			return nil, err
+		}
+		Type := file.Type
+		isVideo := strings.HasPrefix(Type, "video")
+		isImage := strings.HasPrefix(Type, "image")
+		if Type != "iframe" && !isVideo && !isImage {
+			return nil, errors.New("ссылка может быть только iframe или с content-type image или video")
+		}
+
+		section.File = &File{
+			Url:  file.Url,
+			Type: file.Type,
+			Name: file.Name,
+			Size: file.Size,
+		}
+
+		section.Url = sql.NullString{String: section.File.Url, Valid: true}
+
 	default:
 		return nil, errors.New("не удалось создать секцию")
 	}

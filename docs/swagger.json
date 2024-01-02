@@ -1821,6 +1821,17 @@
                 }
             }
         },
+        "create.MediaSection": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "create.Module": {
             "type": "object",
             "required": [
@@ -1989,6 +2000,9 @@
                     "maximum": 300,
                     "minimum": 0
                 },
+                "media": {
+                    "$ref": "#/definitions/create.MediaSection"
+                },
                 "multichoice": {
                     "$ref": "#/definitions/create.MultiChoiceSection"
                 },
@@ -2099,7 +2113,8 @@
                 "code",
                 "permutation",
                 "mapping",
-                "file"
+                "file",
+                "media"
             ],
             "x-enum-varnames": [
                 "ChoiceType",
@@ -2110,7 +2125,8 @@
                 "CodeType",
                 "PermutationType",
                 "MappingType",
-                "FileType"
+                "FileType",
+                "MediaType"
             ]
         },
         "internal_httpserver_handlers_answer_internal_create.AnswerSection": {
@@ -2278,6 +2294,9 @@
                 },
                 "sizeInKiB": {
                     "type": "number"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -2833,6 +2852,17 @@
                 }
             }
         },
+        "update.MediaSection": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "update.Module": {
             "type": "object",
             "required": [
@@ -2920,6 +2950,9 @@
                     "type": "integer",
                     "maximum": 300,
                     "minimum": 0
+                },
+                "media": {
+                    "$ref": "#/definitions/update.MediaSection"
                 },
                 "multichoice": {
                     "$ref": "#/definitions/update.MultiChoiceSection"

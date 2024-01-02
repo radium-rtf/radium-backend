@@ -70,6 +70,7 @@ func NewSection(section *entity.Section, answer *entity.Answer, attempts int) *S
 		file      *File
 	)
 
+	file = NewFile(section.File)
 	if answer != nil {
 		verdict = answer.Verdict
 		score = answer.Score(section)
