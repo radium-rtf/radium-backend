@@ -8,19 +8,16 @@ import (
 )
 
 const (
-	passwordMinLength = 8
-	passwordMaxLength = 32
-	passwordMinChar   = 1
-	passwordMinDigit  = 1
-	passwordMinSymbol = 1
+	passwordMinLength   = 8
+	passwordMaxLength   = 32
+	passwordMinDigit    = 1
+	passwordMinNonDigit = 1
 )
 
 var (
-	lengthRegexp    = regexp.MustCompile(fmt.Sprintf(`^.{%d,%d}$`, passwordMinLength, passwordMaxLength))
-	lowerCaseRegexp = regexp.MustCompile(fmt.Sprintf(`[a-z]{%d,}`, passwordMinChar))
-	upperCaseRegexp = regexp.MustCompile(fmt.Sprintf(`[A-Z]{%d,}`, passwordMinChar))
-	digitRegexp     = regexp.MustCompile(fmt.Sprintf(`[0-9]{%d,}`, passwordMinDigit))
-	symbolRegexp    = regexp.MustCompile(fmt.Sprintf(`[^A-Za-z0-9]{%d,}`, passwordMinSymbol))
+	lengthRegexp   = regexp.MustCompile(fmt.Sprintf(`^.{%d,%d}$`, passwordMinLength, passwordMaxLength))
+	digitRegexp    = regexp.MustCompile(fmt.Sprintf(`[0-9]{%d,}`, passwordMinDigit))
+	nonDigitRegexp = regexp.MustCompile(fmt.Sprintf(`[^0-9]{%d,}`, passwordMinNonDigit))
 )
 
 func (v *validate) passwordValidate(fl validator.FieldLevel) bool {
@@ -36,15 +33,13 @@ func (v *validate) passwordValidate(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	lowerCaseMatch := lowerCaseRegexp.MatchString(fieldValue)
-	upperCaseMatch := upperCaseRegexp.MatchString(fieldValue)
-	if !lowerCaseMatch && !upperCaseMatch {
-		v.passwdErr = fmt.Errorf("field %s must contain at least %d (lower/upper)case letter(s)", fl.FieldName(), passwordMinChar)
+	if ok := digitRegexp.MatchString(fieldValue); !ok {
+		v.passwdErr = fmt.Errorf("field %s must contain at least %d digit letter(s)", fl.FieldName(), passwordMinDigit)
 		return false
 	}
 
-	if ok := digitRegexp.MatchString(fieldValue); !ok {
-		v.passwdErr = fmt.Errorf("field %s must contain at least %d digit(s)", fl.FieldName(), passwordMinDigit)
+	if ok := nonDigitRegexp.MatchString(fieldValue); !ok {
+		v.passwdErr = fmt.Errorf("field %s must contain at least %d non-digit letter(s)", fl.FieldName(), passwordMinNonDigit)
 		return false
 	}
 
