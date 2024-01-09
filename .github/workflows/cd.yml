@@ -1,6 +1,8 @@
-name: Go package
+name: cd
 
-on: [push]
+on:
+  push:
+    branches: ["main"]
 
 env:
   HOST: radium@158.160.64.105
@@ -8,8 +10,7 @@ env:
   ENV_FILE_PATH: /home/radium/radium-backend/config.env
 
 jobs:
-  build:
-
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,9 +19,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.21.1'
-
-      - name: Test
-        run: go test -v ./...
 
       - name: Build
         run: go build -o radium ./cmd/app
