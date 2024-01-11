@@ -48,6 +48,7 @@ func TestPassword(t *testing.T) {
 		isErr    bool
 	}{
 		{"garad", "min length", true},
+		{"1abcde", "min length", false},
 		{"ewqdawara", "digits is required", true},
 		{"141241243", "non-digits is required", true},
 		{"dwadwda3141", "valid", false},

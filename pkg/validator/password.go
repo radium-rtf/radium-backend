@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	passwordMinLength   = 8
+	passwordMinLength   = 6
 	passwordMaxLength   = 32
 	passwordMinDigit    = 1
 	passwordMinNonDigit = 1
