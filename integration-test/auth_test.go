@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestSignIn(t *testing.T) {
+func TestAuth(t *testing.T) {
 	e := httpexpect.Default(t, basePath)
 	tokens := signIn(e)
 	if t.Failed() {
