@@ -5,6 +5,7 @@ services:
   server:
     container_name: server
     build:
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -38,6 +39,15 @@ services:
     ports:
       - "5432:5432"
     restart: "always"
+
+  integration:
+    build:
+      context: .
+      dockerfile: integration-test/Dockerfile
+    container_name: integration
+    image: integration
+    depends_on:
+      - server
 
 volumes:
   radium_pg:

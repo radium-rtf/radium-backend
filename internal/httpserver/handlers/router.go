@@ -39,6 +39,10 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 	h.Use(middleware.RequestID)
 	h.Use(newHandlerLogger(log))
 
+	h.Get("/healthz", func(writer http.ResponseWriter, request *http.Request) {
+		writer.WriteHeader(http.StatusOK)
+	})
+
 	h.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 	h.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Add("Location", "/swagger/index.html")

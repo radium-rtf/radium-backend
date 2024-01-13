@@ -26,6 +26,7 @@ func newHandlerLogger(log *httplog.Logger) func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			for _, path := range paths {
 				if strings.Contains(request.URL.Path, path) {
+					next.ServeHTTP(writer, request)
 					return
 				}
 			}
