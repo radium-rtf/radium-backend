@@ -6,6 +6,10 @@ on:
       - synchronize
       - opened
 
+  push:
+    branches-ignore:
+      - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
