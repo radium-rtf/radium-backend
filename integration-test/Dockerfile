@@ -12,5 +12,7 @@ RUN go env -w CGO_ENABLED=0
 RUN go env -w GOOS=linux
 RUN go env -w GOARCH=amd64
 
+ENV CONFIG_PATH=/config/config.yml
+
 COPY /config /config
 CMD ["go", "test", "-v", "./integration-test/..."]
