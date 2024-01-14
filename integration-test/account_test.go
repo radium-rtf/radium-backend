@@ -11,7 +11,7 @@ import (
 func TestAccount(t *testing.T) {
 	e := httpexpect.Default(t, basePath)
 	tokens := signIn(e)
-	if !t.Failed() {
+	if t.Failed() {
 		return
 	}
 
