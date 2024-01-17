@@ -2814,6 +2814,10 @@ const docTemplate = `{
                 "shortDescription": {
                     "type": "string",
                     "maxLength": 400
+                },
+                "slug": {
+                    "type": "string",
+                    "maxLength": 11
                 }
             }
         },
