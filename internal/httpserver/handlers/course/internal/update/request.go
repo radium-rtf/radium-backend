@@ -11,6 +11,7 @@ type Course struct {
 	Description      string `json:"description" validate:"max=3000"`
 	Logo             string `json:"logo" validate:"url"`
 	Banner           string `json:"banner" validate:"url"`
+	Slug             string `json:"slug,omitempty" validate:"max=11"`
 }
 
 func (c Course) toCourse(id uuid.UUID) *entity.Course {
@@ -21,5 +22,6 @@ func (c Course) toCourse(id uuid.UUID) *entity.Course {
 		Description:      c.Description,
 		Logo:             c.Logo,
 		Banner:           c.Banner,
+		Slug:             c.Slug,
 	}
 }

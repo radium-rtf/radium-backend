@@ -834,6 +834,9 @@ definitions:
       shortDescription:
         maxLength: 400
         type: string
+      slug:
+        maxLength: 11
+        type: string
     type: object
   update.FileSection:
     properties:

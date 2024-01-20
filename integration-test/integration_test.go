@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/radium-rtf/radium-backend/config"
 	"log"
 	"net/http"
@@ -14,6 +15,9 @@ var (
 	healthPath string
 	basePath   string
 
+	userEmail    string
+	userPassword string
+
 	attempts = 20
 )
 
@@ -21,9 +25,12 @@ var (
 func TestMain(m *testing.M) {
 	cfg := config.MustConfig().HTTP
 
+	userEmail = "test.test.test@urfu.me"
+	userPassword = "passworD!123"
+
 	host = "server:" + cfg.Port
 	healthPath = "http://" + host + "/healthz"
-	basePath = "http://" + host + "/"
+	basePath = "http://" + host
 
 	err := healthCheck(attempts)
 	if err != nil {
@@ -44,15 +51,24 @@ func healthCheck(attempts int) error {
 
 	for attempts > 0 {
 		resp, err = http.Get(healthPath)
-		if err == nil && resp.StatusCode == http.StatusOK {
-			return nil
+		if err == nil {
+			break
 		}
-		log.Printf("Integration tests: url %s is not available, attempts left: %d", healthPath, attempts)
+		if attempts%3 == 0 {
+			log.Printf("Integration tests: url %s is not available, attempts left: %d", healthPath, attempts)
+		}
 
 		time.Sleep(time.Second * 2)
-
 		attempts--
 	}
 
-	return err
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+	return errors.New("")
 }
