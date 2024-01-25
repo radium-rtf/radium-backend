@@ -47,7 +47,7 @@ func (r Module) Update(ctx context.Context, module *entity.Module) (*entity.Modu
 
 	n, _ := info.RowsAffected()
 	if n == 0 {
-		return nil, repoerr.ModuleNotFound
+		return nil, repoerr.NotFound
 	}
 	return r.GetById(ctx, module.Id)
 }
@@ -65,7 +65,7 @@ func (r Module) GetById(ctx context.Context, id uuid.UUID) (*entity.Module, erro
 		}).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return module, repoerr.ModuleNotFound
+		return module, repoerr.NotFound
 	}
 	return module, err
 }
@@ -80,7 +80,7 @@ func (r Module) GetCourseByModuleId(ctx context.Context, id uuid.UUID) (*entity.
 		Relation("Course.Coauthors").
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.ModuleNotFound
+		return nil, repoerr.NotFound
 	}
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (r Module) GetLastModule(ctx context.Context, courseId uuid.UUID) (*entity.
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.ModuleNotFound
+		return nil, repoerr.NotFound
 	}
 	return module, err
 }

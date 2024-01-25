@@ -30,12 +30,12 @@ func (uc SectionUseCase) Create(ctx context.Context, section *entity.Section, ed
 	}
 
 	last, err := uc.section.GetLastSection(ctx, section.PageId)
-	if err != nil && !errors.Is(err, repoerr.SectionNotFound) {
+	if err != nil && !errors.Is(err, repoerr.NotFound) {
 		return nil, err
 	}
 
 	section.Order = 1
-	if !errors.Is(err, repoerr.SectionNotFound) {
+	if !errors.Is(err, repoerr.NotFound) {
 		section.Order = last.Order + 1
 	}
 

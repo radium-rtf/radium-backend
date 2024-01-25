@@ -36,7 +36,7 @@ func (r Session) Update(ctx context.Context, refreshToken uuid.UUID, expiresIn t
 
 	rowsAffected, _ := exec.RowsAffected()
 	if rowsAffected == 0 {
-		return repoerr.SessionNotFound
+		return repoerr.NotFound
 	}
 	return err
 }

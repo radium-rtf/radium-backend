@@ -41,7 +41,7 @@ func (r Section) GetById(ctx context.Context, id uuid.UUID) (*entity.Section, er
 	var section = new(entity.Section)
 	err := r.db.NewSelect().Model(section).Where("id = ?", id).Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.SectionNotFound
+		return nil, repoerr.NotFound
 	}
 	return section, err
 }
@@ -82,7 +82,7 @@ func (r Section) Update(ctx context.Context, section *entity.Section) (*entity.S
 
 		n, _ := info.RowsAffected()
 		if n == 0 {
-			return repoerr.SectionNotFound
+			return repoerr.NotFound
 		}
 
 		if section.Answer == "" && section.Answers == nil {
@@ -123,7 +123,7 @@ func (r Section) GetCourseBySectionId(ctx context.Context, id uuid.UUID) (*entit
 		Relation("Page.Module.Course.Coauthors").
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.SectionNotFound
+		return nil, repoerr.NotFound
 	}
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (r Section) GetLastSection(ctx context.Context, pageId uuid.UUID) (*entity.
 		Scan(ctx)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repoerr.SectionNotFound
+		return nil, repoerr.NotFound
 	}
 	return section, err
 }

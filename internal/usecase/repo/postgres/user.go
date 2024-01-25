@@ -51,7 +51,7 @@ func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) 
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, repoerr.UserNotFound
+		return nil, repoerr.NotFound
 	}
 	return user, err
 }
@@ -82,7 +82,7 @@ func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, repoerr.UserNotFound
+		return nil, repoerr.NotFound
 	}
 	return user, err
 }
@@ -101,7 +101,7 @@ func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity.User, er
 		Where("id in (?)", bun.In(ids)).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, repoerr.UserNotFound
+		return nil, repoerr.NotFound
 	}
 	return users, err
 }
@@ -122,7 +122,7 @@ func (r User) GetByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*e
 		return nil, repoerr.SessionIsExpired
 	}
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, repoerr.SessionNotFound
+		return nil, repoerr.NotFound
 	}
 
 	return session.User, err
@@ -140,7 +140,7 @@ func (r User) updateColumn(ctx context.Context, value columnValue, where columnV
 
 	rowsAffected, _ := exec.RowsAffected()
 	if rowsAffected == 0 {
-		return repoerr.UserNotFound
+		return repoerr.NotFound
 	}
 	return err
 }
@@ -163,7 +163,7 @@ func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, erro
 
 	rowsAffected, _ := exec.RowsAffected()
 	if rowsAffected == 0 {
-		return nil, repoerr.UserNotFound
+		return nil, repoerr.NotFound
 	}
 
 	return r.GetById(ctx, user.Id)
@@ -182,7 +182,7 @@ func (r User) GetUnverifiedUser(ctx context.Context, email, verificationCode str
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, repoerr.UserNotFound
+		return nil, repoerr.NotFound
 	}
 	return user, err
 }

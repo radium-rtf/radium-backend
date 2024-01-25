@@ -29,12 +29,12 @@ func (uc ModuleUseCase) Create(ctx context.Context, module *entity.Module, edito
 	}
 
 	last, err := uc.module.GetLastModule(ctx, module.CourseId)
-	if err != nil && !errors.Is(err, repoerr.ModuleNotFound) {
+	if err != nil && !errors.Is(err, repoerr.NotFound) {
 		return nil, err
 	}
 
 	module.Order = 1
-	if !errors.Is(err, repoerr.ModuleNotFound) {
+	if !errors.Is(err, repoerr.NotFound) {
 		module.Order = last.Order + 1
 	}
 
