@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/lib/decode"
+	"github.com/radium-rtf/radium-backend/pkg/decode"
 	"net/http"
 )
 

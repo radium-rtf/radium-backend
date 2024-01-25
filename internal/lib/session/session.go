@@ -3,8 +3,8 @@ package session
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
+	"github.com/radium-rtf/radium-backend/internal/lib/auth"
 	"github.com/radium-rtf/radium-backend/internal/model"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"time"
 )
 

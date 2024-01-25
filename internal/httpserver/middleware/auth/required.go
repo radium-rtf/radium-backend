@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 	"github.com/go-chi/httplog/v2"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
+	"github.com/radium-rtf/radium-backend/internal/lib/auth"
 	"log/slog"
 	"net/http"
 	"strings"

@@ -1,7 +1,7 @@
 package role
 
 import (
-	"github.com/radium-rtf/radium-backend/pkg/auth"
+	"github.com/radium-rtf/radium-backend/internal/lib/auth"
 	"net/http"
 	"strings"
 )

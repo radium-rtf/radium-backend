@@ -3,8 +3,8 @@ package postcoauthor
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/lib/decode"
 	"github.com/radium-rtf/radium-backend/internal/lib/resp"
+	"github.com/radium-rtf/radium-backend/pkg/decode"
 	"net/http"
 	"strings"
 )

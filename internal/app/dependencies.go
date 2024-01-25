@@ -2,10 +2,10 @@ package app
 
 import (
 	"github.com/radium-rtf/radium-backend/config"
+	"github.com/radium-rtf/radium-backend/internal/lib/auth"
 	"github.com/radium-rtf/radium-backend/internal/lib/session"
 	"github.com/radium-rtf/radium-backend/internal/usecase"
 	pg "github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
-	"github.com/radium-rtf/radium-backend/pkg/auth"
 	"github.com/radium-rtf/radium-backend/pkg/email"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
