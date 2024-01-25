@@ -10,7 +10,6 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/email"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
-	"github.com/radium-rtf/radium-backend/pkg/otp"
 	"github.com/radium-rtf/radium-backend/pkg/str"
 	"time"
 )
@@ -20,20 +19,17 @@ type AuthUseCase struct {
 	sessionRepo            postgres.Session
 	hasher                 hash.Hasher
 	session                session.Session
-	otpGenerator           otp.Generator
 	emailSender            *email.SMTPSender
 	lengthVerificationCode int
 }
 
 func NewAuthUseCase(userRepo postgres.User, sessionRepo postgres.Session,
 	hasher hash.Hasher, session session.Session, smtp *email.SMTPSender, lengthVerificationCode int) AuthUseCase {
-	otpGenerator := otp.NewOTPGenerator()
 	return AuthUseCase{
 		user:                   userRepo,
 		sessionRepo:            sessionRepo,
 		hasher:                 hasher,
 		session:                session,
-		otpGenerator:           otpGenerator,
 		emailSender:            smtp,
 		lengthVerificationCode: lengthVerificationCode,
 	}

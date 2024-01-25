@@ -3,7 +3,7 @@ package create
 import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
-	"github.com/radium-rtf/radium-backend/pkg/otp"
+	"github.com/radium-rtf/radium-backend/pkg/str"
 )
 
 type Group struct {
@@ -26,7 +26,7 @@ func (r Group) toGroup() *entity.Group {
 	return &entity.Group{
 		DBModel:    entity.DBModel{Id: uuid.New()},
 		Name:       r.Name,
-		InviteCode: otp.NewOTPGenerator().RandomSecret(10),
+		InviteCode: str.Random(10),
 		Students:   students,
 		Courses:    courses,
 	}

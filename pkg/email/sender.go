@@ -3,7 +3,6 @@ package email
 import (
 	"errors"
 	"fmt"
-	"github.com/radium-rtf/radium-backend/pkg/otp"
 
 	"github.com/go-gomail/gomail"
 )
@@ -13,7 +12,6 @@ type SMTPSender struct {
 	bodyGenerator          emailBodyGenerator
 	verificationCodeLength int
 	isAvailable            bool
-	otp                    *otp.OTPGenerator
 	from                   string
 }
 
@@ -25,7 +23,6 @@ func NewSMTPSender(username, pass, host string, port int,
 		dialer:                 dialer,
 		isAvailable:            true,
 		verificationCodeLength: verificationCodeLength,
-		otp:                    otp.NewOTPGenerator(),
 		from:                   from,
 	}
 }
