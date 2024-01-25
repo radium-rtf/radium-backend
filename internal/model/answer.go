@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/entity"
 	"github.com/radium-rtf/radium-backend/internal/lib/answer/verdict"
-	"slices"
 	"sort"
 	"time"
 )
@@ -40,15 +39,21 @@ type (
 )
 
 func NewUserAnswers(students []*entity.User) []*UserAnswers {
+	// TODO: фильтровать лучше в базе
 	var userAnswers = make([]*UserAnswers, 0, len(students))
 
 	for _, student := range students {
 
-		withoutReview := slices.IndexFunc(student.Answers, func(answer *entity.Answer) bool {
-			return answer.Review != nil
-		})
-		if withoutReview == -1 {
-			withoutReview = len(student.Answers)
+		withoutReview := 0
+		set := make(map[uuid.UUID]bool)
+		for _, answer := range student.Answers {
+			if answer.Review != nil {
+				continue
+			}
+			if !set[answer.SectionId] {
+				withoutReview += 1
+				set[answer.SectionId] = true
+			}
 		}
 
 		reviewed := make(map[uuid.UUID]*entity.Answer, len(student.Answers))
@@ -61,14 +66,14 @@ func NewUserAnswers(students []*entity.User) []*UserAnswers {
 		}
 
 		studentAnswers := make([]*entity.Answer, 0, len(student.Answers))
-		setAnswers := make(map[uuid.UUID]bool, len(student.Answers))
-		setReviewedAnswers := make(map[uuid.UUID]bool, len(student.Answers))
+		answersSet := make(map[uuid.UUID]bool, len(student.Answers))
+		reviewedAnswersSet := make(map[uuid.UUID]bool, len(student.Answers))
 		withoutReview = 0
 		for _, answer := range student.Answers {
 			_, isReviewed := reviewed[answer.SectionId]
 
-			if !setReviewedAnswers[answer.SectionId] && answer.Review != nil {
-				setReviewedAnswers[answer.SectionId] = true
+			if !reviewedAnswersSet[answer.SectionId] && answer.Review != nil {
+				reviewedAnswersSet[answer.SectionId] = true
 				studentAnswers = append(studentAnswers, answer)
 				continue
 			}
@@ -77,14 +82,14 @@ func NewUserAnswers(students []*entity.User) []*UserAnswers {
 				continue
 			}
 
-			if setAnswers[answer.SectionId] {
+			if answersSet[answer.SectionId] {
 				continue
 			}
 
 			if answer.Review == nil {
 				withoutReview += 1
 			}
-			setAnswers[answer.SectionId] = true
+			answersSet[answer.SectionId] = true
 			studentAnswers = append(studentAnswers, answer)
 		}
 

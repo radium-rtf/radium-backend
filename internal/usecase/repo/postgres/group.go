@@ -117,7 +117,7 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.
 				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds).
-				Order("answer.created_at desc")
+				OrderExpr("answer.created_at desc", "answer.verdict = 'REVIEWED'")
 		}).
 		Relation("Students.Answers.Section").
 		Relation("Students.Answers.Review", func(query *bun.SelectQuery) *bun.SelectQuery {
