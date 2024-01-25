@@ -32,7 +32,7 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		recommendations, err := getter.GetRecommendations(ctx, userId, 10)
+		recommendations, err := getter.GetRecommendations(ctx, userId, 30)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, err.Error())
