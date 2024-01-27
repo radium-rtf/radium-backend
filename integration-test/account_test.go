@@ -9,19 +9,10 @@ import (
 )
 
 func TestAccount(t *testing.T) {
-	e := httpexpect.Default(t, basePath)
-	tokens := signIn(e)
-	if t.Failed() {
-		return
-	}
-
-	auth := e.Builder(func(request *httpexpect.Request) {
-		request.WithHeader("Authorization", "Bearer "+tokens.AccessToken)
-	})
-
-	getAccount(auth)
-	updateAccount(t, auth)
-	getAccountCourses(auth)
+	e := newHttpExpectWithAuth(t)
+	getAccount(e)
+	updateAccount(t, e)
+	getAccountCourses(e)
 }
 
 func getAccount(e *httpexpect.Expect) *model.User {

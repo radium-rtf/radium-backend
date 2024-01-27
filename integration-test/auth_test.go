@@ -51,3 +51,15 @@ func refresh(e *httpexpect.Expect, tokens *model.Tokens) {
 		JSON().
 		Decode(&refreshTokens)
 }
+
+func newHttpExpectWithAuth(t *testing.T) *httpexpect.Expect {
+	e := httpexpect.Default(t, basePath)
+	tokens := signIn(e)
+	if t.Failed() {
+		return nil
+	}
+	auth := e.Builder(func(request *httpexpect.Request) {
+		request.WithHeader("Authorization", "Bearer "+tokens.AccessToken)
+	})
+	return auth
+}

@@ -59,6 +59,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 		MaxScore:         maxScore,
 		Score:            score,
 		Modules:          modules,
+		Groups:           NewGroups(course.Groups),
 	}
 }
 

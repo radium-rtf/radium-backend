@@ -80,6 +80,7 @@ func (r Course) GetFullBySlug(ctx context.Context, slug string) (*entity.Course,
 func (r Course) getFull(ctx context.Context, where columnValue) (*entity.Course, error) {
 	var course = new(entity.Course)
 	err := r.getFullCourseQuery(course).
+		Relation("Groups").
 		Where(where.column+" = ?", where.value).
 		Scan(ctx)
 	return course, err
