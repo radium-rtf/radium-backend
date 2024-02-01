@@ -1,42 +1,42 @@
 package app
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/radium-rtf/radium-backend/config"
 	_ "github.com/radium-rtf/radium-backend/docs"
-	"github.com/radium-rtf/radium-backend/pkg/filestorage"
+	radium "github.com/radium-rtf/radium-backend/internal/radium/app"
+	wave "github.com/radium-rtf/radium-backend/internal/wave/app"
+	"log"
+	"sync"
 )
+
+type Runner interface {
+	Run() error
+}
 
 func Run(cfg *config.Config) {
 	db, err := openDB(cfg.PG)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer db.Close()
 
-	storage := filestorage.New(cfg.Storage)
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-	dependencies := newDependencies(storage, cfg, db)
+	radiumApp := radium.NewApp(cfg, db)
+	waveApp := wave.NewApp(cfg, db)
 
-	httpServer := startHttpServer(cfg.HTTP, dependencies)
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
-
-	select {
-	case s := <-interrupt:
-		log.Println("app - Run - signal: " + s.String())
-	case err = <-httpServer.Notify():
-		log.Println(fmt.Errorf("app - Run - httpServer.Notify: %w", err))
+	runners := []Runner{radiumApp, waveApp}
+	for _, runner := range runners {
+		runner := runner
+		go func() {
+			defer wg.Done()
+			err := runner.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 	}
 
-	err = httpServer.Shutdown()
-	if err != nil {
-		log.Println(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err))
-	}
+	wg.Wait()
 }

@@ -1,0 +1,102 @@
+package model
+
+import (
+	"github.com/google/uuid"
+	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	"github.com/radium-rtf/radium-backend/internal/radium/lib/answer/verdict"
+)
+
+type (
+	Section struct {
+		Id          uuid.UUID           `json:"id"`
+		PageId      uuid.UUID           `json:"pageId"`
+		Order       float64             `json:"order"`
+		Type        entity2.SectionType `json:"type" enums:"choice,multiChoice,text,shortAnswer,answer,code"`
+		Score       uint                `json:"score"`
+		Answer      string              `json:"answer"`
+		Answers     []string            `json:"answers" swaggertype:"array,string"`
+		Content     string              `json:"content"`
+		MaxScore    uint                `json:"maxScore"`
+		Variants    []string            `json:"variants"`
+		Verdict     verdict.Type        `json:"verdict" enums:"OK,WA,WAIT,"`
+		Keys        []string            `json:"keys"`
+		Review      *Review             `json:"review"`
+		Attempts    int                 `json:"attempts"`
+		MaxAttempts int                 `json:"maxAttempts"`
+		FileTypes   []string            `json:"fileTypes"`
+		File        *File               `json:"file"`
+	}
+)
+
+func NewSections(sections []*entity2.Section, answers map[uuid.UUID][]*entity2.Answer) ([]*Section, uint, uint) {
+	dtos := make([]*Section, 0, len(sections))
+	var sumMaxScore, sumScore uint = 0, 0
+
+	for _, section := range sections {
+		var (
+			attempts = int(section.MaxAttempts.Int16)
+			answer   *entity2.Answer
+			score    uint
+		)
+
+		sectionAnswers := section.UsersAnswers
+		if _, ok := answers[section.Id]; len(sectionAnswers) < 1 && ok {
+			sectionAnswers = answers[section.Id]
+		}
+
+		if len(sectionAnswers) >= 1 {
+			answer = sectionAnswers[0]
+			attempts = max(int(section.MaxAttempts.Int16)-len(sectionAnswers), 0)
+			score = answer.Score(section)
+		}
+
+		sumMaxScore += section.GetMaxScore()
+		sumScore += score
+
+		dto := NewSection(section, answer, attempts)
+		dtos = append(dtos, dto)
+	}
+
+	return dtos, sumScore, sumMaxScore
+}
+
+func NewSection(section *entity2.Section, answer *entity2.Answer, attempts int) *Section {
+	var (
+		verdict   = verdict.EMPTY
+		score     = uint(0)
+		answerStr = ""
+		answers   []string
+		review    *Review
+		file      *File
+	)
+
+	file = NewFile(section.File)
+	if answer != nil {
+		verdict = answer.Verdict
+		score = answer.Score(section)
+		answerStr = answer.Answer
+		answers = answer.Answers
+		review = NewReview(answer.Review)
+		file = NewFile(answer.File)
+	}
+
+	return &Section{
+		Id:          section.Id,
+		PageId:      section.PageId,
+		Order:       section.Order,
+		Content:     section.Content,
+		MaxScore:    section.GetMaxScore(),
+		Verdict:     verdict,
+		Variants:    section.GetVariants(),
+		Type:        section.Type,
+		Score:       score,
+		Answers:     answers,
+		Answer:      answerStr,
+		Keys:        section.Keys,
+		Attempts:    attempts,
+		Review:      review,
+		FileTypes:   section.FileTypes,
+		File:        file,
+		MaxAttempts: int(section.MaxAttempts.Int16),
+	}
+}
