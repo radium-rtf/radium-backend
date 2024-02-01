@@ -1,4 +1,4 @@
-package main
+package radium
 
 import (
 	"reflect"

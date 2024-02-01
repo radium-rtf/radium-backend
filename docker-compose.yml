@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      - "8081:8081"
     depends_on:
       - minio
       - postgres
@@ -40,12 +41,21 @@ services:
       - "5432:5432"
     restart: "always"
 
-  integration:
+  integration-radium:
     build:
       context: .
-      dockerfile: integration-test/Dockerfile
+      dockerfile: integration-test/radium/Dockerfile
     container_name: integration
-    image: integration
+    image: integration-radium
+    depends_on:
+      - server
+
+  integration-wave:
+    build:
+      context: .
+      dockerfile: integration-test/wave/Dockerfile
+    container_name: integration-wave
+    image: integration-wave
     depends_on:
       - server
 

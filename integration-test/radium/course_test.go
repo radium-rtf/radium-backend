@@ -1,9 +1,9 @@
-package main
+package radium
 
 import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gavv/httpexpect/v2"
-	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"net/http"
 	"reflect"
 	"testing"

@@ -1,4 +1,4 @@
-package main
+package radium
 
 import (
 	"errors"
@@ -15,18 +15,12 @@ var (
 	healthPath string
 	basePath   string
 
-	userEmail    string
-	userPassword string
-
 	attempts = 20
 )
 
 //goland:noinspection HttpUrlsUsage
 func TestMain(m *testing.M) {
-	cfg := config.MustConfig().HTTP
-
-	userEmail = "test.test.test@urfu.me"
-	userPassword = "passworD!123"
+	cfg := config.MustConfig().Radium.HTTP
 
 	host = "server:" + cfg.Port
 	healthPath = "http://" + host + "/healthz"
