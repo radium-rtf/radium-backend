@@ -1,6 +1,10 @@
-swag:
-	swag init -g ./internal/httpserver/handlers/router.go
-.PHONY: swag
+swag radium:
+	swag init -g ./httpserver/handlers/router.go --instanceName radium -dir ./internal/radium --output ./docs/radium
+.PHONY: swag radium
+
+swag wave:
+	swag init -g ./httpserver/handlers/router.go --instanceName wave -dir ./internal/wave --output ./docs/wave
+.PHONY: swag wave
 
 migrate-create:
 	go run ./cmd/migrate db create_sql "$(name)"

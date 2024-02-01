@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
+	_ "github.com/radium-rtf/radium-backend/docs/radium"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/account"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/answer"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/auth"
@@ -43,11 +44,19 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 		writer.WriteHeader(http.StatusOK)
 	})
 
-	h.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
-	h.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Add("Location", "/swagger/index.html")
-		writer.WriteHeader(http.StatusPermanentRedirect)
-	})
+	swaggerHandler := httpSwagger.Handler(
+		httpSwagger.URL("/radium/doc.json"),
+		httpSwagger.InstanceName("radium"),
+		httpSwagger.Layout(httpSwagger.BaseLayout))
+
+	h.Get("/radium/*", swaggerHandler)
+
+	for _, pattern := range []string{"/", "/swagger/*"} {
+		h.Get(pattern, func(writer http.ResponseWriter, request *http.Request) {
+			writer.Header().Add("Location", "/radium/index.html")
+			writer.WriteHeader(http.StatusTemporaryRedirect)
+		})
+	}
 
 	h.Group(func(r chi.Router) {
 		routes(r, useCases)

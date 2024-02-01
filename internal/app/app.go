@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/radium-rtf/radium-backend/config"
-	_ "github.com/radium-rtf/radium-backend/docs"
 	radium "github.com/radium-rtf/radium-backend/internal/radium/app"
 	wave "github.com/radium-rtf/radium-backend/internal/wave/app"
 	"log"

@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/radium-rtf/radium-backend/config"
-	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers"
-	"github.com/radium-rtf/radium-backend/internal/radium/usecase"
+	"github.com/radium-rtf/radium-backend/internal/wave/httpserver/handlers"
+	"github.com/radium-rtf/radium-backend/internal/wave/usecase"
 	"github.com/radium-rtf/radium-backend/pkg/httpserver"
 )
 

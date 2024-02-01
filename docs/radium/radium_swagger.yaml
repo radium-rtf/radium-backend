@@ -27,7 +27,7 @@ definitions:
   create.Answer:
     properties:
       answer:
-        $ref: '#/definitions/internal_httpserver_handlers_answer_internal_create.AnswerSection'
+        $ref: '#/definitions/httpserver_handlers_answer_internal_create.AnswerSection'
       choice:
         $ref: '#/definitions/create.Choice'
       code:
@@ -278,7 +278,7 @@ definitions:
   create.Section:
     properties:
       answer:
-        $ref: '#/definitions/internal_httpserver_handlers_section_internal_create.AnswerSection'
+        $ref: '#/definitions/httpserver_handlers_section_internal_create.AnswerSection'
       choice:
         $ref: '#/definitions/create.ChoiceSection'
       code:
@@ -387,24 +387,24 @@ definitions:
     - MappingType
     - FileType
     - MediaType
-  internal_httpserver_handlers_answer_internal_create.AnswerSection:
+  httpserver_handlers_answer_internal_create.AnswerSection:
     properties:
       answer:
         type: string
     type: object
-  internal_httpserver_handlers_module_internal_order.Order:
+  httpserver_handlers_module_internal_order.Order:
     properties:
       order:
         minimum: 1
         type: integer
     type: object
-  internal_httpserver_handlers_page_internal_order.Order:
+  httpserver_handlers_page_internal_order.Order:
     properties:
       order:
         minimum: 1
         type: integer
     type: object
-  internal_httpserver_handlers_section_internal_create.AnswerSection:
+  httpserver_handlers_section_internal_create.AnswerSection:
     properties:
       question:
         maxLength: 3000
@@ -412,7 +412,7 @@ definitions:
     required:
     - question
     type: object
-  internal_httpserver_handlers_section_internal_order.Order:
+  httpserver_handlers_section_internal_order.Order:
     properties:
       order:
         minimum: 1
@@ -1523,7 +1523,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_module_internal_order.Order'
+          $ref: '#/definitions/httpserver_handlers_module_internal_order.Order'
       responses:
         "200":
           description: ' '
@@ -1626,7 +1626,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_page_internal_order.Order'
+          $ref: '#/definitions/httpserver_handlers_page_internal_order.Order'
       responses:
         "200":
           description: ' '
@@ -1869,7 +1869,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_httpserver_handlers_section_internal_order.Order'
+          $ref: '#/definitions/httpserver_handlers_section_internal_order.Order'
       responses:
         "200":
           description: ' '

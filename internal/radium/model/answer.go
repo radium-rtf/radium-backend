@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/lib/answer/verdict"
 	"sort"
 	"time"
@@ -13,8 +13,8 @@ type (
 		Id      uuid.UUID `json:"id"`
 		Section *Section  `json:"section"`
 
-		Type    entity2.SectionType `json:"type"`
-		Verdict verdict.Type        `json:"verdict"`
+		Type    entity.SectionType `json:"type"`
+		Verdict verdict.Type       `json:"verdict"`
 
 		Answer  string   `json:"answer"`
 		Answers []string `json:"answers"`
@@ -38,7 +38,7 @@ type (
 	}
 )
 
-func NewUserAnswers(students []*entity2.User) []*UserAnswers {
+func NewUserAnswers(students []*entity.User) []*UserAnswers {
 	// TODO: фильтровать лучше в базе
 	var userAnswers = make([]*UserAnswers, 0, len(students))
 
@@ -56,7 +56,7 @@ func NewUserAnswers(students []*entity2.User) []*UserAnswers {
 			}
 		}
 
-		reviewed := make(map[uuid.UUID]*entity2.Answer, len(student.Answers))
+		reviewed := make(map[uuid.UUID]*entity.Answer, len(student.Answers))
 		for i := withoutReview; i < len(student.Answers); i++ {
 			answer := student.Answers[i]
 			if _, ok := reviewed[answer.SectionId]; ok {
@@ -65,7 +65,7 @@ func NewUserAnswers(students []*entity2.User) []*UserAnswers {
 			reviewed[answer.SectionId] = answer
 		}
 
-		studentAnswers := make([]*entity2.Answer, 0, len(student.Answers))
+		studentAnswers := make([]*entity.Answer, 0, len(student.Answers))
 		answersSet := make(map[uuid.UUID]bool, len(student.Answers))
 		reviewedAnswersSet := make(map[uuid.UUID]bool, len(student.Answers))
 		withoutReview = 0
@@ -108,7 +108,7 @@ func NewUserAnswers(students []*entity2.User) []*UserAnswers {
 	return userAnswers
 }
 
-func NewAnswers(answers []*entity2.Answer) []Answer {
+func NewAnswers(answers []*entity.Answer) []Answer {
 	var dtos = make([]Answer, 0, len(answers))
 
 	for _, answer := range answers {
@@ -122,7 +122,7 @@ func NewAnswers(answers []*entity2.Answer) []Answer {
 	return dtos
 }
 
-func NewAnswer(answer *entity2.Answer, attempts int) Answer {
+func NewAnswer(answer *entity.Answer, attempts int) Answer {
 	return Answer{
 		Id:      answer.Id,
 		Section: NewSection(answer.Section, answer, attempts),

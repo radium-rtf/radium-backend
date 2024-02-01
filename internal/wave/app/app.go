@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/radium-rtf/radium-backend/config"
-	_ "github.com/radium-rtf/radium-backend/docs"
+	_ "github.com/radium-rtf/radium-backend/docs/wave"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 )
 
