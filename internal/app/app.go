@@ -4,12 +4,13 @@ import (
 	"github.com/radium-rtf/radium-backend/config"
 	radium "github.com/radium-rtf/radium-backend/internal/radium/app"
 	wave "github.com/radium-rtf/radium-backend/internal/wave/app"
+	"github.com/radium-rtf/radium-backend/pkg/closer"
 	"log"
-	"sync"
 )
 
-type Runner interface {
+type app interface {
 	Run() error
+	Shutdown() error
 }
 
 func Run(cfg *config.Config) {
@@ -19,23 +20,29 @@ func Run(cfg *config.Config) {
 	}
 	defer db.Close()
 
-	var wg sync.WaitGroup
-	wg.Add(2)
-
 	radiumApp := radium.NewApp(cfg, db)
 	waveApp := wave.NewApp(cfg, db)
 
-	runners := []Runner{radiumApp, waveApp}
+	runners := []app{radiumApp, waveApp}
+
+	var closer = closer.New()
+	var notify = make(chan error, len(runners))
 	for _, runner := range runners {
 		runner := runner
 		go func() {
-			defer wg.Done()
 			err := runner.Run()
 			if err != nil {
-				log.Fatal(err)
+				notify <- err
 			}
 		}()
+		closer.Add(runner.Shutdown)
 	}
 
-	wg.Wait()
+	err = <-notify
+	log.Println(err)
+	for len(notify) != 0 {
+		err = <-notify
+		log.Println(err)
+	}
+	closer.Close()
 }

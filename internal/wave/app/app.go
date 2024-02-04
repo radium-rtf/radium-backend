@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"github.com/radium-rtf/radium-backend/pkg/httpserver"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -34,18 +35,18 @@ func (app App) Run() error {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
+	var err error
 	select {
 	case s := <-interrupt:
-		log.Println("wave - app - Run - signal: " + s.String())
-	case err := <-app.httpServer.Notify():
-		log.Println(fmt.Errorf("wave - app - Run - httpServer.Notify: %w", err))
+		err = errors.New("wave - app - Run - signal: " + s.String())
+	case err = <-app.httpServer.Notify():
+		err = fmt.Errorf("wave - app - Run - httpServer.Notify: %w", err)
 	}
 
-	err := app.shutdown()
 	return err
 }
 
-func (app App) shutdown() error {
+func (app App) Shutdown() error {
 	err := app.httpServer.Shutdown()
 	if err != nil {
 		log.Println(fmt.Errorf("wave - app - Run - httpServer.Shutdown: %w", err))
