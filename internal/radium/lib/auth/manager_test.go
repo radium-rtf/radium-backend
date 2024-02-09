@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/model"
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"

@@ -20,7 +20,7 @@ var (
 
 //goland:noinspection HttpUrlsUsage
 func TestMain(m *testing.M) {
-	cfg := config.MustConfig().Radium.HTTP
+	cfg := config.MustConfig().Wave.HTTP
 
 	host = "server:" + cfg.Port
 	healthPath = "http://" + host + "/healthz"
