@@ -46,8 +46,7 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 
 	swaggerHandler := httpSwagger.Handler(
 		httpSwagger.URL("/radium/doc.json"),
-		httpSwagger.InstanceName("radium"),
-		httpSwagger.Layout(httpSwagger.BaseLayout))
+		httpSwagger.InstanceName("radium"))
 
 	h.Get("/radium/*", swaggerHandler)
 
