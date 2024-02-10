@@ -33,8 +33,7 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 
 	swaggerHandler := httpSwagger.Handler(
 		httpSwagger.URL("/wave/doc.json"),
-		httpSwagger.InstanceName("wave"),
-		httpSwagger.Layout(httpSwagger.BaseLayout))
+		httpSwagger.InstanceName("wave"))
 	h.Get("/wave/*", swaggerHandler)
 
 	for _, pattern := range []string{"/", "/swagger/*"} {
