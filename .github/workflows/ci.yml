@@ -3,15 +3,11 @@ name: ci
 on:
   pull_request:
     types:
-      - synchronize
       - opened
-
-  push:
-    branches-ignore:
-      - main
+      - synchronize
 
 jobs:
-  test:
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,8 +20,36 @@ jobs:
       - name: Unit Test
         run: go test ./internal/... ./pkg/...
 
+  integration-test-radium:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.1'
+
       - name: Integration tests
         run: "docker-compose up \
           --build \
           --abort-on-container-exit \
-          --exit-code-from integration"
+          --exit-code-from integration-radium \
+          integration-radium"
+
+  integration-test-wave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.1'
+
+      - name: Integration tests
+        run: "docker-compose up \
+          --build \
+          --abort-on-container-exit \
+          --exit-code-from integration-wave \
+          integration-wave"

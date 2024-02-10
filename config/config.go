@@ -10,11 +10,21 @@ import (
 
 type (
 	Config struct {
-		HTTP    `yaml:"http"`
-		PG      `yaml:"postgres"`
-		Auth    `yaml:"auth"`
-		Storage `yaml:"storage"`
-		Smtp    `yaml:"smtp"`
+		Radium  Radium  `yaml:"radium" env-prefix:"radium"`
+		Wave    Wave    `yaml:"wave" env-prefix:"wave"`
+		PG      PG      `yaml:"postgres"`
+		Storage Storage `yaml:"storage"`
+		Smtp    Smtp    `yaml:"smtp"`
+		JWT     JWT
+	}
+
+	Radium struct {
+		HTTP HTTP `yaml:"http" env-prefix:"http"`
+		Auth Auth `yaml:"auth" env-prefix:"auth"`
+	}
+
+	Wave struct {
+		HTTP HTTP `yaml:"http" env-prefix:"http"`
 	}
 
 	HTTP struct {
@@ -34,11 +44,11 @@ type (
 	}
 
 	Auth struct {
-		SigningKey         string        `env:"JWT_SIGNING_KEY" env-default:"wdkadwadwakpklrbjb"`
-		PasswordSaltSha1   string        `env:"PASSWORD_SALT_SHA1" env-default:"ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ"`
-		PasswordCostBcrypt int           `env-required:"true" yaml:"password_cost_bcrypt"`
-		AccessTokenTTL     time.Duration `env-required:"true" yaml:"access_token_ttl"`
-		RefreshTokenTTL    time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
+		PasswordSaltSha1       string        `env:"PASSWORD_SALT_SHA1" env-default:"ГОД НАЗАД Я СИДЕЛ НА СКАМЕЙКЕ В ОБЩЕСТВЕННОМ ПАРКЕ"`
+		PasswordCostBcrypt     int           `env-required:"true" yaml:"password_cost_bcrypt"`
+		AccessTokenTTL         time.Duration `env-required:"true" yaml:"access_token_ttl"`
+		RefreshTokenTTL        time.Duration `env-required:"true" yaml:"refresh_token_ttl"`
+		LengthVerificationCode int           `env-required:"true" yaml:"length_verification_code"`
 	}
 
 	Storage struct {
@@ -50,13 +60,16 @@ type (
 	}
 
 	Smtp struct {
-		Host                   string `env-required:"true" yaml:"host" env:"SMTP_HOST"`
-		Port                   int    `env-required:"true" yaml:"port" env:"SMTP_PORT"`
-		LengthVerificationCode int    `env-required:"true" yaml:"length_verification_code"`
+		Host string `env-required:"true" yaml:"host" env:"SMTP_HOST"`
+		Port int    `env-required:"true" yaml:"port" env:"SMTP_PORT"`
 
 		Email    string `env:"SMTP_EMAIL" env-default:"wdkadwadwakpklrbjb@urfu.me"`
 		Password string `env:"SMTP_PASSWORD" env-default:"паыауыаыулажыдула"`
 		Username string `env:"SMTP_USERNAME" env-default:"noreply@khostya.online"`
+	}
+
+	JWT struct {
+		SigningKey string `env:"JWT_SIGNING_KEY" env-default:"wdkadwadwakpklrbjb"`
 	}
 )
 

@@ -1,20 +1,29 @@
-http:
-  port: "8080"
-  read_timeout: 5s
-  write_timeout: 5s
-  idle_timeout: 3m
-  max_header_bytes: 65000
+radium:
+  http:
+    port: "8080"
+    read_timeout: 5s
+    write_timeout: 5s
+    idle_timeout: 3m
+    max_header_bytes: 65000
+  auth:
+    password_cost_bcrypt: 13
+    access_token_ttl: 2h
+    refresh_token_ttl: 720h
+    length_verification_code: 6
+
+wave:
+  http:
+    port: "8081"
+    read_timeout: 5s
+    write_timeout: 5s
+    idle_timeout: 3m
+    max_header_bytes: 65000
 
 postgres:
   max_open_conns: 40
   max_idle_conns: 10
   conn_max_idle_time: 5m
   conn_max_lifetime: 10m
-
-auth:
-  password_cost_bcrypt: 13
-  access_token_ttl: 2h
-  refresh_token_ttl: 720h
 
 smtp:
   host: connect.smtp.bz

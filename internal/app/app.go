@@ -1,42 +1,48 @@
 package app
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/radium-rtf/radium-backend/config"
-	_ "github.com/radium-rtf/radium-backend/docs"
-	"github.com/radium-rtf/radium-backend/pkg/filestorage"
+	radium "github.com/radium-rtf/radium-backend/internal/radium/app"
+	wave "github.com/radium-rtf/radium-backend/internal/wave/app"
+	"github.com/radium-rtf/radium-backend/pkg/closer"
+	"log"
 )
+
+type app interface {
+	Run() error
+	Shutdown() error
+}
 
 func Run(cfg *config.Config) {
 	db, err := openDB(cfg.PG)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer db.Close()
 
-	storage := filestorage.New(cfg.Storage)
+	radiumApp := radium.NewApp(cfg, db)
+	waveApp := wave.NewApp(cfg, db)
 
-	dependencies := newDependencies(storage, cfg, db)
+	runners := []app{radiumApp, waveApp}
 
-	httpServer := startHttpServer(cfg.HTTP, dependencies)
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
-
-	select {
-	case s := <-interrupt:
-		log.Println("app - Run - signal: " + s.String())
-	case err = <-httpServer.Notify():
-		log.Println(fmt.Errorf("app - Run - httpServer.Notify: %w", err))
+	var closer = closer.New()
+	var notify = make(chan error, len(runners))
+	for _, runner := range runners {
+		runner := runner
+		go func() {
+			err := runner.Run()
+			if err != nil {
+				notify <- err
+			}
+		}()
+		closer.Add(runner.Shutdown)
 	}
 
-	err = httpServer.Shutdown()
-	if err != nil {
-		log.Println(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err))
+	err = <-notify
+	log.Println(err)
+	for len(notify) != 0 {
+		err = <-notify
+		log.Println(err)
 	}
+	closer.Close()
 }
