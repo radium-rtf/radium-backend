@@ -32,13 +32,14 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 	})
 
 	swaggerHandler := httpSwagger.Handler(
-		httpSwagger.URL("/wave/doc.json"),
+		httpSwagger.URL("/swagger/doc.json"),
 		httpSwagger.InstanceName("wave"))
-	h.Get("/wave/*", swaggerHandler)
 
-	for _, pattern := range []string{"/", "/swagger/*"} {
+	h.Get("/swagger/*", swaggerHandler)
+
+	for _, pattern := range []string{"/"} {
 		h.Get(pattern, func(writer http.ResponseWriter, request *http.Request) {
-			writer.Header().Add("Location", "/wave/index.html")
+			writer.Header().Add("Location", "/swagger/index.html")
 			writer.WriteHeader(http.StatusTemporaryRedirect)
 		})
 	}

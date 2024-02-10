@@ -45,14 +45,14 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 	})
 
 	swaggerHandler := httpSwagger.Handler(
-		httpSwagger.URL("/radium/doc.json"),
+		httpSwagger.URL("/swagger/doc.json"),
 		httpSwagger.InstanceName("radium"))
 
-	h.Get("/radium/*", swaggerHandler)
+	h.Get("/swagger/*", swaggerHandler)
 
-	for _, pattern := range []string{"/", "/swagger/*"} {
+	for _, pattern := range []string{"/"} {
 		h.Get(pattern, func(writer http.ResponseWriter, request *http.Request) {
-			writer.Header().Add("Location", "/radium/index.html")
+			writer.Header().Add("Location", "/swagger/index.html")
 			writer.WriteHeader(http.StatusTemporaryRedirect)
 		})
 	}
