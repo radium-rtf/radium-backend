@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/gavv/httpexpect/v2 v2.16.0
-	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httplog/v2 v2.0.9
 	github.com/go-chi/httprate v0.8.0
@@ -14,7 +14,7 @@ require (
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/google/uuid v1.6.0
-	github.com/gosimple/slug v1.13.1
+	github.com/gosimple/slug v1.14.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx/v5 v5.5.3
 	github.com/lib/pq v1.10.9
