@@ -16,7 +16,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	db, err := postgres.OpenDB(cfg.URL)
+	db, err := postgres.OpenDB(cfg.PG.URL)
 	if err != nil {
 		log.Fatalln(err)
 	}
