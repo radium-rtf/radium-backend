@@ -3,12 +3,13 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+	"strings"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	ans "github.com/radium-rtf/radium-backend/internal/radium/lib/answer"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
-	"slices"
-	"strings"
 )
 
 type AnswerUseCase struct {
@@ -37,7 +38,7 @@ func (uc AnswerUseCase) Create(ctx context.Context, answer *entity2.Answer) (*en
 		return nil, err
 	}
 	if int(section.MaxAttempts.Int16) == count {
-		return nil, errors.New("достигнуто масимальное количество попыток")
+		return nil, errors.New("достигнуто максимальное количество попыток")
 	}
 	return uc.createAnswer(ctx, section, answer)
 }
