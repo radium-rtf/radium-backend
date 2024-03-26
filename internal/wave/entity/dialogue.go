@@ -12,9 +12,9 @@ type (
 
 		FirstUserId    uuid.UUID
 		SecondUserId   uuid.UUID
-		Messages       []*DialogueMessage       `bun:"rel:has-many"`
-		Settings       *DialogueSettings        `bun:"rel:has-one"`
-		PinnedMessages []*DialoguePinnedMessage `bun:"rel:has-many"`
+		Messages       []*Message        `bun:"m2m:dialogue_messages,join:Dialogue=Message"`
+		Settings       *DialogueSettings `bun:"rel:has-one"`
+		PinnedMessages []*Message        `bun:"m2m:dialogue_pinned_messages,join:Dialogue=Message"`
 	}
 
 	DialogueSettings struct {

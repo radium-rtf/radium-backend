@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
+	radium "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/uptrace/bun"
 )
 
@@ -11,12 +12,13 @@ type (
 		DBModel
 		Name string
 
-		Settings    ChannelSettings      `bun:"rel:has-one"`
-		Posts       []*Post              `bun:"rel:has-many"`
-		Subscribers []*ChannelSubscriber `bun:"rel:has-many"`
+		Settings    ChannelSettings `bun:"rel:has-one"`
+		Posts       []*Post         `bun:"rel:has-many"`
+		Subscribers []*radium.User  `bun:"m2m:channel_subscribers,join:Channel=User"`
 		OwnerId     uuid.UUID
-		Admins      []*ChannelAdmin `bun:"rel:has-many"`
-		GroupId     uuid.UUID
+		Admins      []*radium.User `bun:"m2m:channel_admins,join:Channel=User"`
+		GroupChatId uuid.UUID
+		GroupChat   *GroupChat `bun:"rel:belongs-to,join:group_id=id"`
 	}
 
 	ChannelSettings struct {
@@ -30,7 +32,8 @@ type (
 		ChannelId uuid.UUID `bun:",pk"`
 		Channel   *Channel  `bun:"rel:belongs-to,join:channel_id=id"`
 
-		UserId uuid.UUID `bun:",pk"`
+		UserId uuid.UUID    `bun:",pk"`
+		User   *radium.User `bun:"rel:belongs-to,join:user_id=id"`
 	}
 
 	ChannelSubscriber struct {
@@ -39,6 +42,7 @@ type (
 		ChannelId uuid.UUID `bun:",pk"`
 		Channel   *Channel  `bun:"rel:belongs-to,join:channel_id=id"`
 
-		UserId uuid.UUID `bun:",pk"`
+		UserId uuid.UUID    `bun:",pk"`
+		User   *radium.User `bun:"rel:belongs-to,join:user_id=id"`
 	}
 )
