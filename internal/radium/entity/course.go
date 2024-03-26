@@ -1,12 +1,22 @@
 package entity
 
 import (
+	"slices"
+
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
-	"slices"
+)
+
+const (
+	AccessOpen    = AccessType("open")
+	AccessLink    = AccessType("link")
+	AccessPrivate = AccessType("private")
+	AccessClose   = AccessType("close")
 )
 
 type (
+	AccessType string
+
 	Course struct {
 		bun.BaseModel `bun:"table:courses"`
 		DBModel
@@ -17,7 +27,7 @@ type (
 		Description      string `validate:"required,max=3000"`
 		Logo             string `validate:"required,url"`
 		Banner           string `validate:"required,url"`
-		IsPublished      bool
+		Access           AccessType
 
 		Students []User `bun:"m2m:course_student,join:Course=User"`
 

@@ -1,9 +1,10 @@
 package model
 
 import (
+	"slices"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
-	"slices"
 )
 
 type (
@@ -20,8 +21,8 @@ type (
 		Coauthors        []*User `json:"coauthors"`
 		Links            []Link  `json:"links"`
 
-		IsPublished bool `json:"isPublished"`
-		IsStudent   bool `json:"isStudent"`
+		Access    entity2.AccessType `json:"access" enums:"open,link,private,closed"`
+		IsStudent bool               `json:"isStudent"`
 
 		Score    uint      `json:"score"`
 		MaxScore uint      `json:"maxScore"`
