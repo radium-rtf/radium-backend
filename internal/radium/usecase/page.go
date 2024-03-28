@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -79,7 +80,7 @@ func (uc PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, o
 	}
 	last, err := uc.page.GetLastPage(ctx, page.ModuleId)
 	if float64(order) > last.Order {
-		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+		return nil, errors.New("новое местоположение не может быть больше местоположения последнего элемента")
 	}
 	return uc.page.UpdateOrder(ctx, page, order)
 }

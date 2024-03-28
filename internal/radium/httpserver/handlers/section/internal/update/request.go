@@ -3,6 +3,7 @@ package update
 import (
 	"database/sql"
 	"errors"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/section/internal/create"
@@ -114,7 +115,7 @@ func (r Section) toSection(sectionId uuid.UUID) (*entity.Section, error) {
 		keys := r.MappingSection.Keys
 		answer := r.MappingSection.Answer
 		if len(keys) != len(answer) {
-			return nil, errors.New("секция с сопоставлением должна иметь одинаковое колиество строк и обоих столбцах")
+			return nil, errors.New("секция с сопоставлением должна иметь одинаковое количество строк и обоих столбцах")
 		}
 		section, err = entity.NewSection(maxAttempts, pageId, 0, r.MaxScore, r.MappingSection.Question,
 			"", answer, answer, keys, nil, entity.MappingType, "")
