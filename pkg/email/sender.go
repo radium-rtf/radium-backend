@@ -44,7 +44,7 @@ func (s *SMTPSender) SendVerificationEmail(email, name, code string) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", s.from)
 	msg.SetHeader("To", email)
-	msg.SetHeader("Subject", "Поддтверждение почты радиум")
+	msg.SetHeader("Subject", "Подтверждение почты радиум")
 	msg.SetBody("text/html", body)
 
 	if err := s.dialer.DialAndSend(msg); err != nil {

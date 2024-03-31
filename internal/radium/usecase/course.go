@@ -3,10 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/validator"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -27,7 +28,7 @@ func (uc CourseUseCase) Create(ctx context.Context, course *entity2.Course, crea
 	}
 
 	if !creator.Roles.IsAuthor {
-		return nil, errors.New("только автор может созавать курсы")
+		return nil, errors.New("только автор может создавать курсы")
 	}
 
 	return uc.courseRepo.Create(ctx, course)
@@ -99,7 +100,7 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 		return user.Id == userId
 	})
 	if !isAuthor {
-		return nil, errors.New("пубилковать и снимать с публикации курс могут только авторы")
+		return nil, errors.New("публиковать и снимать с публикации курс могут только авторы")
 	}
 
 	return uc.courseRepo.UpdatePublish(ctx, course.Id, !course.IsPublished)

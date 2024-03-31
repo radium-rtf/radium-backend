@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
@@ -67,7 +68,7 @@ func (uc ModuleUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID,
 	}
 	last, err := uc.module.GetLastModule(ctx, module.CourseId)
 	if float64(order) > last.Order {
-		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+		return nil, errors.New("новое местоположение не может быть больше местоположения последнего элемента")
 	}
 	return uc.module.UpdateOrder(ctx, module, order)
 }

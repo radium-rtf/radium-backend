@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
@@ -68,16 +69,12 @@ func (uc SectionUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID
 	}
 	last, err := uc.section.GetLastSection(ctx, section.PageId)
 	if float64(order) > last.Order {
-		return nil, errors.New("новое местоположение не может быть больше местоположения последненего элемента")
+		return nil, errors.New("новое местоположение не может быть больше местоположения последнего элемента")
 	}
 	return uc.section.UpdateOrder(ctx, section, order)
 }
 
 func (uc SectionUseCase) GetFullSectionById(ctx context.Context, id, editorId uuid.UUID) (*entity.Section, error) {
-	canEditErr := uc.canEdit(ctx, id, editorId)
-	if canEditErr != nil {
-		return nil, errors.New("нет прав на просмотр ответов секций")
-	}
 	return uc.section.GetById(ctx, id)
 }
 

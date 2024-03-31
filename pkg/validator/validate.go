@@ -1,8 +1,9 @@
 package validator
 
 import (
-	"github.com/go-playground/validator/v10"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type validate struct {
@@ -26,7 +27,7 @@ func newValidate() (*validate, error) {
 }
 
 func Struct(i any) error {
-	v, err := newValidate() // TODO: хотелось бы прокидвать ошибки не через структуру, тк библиоткека содержит кэш
+	v, err := newValidate() // TODO: хотелось бы прокидывать ошибки не через структуру, тк библиотека содержит кэш
 	if err != nil {
 		return err
 	}

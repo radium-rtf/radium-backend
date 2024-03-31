@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
 )
@@ -23,7 +24,7 @@ func (r ReviewUseCase) Create(ctx context.Context, review *entity.Review) (*enti
 	}
 
 	if section.MaxScore == 0 && review.Score != 0 {
-		return nil, errors.New("нельзся поставить больше баллов, чем возможно")
+		return nil, errors.New("нельзя поставить больше баллов, чем возможно")
 	}
 
 	if section.MaxScore == 0 {
@@ -33,7 +34,7 @@ func (r ReviewUseCase) Create(ctx context.Context, review *entity.Review) (*enti
 	}
 
 	if review.Score > 1 {
-		return nil, errors.New("нельзся поставить больше баллов, чем возможно")
+		return nil, errors.New("нельзя поставить больше баллов, чем возможно")
 	}
 
 	return r.reviewRepo.Create(ctx, review)
