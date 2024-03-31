@@ -75,10 +75,6 @@ func (uc SectionUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID
 }
 
 func (uc SectionUseCase) GetFullSectionById(ctx context.Context, id, editorId uuid.UUID) (*entity.Section, error) {
-	canEditErr := uc.canEdit(ctx, id, editorId)
-	if canEditErr != nil {
-		return nil, errors.New("нет прав на просмотр ответов секций")
-	}
 	return uc.section.GetById(ctx, id)
 }
 
