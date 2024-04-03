@@ -19,7 +19,7 @@ type (
 		Banner           string `validate:"required,url"`
 		IsPublished      bool
 
-		Students []User `bun:"m2m:course_student,join:Course=User"`
+		Students []User `bun:"m2m:students,join:Course=User"`
 
 		Authors   []*User `bun:"m2m:course_author,join:Course=User"`
 		Coauthors []*User `bun:"m2m:course_coauthor,join:Course=User"`
@@ -43,16 +43,6 @@ type (
 
 	CourseCoauthor struct {
 		bun.BaseModel `bun:"table:course_coauthor"`
-
-		CourseId uuid.UUID `bun:",pk"`
-		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`
-
-		UserId uuid.UUID `bun:",pk"`
-		User   *User     `bun:"rel:belongs-to,join:user_id=id"`
-	}
-
-	CourseStudent struct {
-		bun.BaseModel `bun:"table:course_student"`
 
 		CourseId uuid.UUID `bun:",pk"`
 		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`

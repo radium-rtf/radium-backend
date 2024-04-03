@@ -1,16 +1,18 @@
 package postgres
 
 import (
+	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
 type Postgres struct {
-	DB *bun.DB
+	DB             *bun.DB
+	DefaultGroupId uuid.UUID
 }
 
-func New(url string, opts ...Option) (*Postgres, error) {
+func New(url string, defaultGroupId uuid.UUID, opts ...Option) (*Postgres, error) {
 	sqldb, err := open(url)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,8 @@ func New(url string, opts ...Option) (*Postgres, error) {
 	}
 
 	pg := &Postgres{
-		DB: db,
+		DB:             db,
+		DefaultGroupId: defaultGroupId,
 	}
 
 	return pg, nil

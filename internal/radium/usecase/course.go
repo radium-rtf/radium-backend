@@ -46,8 +46,8 @@ func (uc CourseUseCase) GetByIdAndUser(ctx context.Context, id uuid.UUID, userId
 	return uc.courseRepo.GetFullByIdAndUser(ctx, id, userId)
 }
 
-func (c CourseUseCase) GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity2.Course, error) {
-	return c.courseRepo.GetFullBySlugAndUser(ctx, slug, userId)
+func (uc CourseUseCase) GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity2.Course, error) {
+	return uc.courseRepo.GetFullBySlugAndUser(ctx, slug, userId)
 }
 
 func (uc CourseUseCase) GetBySlug(ctx context.Context, slug string) (*entity2.Course, error) {
@@ -106,8 +106,8 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 	return uc.courseRepo.UpdatePublish(ctx, course.Id, !course.IsPublished)
 }
 
-func (c CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) error {
-	link, err := c.courseRepo.GetLinkById(ctx, id)
+func (uc CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) error {
+	link, err := uc.courseRepo.GetLinkById(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -116,16 +116,16 @@ func (c CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) e
 	if !course.CanEdit(editorId) {
 		return cantEditCourse
 	}
-	return c.courseRepo.DeleteLink(ctx, id)
+	return uc.courseRepo.DeleteLink(ctx, id)
 }
 
-func (c CourseUseCase) CreateLink(ctx context.Context, link *entity2.Link, editorId uuid.UUID) (*entity2.Link, error) {
-	course, err := c.courseRepo.GetFullById(ctx, link.CourseId)
+func (uc CourseUseCase) CreateLink(ctx context.Context, link *entity2.Link, editorId uuid.UUID) (*entity2.Link, error) {
+	course, err := uc.courseRepo.GetFullById(ctx, link.CourseId)
 	if err != nil {
 		return nil, err
 	}
 	if !course.CanEdit(editorId) {
 		return nil, cantEditCourse
 	}
-	return link, c.courseRepo.CreateLink(ctx, link)
+	return link, uc.courseRepo.CreateLink(ctx, link)
 }
