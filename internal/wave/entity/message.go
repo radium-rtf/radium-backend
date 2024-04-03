@@ -8,7 +8,7 @@ import (
 
 type (
 	Message struct {
-		bun.BaseModel `bun:"table:messages"`
+		bun.BaseModel `bun:"table:wave.messages"`
 		DBModel
 
 		SenderId        uuid.UUID
@@ -22,7 +22,7 @@ type (
 	}
 
 	ReadBy struct {
-		bun.BaseModel `bun:"table:read_by"`
+		bun.BaseModel `bun:"table:wave.read_by"`
 
 		MessageId uuid.UUID    `bun:",pk"`
 		Message   *Message     `bun:"rel:belongs-to,join:message_id=id"`
@@ -31,7 +31,7 @@ type (
 	}
 
 	Reaction struct {
-		bun.BaseModel `bun:"table:reactions"`
+		bun.BaseModel `bun:"table:wave.reactions"`
 		DBModel
 
 		MessageId uuid.UUID

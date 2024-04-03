@@ -5,21 +5,21 @@ import (
 )
 
 type Repositories struct {
-	Channel
-	Content
-	Dialogue
-	GroupChat
-	Message
-	Post
+	Channel  Channel
+	Content  Content
+	Dialogue Dialogue
+	Group    Group
+	Message  Message
+	Post     Post
 }
 
 func NewRepositories(pg *postgres.Postgres) Repositories {
 	return Repositories{
-		Channel:   NewChannelRepo(pg),
-		Content:   NewContentRepo(pg),
-		Dialogue:  NewDialogueRepo(pg),
-		GroupChat: NewGroupChatRepo(pg),
-		Message:   NewMessageRepo(pg),
-		Post:      NewPostRepo(pg),
+		Channel:  NewChannelRepo(pg),
+		Content:  NewContentRepo(pg),
+		Dialogue: NewDialogueRepo(pg),
+		Group:    NewGroupRepo(pg),
+		Message:  NewMessageRepo(pg),
+		Post:     NewPostRepo(pg),
 	}
 }

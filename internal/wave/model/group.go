@@ -6,13 +6,13 @@ import (
 )
 
 type (
-	GroupChat struct {
+	Group struct {
 		Id uuid.UUID `json:"id"`
 	}
 )
 
-func NewGroupChat(groupChat *entity.GroupChat) GroupChat {
-	return GroupChat{
+func NewGroup(groupChat *entity.Group) Group {
+	return Group{
 		Id: groupChat.Id,
 	}
 }

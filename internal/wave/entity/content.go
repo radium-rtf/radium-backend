@@ -6,7 +6,7 @@ import (
 
 type (
 	Content struct {
-		bun.BaseModel `bun:"table:contents"`
+		bun.BaseModel `bun:"table:wave.contents"`
 		DBModel
 	}
 )

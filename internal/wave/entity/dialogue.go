@@ -7,23 +7,22 @@ import (
 
 type (
 	Dialogue struct {
-		bun.BaseModel `bun:"table:dialogues"`
-		DBModel
-
-		FirstUserId    uuid.UUID
-		SecondUserId   uuid.UUID
-		Messages       []*Message        `bun:"m2m:dialogue_messages,join:Dialogue=Message"`
+		bun.BaseModel  `bun:"table:wave.dialogues"`
+		Id             uuid.UUID         `bun:",unique"`
+		FirstUserId    uuid.UUID         `bun:",pk"`
+		SecondUserId   uuid.UUID         `bun:",pk"`
+		Messages       []*Message        `bun:"m2m:wave.dialogue_message,join:Dialogue=Message"`
 		Settings       *DialogueSettings `bun:"rel:has-one"`
-		PinnedMessages []*Message        `bun:"m2m:dialogue_pinned_messages,join:Dialogue=Message"`
+		PinnedMessages []*Message        `bun:"m2m:wave.dialogue_pinned,join:Dialogue=Message"`
 	}
 
 	DialogueSettings struct {
-		bun.BaseModel `bun:"table:dialogue_settings"`
+		bun.BaseModel `bun:"table:wave.dialogue_settings"`
 		DBModel
 	}
 
 	DialogueMessage struct {
-		bun.BaseModel `bun:"table:dialogue_messages"`
+		bun.BaseModel `bun:"table:wave.dialogue_message"`
 
 		DialogueId uuid.UUID `bun:",pk"`
 		Dialogue   *Dialogue `bun:"rel:belongs-to,join:dialogue_id=id"`
@@ -32,7 +31,7 @@ type (
 	}
 
 	DialoguePinnedMessage struct {
-		bun.BaseModel `bun:"table:dialogue_pinned_messages"`
+		bun.BaseModel `bun:"table:wave.dialogue_pinned"`
 
 		DialogueId uuid.UUID `bun:",pk"`
 		Dialogue   *Dialogue `bun:"rel:belongs-to,join:dialogue_id=id"`

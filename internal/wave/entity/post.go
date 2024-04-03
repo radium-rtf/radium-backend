@@ -7,7 +7,7 @@ import (
 
 type (
 	Post struct {
-		bun.BaseModel `bun:"table:posts"`
+		bun.BaseModel `bun:"table:wave.posts"`
 		DBModel
 
 		ChannelId uuid.UUID
