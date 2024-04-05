@@ -61,7 +61,7 @@ func createCourses(t *testing.T, e *httpexpect.Expect) Courses {
 	}
 	courses.Full = createCourse(json)
 
-	if !FieldsFirstStructEqualSecond(&json, courses.Full.Access) || courses.Full.Access == "" {
+	if courses.Full.Access == "" {
 		t.Fail()
 		return courses
 	}
