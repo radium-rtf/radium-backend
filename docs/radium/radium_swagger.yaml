@@ -13,37 +13,37 @@ definitions:
     properties:
       authorship:
         items:
-          $ref: '#/definitions/model.Course'
+          $ref: "#/definitions/model.Course"
         type: array
       my:
         items:
-          $ref: '#/definitions/model.Course'
+          $ref: "#/definitions/model.Course"
         type: array
       recommendations:
         items:
-          $ref: '#/definitions/model.Course'
+          $ref: "#/definitions/model.Course"
         type: array
     type: object
   create.Answer:
     properties:
       answer:
-        $ref: '#/definitions/httpserver_handlers_answer_internal_create.AnswerSection'
+        $ref: "#/definitions/httpserver_handlers_answer_internal_create.AnswerSection"
       choice:
-        $ref: '#/definitions/create.Choice'
+        $ref: "#/definitions/create.Choice"
       code:
-        $ref: '#/definitions/create.Code'
+        $ref: "#/definitions/create.Code"
       file:
-        $ref: '#/definitions/create.File'
+        $ref: "#/definitions/create.File"
       id:
         type: string
       mapping:
-        $ref: '#/definitions/create.Mapping'
+        $ref: "#/definitions/create.Mapping"
       multiChoice:
-        $ref: '#/definitions/create.MultiChoice'
+        $ref: "#/definitions/create.MultiChoice"
       permutation:
-        $ref: '#/definitions/create.Permutation'
+        $ref: "#/definitions/create.Permutation"
       shortAnswer:
-        $ref: '#/definitions/create.ShortAnswer'
+        $ref: "#/definitions/create.ShortAnswer"
     type: object
   create.Choice:
     properties:
@@ -65,9 +65,9 @@ definitions:
         minItems: 2
         type: array
     required:
-    - answer
-    - question
-    - variants
+      - answer
+      - question
+      - variants
     type: object
   create.Code:
     properties:
@@ -82,7 +82,7 @@ definitions:
         maxLength: 5000
         type: string
     required:
-    - question
+      - question
     type: object
   create.Course:
     properties:
@@ -93,7 +93,7 @@ definitions:
         type: string
       links:
         items:
-          $ref: '#/definitions/model.Link'
+          $ref: "#/definitions/model.Link"
         type: array
       logo:
         type: string
@@ -109,7 +109,7 @@ definitions:
       answer:
         type: string
     required:
-    - answer
+      - answer
     type: object
   create.FileSection:
     properties:
@@ -122,8 +122,8 @@ definitions:
         maxLength: 5000
         type: string
     required:
-    - fileTypes
-    - question
+      - fileTypes
+      - question
     type: object
   create.Group:
     properties:
@@ -140,7 +140,7 @@ definitions:
           type: string
         type: array
     required:
-    - name
+      - name
     type: object
   create.Mapping:
     properties:
@@ -150,7 +150,7 @@ definitions:
         maxItems: 10
         type: array
     required:
-    - answer
+      - answer
     type: object
   create.MappingSection:
     properties:
@@ -168,16 +168,16 @@ definitions:
         maxLength: 800
         type: string
     required:
-    - answer
-    - keys
-    - question
+      - answer
+      - keys
+      - question
     type: object
   create.MediaSection:
     properties:
       url:
         type: string
     required:
-    - url
+      - url
     type: object
   create.Module:
     properties:
@@ -190,7 +190,7 @@ definitions:
       order:
         type: number
     required:
-    - name
+      - name
     type: object
   create.MultiChoice:
     properties:
@@ -216,9 +216,9 @@ definitions:
         minItems: 2
         type: array
     required:
-    - answer
-    - question
-    - variants
+      - answer
+      - question
+      - variants
     type: object
   create.Page:
     properties:
@@ -231,7 +231,7 @@ definitions:
       order:
         type: number
     required:
-    - name
+      - name
     type: object
   create.Permutation:
     properties:
@@ -241,7 +241,7 @@ definitions:
         maxItems: 8
         type: array
     required:
-    - answer
+      - answer
     type: object
   create.PermutationSection:
     properties:
@@ -254,15 +254,15 @@ definitions:
         maxLength: 500
         type: string
     required:
-    - answer
-    - question
+      - answer
+      - question
     type: object
   create.Response:
     properties:
       pageId:
         type: string
       verdict:
-        $ref: '#/definitions/verdict.Type'
+        $ref: "#/definitions/verdict.Type"
     type: object
   create.Review:
     properties:
@@ -278,15 +278,15 @@ definitions:
   create.Section:
     properties:
       answer:
-        $ref: '#/definitions/httpserver_handlers_section_internal_create.AnswerSection'
+        $ref: "#/definitions/httpserver_handlers_section_internal_create.AnswerSection"
       choice:
-        $ref: '#/definitions/create.ChoiceSection'
+        $ref: "#/definitions/create.ChoiceSection"
       code:
-        $ref: '#/definitions/create.CodeSection'
+        $ref: "#/definitions/create.CodeSection"
       file:
-        $ref: '#/definitions/create.FileSection'
+        $ref: "#/definitions/create.FileSection"
       mapping:
-        $ref: '#/definitions/create.MappingSection'
+        $ref: "#/definitions/create.MappingSection"
       maxAttempts:
         maximum: 200
         minimum: 0
@@ -296,19 +296,19 @@ definitions:
         minimum: 0
         type: integer
       media:
-        $ref: '#/definitions/create.MediaSection'
+        $ref: "#/definitions/create.MediaSection"
       multichoice:
-        $ref: '#/definitions/create.MultiChoiceSection'
+        $ref: "#/definitions/create.MultiChoiceSection"
       order:
         type: number
       pageId:
         type: string
       permutation:
-        $ref: '#/definitions/create.PermutationSection'
+        $ref: "#/definitions/create.PermutationSection"
       shortanswer:
-        $ref: '#/definitions/create.ShortAnswerSection'
+        $ref: "#/definitions/create.ShortAnswerSection"
       text:
-        $ref: '#/definitions/create.TextSection'
+        $ref: "#/definitions/create.TextSection"
     type: object
   create.ShortAnswer:
     properties:
@@ -324,14 +324,14 @@ definitions:
         maxLength: 200
         type: string
     required:
-    - answer
-    - question
+      - answer
+      - question
     type: object
   create.Teacher:
     properties:
       courses:
         items:
-          $ref: '#/definitions/create.TeacherCourse'
+          $ref: "#/definitions/create.TeacherCourse"
         type: array
       userId:
         type: string
@@ -349,7 +349,7 @@ definitions:
         maxLength: 10000
         type: string
     required:
-    - content
+      - content
     type: object
   createlink.Link:
     properties:
@@ -360,33 +360,33 @@ definitions:
         minLength: 1
         type: string
     required:
-    - link
-    - name
+      - link
+      - name
     type: object
   entity.SectionType:
     enum:
-    - choice
-    - multiChoice
-    - text
-    - shortAnswer
-    - answer
-    - code
-    - permutation
-    - mapping
-    - file
-    - media
+      - choice
+      - multiChoice
+      - text
+      - shortAnswer
+      - answer
+      - code
+      - permutation
+      - mapping
+      - file
+      - media
     type: string
     x-enum-varnames:
-    - ChoiceType
-    - MultiChoiceType
-    - TextType
-    - ShortAnswerType
-    - AnswerType
-    - CodeType
-    - PermutationType
-    - MappingType
-    - FileType
-    - MediaType
+      - ChoiceType
+      - MultiChoiceType
+      - TextType
+      - ShortAnswerType
+      - AnswerType
+      - CodeType
+      - PermutationType
+      - MappingType
+      - FileType
+      - MediaType
   httpserver_handlers_answer_internal_create.AnswerSection:
     properties:
       answer:
@@ -410,7 +410,7 @@ definitions:
         maxLength: 3000
         type: string
     required:
-    - question
+      - question
     type: object
   httpserver_handlers_section_internal_order.Order:
     properties:
@@ -429,56 +429,56 @@ definitions:
       createdAt:
         type: string
       file:
-        $ref: '#/definitions/model.File'
+        $ref: "#/definitions/model.File"
       id:
         type: string
       language:
         type: string
       review:
-        $ref: '#/definitions/model.Review'
+        $ref: "#/definitions/model.Review"
       section:
-        $ref: '#/definitions/model.Section'
+        $ref: "#/definitions/model.Section"
       type:
-        $ref: '#/definitions/entity.SectionType'
+        $ref: "#/definitions/entity.SectionType"
       verdict:
-        $ref: '#/definitions/verdict.Type'
+        $ref: "#/definitions/verdict.Type"
     type: object
   model.Course:
     properties:
       authors:
         items:
-          $ref: '#/definitions/model.User'
+          $ref: "#/definitions/model.User"
         type: array
       banner:
         type: string
       coauthors:
         items:
-          $ref: '#/definitions/model.User'
+          $ref: "#/definitions/model.User"
         type: array
       description:
         type: string
       groups:
         items:
-          $ref: '#/definitions/model.Group'
+          $ref: "#/definitions/model.Group"
         type: array
       id:
         type: string
-      isPublished:
-        type: boolean
+      access:
+        type: string
       isStudent:
         type: boolean
       links:
         items:
-          $ref: '#/definitions/model.Link'
+          $ref: "#/definitions/model.Link"
         type: array
       logo:
         type: string
       maxScore:
         type: integer
       modules:
-        description: 'TODO: скрыть для людей, у которых нет доступа к курсу'
+        description: "TODO: скрыть для людей, у которых нет доступа к курсу"
         items:
-          $ref: '#/definitions/model.Module'
+          $ref: "#/definitions/model.Module"
         type: array
       name:
         type: string
@@ -504,7 +504,7 @@ definitions:
     properties:
       courses:
         items:
-          $ref: '#/definitions/model.Course'
+          $ref: "#/definitions/model.Course"
         type: array
       id:
         type: string
@@ -514,14 +514,14 @@ definitions:
         type: string
       students:
         items:
-          $ref: '#/definitions/model.User'
+          $ref: "#/definitions/model.User"
         type: array
     type: object
   model.GroupAnswers:
     properties:
       courses:
         items:
-          $ref: '#/definitions/model.Course'
+          $ref: "#/definitions/model.Course"
         type: array
       id:
         type: string
@@ -531,7 +531,7 @@ definitions:
         type: string
       students:
         items:
-          $ref: '#/definitions/model.UserAnswers'
+          $ref: "#/definitions/model.UserAnswers"
         type: array
     type: object
   model.Link:
@@ -545,8 +545,8 @@ definitions:
         minLength: 1
         type: string
     required:
-    - link
-    - name
+      - link
+      - name
     type: object
   model.Module:
     properties:
@@ -560,7 +560,7 @@ definitions:
         type: number
       pages:
         items:
-          $ref: '#/definitions/model.Page'
+          $ref: "#/definitions/model.Page"
         type: array
       score:
         type: integer
@@ -585,7 +585,7 @@ definitions:
         type: integer
       sections:
         items:
-          $ref: '#/definitions/model.Section'
+          $ref: "#/definitions/model.Section"
         type: array
       slug:
         type: string
@@ -593,10 +593,10 @@ definitions:
   model.Report:
     properties:
       header:
-        $ref: '#/definitions/model.ReportHeader'
+        $ref: "#/definitions/model.ReportHeader"
       rows:
         items:
-          $ref: '#/definitions/model.ReportRow'
+          $ref: "#/definitions/model.ReportRow"
         type: array
     type: object
   model.ReportHeader:
@@ -605,7 +605,7 @@ definitions:
         type: integer
       values:
         items:
-          $ref: '#/definitions/model.ReportHeaderValue'
+          $ref: "#/definitions/model.ReportHeaderValue"
         type: array
     type: object
   model.ReportHeaderValue:
@@ -622,7 +622,7 @@ definitions:
       score:
         type: integer
       user:
-        $ref: '#/definitions/model.User'
+        $ref: "#/definitions/model.User"
       values:
         items:
           type: integer
@@ -637,7 +637,7 @@ definitions:
       createdAt:
         type: string
       reviewer:
-        $ref: '#/definitions/model.User'
+        $ref: "#/definitions/model.User"
       score:
         type: number
     type: object
@@ -663,7 +663,7 @@ definitions:
       content:
         type: string
       file:
-        $ref: '#/definitions/model.File'
+        $ref: "#/definitions/model.File"
       fileTypes:
         items:
           type: string
@@ -683,31 +683,31 @@ definitions:
       pageId:
         type: string
       review:
-        $ref: '#/definitions/model.Review'
+        $ref: "#/definitions/model.Review"
       score:
         type: integer
       type:
         allOf:
-        - $ref: '#/definitions/entity.SectionType'
+          - $ref: "#/definitions/entity.SectionType"
         enum:
-        - choice
-        - multiChoice
-        - text
-        - shortAnswer
-        - answer
-        - code
+          - choice
+          - multiChoice
+          - text
+          - shortAnswer
+          - answer
+          - code
       variants:
         items:
           type: string
         type: array
       verdict:
         allOf:
-        - $ref: '#/definitions/verdict.Type'
+          - $ref: "#/definitions/verdict.Type"
         enum:
-        - OK
-        - WA
-        - WAIT
-        - ""
+          - OK
+          - WA
+          - WAIT
+          - ""
     type: object
   model.Tokens:
     properties:
@@ -718,7 +718,7 @@ definitions:
       refreshToken:
         type: string
       user:
-        $ref: '#/definitions/model.User'
+        $ref: "#/definitions/model.User"
     type: object
   model.User:
     properties:
@@ -731,20 +731,20 @@ definitions:
       name:
         type: string
       roles:
-        $ref: '#/definitions/model.Roles'
+        $ref: "#/definitions/model.Roles"
     type: object
   model.UserAnswers:
     properties:
       answers:
         items:
-          $ref: '#/definitions/model.Answer'
+          $ref: "#/definitions/model.Answer"
         type: array
       maxScore:
         type: integer
       score:
         type: integer
       user:
-        $ref: '#/definitions/model.User'
+        $ref: "#/definitions/model.User"
       withoutReview:
         type: integer
     type: object
@@ -788,7 +788,7 @@ definitions:
       password:
         type: string
     required:
-    - name
+      - name
     type: object
   update.AnswerSection:
     properties:
@@ -811,7 +811,7 @@ definitions:
         minItems: 2
         type: array
     required:
-    - variants
+      - variants
     type: object
   update.CodeSection:
     properties:
@@ -865,15 +865,15 @@ definitions:
         maxLength: 800
         type: string
     required:
-    - answer
-    - keys
+      - answer
+      - keys
     type: object
   update.MediaSection:
     properties:
       url:
         type: string
     required:
-    - url
+      - url
     type: object
   update.Module:
     properties:
@@ -882,7 +882,7 @@ definitions:
         minLength: 1
         type: string
     required:
-    - name
+      - name
     type: object
   update.MultiChoiceSection:
     properties:
@@ -901,8 +901,8 @@ definitions:
         minItems: 2
         type: array
     required:
-    - answer
-    - variants
+      - answer
+      - variants
     type: object
   update.PermutationSection:
     properties:
@@ -915,20 +915,20 @@ definitions:
         maxLength: 500
         type: string
     required:
-    - answer
+      - answer
     type: object
   update.Section:
     properties:
       answer:
-        $ref: '#/definitions/update.AnswerSection'
+        $ref: "#/definitions/update.AnswerSection"
       choice:
-        $ref: '#/definitions/update.ChoiceSection'
+        $ref: "#/definitions/update.ChoiceSection"
       code:
-        $ref: '#/definitions/update.CodeSection'
+        $ref: "#/definitions/update.CodeSection"
       file:
-        $ref: '#/definitions/update.FileSection'
+        $ref: "#/definitions/update.FileSection"
       mapping:
-        $ref: '#/definitions/update.MappingSection'
+        $ref: "#/definitions/update.MappingSection"
       maxAttempts:
         maximum: 200
         minimum: 0
@@ -938,15 +938,15 @@ definitions:
         minimum: 0
         type: integer
       media:
-        $ref: '#/definitions/update.MediaSection'
+        $ref: "#/definitions/update.MediaSection"
       multichoice:
-        $ref: '#/definitions/update.MultiChoiceSection'
+        $ref: "#/definitions/update.MultiChoiceSection"
       permutation:
-        $ref: '#/definitions/update.PermutationSection'
+        $ref: "#/definitions/update.PermutationSection"
       shortanswer:
-        $ref: '#/definitions/update.ShortAnswerSection'
+        $ref: "#/definitions/update.ShortAnswerSection"
       text:
-        $ref: '#/definitions/create.TextSection'
+        $ref: "#/definitions/create.TextSection"
     type: object
   update.ShortAnswerSection:
     properties:
@@ -972,22 +972,22 @@ definitions:
       new:
         type: string
     required:
-    - current
+      - current
     type: object
   verdict.Type:
     enum:
-    - OK
-    - ""
-    - WA
-    - WAIT
-    - REVIEWED
+      - OK
+      - ""
+      - WA
+      - WAIT
+      - REVIEWED
     type: string
     x-enum-varnames:
-    - OK
-    - EMPTY
-    - WA
-    - WAIT
-    - REVIEWED
+      - OK
+      - EMPTY
+      - WA
+      - WAIT
+      - REVIEWED
   verify.Request:
     properties:
       email:
@@ -1003,930 +1003,930 @@ paths:
   /v1/account:
     get:
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.User'
+            $ref: "#/definitions/model.User"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - account
+        - account
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Данные для обновления
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/update.User'
+        - description: Данные для обновления
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/update.User"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - account
+        - account
   /v1/account/courses:
     get:
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/courses.Courses'
+            $ref: "#/definitions/courses.Courses"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - account
+        - account
   /v1/account/password:
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Password
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/updatepass.Password'
+        - description: Password
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/updatepass.Password"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - account
+        - account
   /v1/answer:
     post:
       parameters:
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Answer'
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Answer"
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/create.Response'
+            $ref: "#/definitions/create.Response"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - answer
+        - answer
   /v1/answers/group/{groupId}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: groupId
-        required: true
-        type: string
-      - description: ' '
-        in: query
-        name: course_id
-        required: true
-        type: string
+        - description: id
+          in: path
+          name: groupId
+          required: true
+          type: string
+        - description: " "
+          in: query
+          name: course_id
+          required: true
+          type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.GroupAnswers'
+            $ref: "#/definitions/model.GroupAnswers"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - answer
+        - answer
   /v1/auth/refresh:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: RefreshToken
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/refresh.Refresh'
+        - description: RefreshToken
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/refresh.Refresh"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Tokens'
+            $ref: "#/definitions/model.Tokens"
       tags:
-      - auth
+        - auth
   /v1/auth/signin:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: SignIn
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/signin.SignIn'
+        - description: SignIn
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/signin.SignIn"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Tokens'
+            $ref: "#/definitions/model.Tokens"
       tags:
-      - auth
+        - auth
   /v1/auth/signup:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: SignUp
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/signup.SignUp'
+        - description: SignUp
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/signup.SignUp"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Tokens'
+            $ref: "#/definitions/model.Tokens"
       tags:
-      - auth
+        - auth
   /v1/auth/verify:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/verify.Request'
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/verify.Request"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Tokens'
+            $ref: "#/definitions/model.Tokens"
       tags:
-      - auth
+        - auth
   /v1/author/courses:
     get:
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - author
+        - author
   /v1/course:
     get:
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Данные о курсе
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Course'
+        - description: Данные о курсе
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Course"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/course/{courseId}:
     get:
       parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: string
+        - description: course id
+          in: path
+          name: courseId
+          required: true
+          type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
     put:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: string
-      - description: Данные о курсе
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/update.Course'
+        - description: course id
+          in: path
+          name: courseId
+          required: true
+          type: string
+        - description: Данные о курсе
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/update.Course"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/course/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: по умолчанию soft
-        in: query
-        name: is_soft
-        type: boolean
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: по умолчанию soft
+          in: query
+          name: is_soft
+          type: boolean
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/course/join/{courseId}:
     patch:
       parameters:
-      - description: course id
-        in: path
-        name: courseId
-        required: true
-        type: string
+        - description: course id
+          in: path
+          name: courseId
+          required: true
+          type: string
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/course/link/{courseId}:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Данные о ссылке
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/createlink.Link'
-      - description: id
-        in: path
-        name: courseId
-        required: true
-        type: string
+        - description: Данные о ссылке
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/createlink.Link"
+        - description: id
+          in: path
+          name: courseId
+          required: true
+          type: string
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Link'
+            $ref: "#/definitions/model.Link"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course-link
+        - course-link
   /v1/course/link/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course-link
+        - course-link
   /v1/course/publish/{id}:
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: опубликовать или снять с публикации
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: опубликовать или снять с публикации
+          in: path
+          name: id
+          required: true
+          type: string
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/course/slug/{slug}:
     get:
       parameters:
-      - description: slug
-        in: path
-        name: slug
-        required: true
-        type: string
+        - description: slug
+          in: path
+          name: slug
+          required: true
+          type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Course'
+            $ref: "#/definitions/model.Course"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - course
+        - course
   /v1/group:
     get:
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - group
+        - group
     post:
       parameters:
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Group'
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Group"
       responses:
         "201":
           description: created
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - group
+        - group
   /v1/group/{id}:
     get:
       parameters:
-      - description: groupId
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: groupId
+          in: path
+          name: id
+          required: true
+          type: string
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - group
+        - group
   /v1/group/invite/{inviteCode}:
     patch:
       parameters:
-      - description: inviteCode
-        in: path
-        name: inviteCode
-        required: true
-        type: string
+        - description: inviteCode
+          in: path
+          name: inviteCode
+          required: true
+          type: string
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - group
+        - group
   /v1/group/report/{groupId}/{courseId}:
     get:
       parameters:
-      - description: courseId
-        in: path
-        name: courseId
-        required: true
-        type: string
-      - description: groupId
-        in: path
-        name: groupId
-        required: true
-        type: string
+        - description: courseId
+          in: path
+          name: courseId
+          required: true
+          type: string
+        - description: groupId
+          in: path
+          name: groupId
+          required: true
+          type: string
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/model.Report'
+            $ref: "#/definitions/model.Report"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - group
+        - group
   /v1/module:
     post:
       parameters:
-      - description: moduleRequest
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Module'
+        - description: moduleRequest
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Module"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Module'
+            $ref: "#/definitions/model.Module"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - module
+        - module
   /v1/module/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: по умолчанию soft
-        in: query
-        name: is_soft
-        type: boolean
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: по умолчанию soft
+          in: query
+          name: is_soft
+          type: boolean
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - module
+        - module
   /v1/module/{id}/order:
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/httpserver_handlers_module_internal_order.Order'
+        - description: module id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/httpserver_handlers_module_internal_order.Order"
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/model.Module'
+            $ref: "#/definitions/model.Module"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - module
+        - module
   /v1/module/{moduleId}:
     put:
       parameters:
-      - description: id
-        in: path
-        name: moduleId
-        required: true
-        type: string
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/update.Module'
+        - description: id
+          in: path
+          name: moduleId
+          required: true
+          type: string
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/update.Module"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Module'
+            $ref: "#/definitions/model.Module"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - module
+        - module
   /v1/page:
     post:
       parameters:
-      - description: создание
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Page'
+        - description: создание
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Page"
       responses:
         "201":
           description: ok
           schema:
-            $ref: '#/definitions/model.Page'
+            $ref: "#/definitions/model.Page"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
   /v1/page/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: по умолчанию soft
-        in: query
-        name: is_soft
-        type: boolean
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: по умолчанию soft
+          in: query
+          name: is_soft
+          type: boolean
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
     get:
       parameters:
-      - description: page id
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: page id
+          in: path
+          name: id
+          required: true
+          type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Page'
+            $ref: "#/definitions/model.Page"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
   /v1/page/{id}/order:
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: page id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/httpserver_handlers_page_internal_order.Order'
+        - description: page id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/httpserver_handlers_page_internal_order.Order"
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/model.Page'
+            $ref: "#/definitions/model.Page"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
   /v1/page/{pageId}:
     put:
       parameters:
-      - description: id
-        in: path
-        name: pageId
-        required: true
-        type: string
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/update.Module'
+        - description: id
+          in: path
+          name: pageId
+          required: true
+          type: string
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/update.Module"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Page'
+            $ref: "#/definitions/model.Page"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
   /v1/page/slug/{slug}:
     get:
       parameters:
-      - description: slug
-        in: path
-        name: slug
-        required: true
-        type: string
+        - description: slug
+          in: path
+          name: slug
+          required: true
+          type: string
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/model.Page'
+            $ref: "#/definitions/model.Page"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - page
+        - page
   /v1/review:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Review'
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Review"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Review'
+            $ref: "#/definitions/model.Review"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - review
+        - review
   /v1/role/author:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: почта будущего автора
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/postauthor.Email'
+        - description: почта будущего автора
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/postauthor.Email"
       responses:
         "201":
           description: Created
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - role
+        - role
   /v1/role/coauthor:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: почта и курс
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/postcoauthor.Request'
+        - description: почта и курс
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/postcoauthor.Request"
       responses:
         "201":
           description: Created
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - role
+        - role
   /v1/role/coauthor/{id}/{courseId}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: courseId
-        in: path
-        name: courseId
-        required: true
-        type: string
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: courseId
+          in: path
+          name: courseId
+          required: true
+          type: string
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - role
+        - role
   /v1/role/teacher:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: почта будущего преподавателя
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/postteacher.Email'
+        - description: почта будущего преподавателя
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/postteacher.Email"
       responses:
         "201":
           description: Created
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - role
+        - role
   /v1/section:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Информация для раздела
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Section'
+        - description: Информация для раздела
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Section"
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Section'
+            $ref: "#/definitions/model.Section"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - section
+        - section
   /v1/section/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: по умолчанию soft
-        in: query
-        name: is_soft
-        type: boolean
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: по умолчанию soft
+          in: query
+          name: is_soft
+          type: boolean
       responses:
         "200":
           description: OK
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - section
+        - section
     put:
       parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Информация для раздела
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/update.Section'
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Информация для раздела
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/update.Section"
       responses:
         "200":
           description: updated
           schema:
-            $ref: '#/definitions/model.Section'
+            $ref: "#/definitions/model.Section"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - section
+        - section
   /v1/section/{id}/answer:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: section id
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: section id
+          in: path
+          name: id
+          required: true
+          type: string
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/answer.Answer'
+            $ref: "#/definitions/answer.Answer"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - section
+        - section
   /v1/section/{id}/order:
     patch:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: section id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/httpserver_handlers_section_internal_order.Order'
+        - description: section id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/httpserver_handlers_section_internal_order.Order"
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
-            $ref: '#/definitions/model.Section'
+            $ref: "#/definitions/model.Section"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - section
+        - section
   /v1/teacher:
     post:
       parameters:
-      - description: ' '
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/create.Teacher'
+        - description: " "
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/create.Teacher"
       responses:
         "201":
           description: created
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - teacher
+        - teacher
   /v1/teacher/courses:
     get:
       responses:
         "200":
-          description: ' '
+          description: " "
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - teacher
+        - teacher
   /v1/upload:
     post:
       consumes:
-      - multipart/form-data
+        - multipart/form-data
       parameters:
-      - description: file
-        in: formData
-        name: file
-        required: true
-        type: file
+        - description: file
+          in: formData
+          name: file
+          required: true
+          type: file
       responses:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.File'
+            $ref: "#/definitions/model.File"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       tags:
-      - file
+        - file
 securityDefinitions:
   ApiKeyAuth:
     in: header

@@ -11,7 +11,8 @@ create table courses
     short_description varchar(400)     not null,
     description       varchar(3000)    not null,
     logo              varchar(800)     not null,
-    banner            varchar(800)     not null,
+    banner            varchar(800)     not null, 
+    access            varchar(15)      not null,   
 
     updated_at        timestamptz,
     deleted_at        timestamptz,

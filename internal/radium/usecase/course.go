@@ -3,10 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/validator"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -92,8 +93,8 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 	if err != nil {
 		return nil, err
 	}
-	if !course.IsPublished && validator.Struct(course) != nil {
-		return nil, errors.New("курс ещё не готов к публикации")
+	if course.Access == "" && validator.Struct(course) != nil {
+		return nil, errors.New("access является обязательным полем")
 	}
 	isAuthor := slices.ContainsFunc(course.Authors, func(user *entity2.User) bool {
 		return user.Id == userId
@@ -102,7 +103,7 @@ func (uc CourseUseCase) Publish(ctx context.Context, id uuid.UUID, userId uuid.U
 		return nil, errors.New("пубилковать и снимать с публикации курс могут только авторы")
 	}
 
-	return uc.courseRepo.UpdatePublish(ctx, course.Id, !course.IsPublished)
+	return uc.courseRepo.UpdateAccess(ctx, course.Id, string(course.Access))
 }
 
 func (c CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) error {

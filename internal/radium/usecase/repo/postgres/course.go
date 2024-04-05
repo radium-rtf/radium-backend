@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
@@ -145,11 +146,28 @@ func (r Course) Update(ctx context.Context, course *entity2.Course) (*entity2.Co
 	return r.GetFullById(ctx, course.Id)
 }
 
-func (r Course) UpdatePublish(ctx context.Context, id uuid.UUID, status bool) (*entity2.Course, error) {
+//func (r Course) UpdatePublish(ctx context.Context, id uuid.UUID, status bool) (*entity2.Course, error) {
+//	info, err := r.db.NewUpdate().
+//		Model(&entity2.Course{}).
+//		Where("id = ?", id).
+//		Set("is_published = ?", status).
+//		Exec(ctx)
+//	if err != nil {
+//		return nil, err
+//	}
+
+//	n, _ := info.RowsAffected()
+//	if n == 0 {
+//		return nil, repoerr.NotFound
+//	}
+//	return r.GetFullById(ctx, id)
+//}
+
+func (r Course) UpdateAccess(ctx context.Context, id uuid.UUID, access string) (*entity2.Course, error) {
 	info, err := r.db.NewUpdate().
 		Model(&entity2.Course{}).
 		Where("id = ?", id).
-		Set("is_published = ?", status).
+		Set("access = ?", access).
 		Exec(ctx)
 	if err != nil {
 		return nil, err

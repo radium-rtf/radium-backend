@@ -1,12 +1,13 @@
 package radium
 
 import (
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/gavv/httpexpect/v2"
-	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/gavv/httpexpect/v2"
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 )
 
 type Courses struct {
@@ -60,7 +61,7 @@ func createCourses(t *testing.T, e *httpexpect.Expect) Courses {
 	}
 	courses.Full = createCourse(json)
 
-	if !FieldsFirstStructEqualSecond(&json, courses.Full) || courses.Full.IsPublished || courses.Empty.IsPublished {
+	if !FieldsFirstStructEqualSecond(&json, courses.Full.Access) || courses.Full.Access == "" {
 		t.Fail()
 		return courses
 	}
