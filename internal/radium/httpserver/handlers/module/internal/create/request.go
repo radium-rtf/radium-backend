@@ -8,7 +8,7 @@ import (
 
 type Module struct {
 	CourseId uuid.UUID `json:"courseId"`
-	Name     string    `json:"name" validate:"required,min=1,max=40"`
+	Name     string    `json:"name" validate:"required,min=1,max=48"`
 	Order    float64   `json:"order" validate:"numeric"`
 }
 

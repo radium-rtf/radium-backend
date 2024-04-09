@@ -11,10 +11,10 @@ type (
 		bun.BaseModel `bun:"table:courses"`
 		DBModel
 
-		Name             string `validate:"required,min=1,max=128"`
-		Slug             string `validate:"required,min=1,max=700"`
-		ShortDescription string `validate:"required,min=1,max=400"`
-		Description      string `validate:"required,max=3000"`
+		Name             string `validate:"required,min=1,max=64"`
+		Slug             string `validate:"required,min=1,max=64,slug"`
+		ShortDescription string `validate:"required,min=1,max=512"`
+		Description      string `validate:"required,max=4096"`
 		Logo             string `validate:"required,url"`
 		Banner           string `validate:"required,url"`
 		IsPublished      bool
