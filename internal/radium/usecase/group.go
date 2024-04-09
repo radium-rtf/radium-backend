@@ -44,7 +44,7 @@ func (uc GroupUseCase) GetWithAnswers(ctx context.Context, teacherId, groupId, c
 		return nil, err
 	}
 
-	contains := slices.ContainsFunc(courses, func(group *entity2.TeacherCourseGroup) bool {
+	contains := slices.ContainsFunc(courses, func(group *entity2.Teacher) bool {
 		return group.GroupId == groupId && group.CourseId == courseId
 	})
 	if !contains {
@@ -73,7 +73,7 @@ func (uc GroupUseCase) GetReportByCourse(ctx context.Context, userId, courseId, 
 		return nil, errors.New("такой курс не назначен группе")
 	}
 
-	isTeacher := slices.ContainsFunc(teacherCourses, func(course *entity2.TeacherCourseGroup) bool {
+	isTeacher := slices.ContainsFunc(teacherCourses, func(course *entity2.Teacher) bool {
 		return course.CourseId == courseId && course.GroupId == groupId
 	})
 	canViewReport := isTeacher || slices.ContainsFunc(group.Students, func(user *entity2.User) bool {

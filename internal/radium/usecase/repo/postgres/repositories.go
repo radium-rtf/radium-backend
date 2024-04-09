@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 )
 
@@ -19,7 +20,7 @@ type Repositories struct {
 	File
 }
 
-func NewRepositories(pg *postgres.Postgres) Repositories {
+func NewRepositories(pg *postgres.Postgres, defaultGroupId uuid.UUID) Repositories {
 	return Repositories{
 		Course:  NewCourseRepo(pg),
 		Answer:  NewAnswerRepo(pg),
