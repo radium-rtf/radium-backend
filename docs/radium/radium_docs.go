@@ -948,6 +948,29 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Notification"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/page": {
             "post": {
                 "security": [
@@ -2399,6 +2422,23 @@ const docTemplateradium = `{
                 }
             }
         },
+        "model.Notification": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "review": {
+                    "$ref": "#/definitions/model.ReviewNotification"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Page": {
             "type": "object",
             "properties": {
@@ -2510,6 +2550,35 @@ const docTemplateradium = `{
                 },
                 "score": {
                     "type": "number"
+                }
+            }
+        },
+        "model.ReviewNotification": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "moduleId": {
+                    "type": "string"
+                },
+                "moduleName": {
+                    "type": "string"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "pageName": {
+                    "type": "string"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },

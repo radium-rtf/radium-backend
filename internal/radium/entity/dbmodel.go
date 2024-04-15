@@ -18,6 +18,7 @@ func (m *DBModel) BeforeAppendModel(_ context.Context, query bun.Query) error {
 	switch query.(type) {
 	case *bun.InsertQuery:
 		m.CreatedAt = time.Now()
+		m.Id = uuid.New()
 	case *bun.UpdateQuery:
 		m.UpdatedAt = time.Now()
 	}

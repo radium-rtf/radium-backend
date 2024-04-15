@@ -88,7 +88,7 @@ func (r *Answer) ToAnswer(userId uuid.UUID) (*entity2.Answer, error) {
 		answer.Type = entity2.FileType
 		answer.FileUrl = sql.NullString{String: r.File.Answer, Valid: r.File.Answer == ""}
 	default:
-		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
+		return nil, errors.New("create.Review - toAnswer - не удалось создать ответ")
 	}
 
 	return answer, nil

@@ -560,6 +560,17 @@ definitions:
       slug:
         type: string
     type: object
+  model.Notification:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      review:
+        $ref: '#/definitions/model.ReviewNotification'
+      type:
+        type: string
+    type: object
   model.Page:
     properties:
       id:
@@ -633,6 +644,25 @@ definitions:
         $ref: '#/definitions/model.User'
       score:
         type: number
+    type: object
+  model.ReviewNotification:
+    properties:
+      courseId:
+        type: string
+      maxScore:
+        type: integer
+      moduleId:
+        type: string
+      moduleName:
+        type: string
+      pageId:
+        type: string
+      pageName:
+        type: string
+      reviewer:
+        $ref: '#/definitions/model.User'
+      score:
+        type: integer
     type: object
   model.Roles:
     properties:
@@ -1553,6 +1583,19 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /v1/notification:
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Notification'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
   /v1/page:
     post:
       parameters:
