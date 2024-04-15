@@ -13,6 +13,7 @@ type (
 		Review *ReviewNotification `json:"review"`
 
 		Type      string    `json:"type"`
+		Read      bool      `json:"read"`
 		CreatedAt time.Time `json:"createdAt"`
 	}
 
@@ -58,6 +59,7 @@ func NewNotification(notification entity.Notification) Notification {
 		Type:      string(notification.Type),
 		Review:    &reviewNotification,
 		CreatedAt: notification.CreatedAt,
+		Read:      notification.Read,
 	}
 }
 

@@ -38,6 +38,7 @@ func (r Review) Create(ctx context.Context, review *entity.Review) (*entity.Revi
 		}
 
 		notification := entity.Notification{
+			DBModel:  entity.DBModel{Id: uuid.New()},
 			AnswerId: review.AnswerId,
 			UserId:   review.Answer.UserId,
 			Type:     entity.ReviewNotification,

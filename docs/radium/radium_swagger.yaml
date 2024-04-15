@@ -91,15 +91,15 @@ definitions:
       description:
         maxLength: 4096
         type: string
-      links:
-        items:
-          $ref: '#/definitions/createlink.Link'
-        type: array
       logo:
         type: string
       name:
         maxLength: 64
         type: string
+      omitempty:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
       shortDescription:
         maxLength: 512
         type: string
@@ -566,6 +566,8 @@ definitions:
         type: string
       id:
         type: string
+      read:
+        type: boolean
       review:
         $ref: '#/definitions/model.ReviewNotification'
       type:
@@ -792,6 +794,11 @@ definitions:
     properties:
       refreshToken:
         type: string
+    type: object
+  resp.Success:
+    properties:
+      success:
+        type: integer
     type: object
   signin.SignIn:
     properties:
@@ -1592,6 +1599,46 @@ paths:
           description: ' '
           schema:
             $ref: '#/definitions/model.Notification'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
+  /v1/notifications:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: массив uuid`ов уведомлений для удаления
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: количество удачных операций, чужие уведомления удалять нельзя
+          schema:
+            $ref: '#/definitions/resp.Success'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
+  /v1/notifications/read:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: массив uuid`ов уведомлений для чтения
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: количество удачных операций, чужие уведомления читать нельзя
+          schema:
+            $ref: '#/definitions/resp.Success'
       security:
       - ApiKeyAuth: []
       tags:

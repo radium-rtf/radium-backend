@@ -23,5 +23,6 @@ type (
 		Answer   *Answer   `bun:"rel:belongs-to,join:answer_id=id"`
 
 		Type NotificationType
+		Read bool
 	}
 )

@@ -3,17 +3,17 @@ package create
 import (
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
-	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/createlink"
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"github.com/radium-rtf/radium-backend/pkg/str"
 )
 
 type Course struct {
-	Name             string            `json:"name" validate:"max=64"`
-	ShortDescription string            `json:"shortDescription" validate:"max=512"`
-	Description      string            `json:"description" validate:"max=4096"`
-	Logo             string            `json:"logo" validate:"url"`
-	Banner           string            `json:"banner" validate:"url"`
-	Links            []createlink.Link `json:"links" validate:"dive"`
+	Name             string       `json:"name" validate:"max=64"`
+	ShortDescription string       `json:"shortDescription" validate:"max=512"`
+	Description      string       `json:"description" validate:"max=4096"`
+	Logo             string       `json:"logo" validate:"url"`
+	Banner           string       `json:"banner" validate:"url"`
+	Links            []model.Link `json:"links" validate:"dive"`
 }
 
 func (r Course) toCourse(authorId uuid.UUID) *entity2.Course {
@@ -23,7 +23,12 @@ func (r Course) toCourse(authorId uuid.UUID) *entity2.Course {
 
 	links := make([]*entity2.Link, 0, len(r.Links))
 	for _, v := range r.Links {
-		link := v.ToLink(courseId)
+		link := &entity2.Link{
+			Link:     v.Link,
+			Name:     v.Name,
+			CourseId: courseId,
+			DBModel:  entity2.DBModel{Id: uuid.New()},
+		}
 		links = append(links, link)
 	}
 
