@@ -6,11 +6,11 @@ import (
 )
 
 type Link struct {
-	Name string `json:"name" validate:"required,min=1,max=32"`
+	Name string `json:"name" validate:"required,min=1,max=64"`
 	Link string `json:"link" validate:"required,uri"`
 }
 
-func (r Link) toLink(courseId uuid.UUID) *entity2.Link {
+func (r Link) ToLink(courseId uuid.UUID) *entity2.Link {
 	return &entity2.Link{
 		DBModel:  entity2.DBModel{Id: uuid.New()},
 		Link:     r.Link,

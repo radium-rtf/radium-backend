@@ -23,6 +23,11 @@ func newValidate() (*validate, error) {
 		return nil, err
 	}
 
+	err = v.v.RegisterValidation("slug", v.slugValidate)
+	if err != nil {
+		return nil, err
+	}
+
 	return &v, nil
 }
 

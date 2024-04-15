@@ -461,7 +461,7 @@ const docTemplateradium = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/model.Link"
+                            "$ref": "#/definitions/createlink.Link"
                         }
                     }
                 }
@@ -1662,16 +1662,16 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1697,7 +1697,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -1709,12 +1709,12 @@ const docTemplateradium = `{
                 },
                 "description": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 },
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Link"
+                        "$ref": "#/definitions/createlink.Link"
                     }
                 },
                 "logo": {
@@ -1722,11 +1722,11 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 128
+                    "maxLength": 64
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400
+                    "maxLength": 512
                 }
             }
         },
@@ -1757,7 +1757,7 @@ const docTemplateradium = `{
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -1788,13 +1788,9 @@ const docTemplateradium = `{
         },
         "create.Mapping": {
             "type": "object",
-            "required": [
-                "answer"
-            ],
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 10,
                     "items": {
                         "type": "string"
                     }
@@ -1812,6 +1808,7 @@ const docTemplateradium = `{
                 "answer": {
                     "type": "array",
                     "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1819,13 +1816,14 @@ const docTemplateradium = `{
                 "keys": {
                     "type": "array",
                     "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 800
+                    "maxLength": 4096
                 }
             }
         },
@@ -1851,7 +1849,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "order": {
@@ -1880,19 +1878,20 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 6,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1910,7 +1909,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "order": {
@@ -1920,13 +1919,9 @@ const docTemplateradium = `{
         },
         "create.Permutation": {
             "type": "object",
-            "required": [
-                "answer"
-            ],
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 8,
                     "items": {
                         "type": "string"
                     }
@@ -1942,14 +1937,15 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 8,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 500
+                    "maxLength": 4096
                 }
             }
         },
@@ -2048,11 +2044,11 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 50
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 200
+                    "maxLength": 4096
                 }
             }
         },
@@ -2089,7 +2085,7 @@ const docTemplateradium = `{
             "properties": {
                 "content": {
                     "type": "string",
-                    "maxLength": 10000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2105,7 +2101,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 32,
+                    "maxLength": 64,
                     "minLength": 1
                 }
             }
@@ -2171,7 +2167,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2362,10 +2358,6 @@ const docTemplateradium = `{
         },
         "model.Link": {
             "type": "object",
-            "required": [
-                "link",
-                "name"
-            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2374,9 +2366,7 @@ const docTemplateradium = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string",
-                    "maxLength": 32,
-                    "minLength": 1
+                    "type": "string"
                 }
             }
         },
@@ -2744,7 +2734,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 30,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "password": {
@@ -2757,7 +2747,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2769,16 +2759,16 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 26,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -2790,7 +2780,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2802,22 +2792,22 @@ const docTemplateradium = `{
                 },
                 "description": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 128
+                    "maxLength": 64
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400
+                    "maxLength": 512
                 },
                 "slug": {
                     "type": "string",
-                    "maxLength": 11
+                    "maxLength": 64
                 }
             }
         },
@@ -2833,7 +2823,7 @@ const docTemplateradium = `{
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2846,21 +2836,23 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "keys": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 800
+                    "maxLength": 4096
                 }
             }
         },
@@ -2883,7 +2875,7 @@ const docTemplateradium = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 }
             }
@@ -2897,19 +2889,20 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 26,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -2924,14 +2917,15 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 500
+                    "maxLength": 4096
                 }
             }
         },
@@ -2985,11 +2979,11 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 50
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 200
+                    "maxLength": 4096
                 }
             }
         },
@@ -3001,7 +2995,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 25
+                    "maxLength": 48
                 }
             }
         },

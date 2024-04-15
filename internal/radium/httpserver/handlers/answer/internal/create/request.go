@@ -46,11 +46,11 @@ type (
 	}
 
 	Permutation struct {
-		Answer []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
+		Answer []string `swaggertype:"array,string"`
 	}
 
 	Mapping struct {
-		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+		Answer []string `swaggertype:"array,string"`
 	}
 )
 
