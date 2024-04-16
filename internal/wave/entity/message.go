@@ -24,10 +24,11 @@ type (
 	ReadBy struct {
 		bun.BaseModel `bun:"table:wave.read_by"`
 
-		MessageId uuid.UUID    `bun:",pk"`
-		Message   *Message     `bun:"rel:belongs-to,join:message_id=id"`
-		UserId    uuid.UUID    `bun:",pk"`
-		User      *radium.User `bun:"rel:belongs-to,join:user_id=id"`
+		MessageId uuid.UUID `bun:",pk"`
+		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
+
+		UserId uuid.UUID    `bun:",pk"`
+		User   *radium.User `bun:"rel:belongs-to,join:user_id=id"`
 	}
 
 	Reaction struct {
@@ -36,8 +37,10 @@ type (
 
 		MessageId uuid.UUID
 		Message   *Message `bun:"rel:belongs-to,join:message_id=id"`
-		UserId    uuid.UUID
-		User      *radium.User `bun:"rel:belongs-to,join:user_id=id"`
-		Reaction  string
+
+		UserId uuid.UUID
+		User   *radium.User `bun:"rel:belongs-to,join:user_id=id"`
+
+		Reaction string
 	}
 )

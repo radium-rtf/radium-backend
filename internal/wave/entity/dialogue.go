@@ -26,8 +26,9 @@ type (
 
 		DialogueId uuid.UUID `bun:",pk"`
 		Dialogue   *Dialogue `bun:"rel:belongs-to,join:dialogue_id=id"`
-		MessageId  uuid.UUID `bun:",pk"`
-		Message    *Message  `bun:"rel:belongs-to,join:message_id=id"`
+
+		MessageId uuid.UUID `bun:",pk"`
+		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
 	}
 
 	DialoguePinnedMessage struct {
@@ -35,7 +36,8 @@ type (
 
 		DialogueId uuid.UUID `bun:",pk"`
 		Dialogue   *Dialogue `bun:"rel:belongs-to,join:dialogue_id=id"`
-		MessageId  uuid.UUID `bun:",pk"`
-		Message    *Message  `bun:"rel:belongs-to,join:message_id=id"`
+
+		MessageId uuid.UUID `bun:",pk"`
+		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
 	}
 )

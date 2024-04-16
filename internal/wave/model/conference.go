@@ -6,13 +6,13 @@ import (
 )
 
 type (
-	Post struct {
+	Conference struct {
 		Id uuid.UUID `json:"id"`
 	}
 )
 
-func NewPost(post *entity.Post) Post {
-	return Post{
-		Id: post.Id,
+func NewConference(conference *entity.Conference) Conference {
+	return Conference{
+		Id: conference.Id,
 	}
 }
