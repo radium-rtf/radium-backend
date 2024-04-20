@@ -29,6 +29,8 @@ type (
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 
 		Groups []*Group `bun:"m2m:group_course,join:Course=Group"`
+
+		LastVisitedPage []*LastVisitedPage `bun:"rel:has-many,join:id=course_id"`
 	}
 
 	CourseAuthor struct {

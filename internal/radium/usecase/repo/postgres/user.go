@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	repoerr2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
@@ -23,14 +23,14 @@ func NewUserRepo(pg *postgres.Postgres) User {
 	return User{db: pg.DB, defaultGroupId: pg.DefaultGroupId, group: NewGroupRepo(pg)}
 }
 
-func (r User) Create(ctx context.Context, user *entity2.User) error {
+func (r User) Create(ctx context.Context, user *entity.User) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().Model(user).Exec(ctx)
 		if err != nil {
 			return err
 		}
 
-		roles := entity2.GetAllRoles(user.Id)
+		roles := entity.GetAllRoles(user.Id)
 		user.Roles = roles
 		_, err = tx.NewInsert().Model(roles).Exec(ctx)
 		if err != nil {
@@ -41,8 +41,8 @@ func (r User) Create(ctx context.Context, user *entity2.User) error {
 	})
 }
 
-func (r User) get(ctx context.Context, value columnValue) (*entity2.User, error) {
-	var user = new(entity2.User)
+func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) {
+	var user = new(entity.User)
 	err := r.db.NewSelect().Model(user).
 		Relation("Roles").
 		Where(value.column+" = ?", value.value).
@@ -54,29 +54,31 @@ func (r User) get(ctx context.Context, value columnValue) (*entity2.User, error)
 	return user, err
 }
 
-func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity2.User, error) {
-	var user = new(entity2.User)
+func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+	var user = new(entity.User)
 	err := r.db.NewSelect().Model(user).
+		Where("\"user\".\"id\" = ?", id).
 		Relation("Roles").
-		Relation("Author").
+		Relation("Author.Modules.Pages.Sections.UsersAnswers.Review").
+		Relation("Author.Modules.Pages.Sections.UsersAnswers.File").
+		Relation("Author.LastVisitedPage", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("user_id =?", id)
+		}).
 		Relation("Author.Authors").
-		Relation("Coauthor").
-		Relation("Courses").
-		Relation("Courses.Modules", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
+		Relation("Coauthor.Modules.Pages.Sections.UsersAnswers.Review").
+		Relation("Coauthor.LastVisitedPage", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Where("user_id =?", id)
 		}).
-		Relation("Courses.Modules.Pages", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
+		Relation("Coauthor.Modules.Pages.Sections.UsersAnswers.File").
+		Relation("LastVisitedPage", func(query *bun.SelectQuery) *bun.SelectQuery {
+			return query.Order("last_visited_page.updated_at desc").Limit(1)
 		}).
-		Relation("Courses.Modules.Pages.Sections", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("order")
-		}).
-		Relation("Courses.Modules.Pages.Sections.UsersAnswers", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Order("answer.created_at desc").Where("user_id = ?", id)
-		}).
+		Relation("LastVisitedPage.Course.Modules.Pages.Sections.UsersAnswers.Review").
+		Relation("LastVisitedPage.Course.Modules.Pages.Sections.UsersAnswers.File").
+		Relation("LastVisitedPage.Course.Authors").
+		Relation("LastVisitedPage.Course.Coauthors").
 		Relation("Courses.Modules.Pages.Sections.UsersAnswers.Review").
 		Relation("Courses.Modules.Pages.Sections.UsersAnswers.File").
-		Where("id = ?", id).
 		Limit(1).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
@@ -85,16 +87,16 @@ func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity2.User, error) 
 	return user, err
 }
 
-func (r User) GetByEmail(ctx context.Context, email string) (*entity2.User, error) {
+func (r User) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
 	return r.get(ctx, columnValue{column: "email", value: email})
 }
 
-func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity2.User, error) {
+func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 	return r.get(ctx, columnValue{column: "id", value: id})
 }
 
-func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity2.User, error) {
-	var users []*entity2.User
+func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity.User, error) {
+	var users []*entity.User
 	err := r.db.NewSelect().Model(&users).Relation("Roles").
 		Where("id in (?)", bun.In(ids)).
 		Scan(ctx)
@@ -104,8 +106,8 @@ func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity2.User, e
 	return users, err
 }
 
-func (r User) GetByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*entity2.User, error) {
-	var session = new(entity2.Session)
+func (r User) GetByRefreshToken(ctx context.Context, refreshToken uuid.UUID) (*entity.User, error) {
+	var session = new(entity.Session)
 
 	err := r.db.NewSelect().
 		Model(session).
@@ -149,7 +151,7 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 	return r.updateColumn(ctx, value, where)
 }
 
-func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, error) {
+func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
 	exec, err := r.db.NewUpdate().
 		Model(user).
 		WherePK().
@@ -167,13 +169,13 @@ func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, er
 	return r.GetById(ctx, user.Id)
 }
 
-func (r User) CreateUnverifiedUser(ctx context.Context, user *entity2.UnverifiedUser) error {
+func (r User) CreateUnverifiedUser(ctx context.Context, user *entity.UnverifiedUser) error {
 	_, err := r.db.NewInsert().Model(user).Exec(ctx)
 	return err
 }
 
-func (r User) GetUnverifiedUser(ctx context.Context, email, verificationCode string) (*entity2.UnverifiedUser, error) {
-	var user = new(entity2.UnverifiedUser)
+func (r User) GetUnverifiedUser(ctx context.Context, email, verificationCode string) (*entity.UnverifiedUser, error) {
+	var user = new(entity.UnverifiedUser)
 	err := r.db.NewSelect().
 		Model(user).
 		Where("email = ? and verification_code = ?", email, verificationCode).
@@ -183,4 +185,31 @@ func (r User) GetUnverifiedUser(ctx context.Context, email, verificationCode str
 		return nil, repoerr2.NotFound
 	}
 	return user, err
+}
+
+func (r User) SaveLastVisitedPage(ctx context.Context, page *entity.Page, userId uuid.UUID) error {
+	module := new(entity.Module)
+	err := r.db.NewSelect().
+		Model(module).
+		Where("id = ?", page.ModuleId).
+		Scan(ctx)
+	if err != nil {
+		return err
+	}
+
+	lastVisitedPage := &entity.LastVisitedPage{
+		CourseId:  module.CourseId,
+		UserId:    userId,
+		PageId:    page.Id,
+		UpdatedAt: time.Now(),
+	}
+
+	set := `course_id = excluded.course_id, page_id = excluded.page_id, 
+			user_id = excluded.user_id, updated_at = excluded.updated_at`
+	_, err = r.db.NewInsert().
+		Model(lastVisitedPage).On("conflict (user_id, course_id) do update").
+		Set(set).
+		Exec(ctx)
+
+	return err
 }

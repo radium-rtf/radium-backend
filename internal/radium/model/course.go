@@ -23,10 +23,11 @@ type (
 		IsPublished bool `json:"isPublished"`
 		IsStudent   bool `json:"isStudent"`
 
-		Score    uint      `json:"score"`
-		MaxScore uint      `json:"maxScore"`
-		Modules  []*Module `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
-		Groups   []*Group  `json:"groups"`
+		Score           uint       `json:"score"`
+		MaxScore        uint       `json:"maxScore"`
+		Modules         []*Module  `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
+		Groups          []*Group   `json:"groups"`
+		LastVisitedPage *uuid.UUID `json:"lastVisitedPage"`
 	}
 )
 
@@ -43,6 +44,12 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 	isStudent := slices.ContainsFunc(course.Students, func(user entity.User) bool {
 		return user.Id == userId
 	})
+
+	var lastVisitedPage *uuid.UUID
+	if len(course.LastVisitedPage) != 0 {
+		lastVisitedPage = &course.LastVisitedPage[0].PageId
+	}
+
 	return &Course{
 		Id:               course.Id,
 		Name:             course.Name,
@@ -60,6 +67,7 @@ func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, us
 		Score:            score,
 		Modules:          modules,
 		Groups:           NewGroups(course.Groups),
+		LastVisitedPage:  lastVisitedPage,
 	}
 }
 

@@ -1572,6 +1572,26 @@ const docTemplateradium = `{
                     }
                 }
             }
+        },
+        "/v2/account/courses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "account"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.Main"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2218,6 +2238,41 @@ const docTemplateradium = `{
                 }
             }
         },
+        "model.Card": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastVisitedPage": {
+                    "type": "string"
+                },
+                "logoUrl": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "moduleCount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Course": {
             "type": "object",
             "properties": {
@@ -2253,6 +2308,9 @@ const docTemplateradium = `{
                 },
                 "isStudent": {
                     "type": "boolean"
+                },
+                "lastVisitedPage": {
+                    "type": "string"
                 },
                 "links": {
                     "type": "array",
@@ -2367,6 +2425,32 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Main": {
+            "type": "object",
+            "properties": {
+                "assignedCards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "authorCards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "recommended": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "topCard": {
+                    "$ref": "#/definitions/model.Card"
                 }
             }
         },
