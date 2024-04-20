@@ -12,15 +12,18 @@ type (
 		bun.BaseModel `bun:"table:reviews"`
 
 		AnswerId uuid.UUID `bun:",pk"`
+		Answer   *Answer   `bun:"rel:belongs-to,join:answer_id=id"`
 
 		ReviewerId uuid.UUID
 		Reviewer   *User `bun:"rel:belongs-to,join:reviewer_id=id"`
-		Score      float64
+
+		Score float64
+
+		Comment string
 
 		UpdatedAt time.Time `bun:",nullzero"`
 		CreatedAt time.Time `bun:",nullzero"`
 		DeletedAt time.Time `bun:",soft_delete,nullzero"`
-		Comment   string
 	}
 
 	ReviewComment struct { // несколько преподавателей оставили комментарий
