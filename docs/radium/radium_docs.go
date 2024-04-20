@@ -948,6 +948,97 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Notification"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "parameters": [
+                    {
+                        "description": "массив uuid` + "`" + `ов уведомлений для удаления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "количество удачных операций, чужие уведомления удалять нельзя",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Success"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/read": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "parameters": [
+                    {
+                        "description": "массив uuid` + "`" + `ов уведомлений для чтения",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "количество удачных операций, чужие уведомления читать нельзя",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Success"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/page": {
             "post": {
                 "security": [
@@ -1731,18 +1822,18 @@ const docTemplateradium = `{
                     "type": "string",
                     "maxLength": 4096
                 },
-                "links": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/createlink.Link"
-                    }
-                },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 64
+                },
+                "omitempty": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
                 },
                 "shortDescription": {
                     "type": "string",
@@ -2483,6 +2574,26 @@ const docTemplateradium = `{
                 }
             }
         },
+        "model.Notification": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "review": {
+                    "$ref": "#/definitions/model.ReviewNotification"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Page": {
             "type": "object",
             "properties": {
@@ -2594,6 +2705,35 @@ const docTemplateradium = `{
                 },
                 "score": {
                     "type": "number"
+                }
+            }
+        },
+        "model.ReviewNotification": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "moduleId": {
+                    "type": "string"
+                },
+                "moduleName": {
+                    "type": "string"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "pageName": {
+                    "type": "string"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },
@@ -2793,6 +2933,14 @@ const docTemplateradium = `{
             "properties": {
                 "refreshToken": {
                     "type": "string"
+                }
+            }
+        },
+        "resp.Success": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "integer"
                 }
             }
         },

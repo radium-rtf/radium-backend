@@ -81,16 +81,14 @@ func (r Group) JoinStudent(ctx context.Context, studentId uuid.UUID, code string
 		return err
 	}
 
-	coursesIds := r.db.NewSelect().
-		ColumnExpr("? as group_id, ? as user_id, course_id", group.Id, studentId).
-		Model(&entity.GroupCourse{}).
-		Where("group_id = ?", group.Id)
+	insert := `
+	insert into students (user_id, course_id, group_id) 
+	select ? as user_id, course_id, group_id from group_course 
+	where group_id = ?
+	on conflict (user_id, course_id) do update set group_id = excluded.group_id
+` // todo: хотелось бы делать этот разпрос через орм, но я не нашел как это написать через orm
 
-	_, err = r.db.NewInsert().
-		Model(coursesIds).
-		On("CONFLICT (user_id, course_id) DO UPDATE").
-		Set("group_id = ?", group.Id).
-		Exec(ctx)
+	_, err = r.db.NewRaw(insert, studentId, group.Id).Exec(ctx)
 
 	return err
 }

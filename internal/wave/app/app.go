@@ -3,12 +3,13 @@ package app
 import (
 	"errors"
 	"fmt"
-	"github.com/radium-rtf/radium-backend/pkg/httpserver"
-	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/radium-rtf/radium-backend/pkg/httpserver"
+	"github.com/radium-rtf/radium-backend/pkg/postgres"
 
 	"github.com/radium-rtf/radium-backend/config"
 	_ "github.com/radium-rtf/radium-backend/docs/wave"

@@ -15,7 +15,7 @@ import (
 func newDependencies(storage filestorage.Storage, cfg *config.Config, db *postgres.Postgres) usecase.Dependencies {
 	authCFG := cfg.Radium.Auth
 
-	repositories := pg.NewRepositories(db, cfg.Radium.DefaultGroupID)
+	repositories := pg.NewRepositories(db)
 	tokenManager := auth.NewManager(cfg.JWT.SigningKey)
 	passwordHasher := hash.NewPasswordHasher(authCFG.PasswordSaltSha1, authCFG.PasswordCostBcrypt)
 	smtp := email.NewSMTPSender(cfg.Smtp.Email, cfg.Smtp.Password, cfg.Smtp.Host, cfg.Smtp.Port,
