@@ -2222,6 +2222,23 @@ const docTemplateradium = `{
                 }
             }
         },
+        "model.Contact": {
+            "type": "object",
+            "required": [
+                "link",
+                "name"
+            ],
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 1
+                }
+            }
+        },
         "model.Course": {
             "type": "object",
             "properties": {
@@ -2650,6 +2667,9 @@ const docTemplateradium = `{
                 "avatar": {
                     "type": "string"
                 },
+                "contact": {
+                    "$ref": "#/definitions/model.Contact"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2817,7 +2837,7 @@ const docTemplateradium = `{
                 },
                 "slug": {
                     "type": "string",
-                    "maxLength": 11
+                    "maxLength": 64
                 }
             }
         },
@@ -2998,6 +3018,9 @@ const docTemplateradium = `{
             "properties": {
                 "avatar": {
                     "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/model.Contact"
                 },
                 "name": {
                     "type": "string",

@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/lib/session"
@@ -11,7 +13,6 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/email"
 	"github.com/radium-rtf/radium-backend/pkg/hash"
 	"github.com/radium-rtf/radium-backend/pkg/str"
-	"time"
 )
 
 type AuthUseCase struct {
@@ -62,6 +63,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity2.User) (*entity2.
 	user.Password = password
 
 	code := str.Random(uc.lengthVerificationCode)
+
 	unverifiedUser = &entity2.UnverifiedUser{
 		Id:       user.Id,
 		Name:     user.Name,

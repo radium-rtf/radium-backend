@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	repoerr2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
-	"time"
 )
 
 type User struct {
@@ -46,6 +48,7 @@ func (r User) Create(ctx context.Context, user *entity2.User) error {
 func (r User) get(ctx context.Context, value columnValue) (*entity2.User, error) {
 	var user = new(entity2.User)
 	err := r.db.NewSelect().Model(user).
+		Relation("Contact").
 		Relation("Roles").
 		Where(value.column+" = ?", value.value).
 		Limit(1).
@@ -59,6 +62,7 @@ func (r User) get(ctx context.Context, value columnValue) (*entity2.User, error)
 func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity2.User, error) {
 	var user = new(entity2.User)
 	err := r.db.NewSelect().Model(user).
+		Relation("Contact").
 		Relation("Roles").
 		Relation("Author").
 		Relation("Author.Authors").
@@ -142,6 +146,7 @@ func (r User) updateColumn(ctx context.Context, value columnValue, where columnV
 	if rowsAffected == 0 {
 		return repoerr2.NotFound
 	}
+
 	return err
 }
 
@@ -152,21 +157,54 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 }
 
 func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, error) {
-	exec, err := r.db.NewUpdate().
-		Model(user).
-		WherePK().
-		OmitZero().
-		Exec(ctx)
+	var updatedUser *entity2.User
+
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+
+		if user.Contact != nil {
+			_, err := tx.NewInsert().
+				Model(user.Contact).
+				On("conflict (user_id) do update").
+				Set("name = EXCLUDED.name, link = EXCLUDED.link").
+				Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		exec, err := tx.NewUpdate().
+			Model(user).
+			WherePK().
+			OmitZero().
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := exec.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
+			return repoerr2.NotFound
+		}
+
+		updatedUser, err = r.GetById(ctx, user.Id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("transaction error: %w", err)
 	}
 
-	rowsAffected, _ := exec.RowsAffected()
-	if rowsAffected == 0 {
-		return nil, repoerr2.NotFound
-	}
+	fmt.Println("Transaction committed successfully")
 
-	return r.GetById(ctx, user.Id)
+	return updatedUser, nil
 }
 
 func (r User) CreateUnverifiedUser(ctx context.Context, user *entity2.UnverifiedUser) error {

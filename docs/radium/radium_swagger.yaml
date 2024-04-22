@@ -443,6 +443,18 @@ definitions:
       verdict:
         $ref: '#/definitions/verdict.Type'
     type: object
+  model.Contact:
+    properties:
+      link:
+        type: string
+      name:
+        maxLength: 32
+        minLength: 1
+        type: string
+    required:
+    - link
+    - name
+    type: object
   model.Course:
     properties:
       authors:
@@ -724,6 +736,8 @@ definitions:
     properties:
       avatar:
         type: string
+      contact:
+        $ref: '#/definitions/model.Contact'
       email:
         type: string
       id:
@@ -835,7 +849,7 @@ definitions:
         maxLength: 400
         type: string
       slug:
-        maxLength: 11
+        maxLength: 64
         type: string
     type: object
   update.FileSection:
@@ -961,6 +975,8 @@ definitions:
     properties:
       avatar:
         type: string
+      contact:
+        $ref: '#/definitions/model.Contact'
       name:
         maxLength: 25
         type: string
