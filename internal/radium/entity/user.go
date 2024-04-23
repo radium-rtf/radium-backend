@@ -23,6 +23,8 @@ type (
 
 		Author   []*Course `bun:"m2m:course_author,join:User=Course"`
 		Coauthor []*Course `bun:"m2m:course_coauthor,join:User=Course"`
+
+		LastVisitedPage *LastVisitedPage `bun:"rel:has-one,join:id=user_id"`
 	}
 
 	UnverifiedUser struct {

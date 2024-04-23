@@ -25,4 +25,9 @@ func New(r chi.Router, useCases usecase.UseCases) {
 			r.Patch("/password", updatepass.New(useCase))
 		})
 	})
+
+	r.Route("/v2/account", func(r chi.Router) {
+		r.Use(mwAuth.Required(useCases.Deps.TokenManager))
+		r.Get("/courses", courses.NewV2(useCase))
+	})
 }

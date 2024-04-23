@@ -52,7 +52,7 @@ func NewUseCases(deps Dependencies) UseCases {
 		File:         NewFileUseCase(deps.Storage, repos.File),
 		Group:        NewGroupUseCase(repos.Group, repos.Course, repos.Answer, repos.Teacher),
 		Module:       NewModuleUseCase(repos.Module, repos.Course),
-		Page:         NewPageUseCase(repos.Page, repos.Module),
+		Page:         NewPageUseCase(repos.Page, repos.Module, repos.User),
 		Review:       NewReviewUseCase(repos.Review, repos.Answer),
 		Section:      NewSectionUseCase(repos.Section, repos.Page),
 		Teacher:      NewTeacherUseCase(repos.Teacher),
