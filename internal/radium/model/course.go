@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"slices"
 )
 
@@ -23,26 +23,33 @@ type (
 		IsPublished bool `json:"isPublished"`
 		IsStudent   bool `json:"isStudent"`
 
-		Score    uint      `json:"score"`
-		MaxScore uint      `json:"maxScore"`
-		Modules  []*Module `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
-		Groups   []*Group  `json:"groups"`
+		Score           uint       `json:"score"`
+		MaxScore        uint       `json:"maxScore"`
+		Modules         []*Module  `json:"modules"` // TODO: скрыть для людей, у которых нет доступа к курсу
+		Groups          []*Group   `json:"groups"`
+		LastVisitedPage *uuid.UUID `json:"lastVisitedPage"`
 	}
 )
 
-func NewCourses(courses []*entity2.Course, userId uuid.UUID) []*Course {
+func NewCourses(courses []*entity.Course, userId uuid.UUID) []*Course {
 	c := make([]*Course, 0, len(courses))
 	for _, course := range courses {
-		c = append(c, NewCourse(course, map[uuid.UUID][]*entity2.Answer{}, userId))
+		c = append(c, NewCourse(course, map[uuid.UUID][]*entity.Answer{}, userId))
 	}
 	return c
 }
 
-func NewCourse(course *entity2.Course, answers map[uuid.UUID][]*entity2.Answer, userId uuid.UUID) *Course {
+func NewCourse(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, userId uuid.UUID) *Course {
 	modules, score, maxScore := NewModules(course.Modules, answers)
-	isStudent := slices.ContainsFunc(course.Students, func(user entity2.User) bool {
+	isStudent := slices.ContainsFunc(course.Students, func(user entity.User) bool {
 		return user.Id == userId
 	})
+
+	var lastVisitedPage *uuid.UUID
+	if len(course.LastVisitedPage) != 0 {
+		lastVisitedPage = &course.LastVisitedPage[0].PageId
+	}
+
 	return &Course{
 		Id:               course.Id,
 		Name:             course.Name,
@@ -60,17 +67,18 @@ func NewCourse(course *entity2.Course, answers map[uuid.UUID][]*entity2.Answer, 
 		Score:            score,
 		Modules:          modules,
 		Groups:           NewGroups(course.Groups),
+		LastVisitedPage:  lastVisitedPage,
 	}
 }
 
-func NewCourseWithUserGroups(course *entity2.Course, answers map[uuid.UUID][]*entity2.Answer, userId uuid.UUID) *Course {
+func NewCourseWithUserGroups(course *entity.Course, answers map[uuid.UUID][]*entity.Answer, userId uuid.UUID) *Course {
 	groups := make([]*Group, 0, len(course.Groups))
 	for _, group := range course.Groups {
-		isStudent := slices.ContainsFunc(group.Students, func(user *entity2.User) bool {
+		isStudent := slices.ContainsFunc(group.Students, func(user *entity.User) bool {
 			return user.Id == userId
 		})
 		if isStudent {
-			group.Students = make([]*entity2.User, 0)
+			group.Students = make([]*entity.User, 0)
 			groups = append(groups, NewGroup(group))
 		}
 	}

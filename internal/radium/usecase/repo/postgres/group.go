@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"context"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
 
@@ -17,16 +17,16 @@ func NewGroupRepo(pg *postgres.Postgres) Group {
 	return Group{db: pg.DB}
 }
 
-func (r Group) Create(ctx context.Context, group *entity2.Group) (*entity2.Group, error) {
+func (r Group) Create(ctx context.Context, group *entity.Group) (*entity.Group, error) {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().Model(group).Exec(ctx)
 		if err != nil {
 			return err
 		}
 
-		var groupCourse []*entity2.GroupCourse
+		var groupCourse []*entity.GroupCourse
 		for _, course := range group.Courses {
-			groupCourse = append(groupCourse, &entity2.GroupCourse{CourseId: course.Id, GroupId: group.Id})
+			groupCourse = append(groupCourse, &entity.GroupCourse{CourseId: course.Id, GroupId: group.Id})
 		}
 
 		if len(groupCourse) != 0 {
@@ -36,15 +36,19 @@ func (r Group) Create(ctx context.Context, group *entity2.Group) (*entity2.Group
 			return err
 		}
 
-		var groupStudent []*entity2.GroupStudent
+		var groupStudent []*entity.Student
 		for _, student := range group.Students {
-			groupStudent = append(groupStudent, &entity2.GroupStudent{UserId: student.Id, GroupId: group.Id})
+			for _, course := range group.Courses {
+				s := &entity.Student{UserId: student.Id, GroupId: group.Id, CourseId: course.Id}
+				groupStudent = append(groupStudent, s)
+			}
 		}
+
 		if len(groupStudent) != 0 {
-			_, err = tx.NewInsert().Model(&groupStudent).Exec(ctx)
-		}
-		if err != nil {
-			return err
+			_, err = tx.NewInsert().Model(&groupStudent).
+				On("CONFLICT (user_id, course_id) DO UPDATE").
+				Set("group_id = ?", group.Id).
+				Exec(ctx)
 		}
 
 		return err
@@ -53,16 +57,16 @@ func (r Group) Create(ctx context.Context, group *entity2.Group) (*entity2.Group
 	return group, err
 }
 
-func (r Group) GetById(ctx context.Context, id uuid.UUID) (*entity2.Group, error) {
+func (r Group) GetById(ctx context.Context, id uuid.UUID) (*entity.Group, error) {
 	return r.get(ctx, columnValue{column: "id", value: id})
 }
 
-func (r Group) GetByInviteCode(ctx context.Context, code string) (*entity2.Group, error) {
+func (r Group) GetByInviteCode(ctx context.Context, code string) (*entity.Group, error) {
 	return r.get(ctx, columnValue{column: "invite_code", value: code})
 }
 
-func (r Group) get(ctx context.Context, where columnValue) (*entity2.Group, error) {
-	var group = new(entity2.Group)
+func (r Group) get(ctx context.Context, where columnValue) (*entity.Group, error) {
+	var group = new(entity.Group)
 	err := r.db.NewSelect().
 		Model(group).
 		Where(where.column+" = ?", where.value).
@@ -76,23 +80,31 @@ func (r Group) JoinStudent(ctx context.Context, studentId uuid.UUID, code string
 	if err != nil {
 		return err
 	}
-	groupStudent := &entity2.GroupStudent{UserId: studentId, GroupId: group.Id}
-	_, err = r.db.NewInsert().Model(groupStudent).Exec(ctx)
+
+	insert := `
+	insert into students (user_id, course_id, group_id) 
+	select ? as user_id, course_id, group_id from group_course 
+	where group_id = ?
+	on conflict (user_id, course_id) do update set group_id = excluded.group_id
+` // todo: хотелось бы делать этот разпрос через орм, но я не нашел как это написать через orm
+
+	_, err = r.db.NewRaw(insert, studentId, group.Id).Exec(ctx)
+
 	return err
 }
 
-func (r Group) Get(ctx context.Context) ([]*entity2.Group, error) {
-	var groups []*entity2.Group
+func (r Group) Get(ctx context.Context) ([]*entity.Group, error) {
+	var groups []*entity.Group
 	err := r.db.NewSelect().
 		Model(&groups).
 		Scan(ctx)
 	return groups, err
 }
 
-func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity2.Group, error) {
-	var group = new(entity2.Group)
+func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error) {
+	var group = new(entity.Group)
 	sectionsIds := r.db.NewSelect().
-		Model(&entity2.Course{}).
+		Model(&entity.Course{}).
 		ColumnExpr("sections.id").
 		Join("join modules on course.id = modules.course_id").
 		Join("join pages on pages.module_id = modules.id").
@@ -101,7 +113,7 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 
 	students := r.db.NewSelect().
 		ColumnExpr("user_id").
-		Model(&entity2.CourseStudent{}).
+		Model(&entity.Student{}).
 		Where("course_id = ?", courseId)
 
 	err := r.db.NewSelect().
@@ -111,7 +123,7 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 			return query.Where("course.id = ?", courseId)
 		}).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Where("group_student.user_id in (?)", students)
+			return query.Where("student.user_id in (?)", students)
 		}).
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.

@@ -11,15 +11,15 @@ type (
 		bun.BaseModel `bun:"table:courses"`
 		DBModel
 
-		Name             string `validate:"required,min=1,max=128"`
-		Slug             string `validate:"required,min=1,max=700"`
-		ShortDescription string `validate:"required,min=1,max=400"`
-		Description      string `validate:"required,max=3000"`
+		Name             string `validate:"required,min=1,max=64"`
+		Slug             string `validate:"required,min=1,max=64,slug"`
+		ShortDescription string `validate:"required,min=1,max=512"`
+		Description      string `validate:"required,max=4096"`
 		Logo             string `validate:"required,url"`
 		Banner           string `validate:"required,url"`
 		IsPublished      bool
 
-		Students []User `bun:"m2m:course_student,join:Course=User"`
+		Students []User `bun:"m2m:students,join:Course=User"`
 
 		Authors   []*User `bun:"m2m:course_author,join:Course=User"`
 		Coauthors []*User `bun:"m2m:course_coauthor,join:Course=User"`
@@ -29,6 +29,8 @@ type (
 		Modules []*Module `bun:"rel:has-many,join:id=course_id"`
 
 		Groups []*Group `bun:"m2m:group_course,join:Course=Group"`
+
+		LastVisitedPage []*LastVisitedPage `bun:"rel:has-many,join:id=course_id"`
 	}
 
 	CourseAuthor struct {
@@ -43,16 +45,6 @@ type (
 
 	CourseCoauthor struct {
 		bun.BaseModel `bun:"table:course_coauthor"`
-
-		CourseId uuid.UUID `bun:",pk"`
-		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`
-
-		UserId uuid.UUID `bun:",pk"`
-		User   *User     `bun:"rel:belongs-to,join:user_id=id"`
-	}
-
-	CourseStudent struct {
-		bun.BaseModel `bun:"table:course_student"`
 
 		CourseId uuid.UUID `bun:",pk"`
 		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`

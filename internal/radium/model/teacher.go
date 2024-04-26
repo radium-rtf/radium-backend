@@ -12,7 +12,7 @@ type (
 	}
 )
 
-func NewTeacherCourses(teacher []*entity2.TeacherCourseGroup) []*TeacherCourse {
+func NewTeacherCourses(teacher []*entity2.Teacher) []*TeacherCourse {
 	courseGroups := make(map[uuid.UUID][]*Group)
 	courseById := make(map[uuid.UUID]*Course)
 

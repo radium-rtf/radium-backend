@@ -14,7 +14,7 @@ type app interface {
 }
 
 func Run(cfg *config.Config) {
-	db, err := openDB(cfg.PG)
+	db, err := openDB(cfg.PG, cfg.Radium.DefaultGroupID)
 	if err != nil {
 		log.Println(err)
 	}

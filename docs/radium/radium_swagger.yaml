@@ -53,16 +53,16 @@ definitions:
   create.ChoiceSection:
     properties:
       answer:
-        maxLength: 100
+        maxLength: 256
         type: string
       question:
-        maxLength: 1000
+        maxLength: 4096
         type: string
       variants:
         items:
           type: string
-        maxItems: 6
-        minItems: 2
+        maxItems: 10
+        minItems: 1
         type: array
     required:
     - answer
@@ -79,7 +79,7 @@ definitions:
   create.CodeSection:
     properties:
       question:
-        maxLength: 5000
+        maxLength: 4096
         type: string
     required:
     - question
@@ -89,19 +89,19 @@ definitions:
       banner:
         type: string
       description:
-        maxLength: 3000
+        maxLength: 4096
         type: string
-      links:
-        items:
-          $ref: '#/definitions/model.Link'
-        type: array
       logo:
         type: string
       name:
-        maxLength: 128
+        maxLength: 64
         type: string
+      omitempty:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
       shortDescription:
-        maxLength: 400
+        maxLength: 512
         type: string
     type: object
   create.File:
@@ -119,7 +119,7 @@ definitions:
         minItems: 1
         type: array
       question:
-        maxLength: 5000
+        maxLength: 4096
         type: string
     required:
     - fileTypes
@@ -147,10 +147,7 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 10
         type: array
-    required:
-    - answer
     type: object
   create.MappingSection:
     properties:
@@ -158,14 +155,16 @@ definitions:
         items:
           type: string
         maxItems: 10
+        minItems: 1
         type: array
       keys:
         items:
           type: string
         maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 800
+        maxLength: 4096
         type: string
     required:
     - answer
@@ -184,7 +183,7 @@ definitions:
       courseId:
         type: string
       name:
-        maxLength: 40
+        maxLength: 48
         minLength: 1
         type: string
       order:
@@ -204,16 +203,17 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 6
+        maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 1000
+        maxLength: 4096
         type: string
       variants:
         items:
           type: string
-        maxItems: 6
-        minItems: 2
+        maxItems: 10
+        minItems: 1
         type: array
     required:
     - answer
@@ -225,7 +225,7 @@ definitions:
       moduleId:
         type: string
       name:
-        maxLength: 40
+        maxLength: 48
         minLength: 1
         type: string
       order:
@@ -238,20 +238,18 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 8
         type: array
-    required:
-    - answer
     type: object
   create.PermutationSection:
     properties:
       answer:
         items:
           type: string
-        maxItems: 8
+        maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 500
+        maxLength: 4096
         type: string
     required:
     - answer
@@ -318,10 +316,10 @@ definitions:
   create.ShortAnswerSection:
     properties:
       answer:
-        maxLength: 50
+        maxLength: 256
         type: string
       question:
-        maxLength: 200
+        maxLength: 4096
         type: string
     required:
     - answer
@@ -346,7 +344,7 @@ definitions:
   create.TextSection:
     properties:
       content:
-        maxLength: 10000
+        maxLength: 4096
         type: string
     required:
     - content
@@ -356,7 +354,7 @@ definitions:
       link:
         type: string
       name:
-        maxLength: 32
+        maxLength: 64
         minLength: 1
         type: string
     required:
@@ -407,7 +405,7 @@ definitions:
   httpserver_handlers_section_internal_create.AnswerSection:
     properties:
       question:
-        maxLength: 3000
+        maxLength: 4096
         type: string
     required:
     - question
@@ -443,6 +441,29 @@ definitions:
       verdict:
         $ref: '#/definitions/verdict.Type'
     type: object
+  model.Card:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      lastVisitedPage:
+        type: string
+      logoUrl:
+        type: string
+      maxScore:
+        type: integer
+      moduleCount:
+        type: integer
+      name:
+        type: string
+      score:
+        type: integer
+      slug:
+        type: string
+      state:
+        type: string
+    type: object
   model.Course:
     properties:
       authors:
@@ -467,6 +488,8 @@ definitions:
         type: boolean
       isStudent:
         type: boolean
+      lastVisitedPage:
+        type: string
       links:
         items:
           $ref: '#/definitions/model.Link'
@@ -541,12 +564,24 @@ definitions:
       link:
         type: string
       name:
-        maxLength: 32
-        minLength: 1
         type: string
-    required:
-    - link
-    - name
+    type: object
+  model.Main:
+    properties:
+      assignedCards:
+        items:
+          $ref: '#/definitions/model.Card'
+        type: array
+      authorCards:
+        items:
+          $ref: '#/definitions/model.Card'
+        type: array
+      recommended:
+        items:
+          $ref: '#/definitions/model.Card'
+        type: array
+      topCard:
+        $ref: '#/definitions/model.Card'
     type: object
   model.Module:
     properties:
@@ -565,6 +600,19 @@ definitions:
       score:
         type: integer
       slug:
+        type: string
+    type: object
+  model.Notification:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      read:
+        type: boolean
+      review:
+        $ref: '#/definitions/model.ReviewNotification'
+      type:
         type: string
     type: object
   model.Page:
@@ -640,6 +688,25 @@ definitions:
         $ref: '#/definitions/model.User'
       score:
         type: number
+    type: object
+  model.ReviewNotification:
+    properties:
+      courseId:
+        type: string
+      maxScore:
+        type: integer
+      moduleId:
+        type: string
+      moduleName:
+        type: string
+      pageId:
+        type: string
+      pageName:
+        type: string
+      reviewer:
+        $ref: '#/definitions/model.User'
+      score:
+        type: integer
     type: object
   model.Roles:
     properties:
@@ -770,6 +837,11 @@ definitions:
       refreshToken:
         type: string
     type: object
+  resp.Success:
+    properties:
+      success:
+        type: integer
+    type: object
   signin.SignIn:
     properties:
       email:
@@ -782,7 +854,7 @@ definitions:
       email:
         type: string
       name:
-        maxLength: 30
+        maxLength: 48
         minLength: 1
         type: string
       password:
@@ -793,22 +865,22 @@ definitions:
   update.AnswerSection:
     properties:
       question:
-        maxLength: 3000
+        maxLength: 4096
         type: string
     type: object
   update.ChoiceSection:
     properties:
       answer:
-        maxLength: 100
+        maxLength: 256
         type: string
       question:
-        maxLength: 1000
+        maxLength: 4096
         type: string
       variants:
         items:
           type: string
-        maxItems: 26
-        minItems: 2
+        maxItems: 10
+        minItems: 1
         type: array
     required:
     - variants
@@ -816,7 +888,7 @@ definitions:
   update.CodeSection:
     properties:
       question:
-        maxLength: 5000
+        maxLength: 4096
         type: string
     type: object
   update.Course:
@@ -824,18 +896,18 @@ definitions:
       banner:
         type: string
       description:
-        maxLength: 3000
+        maxLength: 4096
         type: string
       logo:
         type: string
       name:
-        maxLength: 128
+        maxLength: 64
         type: string
       shortDescription:
-        maxLength: 400
+        maxLength: 512
         type: string
       slug:
-        maxLength: 11
+        maxLength: 64
         type: string
     type: object
   update.FileSection:
@@ -846,7 +918,7 @@ definitions:
         minItems: 1
         type: array
       question:
-        maxLength: 5000
+        maxLength: 4096
         type: string
     type: object
   update.MappingSection:
@@ -854,15 +926,17 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 26
+        maxItems: 10
+        minItems: 1
         type: array
       keys:
         items:
           type: string
-        maxItems: 26
+        maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 800
+        maxLength: 4096
         type: string
     required:
     - answer
@@ -878,7 +952,7 @@ definitions:
   update.Module:
     properties:
       name:
-        maxLength: 40
+        maxLength: 48
         minLength: 1
         type: string
     required:
@@ -889,16 +963,17 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 26
+        maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 1000
+        maxLength: 4096
         type: string
       variants:
         items:
           type: string
-        maxItems: 26
-        minItems: 2
+        maxItems: 10
+        minItems: 1
         type: array
     required:
     - answer
@@ -909,10 +984,11 @@ definitions:
       answer:
         items:
           type: string
-        maxItems: 26
+        maxItems: 10
+        minItems: 1
         type: array
       question:
-        maxLength: 500
+        maxLength: 4096
         type: string
     required:
     - answer
@@ -951,10 +1027,10 @@ definitions:
   update.ShortAnswerSection:
     properties:
       answer:
-        maxLength: 50
+        maxLength: 256
         type: string
       question:
-        maxLength: 200
+        maxLength: 4096
         type: string
     type: object
   update.User:
@@ -962,7 +1038,7 @@ definitions:
       avatar:
         type: string
       name:
-        maxLength: 25
+        maxLength: 48
         type: string
     type: object
   updatepass.Password:
@@ -1327,7 +1403,7 @@ paths:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Link'
+            $ref: '#/definitions/createlink.Link'
       security:
       - ApiKeyAuth: []
       tags:
@@ -1556,6 +1632,59 @@ paths:
       - ApiKeyAuth: []
       tags:
       - module
+  /v1/notification:
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Notification'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
+  /v1/notifications:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: массив uuid`ов уведомлений для удаления
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: количество удачных операций, чужие уведомления удалять нельзя
+          schema:
+            $ref: '#/definitions/resp.Success'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
+  /v1/notifications/read:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: массив uuid`ов уведомлений для чтения
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: количество удачных операций, чужие уведомления читать нельзя
+          schema:
+            $ref: '#/definitions/resp.Success'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - notification
   /v1/page:
     post:
       parameters:
@@ -1927,6 +2056,17 @@ paths:
       - ApiKeyAuth: []
       tags:
       - file
+  /v2/account/courses:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/model.Main'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - account
 securityDefinitions:
   ApiKeyAuth:
     in: header

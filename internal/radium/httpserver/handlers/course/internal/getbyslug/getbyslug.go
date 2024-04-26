@@ -5,15 +5,15 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 	"net/http"
 )
 
 type getter interface {
-	GetBySlug(ctx context.Context, slug string) (*entity2.Course, error)
-	GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity2.Course, error)
+	GetBySlug(ctx context.Context, slug string) (*entity.Course, error)
+	GetBySlugAndUser(ctx context.Context, slug string, userId uuid.UUID) (*entity.Course, error)
 }
 
 // @Tags course
@@ -40,7 +40,7 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewCourseWithUserGroups(course, map[uuid.UUID][]*entity2.Answer{}, userId)
+		c := model.NewCourseWithUserGroups(course, map[uuid.UUID][]*entity.Answer{}, userId)
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}
@@ -53,7 +53,8 @@ func responseIfNotAuthorized(getter getter, slug string, w http.ResponseWriter, 
 		return
 	}
 
-	c := model.NewCourse(course, map[uuid.UUID][]*entity2.Answer{}, uuid.UUID{})
+	course.Groups = make([]*entity.Group, 0)
+	c := model.NewCourse(course, map[uuid.UUID][]*entity.Answer{}, uuid.UUID{})
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, c)
 }

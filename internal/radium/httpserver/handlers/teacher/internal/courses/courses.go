@@ -11,7 +11,7 @@ import (
 )
 
 type getter interface {
-	GetByUserId(ctx context.Context, id uuid.UUID) ([]*entity.TeacherCourseGroup, error)
+	GetByUserId(ctx context.Context, id uuid.UUID) ([]*entity.Teacher, error)
 }
 
 // @Tags teacher
