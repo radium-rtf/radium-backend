@@ -21,6 +21,7 @@ type creator interface {
 // @Accept       json
 // @Param request body DialogueCreate true "Данные о реципиенте"
 // @Success      201   {object} model.Dialogue      "created"
+// @Success      200   {object} model.Dialogue      "already exists"
 // @Router       /v1/dialogue [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +51,7 @@ func New(creator creator) http.HandlerFunc {
 		}
 
 		c := model.NewDialogue(dialogue)
-		render.Status(r, http.StatusCreated)
+		render.Status(r, http.StatusCreated) // or exists
 		render.JSON(w, r, c)
 	}
 }

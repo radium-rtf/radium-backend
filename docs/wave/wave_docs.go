@@ -16,24 +16,6 @@ const docTemplatewave = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/v1/dialogue": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "dialogue"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "$ref": "#/definitions/model.Dialogue"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -58,6 +40,12 @@ const docTemplatewave = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "already exists",
+                        "schema": {
+                            "$ref": "#/definitions/model.Dialogue"
+                        }
+                    },
                     "201": {
                         "description": "created",
                         "schema": {
