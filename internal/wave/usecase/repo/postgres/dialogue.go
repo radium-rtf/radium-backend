@@ -1,6 +1,9 @@
 package postgres
 
 import (
+	"context"
+
+	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
 )
@@ -15,4 +18,9 @@ func NewDialogueRepo(pg *postgres.Postgres) Dialogue {
 
 func (r Dialogue) Create() error {
 	return nil
+}
+
+func (r Dialogue) Get(ctx context.Context) (*entity.Dialogue, error) {
+	dialogue := new(entity.Dialogue)
+	return dialogue, nil
 }

@@ -1,9 +1,130 @@
 basePath: /
+definitions:
+  create.DialogueCreate:
+    properties:
+      userId:
+        type: string
+    required:
+    - userId
+    type: object
+  model.Content:
+    properties:
+      text:
+        type: string
+    type: object
+  model.Dialogue:
+    properties:
+      firstUserId:
+        type: string
+      id:
+        type: string
+      secondUserId:
+        type: string
+      settings:
+        $ref: '#/definitions/model.DialogueSettings'
+    type: object
+  model.DialogueSettings:
+    properties:
+      id:
+        type: string
+    type: object
+  model.Message:
+    properties:
+      content:
+        $ref: '#/definitions/model.Content'
+      id:
+        type: string
+      parentMessageId:
+        type: string
+      senderId:
+        type: string
+      type:
+        type: string
+    type: object
+  send.MessageSend:
+    properties:
+      chatId:
+        type: string
+      content:
+        $ref: '#/definitions/model.Content'
+    required:
+    - chatId
+    - content
+    type: object
 info:
   contact: {}
   title: wave
   version: "1.0"
-paths: {}
+paths:
+  /v1/dialogue:
+    get:
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dialogue
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о реципиенте
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.DialogueCreate'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dialogue
+  /v1/message:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение и направление
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/send.MessageSend'
+      responses:
+        "201":
+          description: sent
+          schema:
+            $ref: '#/definitions/model.Message'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/messages/{chatId}:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
 securityDefinitions:
   ApiKeyAuth:
     in: header

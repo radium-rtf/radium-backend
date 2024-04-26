@@ -1,0 +1,56 @@
+package create
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/go-chi/render"
+	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/wave/entity"
+	"github.com/radium-rtf/radium-backend/internal/wave/model"
+	"github.com/radium-rtf/radium-backend/pkg/decode"
+	"github.com/radium-rtf/radium-backend/pkg/resp"
+)
+
+type creator interface {
+	CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error)
+}
+
+// @Tags dialogue
+// @Security ApiKeyAuth
+// @Accept       json
+// @Param request body DialogueCreate true "Данные о реципиенте"
+// @Success      201   {object} model.Dialogue      "created"
+// @Router       /v1/dialogue [post]
+func New(creator creator) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var (
+			request DialogueCreate
+			ctx     = r.Context()
+			userId  = uuid.New()
+			// userId  = ctx.Value("userId").(uuid.UUID)
+		)
+
+		err := decode.Json(r.Body, &request)
+		if err != nil {
+			resp.Error(r, w, err)
+			return
+		}
+
+		recipientId, err := request.GetId()
+		if err != nil {
+			resp.Error(r, w, err)
+			return
+		}
+
+		dialogue, err := creator.CreateDialogue(ctx, userId, recipientId)
+		if err != nil {
+			resp.Error(r, w, err)
+			return
+		}
+
+		c := model.NewDialogue(dialogue)
+		render.Status(r, http.StatusCreated)
+		render.JSON(w, r, c)
+	}
+}

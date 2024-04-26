@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -8,8 +11,6 @@ import (
 	_ "github.com/radium-rtf/radium-backend/docs/wave"
 	"github.com/radium-rtf/radium-backend/internal/wave/usecase"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"net/http"
-	"time"
 )
 
 // @title       wave
@@ -43,4 +44,8 @@ func NewRouter(h *chi.Mux, useCases usecase.UseCases) {
 			writer.WriteHeader(http.StatusTemporaryRedirect)
 		})
 	}
+
+	h.Group(func(r chi.Router) {
+		routes(r, useCases)
+	})
 }
