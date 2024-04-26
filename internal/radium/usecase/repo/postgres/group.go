@@ -123,7 +123,7 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 			return query.Where("course.id = ?", courseId)
 		}).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Where("group_student.user_id in (?)", students)
+			return query.Where("student.user_id in (?)", students)
 		}).
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.
