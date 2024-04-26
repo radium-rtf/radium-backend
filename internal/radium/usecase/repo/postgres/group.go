@@ -102,7 +102,6 @@ func (r Group) Get(ctx context.Context) ([]*entity.Group, error) {
 }
 
 func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error) {
-	var group = new(entity.Group)
 	sectionsIds := r.db.NewSelect().
 		Model(&entity.Course{}).
 		ColumnExpr("sections.id").
@@ -114,8 +113,9 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 	students := r.db.NewSelect().
 		ColumnExpr("user_id").
 		Model(&entity.Student{}).
-		Where("course_id = ?", courseId)
+		Where("course_id = ? and group_id = ?", courseId, groupId)
 
+	var group = new(entity.Group)
 	err := r.db.NewSelect().
 		Model(group).
 		Where("id = ?", groupId).
@@ -123,12 +123,12 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 			return query.Where("course.id = ?", courseId)
 		}).
 		Relation("Students", func(query *bun.SelectQuery) *bun.SelectQuery {
-			return query.Where("student.user_id in (?)", students)
+			return query.Where("student.user_id in (?) and course_id = ?", students, courseId)
 		}).
 		Relation("Students.Answers", func(query *bun.SelectQuery) *bun.SelectQuery {
 			return query.
 				Where("answer.section_id in (?) and answer.verdict in ('WAIT', 'REVIEWED')", sectionsIds).
-				OrderExpr("answer.created_at desc", "answer.verdict = 'REVIEWED'")
+				OrderExpr("answer.created_at desc, answer.verdict = 'REVIEWED'")
 		}).
 		Relation("Students.Answers.Section").
 		Relation("Students.Answers.Review", func(query *bun.SelectQuery) *bun.SelectQuery {
