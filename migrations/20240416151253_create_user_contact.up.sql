@@ -4,7 +4,7 @@ SET statement_timeout = 0;
 
 create table contacts
 (
-    name       varchar(15)      not null,
+    name       varchar(800)      not null,
     link       varchar(800)     not null,
     user_id   uuid primary key not null,
 

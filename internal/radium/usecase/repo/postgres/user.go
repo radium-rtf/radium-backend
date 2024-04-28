@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -102,6 +101,7 @@ func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity2.User, error) 
 func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity2.User, error) {
 	var users []*entity2.User
 	err := r.db.NewSelect().Model(&users).Relation("Roles").
+		Relation("Contact").
 		Where("id in (?)", bun.In(ids)).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
@@ -157,7 +157,6 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 }
 
 func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, error) {
-	var updatedUser *entity2.User
 
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 
@@ -189,20 +188,18 @@ func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, er
 		if rowsAffected == 0 {
 			return repoerr2.NotFound
 		}
-
-		updatedUser, err = r.GetById(ctx, user.Id)
-		if err != nil {
-			return err
-		}
-
 		return nil
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("transaction error: %w", err)
+		return nil, err
 	}
 
-	fmt.Println("Transaction committed successfully")
+	updatedUser, err := r.GetById(ctx, user.Id)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return updatedUser, nil
 }

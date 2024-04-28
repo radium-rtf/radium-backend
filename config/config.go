@@ -36,7 +36,7 @@ type (
 	}
 
 	PG struct {
-		URL             string        `env:"PG_URL" env-default:"postgres://postgres:password@localhost:5432/postgres?sslmode=disable"`
+		URL             string        `env:"PG_URL" env-default:"user://password:postgres@localhost:5432/postgres?sslmode=disable"`
 		MaxOpenConns    int           `env-required:"true" yaml:"max_open_conns"`
 		MaxIdleConns    int           `env-required:"true" yaml:"max_idle_conns"`
 		ConnMaxIdleTime time.Duration `env-required:"true" yaml:"conn_max_idle_time"`
@@ -52,7 +52,7 @@ type (
 	}
 
 	Storage struct {
-		PrivateEndpoint string `env:"STORAGE_PRIVATE_ENDPOINT" env-default:"localhost:9000"`
+		PrivateEndpoint string `env:"STORAGE_PRIVATE_ENDPOINT" env-default:"minio:9000"`
 		Endpoint        string `env:"STORAGE_ENDPOINT" env-default:"localhost:9000"`
 		Id              string `env:"STORAGE_ID" env-default:"useruseruser"`
 		Secret          string `env:"STORAGE_SECRET" env-default:"useruseruser"`
