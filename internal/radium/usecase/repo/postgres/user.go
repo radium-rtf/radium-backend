@@ -181,13 +181,11 @@ func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, er
 		}
 
 		rowsAffected, err := exec.RowsAffected()
-		if err != nil {
-			return err
-		}
 
 		if rowsAffected == 0 {
 			return repoerr2.NotFound
 		}
+
 		return nil
 	})
 
