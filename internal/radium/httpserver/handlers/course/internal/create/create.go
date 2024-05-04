@@ -42,6 +42,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
+		course.Groups = make([]*entity2.Group, 0)
 		c := model.NewCourse(course, map[uuid.UUID][]*entity2.Answer{}, userId)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, c)

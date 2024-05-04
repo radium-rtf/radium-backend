@@ -33,7 +33,7 @@ type (
 		DBModel
 
 		PageId uuid.UUID
-		Page   Page `bun:"rel:belongs-to,join:page_id=id"`
+		Page   *Page `bun:"rel:belongs-to,join:page_id=id"`
 
 		Order    float64
 		MaxScore uint

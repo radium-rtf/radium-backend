@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	Name    string         `json:"name" validate:"max=25"`
+	Name    string         `json:"name" validate:"max=48"`
 	Avatar  string         `json:"avatar" validate:"url"`
 	Contact *model.Contact `json:"contact"`
 }

@@ -9,8 +9,8 @@ type (
 	Link struct {
 		bun.BaseModel `bun:"table:links"`
 		DBModel
-		Name string `validate:"required,min=1,max=32"`
-		Link string `validate:"required,url"`
+		Name string
+		Link string
 
 		Course   *Course `bun:"rel:belongs-to,join:course_id=id"`
 		CourseId uuid.UUID

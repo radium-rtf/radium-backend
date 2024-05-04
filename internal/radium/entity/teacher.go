@@ -6,8 +6,8 @@ import (
 )
 
 type (
-	TeacherCourseGroup struct {
-		bun.BaseModel `bun:"table:teacher_course_group"`
+	Teacher struct {
+		bun.BaseModel `bun:"table:teacher"`
 
 		UserId   uuid.UUID `bun:",pk"`
 		CourseId uuid.UUID `bun:",pk"`

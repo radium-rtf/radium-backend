@@ -46,11 +46,11 @@ type (
 	}
 
 	Permutation struct {
-		Answer []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
+		Answer []string `swaggertype:"array,string"`
 	}
 
 	Mapping struct {
-		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+		Answer []string `swaggertype:"array,string"`
 	}
 )
 
@@ -86,9 +86,9 @@ func (r *Answer) ToAnswer(userId uuid.UUID) (*entity2.Answer, error) {
 		answer.Answers = r.Mapping.Answer
 	case r.File != nil:
 		answer.Type = entity2.FileType
-		answer.FileUrl = sql.NullString{String: r.File.Answer, Valid: r.File.Answer == ""}
+		answer.FileUrl = sql.NullString{String: r.File.Answer, Valid: r.File.Answer != ""}
 	default:
-		return nil, errors.New("create.Answer - toAnswer - не удалось создать ответ")
+		return nil, errors.New("create.Review - toAnswer - не удалось создать ответ")
 	}
 
 	return answer, nil

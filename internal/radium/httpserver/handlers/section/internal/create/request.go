@@ -28,7 +28,7 @@ type (
 	}
 
 	TextSection struct {
-		Content string `validate:"required,max=10000"`
+		Content string `validate:"required,max=4096"`
 	}
 
 	MediaSection struct {
@@ -36,44 +36,44 @@ type (
 	}
 
 	ChoiceSection struct {
-		Question string   `validate:"required,max=1000"`
-		Answer   string   `validate:"required,max=100"`
-		Variants []string `swaggertype:"array,string" validate:"required,min=2,max=6,dive,required,max=100"`
+		Question string   `validate:"required,max=4096"`
+		Answer   string   `validate:"required,max=256"`
+		Variants []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
 	}
 
 	MultiChoiceSection struct {
-		Question string   `validate:"required,max=1000"`
-		Answer   []string `swaggertype:"array,string" validate:"required,max=6,dive,required,max=100"`
-		Variants []string `swaggertype:"array,string" validate:"required,min=2,max=6,dive,required,max=100"`
+		Question string   `validate:"required,max=4096"`
+		Answer   []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
+		Variants []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
 	}
 
 	ShortAnswerSection struct {
-		Question string `validate:"required,max=200"`
-		Answer   string `validate:"required,max=50"`
+		Question string `validate:"required,max=4096"`
+		Answer   string `validate:"required,max=256"`
 	}
 
 	AnswerSection struct {
-		Question string `validate:"required,max=3000"`
+		Question string `validate:"required,max=4096"`
 	}
 
 	CodeSection struct {
-		Question string `validate:"required,max=5000"`
+		Question string `validate:"required,max=4096"`
 	}
 
 	PermutationSection struct {
-		Question string   `validate:"required,max=500"`
-		Answer   []string `swaggertype:"array,string" validate:"required,max=8,dive,required,max=100"`
+		Question string   `validate:"required,max=4096"`
+		Answer   []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
 	}
 
 	MappingSection struct {
-		Question string `validate:"required,max=800"`
+		Question string `validate:"required,max=4096"`
 
-		Keys   []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
-		Answer []string `swaggertype:"array,string" validate:"required,max=10,dive,required,max=150"`
+		Keys   []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
+		Answer []string `swaggertype:"array,string" validate:"required,min=1,max=10,dive,required,max=256"`
 	}
 
 	FileSection struct {
-		Question  string   `validate:"required,max=5000"`
+		Question  string   `validate:"required,max=4096"`
 		FileTypes []string `validate:"required,min=1,dive,startswith=."`
 	}
 )

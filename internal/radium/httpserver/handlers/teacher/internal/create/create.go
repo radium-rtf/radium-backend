@@ -9,7 +9,7 @@ import (
 )
 
 type creator interface {
-	Create(ctx context.Context, teacher []*entity.TeacherCourseGroup) ([]*entity.TeacherCourseGroup, error)
+	Create(ctx context.Context, teacher []*entity.Teacher) ([]*entity.Teacher, error)
 }
 
 // @Tags teacher

@@ -17,12 +17,12 @@ type (
 	}
 )
 
-func (r Teacher) toCourses() []*entity.TeacherCourseGroup {
+func (r Teacher) toCourses() []*entity.Teacher {
 	userId := r.UserId
 
-	courses := make([]*entity.TeacherCourseGroup, 0, len(r.Courses))
+	courses := make([]*entity.Teacher, 0, len(r.Courses))
 	for _, coursePost := range r.Courses {
-		course := &entity.TeacherCourseGroup{
+		course := &entity.Teacher{
 			UserId:   userId,
 			CourseId: coursePost.CourseId,
 			GroupId:  coursePost.GroupId,
