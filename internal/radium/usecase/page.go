@@ -5,7 +5,7 @@ import (
 	"errors"
 	"slices"
 
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
@@ -16,13 +16,14 @@ import (
 type PageUseCase struct {
 	page   postgres2.Page
 	module postgres2.Module
+	user   postgres2.User
 }
 
-func NewPageUseCase(pageRepo postgres2.Page, module postgres2.Module) PageUseCase {
-	return PageUseCase{page: pageRepo, module: module}
+func NewPageUseCase(pageRepo postgres2.Page, module postgres2.Module, user postgres2.User) PageUseCase {
+	return PageUseCase{page: pageRepo, module: module, user: user}
 }
 
-func (uc PageUseCase) Create(ctx context.Context, page *entity2.Page, editorId uuid.UUID) (*entity2.Page, error) {
+func (uc PageUseCase) Create(ctx context.Context, page *entity.Page, editorId uuid.UUID) (*entity.Page, error) {
 	course, err := uc.module.GetCourseByModuleId(ctx, page.ModuleId)
 	if err != nil {
 		return nil, err
@@ -45,12 +46,18 @@ func (uc PageUseCase) Create(ctx context.Context, page *entity2.Page, editorId u
 	return uc.page.Create(ctx, page)
 }
 
-func (uc PageUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity2.Page, error) {
+func (uc PageUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity.Page, error) {
 	return uc.page.GetById(ctx, id)
 }
 
-func (uc PageUseCase) GetByIdWithUserAnswers(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity2.Page, error) {
-	return uc.page.GetByIdWithUserAnswers(ctx, id, userId)
+func (uc PageUseCase) GetByIdWithUserAnswers(ctx context.Context, id uuid.UUID, userId uuid.UUID) (*entity.Page, error) {
+	page, err := uc.page.GetByIdWithUserAnswers(ctx, id, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.user.SaveLastVisitedPage(ctx, page, userId)
+	return page, nil
 }
 
 func (uc PageUseCase) Delete(ctx context.Context, id, editorId uuid.UUID, isSoft bool) error {
@@ -61,7 +68,7 @@ func (uc PageUseCase) Delete(ctx context.Context, id, editorId uuid.UUID, isSoft
 	return uc.page.Delete(ctx, id, isSoft)
 }
 
-func (uc PageUseCase) Update(ctx context.Context, page *entity2.Page, editorId uuid.UUID) (*entity2.Page, error) {
+func (uc PageUseCase) Update(ctx context.Context, page *entity.Page, editorId uuid.UUID) (*entity.Page, error) {
 	canEditErr := uc.canEdit(ctx, page.Id, editorId)
 	if canEditErr != nil {
 		return nil, canEditErr
@@ -69,7 +76,7 @@ func (uc PageUseCase) Update(ctx context.Context, page *entity2.Page, editorId u
 	return uc.page.Update(ctx, page)
 }
 
-func (uc PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity2.Page, error) {
+func (uc PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, order uint) (*entity.Page, error) {
 	canEditErr := uc.canEdit(ctx, id, editorId)
 	if canEditErr != nil {
 		return nil, canEditErr
@@ -85,15 +92,15 @@ func (uc PageUseCase) UpdateOrder(ctx context.Context, id, editorId uuid.UUID, o
 	return uc.page.UpdateOrder(ctx, page, order)
 }
 
-func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity2.Page) (*model.NextAndPreviousPage, error) {
+func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity.Page) (*model.NextAndPreviousPage, error) {
 	modules, err := uc.page.GetModulesByPageId(ctx, page.Id)
 	if err != nil {
 		return nil, err
 	}
-	moduleIndex := slices.IndexFunc(modules, func(module *entity2.Module) bool {
+	moduleIndex := slices.IndexFunc(modules, func(module *entity.Module) bool {
 		return module.Id == page.ModuleId
 	})
-	pageIndex := slices.IndexFunc(modules[moduleIndex].Pages, func(p *entity2.Page) bool {
+	pageIndex := slices.IndexFunc(modules[moduleIndex].Pages, func(p *entity.Page) bool {
 		return p.Id == page.Id
 	})
 
@@ -101,7 +108,7 @@ func (uc PageUseCase) GetNextAndPrevious(ctx context.Context, page *entity2.Page
 	return nextAndPrevious, nil
 }
 
-func (uc PageUseCase) GetBySlug(ctx context.Context, slug string) (*entity2.Page, error) {
+func (uc PageUseCase) GetBySlug(ctx context.Context, slug string) (*entity.Page, error) {
 	return uc.page.GetBySlug(ctx, slug)
 }
 

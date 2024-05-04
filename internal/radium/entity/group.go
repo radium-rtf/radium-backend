@@ -14,17 +14,20 @@ type (
 		InviteCode string
 
 		Courses  []*Course `bun:"m2m:group_course,join:Group=Course"`
-		Students []*User   `bun:"m2m:group_student,join:Group=User"`
+		Students []*User   `bun:"m2m:students,join:Group=User"`
 	}
 
-	GroupStudent struct {
-		bun.BaseModel `bun:"table:group_student"`
+	Student struct {
+		bun.BaseModel `bun:"table:students"`
 
 		GroupId uuid.UUID `bun:",pk"`
 		Group   *Group    `bun:"rel:belongs-to,join:group_id=id"`
 
 		UserId uuid.UUID `bun:",pk"`
 		User   *User     `bun:"rel:belongs-to,join:user_id=id"`
+
+		CourseId uuid.UUID `bun:",pk"`
+		Course   *Course   `bun:"rel:belongs-to,join:course_id=id"`
 	}
 
 	GroupCourse struct {

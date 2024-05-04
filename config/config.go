@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
@@ -19,8 +20,9 @@ type (
 	}
 
 	Radium struct {
-		HTTP HTTP `yaml:"http" env-prefix:"http"`
-		Auth Auth `yaml:"auth" env-prefix:"auth"`
+		HTTP           HTTP      `yaml:"http" env-prefix:"http"`
+		Auth           Auth      `yaml:"auth" env-prefix:"auth"`
+		DefaultGroupID uuid.UUID `env:"DEFAULT_GROUP_ID" env-default:"81af02da-bf9e-4769-aa07-36903517733d"`
 	}
 
 	Wave struct {

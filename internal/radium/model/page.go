@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 )
 
 type (
@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func NewPage(page *entity2.Page, answers map[uuid.UUID][]*entity2.Answer, nextAndPrevious *NextAndPreviousPage) *Page {
+func NewPage(page *entity.Page, answers map[uuid.UUID][]*entity.Answer, nextAndPrevious *NextAndPreviousPage) *Page {
 	sectionsDto, score, maxScore := NewSections(page.Sections, answers)
 
 	var next, previous *uuid.UUID
@@ -46,7 +46,7 @@ func NewPage(page *entity2.Page, answers map[uuid.UUID][]*entity2.Answer, nextAn
 	}
 }
 
-func NewPages(pages []*entity2.Page, answers map[uuid.UUID][]*entity2.Answer) ([]*Page, uint, uint) {
+func NewPages(pages []*entity.Page, answers map[uuid.UUID][]*entity.Answer) ([]*Page, uint, uint) {
 	dtos := make([]*Page, 0, len(pages))
 	var maxScore, score uint = 0, 0
 
@@ -61,7 +61,7 @@ func NewPages(pages []*entity2.Page, answers map[uuid.UUID][]*entity2.Answer) ([
 	return dtos, score, maxScore
 }
 
-func GetNextAndPreviousPage(moduleIndex, pageIndex int, modules []*entity2.Module) *NextAndPreviousPage {
+func GetNextAndPreviousPage(moduleIndex, pageIndex int, modules []*entity.Module) *NextAndPreviousPage {
 	var prev *uuid.UUID
 	for module := moduleIndex; module >= 0; module-- {
 		page := len(modules[module].Pages) - 1

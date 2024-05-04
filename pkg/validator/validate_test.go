@@ -71,3 +71,37 @@ func TestPassword(t *testing.T) {
 		})
 	}
 }
+
+func TestSlug(t *testing.T) {
+	type slug struct {
+		Slug string `validate:"slug"`
+	}
+
+	tests := []struct {
+		slug  string
+		isErr bool
+	}{
+		{"AFEEA", true},
+		{"_--_-_", false},
+		{"fafassa", false},
+		{"141241243", false},
+		{"dwadwda3141", false},
+		{"AFASDRAA3141", true},
+		{"4ХАХАХИХА1", true},
+		{"__!;%:\"@1", true},
+		{"__!;%:\"@1а", true},
+		{"babaika-123_", false},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.slug, func(t *testing.T) {
+			t.Parallel()
+
+			err := Struct(slug{tt.slug})
+
+			assert.Equal(t, tt.isErr, err != nil, fmt.Sprintf("slug=%s", tt.slug))
+		})
+	}
+}

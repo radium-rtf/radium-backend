@@ -1,9 +1,9 @@
 swag radium:
-	swag init -g ./httpserver/handlers/router.go --instanceName radium -dir ./internal/radium --output ./docs/radium
+	swag init -q -g ./httpserver/handlers/router.go --instanceName radium -dir ./internal/radium,./pkg --output ./docs/radium
 .PHONY: swag radium
 
 swag wave:
-	swag init -g ./httpserver/handlers/router.go --instanceName wave -dir ./internal/wave --output ./docs/wave
+	swag init -g ./httpserver/handlers/router.go --instanceName wave -dir ./internal/wave,./pkg --output ./docs/wave
 .PHONY: swag wave
 
 migrate-create:

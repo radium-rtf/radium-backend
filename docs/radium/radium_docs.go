@@ -461,7 +461,7 @@ const docTemplateradium = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/model.Link"
+                            "$ref": "#/definitions/createlink.Link"
                         }
                     }
                 }
@@ -943,6 +943,97 @@ const docTemplateradium = `{
                         "description": "created",
                         "schema": {
                             "$ref": "#/definitions/model.Module"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Notification"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "parameters": [
+                    {
+                        "description": "массив uuid` + "`" + `ов уведомлений для удаления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "количество удачных операций, чужие уведомления удалять нельзя",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Success"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/read": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "parameters": [
+                    {
+                        "description": "массив uuid` + "`" + `ов уведомлений для чтения",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "количество удачных операций, чужие уведомления читать нельзя",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Success"
                         }
                     }
                 }
@@ -1572,6 +1663,26 @@ const docTemplateradium = `{
                     }
                 }
             }
+        },
+        "/v2/account/courses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "account"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/model.Main"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1662,16 +1773,16 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1697,7 +1808,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -1709,24 +1820,24 @@ const docTemplateradium = `{
                 },
                 "description": {
                     "type": "string",
-                    "maxLength": 3000
-                },
-                "links": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Link"
-                    }
+                    "maxLength": 4096
                 },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 128
+                    "maxLength": 64
+                },
+                "omitempty": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400
+                    "maxLength": 512
                 }
             }
         },
@@ -1757,7 +1868,7 @@ const docTemplateradium = `{
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -1788,13 +1899,9 @@ const docTemplateradium = `{
         },
         "create.Mapping": {
             "type": "object",
-            "required": [
-                "answer"
-            ],
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 10,
                     "items": {
                         "type": "string"
                     }
@@ -1812,6 +1919,7 @@ const docTemplateradium = `{
                 "answer": {
                     "type": "array",
                     "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1819,13 +1927,14 @@ const docTemplateradium = `{
                 "keys": {
                     "type": "array",
                     "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 800
+                    "maxLength": 4096
                 }
             }
         },
@@ -1851,7 +1960,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "order": {
@@ -1880,19 +1989,20 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 6,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 6,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -1910,7 +2020,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "order": {
@@ -1920,13 +2030,9 @@ const docTemplateradium = `{
         },
         "create.Permutation": {
             "type": "object",
-            "required": [
-                "answer"
-            ],
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 8,
                     "items": {
                         "type": "string"
                     }
@@ -1942,14 +2048,15 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 8,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 500
+                    "maxLength": 4096
                 }
             }
         },
@@ -2048,11 +2155,11 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 50
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 200
+                    "maxLength": 4096
                 }
             }
         },
@@ -2089,7 +2196,7 @@ const docTemplateradium = `{
             "properties": {
                 "content": {
                     "type": "string",
-                    "maxLength": 10000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2105,7 +2212,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 32,
+                    "maxLength": 64,
                     "minLength": 1
                 }
             }
@@ -2171,7 +2278,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2239,6 +2346,41 @@ const docTemplateradium = `{
                 }
             }
         },
+        "model.Card": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastVisitedPage": {
+                    "type": "string"
+                },
+                "logoUrl": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "moduleCount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Course": {
             "type": "object",
             "properties": {
@@ -2274,6 +2416,9 @@ const docTemplateradium = `{
                 },
                 "isStudent": {
                     "type": "boolean"
+                },
+                "lastVisitedPage": {
+                    "type": "string"
                 },
                 "links": {
                     "type": "array",
@@ -2379,10 +2524,6 @@ const docTemplateradium = `{
         },
         "model.Link": {
             "type": "object",
-            "required": [
-                "link",
-                "name"
-            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2391,9 +2532,33 @@ const docTemplateradium = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string",
-                    "maxLength": 32,
-                    "minLength": 1
+                    "type": "string"
+                }
+            }
+        },
+        "model.Main": {
+            "type": "object",
+            "properties": {
+                "assignedCards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "authorCards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "recommended": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Card"
+                    }
+                },
+                "topCard": {
+                    "$ref": "#/definitions/model.Card"
                 }
             }
         },
@@ -2422,6 +2587,26 @@ const docTemplateradium = `{
                     "type": "integer"
                 },
                 "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Notification": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "review": {
+                    "$ref": "#/definitions/model.ReviewNotification"
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -2537,6 +2722,35 @@ const docTemplateradium = `{
                 },
                 "score": {
                     "type": "number"
+                }
+            }
+        },
+        "model.ReviewNotification": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "maxScore": {
+                    "type": "integer"
+                },
+                "moduleId": {
+                    "type": "string"
+                },
+                "moduleName": {
+                    "type": "string"
+                },
+                "pageId": {
+                    "type": "string"
+                },
+                "pageName": {
+                    "type": "string"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },
@@ -2742,6 +2956,14 @@ const docTemplateradium = `{
                 }
             }
         },
+        "resp.Success": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "integer"
+                }
+            }
+        },
         "signin.SignIn": {
             "type": "object",
             "properties": {
@@ -2764,7 +2986,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 30,
+                    "maxLength": 48,
                     "minLength": 1
                 },
                 "password": {
@@ -2777,7 +2999,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2789,16 +3011,16 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 100
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 26,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -2810,7 +3032,7 @@ const docTemplateradium = `{
             "properties": {
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2822,18 +3044,18 @@ const docTemplateradium = `{
                 },
                 "description": {
                     "type": "string",
-                    "maxLength": 3000
+                    "maxLength": 4096
                 },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 128
+                    "maxLength": 64
                 },
                 "shortDescription": {
                     "type": "string",
-                    "maxLength": 400
+                    "maxLength": 512
                 },
                 "slug": {
                     "type": "string",
@@ -2853,7 +3075,7 @@ const docTemplateradium = `{
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 5000
+                    "maxLength": 4096
                 }
             }
         },
@@ -2866,21 +3088,23 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "keys": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 800
+                    "maxLength": 4096
                 }
             }
         },
@@ -2903,7 +3127,7 @@ const docTemplateradium = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "maxLength": 40,
+                    "maxLength": 48,
                     "minLength": 1
                 }
             }
@@ -2917,19 +3141,20 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 4096
                 },
                 "variants": {
                     "type": "array",
-                    "maxItems": 26,
-                    "minItems": 2,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -2944,14 +3169,15 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "array",
-                    "maxItems": 26,
+                    "maxItems": 10,
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 500
+                    "maxLength": 4096
                 }
             }
         },
@@ -3005,11 +3231,11 @@ const docTemplateradium = `{
             "properties": {
                 "answer": {
                     "type": "string",
-                    "maxLength": 50
+                    "maxLength": 256
                 },
                 "question": {
                     "type": "string",
-                    "maxLength": 200
+                    "maxLength": 4096
                 }
             }
         },
@@ -3024,7 +3250,7 @@ const docTemplateradium = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 25
+                    "maxLength": 48
                 }
             }
         },

@@ -21,7 +21,7 @@ type creator interface {
 // @Accept       json
 // @Param request body Link true "Данные о ссылке"
 // @Param        courseId   path      string  true  "id"
-// @Success      201   {object} model.Link      "created"
+// @Success      201   {object} createlink.Link      "created"
 // @Router       /v1/course/link/{courseId} [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		link := request.toLink(courseId)
+		link := request.ToLink(courseId)
 		link, err = creator.CreateLink(ctx, link, userId)
 		if err != nil {
 			resp.Error(r, w, err)
