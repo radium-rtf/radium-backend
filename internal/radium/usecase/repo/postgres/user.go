@@ -197,11 +197,7 @@ func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, er
 
 	updatedUser, err := r.GetById(ctx, user.Id)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return updatedUser, nil
+	return updatedUser, err
 }
 
 func (r User) CreateUnverifiedUser(ctx context.Context, user *entity2.UnverifiedUser) error {
