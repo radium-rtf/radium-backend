@@ -155,7 +155,7 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 	return r.updateColumn(ctx, value, where)
 }
 
-func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, error) {
+func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
 
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 
@@ -187,7 +187,7 @@ func (r User) Update(ctx context.Context, user *entity2.User) (*entity2.User, er
 
 		return nil
 	})
-  
+
 	if err != nil {
 		return nil, err
 	}
