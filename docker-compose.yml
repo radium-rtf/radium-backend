@@ -29,7 +29,9 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:latest
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=user

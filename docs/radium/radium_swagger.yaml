@@ -91,15 +91,15 @@ definitions:
       description:
         maxLength: 4096
         type: string
+      links:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
       logo:
         type: string
       name:
         maxLength: 64
         type: string
-      omitempty:
-        items:
-          $ref: '#/definitions/model.Link'
-        type: array
       shortDescription:
         maxLength: 512
         type: string
@@ -1444,6 +1444,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - course
+  /v1/course/search:
+    get:
+      parameters:
+      - description: query
+        in: query
+        name: query
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Card'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - course
   /v1/course/slug/{slug}:
     get:
       parameters:
@@ -1541,6 +1558,23 @@ paths:
           description: ' '
           schema:
             $ref: '#/definitions/model.Report'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/search:
+    get:
+      parameters:
+      - description: query
+        in: query
+        name: query
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Group'
       security:
       - ApiKeyAuth: []
       tags:
@@ -2056,6 +2090,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - file
+  /v1/user/search:
+    get:
+      parameters:
+      - description: query
+        in: query
+        name: query
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.User'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - account
   /v2/account/courses:
     get:
       responses:
