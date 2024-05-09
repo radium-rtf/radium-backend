@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
@@ -139,4 +140,20 @@ func (r Group) GetWithAnswers(ctx context.Context, groupId uuid.UUID, courseId u
 		Scan(ctx)
 
 	return group, err
+}
+
+func (r Group) Search(ctx context.Context, name string, limit int) ([]*entity.Group, error) {
+	var (
+		groups  []*entity.Group
+		tsquery = fmt.Sprintf("(CONCAT(CAST('%v'::tsquery as text), ':*'))::tsquery", name)
+	)
+
+	err := r.db.NewSelect().
+		Model(&groups).
+		Where("tsvector_name @@ ?", bun.Safe(tsquery)).
+		OrderExpr("tsvector_name <=> ?", bun.Safe(tsquery)).
+		Limit(limit).
+		Scan(ctx)
+
+	return groups, err
 }

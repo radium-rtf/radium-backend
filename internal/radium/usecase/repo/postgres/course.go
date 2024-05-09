@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
@@ -329,4 +330,20 @@ func (r Course) GetFullWithStudents(ctx context.Context, id uuid.UUID) (*entity.
 		Where("id = ?", id).
 		Scan(ctx)
 	return course, err
+}
+
+func (r Course) Search(ctx context.Context, name string, limit int) ([]*entity.Course, error) {
+	var (
+		courses []*entity.Course
+		tsquery = fmt.Sprintf("(CONCAT(CAST('%v'::tsquery as text), ':*'))::tsquery", name)
+	)
+
+	err := r.db.NewSelect().
+		Model(&courses).
+		Where("tsvector_name @@ ?", bun.Safe(tsquery)).
+		OrderExpr("tsvector_name <=> ?", bun.Safe(tsquery)).
+		Limit(limit).
+		Scan(ctx)
+
+	return courses, err
 }

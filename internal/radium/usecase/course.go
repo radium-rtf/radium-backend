@@ -119,6 +119,10 @@ func (uc CourseUseCase) DeleteLink(ctx context.Context, id, editorId uuid.UUID) 
 	return uc.courseRepo.DeleteLink(ctx, id)
 }
 
+func (uc CourseUseCase) Search(ctx context.Context, name string, limit int) ([]*entity2.Course, error) {
+	return uc.courseRepo.Search(ctx, name, limit)
+}
+
 func (uc CourseUseCase) CreateLink(ctx context.Context, link *entity2.Link, editorId uuid.UUID) (*entity2.Link, error) {
 	course, err := uc.courseRepo.GetFullById(ctx, link.CourseId)
 	if err != nil {

@@ -528,6 +528,35 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/course/search": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "course"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "query",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Card"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/course/slug/{slug}": {
             "get": {
                 "security": [
@@ -769,6 +798,35 @@ const docTemplateradium = `{
                         "description": " ",
                         "schema": {
                             "$ref": "#/definitions/model.Report"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/search": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "query",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
                         }
                     }
                 }
@@ -1664,6 +1722,35 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/user/search": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "account"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "query",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/account/courses": {
             "get": {
                 "security": [
@@ -1822,18 +1909,18 @@ const docTemplateradium = `{
                     "type": "string",
                     "maxLength": 4096
                 },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
+                },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 64
-                },
-                "omitempty": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Link"
-                    }
                 },
                 "shortDescription": {
                     "type": "string",

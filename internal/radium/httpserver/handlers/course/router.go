@@ -11,6 +11,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/getbyslug"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/join"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/publish"
+	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/search"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/course/internal/update"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/middleware/auth"
 	role2 "github.com/radium-rtf/radium-backend/internal/radium/httpserver/middleware/role"
@@ -27,6 +28,7 @@ func New(r chi.Router, useCases usecase.UseCases) {
 			r.Get("/", get.New(useCase))
 			r.Get("/{courseId}", getbyid.New(useCase))
 			r.Get("/slug/{slug}", getbyslug.New(useCase))
+			r.Get("/search", search.New(useCase))
 		})
 
 		r.Group(func(r chi.Router) {
