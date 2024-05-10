@@ -109,3 +109,7 @@ func (uc GroupUseCase) newReport(ctx context.Context, courseId uuid.UUID, group 
 	report := model.NewGroupReport(collection, course)
 	return report, nil
 }
+
+func (uc GroupUseCase) Search(ctx context.Context, name string, limit int) ([]*entity2.Group, error) {
+	return uc.group.Search(ctx, name, limit)
+}
