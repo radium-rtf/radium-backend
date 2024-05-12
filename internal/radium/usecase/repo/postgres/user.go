@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
-
+	"fmt"
 	"github.com/google/uuid"
 	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	repoerr2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
@@ -240,4 +240,23 @@ func (r User) SaveLastVisitedPage(ctx context.Context, page *entity.Page, userId
 		Exec(ctx)
 
 	return err
+}
+
+func (r User) Search(ctx context.Context, query string, limit int) ([]*entity.User, error) {
+	var (
+		users   []*entity.User
+		tsquery = fmt.Sprintf("(CONCAT(CAST('%v'::tsquery as text), ':*'))::tsquery", query)
+	)
+
+	where := `tsvector_name @@ ? or tsvector_email @@ ?`
+	order := `(tsvector_name <=> ?) + (tsvector_email <=> ?)`
+
+	err := r.db.NewSelect().
+		Model(&users).
+		Where(where, bun.Safe(tsquery), bun.Safe(tsquery)).
+		OrderExpr(order, bun.Safe(tsquery), bun.Safe(tsquery)).
+		Limit(limit).
+		Scan(ctx)
+
+	return users, err
 }
