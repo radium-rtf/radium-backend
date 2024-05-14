@@ -2,10 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-	"time"
 
-	"github.com/centrifugal/centrifuge-go"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
@@ -30,32 +27,12 @@ func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) 
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error) {
 	var err error
-	client := uc.centrifugo.Client
-	sub, exists := client.GetSubscription(chatId.String())
-	if !exists {
-		sub, err = client.NewSubscription(chatId.String(), centrifuge.SubscriptionConfig{
-			GetToken: func(e centrifuge.SubscriptionTokenEvent) (string, error) {
-				token := uc.centrifugo.GetSubscriptionToken(e.Channel, "1", time.Now().Unix()+10)
-				return token, nil
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
+	client := uc.centrifugo.GetClient("testUser", 0)
+	client.Connect()
+	sub, err := uc.centrifugo.GetSubscription(chatId.String(), "testUser", 0)
+	if err != nil {
+		return nil, err
 	}
-
-	sub.OnSubscribed(func(e centrifuge.SubscribedEvent) {
-		fmt.Println("Subscribed to channel", sub.Channel)
-	})
-	sub.OnError(func(e centrifuge.SubscriptionErrorEvent) {
-		fmt.Println("Subscription error:", sub.Channel, e.Error)
-	})
-	sub.OnUnsubscribed(func(e centrifuge.UnsubscribedEvent) {
-		fmt.Println("Unsubscribed from channel", sub.Channel, e.Reason)
-	})
-	sub.OnPublication(func(e centrifuge.PublicationEvent) {
-		fmt.Println("New publication in channel", sub.Channel, string(e.Data))
-	})
 	defer sub.Unsubscribe()
 	sub.Subscribe()
 

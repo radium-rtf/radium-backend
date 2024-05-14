@@ -33,7 +33,6 @@ func NewApp(cfg *config.Config, db *postgres.Postgres) App {
 }
 
 func (app App) Run() error {
-	app.dependencies.Centrifugo.Connect()
 	app.httpServer.Start()
 
 	interrupt := make(chan os.Signal, 1)
@@ -51,7 +50,6 @@ func (app App) Run() error {
 }
 
 func (app App) Shutdown() error {
-	app.dependencies.Centrifugo.Close()
 	err := app.httpServer.Shutdown()
 
 	if err != nil {

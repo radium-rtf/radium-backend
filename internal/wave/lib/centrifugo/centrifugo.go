@@ -9,25 +9,13 @@ import (
 	"github.com/radium-rtf/radium-backend/config"
 )
 
-func getConnectionToken(user string, exp int64, token string) string {
-	claims := jwt.MapClaims{"sub": user}
-	if exp > 0 {
-		claims["exp"] = exp
-	}
-	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(token))
-	if err != nil {
-		panic(err)
-	}
-	return t
-}
-
 type Centrifugo struct {
-	Client *centrifuge.Client
-	token  string
+	clients map[string]*centrifuge.Client
+	token   string
 }
 
-func (c Centrifugo) GetSubscriptionToken(channel string, user string, exp int64) string {
-	claims := jwt.MapClaims{"channel": channel, "sub": user}
+func (c Centrifugo) getConnectionToken(user string, exp int64) string {
+	claims := jwt.MapClaims{"sub": user}
 	if exp > 0 {
 		claims["exp"] = exp
 	}
@@ -38,24 +26,20 @@ func (c Centrifugo) GetSubscriptionToken(channel string, user string, exp int64)
 	return t
 }
 
-func (c Centrifugo) Connect() error {
-	return c.Client.Connect()
-}
-
-func (c Centrifugo) Close() {
-	c.Client.Close()
-}
-
-func New(cfg config.Centrifugo) Centrifugo {
-	config := centrifuge.Config{
-		Token: getConnectionToken("1", 0, cfg.Token),
-		// GetToken: func(e centrifuge.ConnectionTokenEvent) (string, error) {
-		// 	return getConnectionToken("1", 0, cfg.Token), nil
-		// },
+func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
+	client, exists := c.clients[user]
+	if exists {
+		return client
 	}
-	client := centrifuge.NewJsonClient(
+
+	client = centrifuge.NewJsonClient(
 		"ws://centrifugo:6969/connection/websocket",
-		config,
+		centrifuge.Config{
+			Token: c.getConnectionToken(user, exp),
+			// GetToken: func(e centrifuge.ConnectionTokenEvent) (string, error) {
+			// 	return c.getConnectionToken("1", 0), nil
+			// },
+		},
 	)
 
 	client.OnConnecting(func(e centrifuge.ConnectingEvent) {
@@ -75,8 +59,62 @@ func New(cfg config.Centrifugo) Centrifugo {
 		log.Printf("Publication: (%s)\n", string(bt))
 	})
 
+	c.clients[user] = client
+
+	return client
+}
+
+func (c Centrifugo) getSubscriptionToken(channel string, user string, exp int64) string {
+	claims := jwt.MapClaims{"channel": channel, "sub": user}
+	if exp > 0 {
+		claims["exp"] = exp
+	}
+	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(c.token))
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
+func (c Centrifugo) GetSubscription(channel string, user string, exp int64) (*centrifuge.Subscription, error) {
+	client, exists := c.clients[user]
+	if !exists {
+		panic("client not found")
+	}
+
+	sub, exists := client.GetSubscription(channel)
+	if exists {
+		return sub, nil
+	}
+
+	sub, err := client.NewSubscription(channel, centrifuge.SubscriptionConfig{
+		GetToken: func(e centrifuge.SubscriptionTokenEvent) (string, error) {
+			return c.getSubscriptionToken(e.Channel, user, exp), nil
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sub.OnSubscribed(func(e centrifuge.SubscribedEvent) {
+		log.Printf("Subscribed to channel %s", sub.Channel)
+	})
+	sub.OnUnsubscribed(func(e centrifuge.UnsubscribedEvent) {
+		log.Printf("Unsubscribed from channel %s", sub.Channel)
+	})
+	sub.OnError(func(e centrifuge.SubscriptionErrorEvent) {
+		log.Printf("Subscription error: %s", e.Error)
+	})
+	sub.OnPublication(func(e centrifuge.PublicationEvent) {
+		log.Println("New publication in channel", sub.Channel, string(e.Data))
+	})
+
+	return sub, nil
+}
+
+func New(cfg config.Centrifugo) Centrifugo {
 	return Centrifugo{
-		Client: client,
-		token:  cfg.Token,
+		token:   cfg.Token,
+		clients: make(map[string]*centrifuge.Client),
 	}
 }
