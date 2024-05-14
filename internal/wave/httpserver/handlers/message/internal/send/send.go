@@ -6,14 +6,13 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/decode"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
 
 type sender interface {
-	SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*entity.Message, error)
+	SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error)
 }
 
 // @Tags message
@@ -48,7 +47,7 @@ func New(sender sender) http.HandlerFunc {
 			return
 		}
 
-		c := model.NewMessage(message)
+		c := message
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)
 	}

@@ -11,5 +11,5 @@ type MessageSend struct {
 }
 
 func (d MessageSend) GetData() (uuid.UUID, model.Content, error) {
-	return d.ChatId, model.Content{}, nil
+	return d.ChatId, d.Content, nil
 }

@@ -1,13 +1,15 @@
 package usecase
 
 import (
+	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
 	"github.com/radium-rtf/radium-backend/internal/wave/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 )
 
 type Dependencies struct {
-	Repos   postgres.Repositories
-	Storage filestorage.Storage
+	Repos      postgres.Repositories
+	Storage    filestorage.Storage
+	Centrifugo centrifugo.Centrifugo
 }
 
 type UseCases struct {
@@ -32,6 +34,6 @@ func NewUseCases(deps Dependencies) UseCases {
 		Content:    NewContentUseCase(repos.Content),
 		Dialogue:   NewDialogueUseCase(repos.Dialogue),
 		Group:      NewGroupUseCase(repos.Group),
-		Message:    NewMessageUseCase(repos.Message),
+		Message:    NewMessageUseCase(repos.Message, deps.Centrifugo),
 	}
 }

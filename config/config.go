@@ -11,12 +11,13 @@ import (
 
 type (
 	Config struct {
-		Radium  Radium  `yaml:"radium" env-prefix:"radium"`
-		Wave    Wave    `yaml:"wave" env-prefix:"wave"`
-		PG      PG      `yaml:"postgres"`
-		Storage Storage `yaml:"storage"`
-		Smtp    Smtp    `yaml:"smtp"`
-		JWT     JWT
+		Radium     Radium     `yaml:"radium" env-prefix:"radium"`
+		Wave       Wave       `yaml:"wave" env-prefix:"wave"`
+		PG         PG         `yaml:"postgres"`
+		Storage    Storage    `yaml:"storage"`
+		Smtp       Smtp       `yaml:"smtp"`
+		Centrifugo Centrifugo `yaml:"centrifugo"`
+		JWT        JWT
 	}
 
 	Radium struct {
@@ -68,6 +69,11 @@ type (
 		Email    string `env:"SMTP_EMAIL" env-default:"wdkadwadwakpklrbjb@urfu.me"`
 		Password string `env:"SMTP_PASSWORD" env-default:"паыауыаыулажыдула"`
 		Username string `env:"SMTP_USERNAME" env-default:"noreply@khostya.online"`
+	}
+
+	Centrifugo struct {
+		Token  string `env-required:"true" yaml:"token" env:"CENTRIFUGO_TOKEN"`
+		ApiKey string `env-required:"true" yaml:"api_key" env:"CENTRIFUGO_API_KEY"`
 	}
 
 	JWT struct {

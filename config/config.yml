@@ -29,3 +29,7 @@ smtp:
   host: connect.smtp.bz
   port: 2525
   length_verification_code: 6
+
+centrifugo:
+  token: "5d12cdf5-252f-4b04-a4e1-37aec016ef5c"
+  api_key: "373b4d58-fe26-40a8-b5fc-00785ffc8450"

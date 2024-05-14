@@ -1,0 +1,11 @@
+{
+  "token_hmac_secret_key": "5d12cdf5-252f-4b04-a4e1-37aec016ef5c",
+  "admin": true,
+  "admin_password": "dac0004d-cd8f-4674-b343-8dce4c280ea7",
+  "admin_secret": "5429b7e8-7c4e-4510-b523-c57fa3113d81",
+  "api_key": "373b4d58-fe26-40a8-b5fc-00785ffc8450",
+  "allowed_origins": ["http://localhost:8081"],
+  "port": 6969,
+  "allow_subscribe_for_client": true,
+  "allow_publish_for_subscriber": true
+}

@@ -10,6 +10,7 @@ type (
 		Id uuid.UUID `json:"id"`
 
 		SenderId        uuid.UUID `json:"senderId"`
+		ChatId          uuid.UUID `json:"chatId"`
 		Content         Content   `json:"content"`
 		ParentMessageId uuid.UUID `json:"parentMessageId"`
 		Type            string    `json:"type"`
