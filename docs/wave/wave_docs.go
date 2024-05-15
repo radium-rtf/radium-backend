@@ -55,6 +55,70 @@ const docTemplatewave = `{
                 }
             }
         },
+        "/v1/dialogue/{chatId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID группы/диалога",
+                        "name": "chatId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Dialogue"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/dialogue/{chatId}/token": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID группы/диалога",
+                        "name": "chatId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.CentrifugoToken"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/message": {
             "post": {
                 "security": [
@@ -134,6 +198,14 @@ const docTemplatewave = `{
                 }
             }
         },
+        "model.CentrifugoToken": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Content": {
             "type": "object",
             "properties": {
@@ -170,6 +242,9 @@ const docTemplatewave = `{
         "model.Message": {
             "type": "object",
             "properties": {
+                "chatId": {
+                    "type": "string"
+                },
                 "content": {
                     "$ref": "#/definitions/model.Content"
                 },

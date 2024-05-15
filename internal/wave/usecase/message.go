@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
@@ -26,17 +27,18 @@ func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) 
 }
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error) {
+	uc.centrifugo.GetClient("testUser", 0)
 	var err error
-	client := uc.centrifugo.GetClient("testUser", 0)
-	client.Connect()
 	sub, err := uc.centrifugo.GetSubscription(chatId.String(), "testUser", 0)
 	if err != nil {
 		return nil, err
 	}
-	defer sub.Unsubscribe()
 	sub.Subscribe()
+	// defer sub.Unsubscribe()
 
-	json_data := []byte(`{"value":"` + content.Text + `"}`)
+	text := strings.ReplaceAll(content.Text, `"`, `\"`)
+
+	json_data := []byte(`{"value":"` + text + `"}`)
 	_, err = sub.Publish(ctx, json_data)
 	if err != nil {
 		return nil, err

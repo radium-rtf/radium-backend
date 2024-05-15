@@ -32,7 +32,7 @@ func NewUseCases(deps Dependencies) UseCases {
 		Channel:    NewChannelUseCase(repos.Channel),
 		Conference: NewConferenceUseCase(repos.Conference),
 		Content:    NewContentUseCase(repos.Content),
-		Dialogue:   NewDialogueUseCase(repos.Dialogue),
+		Dialogue:   NewDialogueUseCase(repos.Dialogue, deps.Centrifugo),
 		Group:      NewGroupUseCase(repos.Group),
 		Message:    NewMessageUseCase(repos.Message, deps.Centrifugo),
 	}

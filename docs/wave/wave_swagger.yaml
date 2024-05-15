@@ -7,6 +7,11 @@ definitions:
     required:
     - userId
     type: object
+  model.CentrifugoToken:
+    properties:
+      token:
+        type: string
+    type: object
   model.Content:
     properties:
       text:
@@ -30,6 +35,8 @@ definitions:
     type: object
   model.Message:
     properties:
+      chatId:
+        type: string
       content:
         $ref: '#/definitions/model.Content'
       id:
@@ -80,6 +87,44 @@ paths:
       - ApiKeyAuth: []
       tags:
       - dialogue
+  /v1/dialogue/{chatId}:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Dialogue'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/dialogue/{chatId}/token:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.CentrifugoToken'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
   /v1/message:
     post:
       consumes:

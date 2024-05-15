@@ -14,16 +14,16 @@ type Centrifugo struct {
 	token   string
 }
 
-func (c Centrifugo) getConnectionToken(user string, exp int64) string {
+func (c Centrifugo) GetConnectionToken(user string, exp int64) (string, error) {
 	claims := jwt.MapClaims{"sub": user}
 	if exp > 0 {
 		claims["exp"] = exp
 	}
 	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(c.token))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return t
+	return t, nil
 }
 
 func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
@@ -32,10 +32,12 @@ func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
 		return client
 	}
 
+	token, _ := c.GetConnectionToken(user, exp)
+
 	client = centrifuge.NewJsonClient(
 		"ws://centrifugo:6969/connection/websocket",
 		centrifuge.Config{
-			Token: c.getConnectionToken(user, exp),
+			Token: token,
 			// GetToken: func(e centrifuge.ConnectionTokenEvent) (string, error) {
 			// 	return c.getConnectionToken("1", 0), nil
 			// },
@@ -61,36 +63,42 @@ func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
 
 	c.clients[user] = client
 
+	client.Connect()
+
 	return client
 }
 
-func (c Centrifugo) getSubscriptionToken(channel string, user string, exp int64) string {
+func (c Centrifugo) GetSubscriptionToken(channel string, user string, exp int64) (string, error) {
 	claims := jwt.MapClaims{"channel": channel, "sub": user}
 	if exp > 0 {
 		claims["exp"] = exp
 	}
 	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(c.token))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return t
+	return t, nil
 }
 
 func (c Centrifugo) GetSubscription(channel string, user string, exp int64) (*centrifuge.Subscription, error) {
 	client, exists := c.clients[user]
 	if !exists {
-		panic("client not found")
+		return nil, centrifuge.Error{Code: 1, Message: "client not found"}
 	}
 
 	sub, exists := client.GetSubscription(channel)
+	// возможно саб не имеет обработки ивентов ниже
 	if exists {
 		return sub, nil
 	}
 
-	sub, err := client.NewSubscription(channel, centrifuge.SubscriptionConfig{
-		GetToken: func(e centrifuge.SubscriptionTokenEvent) (string, error) {
-			return c.getSubscriptionToken(e.Channel, user, exp), nil
-		},
+	token, err := c.GetSubscriptionToken(channel, user, exp)
+	if err != nil {
+		return nil, err
+	}
+
+	sub, err = client.NewSubscription(channel, centrifuge.SubscriptionConfig{
+		Token: token,
 	})
 	if err != nil {
 		return nil, err
