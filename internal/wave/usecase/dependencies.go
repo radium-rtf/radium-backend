@@ -19,6 +19,7 @@ type UseCases struct {
 	Dialogue   DialogueUseCase
 	Group      GroupUseCase
 	Message    MessageUseCase
+	User       UserUseCase
 
 	Deps Dependencies
 }
@@ -35,5 +36,6 @@ func NewUseCases(deps Dependencies) UseCases {
 		Dialogue:   NewDialogueUseCase(repos.Dialogue, deps.Centrifugo),
 		Group:      NewGroupUseCase(repos.Group),
 		Message:    NewMessageUseCase(repos.Message, deps.Centrifugo),
+		User:       NewUserUseCase(deps.Centrifugo),
 	}
 }

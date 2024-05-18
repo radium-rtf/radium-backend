@@ -20,7 +20,11 @@ func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*e
 }
 
 func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error) {
-	return uc.centrifugo.GetSubscriptionToken(chatId.String(), "testUser", 0)
+	chatToken, err := uc.centrifugo.GetSubscriptionToken(chatId.String(), "testUser", 0)
+	if err != nil {
+		return "", err
+	}
+	return chatToken, nil
 }
 
 func (uc DialogueUseCase) CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error) {

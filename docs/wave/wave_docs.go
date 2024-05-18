@@ -63,7 +63,7 @@ const docTemplatewave = `{
                     }
                 ],
                 "tags": [
-                    "message"
+                    "dialogue"
                 ],
                 "parameters": [
                     {
@@ -179,6 +179,29 @@ const docTemplatewave = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.Message"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/token": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.CentrifugoToken"
                             }
                         }
                     }

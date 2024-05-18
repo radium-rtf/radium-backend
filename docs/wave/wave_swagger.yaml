@@ -105,7 +105,7 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - message
+      - dialogue
   /v1/dialogue/{chatId}/token:
     get:
       parameters:
@@ -164,6 +164,19 @@ paths:
       - ApiKeyAuth: []
       tags:
       - message
+  /v1/user/token:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.CentrifugoToken'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - user
 securityDefinitions:
   ApiKeyAuth:
     in: header

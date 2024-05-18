@@ -16,7 +16,7 @@ type getter interface {
 	GetDialogue(ctx context.Context, chatId uuid.UUID) (*entity.Dialogue, error)
 }
 
-// @Tags message
+// @Tags dialogue
 // @Security ApiKeyAuth
 // @Param        chatId   path      string  true  "ID группы/диалога"
 // @Success      200   {object} []model.Dialogue        " "
