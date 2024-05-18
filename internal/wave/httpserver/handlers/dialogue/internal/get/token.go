@@ -15,7 +15,7 @@ type tokenGetter interface {
 	GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error)
 }
 
-// @Tags message
+// @Tags dialogue
 // @Security ApiKeyAuth
 // @Param        chatId   path      string  true  "ID группы/диалога"
 // @Success      200   {object} []model.CentrifugoToken        " "

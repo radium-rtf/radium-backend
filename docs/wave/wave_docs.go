@@ -95,7 +95,7 @@ const docTemplatewave = `{
                     }
                 ],
                 "tags": [
-                    "message"
+                    "dialogue"
                 ],
                 "parameters": [
                     {

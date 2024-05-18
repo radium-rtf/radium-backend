@@ -124,7 +124,7 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - message
+      - dialogue
   /v1/message:
     post:
       consumes:
