@@ -49,15 +49,15 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 		ChatId:  chatId,
 		Content: content,
 	}
-	err = uc.message.Create(ctx, &entity.Message{
-		ChatId: chatId,
-		Content: &entity.Content{
-			Text: content.Text,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
+	// err = uc.message.Create(ctx, &entity.Message{
+	// 	ChatId: chatId,
+	// 	Content: &entity.Content{
+	// 		Text: content.Text,
+	// 	},
+	// })
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return &message, nil
 }
 
