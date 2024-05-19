@@ -20,7 +20,7 @@ func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*e
 }
 
 func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error) {
-	chatToken, err := uc.centrifugo.GetSubscriptionToken(chatId.String(), "testUser", 0)
+	chatToken, err := uc.centrifugo.GetSubscriptionToken(chatId.String(), "65ff1149-f306-4d35-8b7b-a58c2781d4be", 0)
 	if err != nil {
 		return "", err
 	}

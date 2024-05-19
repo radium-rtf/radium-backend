@@ -22,14 +22,16 @@ func (uc MessageUseCase) GetMessage(ctx context.Context) (*entity.Message, error
 }
 
 func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) ([]*entity.Message, error) {
-	message, err := uc.message.Get(ctx)
-	return []*entity.Message{message}, err
+	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String())
+	return messages, err
 }
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error) {
-	uc.centrifugo.GetClient("testUser", 0)
+	// test user: 65ff1149-f306-4d35-8b7b-a58c2781d4be
+	user := "65ff1149-f306-4d35-8b7b-a58c2781d4be"
+	uc.centrifugo.GetClient(user, 0)
 	var err error
-	sub, err := uc.centrifugo.GetSubscription(chatId.String(), "testUser", 0)
+	sub, err := uc.centrifugo.GetSubscription(chatId.String(), user, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +40,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 
 	text := strings.ReplaceAll(content.Text, `"`, `\"`)
 
-	json_data := []byte(`{"value":"` + text + `"}`)
+	json_data := []byte(`{"value":"` + text + `", "userId": "` + user + `", "chatId": "` + chatId.String() + `"}`)
 	_, err = sub.Publish(ctx, json_data)
 	if err != nil {
 		return nil, err
@@ -46,6 +48,15 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 	message := model.Message{
 		ChatId:  chatId,
 		Content: content,
+	}
+	err = uc.message.Create(ctx, &entity.Message{
+		ChatId: chatId,
+		Content: &entity.Content{
+			Text: content.Text,
+		},
+	})
+	if err != nil {
+		return nil, err
 	}
 	return &message, nil
 }
