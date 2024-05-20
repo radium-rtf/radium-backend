@@ -21,9 +21,6 @@ func NewMessageRepo(pg *postgres.Postgres) Message {
 func (r Message) Create(ctx context.Context, message *entity.Message) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().Model(message).Exec(ctx)
-		if err != nil {
-			return err
-		}
 		return err
 	})
 }
@@ -31,10 +28,11 @@ func (r Message) Create(ctx context.Context, message *entity.Message) error {
 func (r Message) GetMessagesFrom(ctx context.Context, chatId string) ([]*entity.Message, error) {
 	var messages []*entity.Message
 	err := r.db.NewSelect().Model(&messages).
-		Where("chat_id = ?", chatId).
+		Relation("Content").
+		Where("\"message\".\"chat_id\" = ?", chatId).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
-		return nil, nil
+		return nil, err
 	}
 	return messages, err
 }

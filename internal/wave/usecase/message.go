@@ -13,6 +13,7 @@ import (
 
 type MessageUseCase struct {
 	message    postgres2.Message
+	content    postgres2.Content
 	centrifugo centrifugo.Centrifugo
 }
 
@@ -45,22 +46,35 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 	if err != nil {
 		return nil, err
 	}
+	contentId := uuid.New()
+	contentObject := &entity.Content{
+		DBModel: entity.DBModel{
+			Id: contentId,
+		},
+		Text: content.Text,
+	}
+	err = uc.content.Create(ctx, contentObject)
+	if err != nil {
+		return nil, err
+	}
 	message := model.Message{
 		ChatId:  chatId,
 		Content: content,
 	}
-	// err = uc.message.Create(ctx, &entity.Message{
-	// 	ChatId: chatId,
-	// 	Content: &entity.Content{
-	// 		Text: content.Text,
-	// 	},
-	// })
-	// if err != nil {
-	// 	return nil, err
-	// }
+	messageId := uuid.New()
+	err = uc.message.Create(ctx, &entity.Message{
+		DBModel: entity.DBModel{
+			Id: messageId,
+		},
+		ChatId:    chatId,
+		ContentId: contentId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &message, nil
 }
 
-func NewMessageUseCase(messageRepo postgres2.Message, centrifugo centrifugo.Centrifugo) MessageUseCase {
-	return MessageUseCase{message: messageRepo, centrifugo: centrifugo}
+func NewMessageUseCase(messageRepo postgres2.Message, contentRepo postgres2.Content, centrifugo centrifugo.Centrifugo) MessageUseCase {
+	return MessageUseCase{message: messageRepo, content: contentRepo, centrifugo: centrifugo}
 }
