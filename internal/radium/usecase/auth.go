@@ -63,6 +63,7 @@ func (uc AuthUseCase) SignUp(ctx context.Context, user *entity2.User) (*entity2.
 	user.Password = password
 
 	code := str.Random(uc.lengthVerificationCode)
+
 	unverifiedUser = &entity2.UnverifiedUser{
 		Id:       user.Id,
 		Name:     user.Name,

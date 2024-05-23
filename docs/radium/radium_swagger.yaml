@@ -464,6 +464,18 @@ definitions:
       state:
         type: string
     type: object
+  model.Contact:
+    properties:
+      link:
+        type: string
+      name:
+        maxLength: 32
+        minLength: 1
+        type: string
+    required:
+    - link
+    - name
+    type: object
   model.Course:
     properties:
       authors:
@@ -791,6 +803,8 @@ definitions:
     properties:
       avatar:
         type: string
+      contact:
+        $ref: '#/definitions/model.Contact'
       email:
         type: string
       id:
@@ -1037,6 +1051,8 @@ definitions:
     properties:
       avatar:
         type: string
+      contact:
+        $ref: '#/definitions/model.Contact'
       name:
         maxLength: 48
         type: string

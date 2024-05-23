@@ -12,7 +12,8 @@ type (
 		Name   string    `json:"name"`
 		Avatar string    `json:"avatar"`
 
-		Roles *Roles `json:"roles"`
+		Contact *Contact `json:"contact"`
+		Roles   *Roles   `json:"roles"`
 	}
 )
 
@@ -21,11 +22,12 @@ func NewUser(user *entity.User) *User {
 		return nil
 	}
 	return &User{
-		Id:     user.Id,
-		Email:  user.Email,
-		Name:   user.Name,
-		Avatar: user.Avatar.String,
-		Roles:  NewRoles(user.Roles),
+		Id:      user.Id,
+		Email:   user.Email,
+		Name:    user.Name,
+		Avatar:  user.Avatar.String,
+		Contact: NewContact(user.Contact),
+		Roles:   NewRoles(user.Roles),
 	}
 }
 

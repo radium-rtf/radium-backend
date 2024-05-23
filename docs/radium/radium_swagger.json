@@ -2443,6 +2443,23 @@
                 }
             }
         },
+        "model.Contact": {
+            "type": "object",
+            "required": [
+                "link",
+                "name"
+            ],
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 1
+                }
+            }
+        },
         "model.Course": {
             "type": "object",
             "properties": {
@@ -2943,6 +2960,9 @@
                 "avatar": {
                     "type": "string"
                 },
+                "contact": {
+                    "$ref": "#/definitions/model.Contact"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3303,6 +3323,9 @@
             "properties": {
                 "avatar": {
                     "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/model.Contact"
                 },
                 "name": {
                     "type": "string",
