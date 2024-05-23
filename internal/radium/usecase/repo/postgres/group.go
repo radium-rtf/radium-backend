@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+
 	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
@@ -53,6 +54,28 @@ func (r Group) Create(ctx context.Context, group *entity.Group) (*entity.Group, 
 
 		return err
 	})
+
+	return group, err
+}
+
+func (r Group) Update(ctx context.Context, group *entity.Group) (*entity.Group, error) {
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewUpdate().Model(group).WherePK().OmitZero().Exec(ctx)
+
+		return err
+	})
+
+	return group, err
+}
+
+func (r Group) AddStudent(ctx context.Context, groupId uuid.UUID, studentId uuid.UUID) (*entity.Group, error) {
+	group, err := r.get(ctx, columnValue{column: "id", value: groupId})
+
+	//err = r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+	//	_, err := tx.NewUpdate().Model(group).WherePK().OmitZero().Exec(ctx)
+
+	//	return err
+	//})
 
 	return group, err
 }
