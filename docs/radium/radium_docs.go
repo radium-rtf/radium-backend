@@ -2416,23 +2416,6 @@ const docTemplateradium = `{
                 }
             }
         },
-        "model.Contact": {
-            "type": "object",
-            "required": [
-                "link",
-                "name"
-            ],
-            "properties": {
-                "link": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 32,
-                    "minLength": 1
-                }
-            }
-        },
         "model.Card": {
             "type": "object",
             "properties": {
@@ -2465,6 +2448,23 @@ const docTemplateradium = `{
                 },
                 "state": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Contact": {
+            "type": "object",
+            "required": [
+                "link",
+                "name"
+            ],
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 1
                 }
             }
         },

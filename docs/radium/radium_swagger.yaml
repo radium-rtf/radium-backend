@@ -441,17 +441,6 @@ definitions:
       verdict:
         $ref: '#/definitions/verdict.Type'
     type: object
-  model.Contact:
-    properties:
-      link:
-        type: string
-      name:
-        maxLength: 32
-        minLength: 1
-        type: string
-    required:
-    - link
-    - name
   model.Card:
     properties:
       description:
@@ -474,6 +463,18 @@ definitions:
         type: string
       state:
         type: string
+    type: object
+  model.Contact:
+    properties:
+      link:
+        type: string
+      name:
+        maxLength: 32
+        minLength: 1
+        type: string
+    required:
+    - link
+    - name
     type: object
   model.Course:
     properties:
