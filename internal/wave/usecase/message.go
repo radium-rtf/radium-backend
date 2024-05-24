@@ -28,11 +28,13 @@ func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) 
 }
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error) {
-	// test user: 65ff1149-f306-4d35-8b7b-a58c2781d4be
-	user := "65ff1149-f306-4d35-8b7b-a58c2781d4be"
-	uc.centrifugo.GetClient(user, 0)
+	userId, ok := ctx.Value("userId").(uuid.UUID)
+	if !ok {
+		userId = uuid.Nil
+	}
+	uc.centrifugo.GetClient(userId.String(), 0)
 	var err error
-	sub, err := uc.centrifugo.GetSubscription(chatId.String(), user, 0)
+	sub, err := uc.centrifugo.GetSubscription(chatId.String(), userId.String(), 0)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +43,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 
 	text := strings.ReplaceAll(content.Text, `"`, `\"`)
 
-	json_data := []byte(`{"value":"` + text + `", "userId": "` + user + `", "chatId": "` + chatId.String() + `"}`)
+	json_data := []byte(`{"value":"` + text + `", "userId": "` + userId.String() + `", "chatId": "` + chatId.String() + `"}`)
 	_, err = sub.Publish(ctx, json_data)
 	if err != nil {
 		return nil, err

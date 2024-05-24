@@ -72,8 +72,8 @@ type (
 	}
 
 	Centrifugo struct {
-		Token  string `env-required:"true" yaml:"token" env:"CENTRIFUGO_TOKEN"`
-		ApiKey string `env-required:"true" yaml:"api_key" env:"CENTRIFUGO_API_KEY"`
+		Token  string `env:"CENTRIFUGO_TOKEN" env-default:"5d12cdf5-252f-4b04-a4e1-37aec016ef5c"`
+		ApiKey string `env:"CENTRIFUGO_API_KEY" env-default:"373b4d58-fe26-40a8-b5fc-00785ffc8450"`
 	}
 
 	JWT struct {

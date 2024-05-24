@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
 )
 
@@ -11,7 +12,11 @@ type UserUseCase struct {
 }
 
 func (uc UserUseCase) GetClientToken(ctx context.Context) (string, error) {
-	token, err := uc.centrifugo.GetConnectionToken("65ff1149-f306-4d35-8b7b-a58c2781d4be", 0)
+	userId, ok := ctx.Value("userId").(uuid.UUID)
+	if !ok {
+		userId = uuid.Nil
+	}
+	token, err := uc.centrifugo.GetConnectionToken(userId.String(), 0)
 	if err != nil {
 		return "", err
 	}

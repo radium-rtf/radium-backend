@@ -29,7 +29,7 @@ func (r Message) GetMessagesFrom(ctx context.Context, chatId string) ([]*entity.
 	var messages []*entity.Message
 	err := r.db.NewSelect().Model(&messages).
 		Relation("Content").
-		Where("\"message\".\"chat_id\" = ?", chatId).
+		Where("chat_id = ?", chatId).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
 		return nil, err

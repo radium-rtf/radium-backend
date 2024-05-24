@@ -2,7 +2,8 @@ package centrifugo
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
+	"strconv"
 
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/golang-jwt/jwt"
@@ -45,20 +46,20 @@ func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
 	)
 
 	client.OnConnecting(func(e centrifuge.ConnectingEvent) {
-		log.Printf("Connecting - %d (%s)", e.Code, e.Reason)
+		slog.Info("Connecting", "code", strconv.Itoa(int(e.Code)), "reason", e.Reason)
 	})
 	client.OnConnected(func(e centrifuge.ConnectedEvent) {
-		log.Printf("Connected with ID %s", e.ClientID)
+		slog.Info("Connected", "clientId", e.ClientID)
 	})
 	client.OnDisconnected(func(e centrifuge.DisconnectedEvent) {
-		log.Printf("Disconnected: %d (%s)", e.Code, e.Reason)
+		slog.Info("Disconnected", "code", strconv.Itoa(int(e.Code)), "reason", e.Reason)
 		go client.Connect() // keep alive on errors
 	})
 	client.OnPublication(func(e centrifuge.ServerPublicationEvent) {
 		var msg map[string]interface{}
 		_ = json.Unmarshal(e.Data, &msg)
 		bt, _ := json.MarshalIndent(msg, "  ", " ")
-		log.Printf("Publication: (%s)\n", string(bt))
+		slog.Info("Publication", "data", string(bt))
 	})
 
 	c.clients[user] = client
@@ -105,16 +106,16 @@ func (c Centrifugo) GetSubscription(channel string, user string, exp int64) (*ce
 	}
 
 	sub.OnSubscribed(func(e centrifuge.SubscribedEvent) {
-		log.Printf("Subscribed to channel %s", sub.Channel)
+		slog.Info("Subscribed to channel", "channel", sub.Channel)
 	})
 	sub.OnUnsubscribed(func(e centrifuge.UnsubscribedEvent) {
-		log.Printf("Unsubscribed from channel %s", sub.Channel)
+		slog.Info("Unsubscribed from channel", "channel", sub.Channel)
 	})
 	sub.OnError(func(e centrifuge.SubscriptionErrorEvent) {
-		log.Printf("Subscription error: %s", e.Error)
+		slog.Error("Subscription error in channel", "channel", sub.Channel, "error", e.Error)
 	})
 	sub.OnPublication(func(e centrifuge.PublicationEvent) {
-		log.Println("New publication in channel", sub.Channel, string(e.Data))
+		slog.Info("New publication in channel", "channel", sub.Channel, "data", string(e.Data))
 	})
 
 	return sub, nil
