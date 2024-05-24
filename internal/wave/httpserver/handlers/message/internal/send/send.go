@@ -35,11 +35,7 @@ func New(sender sender) http.HandlerFunc {
 			return
 		}
 
-		chatId, content, err := request.GetData()
-		if err != nil {
-			resp.Error(r, w, err)
-			return
-		}
+		chatId, content := request.GetData()
 
 		message, err := sender.SendMessage(ctx, chatId, content)
 		if err != nil {
@@ -48,7 +44,7 @@ func New(sender sender) http.HandlerFunc {
 		}
 
 		c := message
-		render.Status(r, http.StatusOK)
+		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, c)
 	}
 }

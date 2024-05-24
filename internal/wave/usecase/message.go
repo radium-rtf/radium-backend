@@ -48,10 +48,9 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 	if err != nil {
 		return nil, err
 	}
-	contentId := uuid.New()
 	contentObject := &entity.Content{
 		DBModel: entity.DBModel{
-			Id: contentId,
+			Id: uuid.New(),
 		},
 		Text: content.Text,
 	}
@@ -63,18 +62,14 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 		ChatId:  chatId,
 		Content: content,
 	}
-	messageId := uuid.New()
 	err = uc.message.Create(ctx, &entity.Message{
 		DBModel: entity.DBModel{
-			Id: messageId,
+			Id: uuid.New(),
 		},
 		ChatId:    chatId,
-		ContentId: contentId,
+		ContentId: contentObject.Id,
 	})
-	if err != nil {
-		return nil, err
-	}
-	return &message, nil
+	return &message, err
 }
 
 func NewMessageUseCase(messageRepo postgres2.Message, contentRepo postgres2.Content, centrifugo centrifugo.Centrifugo) MessageUseCase {

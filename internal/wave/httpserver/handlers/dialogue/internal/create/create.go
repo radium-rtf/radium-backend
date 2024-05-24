@@ -21,16 +21,20 @@ type creator interface {
 // @Accept       json
 // @Param request body DialogueCreate true "Данные о реципиенте"
 // @Success      201   {object} model.Dialogue      "created"
-// @Success      200   {object} model.Dialogue      "already exists"
+// @Success      409   {object} model.Dialogue      "already exists"
 // @Router       /v1/dialogue [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request DialogueCreate
-			ctx     = r.Context()
-			userId  = uuid.New()
-			// userId  = ctx.Value("userId").(uuid.UUID)
+			request    DialogueCreate
+			ctx        = r.Context()
+			userId, ok = ctx.Value("userId").(uuid.UUID)
 		)
+		if !ok {
+			// resp.Error(r, w, resp.ErrUnauthorized)
+			// return
+			userId = uuid.Nil
+		}
 
 		err := decode.Json(r.Body, &request)
 		if err != nil {
@@ -38,11 +42,7 @@ func New(creator creator) http.HandlerFunc {
 			return
 		}
 
-		recipientId, err := request.GetId()
-		if err != nil {
-			resp.Error(r, w, err)
-			return
-		}
+		recipientId := request.GetId()
 
 		dialogue, err := creator.CreateDialogue(ctx, userId, recipientId)
 		if err != nil {

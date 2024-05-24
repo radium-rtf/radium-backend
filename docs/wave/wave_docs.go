@@ -40,14 +40,14 @@ const docTemplatewave = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "already exists",
+                    "201": {
+                        "description": "created",
                         "schema": {
                             "$ref": "#/definitions/model.Dialogue"
                         }
                     },
-                    "201": {
-                        "description": "created",
+                    "409": {
+                        "description": "already exists",
                         "schema": {
                             "$ref": "#/definitions/model.Dialogue"
                         }

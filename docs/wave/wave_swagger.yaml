@@ -75,12 +75,12 @@ paths:
         schema:
           $ref: '#/definitions/create.DialogueCreate'
       responses:
-        "200":
-          description: already exists
-          schema:
-            $ref: '#/definitions/model.Dialogue'
         "201":
           description: created
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+        "409":
+          description: already exists
           schema:
             $ref: '#/definitions/model.Dialogue'
       security:
