@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
-	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/wave/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/centrifugo"
 )
 
 type DialogueUseCase struct {

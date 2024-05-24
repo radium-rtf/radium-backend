@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
+	"github.com/radium-rtf/radium-backend/pkg/centrifugo"
 )
 
 type UserUseCase struct {

@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/radium-rtf/radium-backend/internal/wave/lib/centrifugo"
 	"github.com/radium-rtf/radium-backend/internal/wave/usecase/repo/postgres"
+	"github.com/radium-rtf/radium-backend/pkg/centrifugo"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 )
 
