@@ -6,13 +6,13 @@ import (
 	"strconv"
 
 	"github.com/centrifugal/centrifuge-go"
-	"github.com/golang-jwt/jwt"
-	"github.com/radium-rtf/radium-backend/config"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/radium-rtf/radium-backend/internal/radium/lib/auth"
 )
 
 type Centrifugo struct {
-	clients map[string]*centrifuge.Client
-	token   string
+	tokenManager auth.TokenManager
+	clients      map[string]*centrifuge.Client
 }
 
 func (c Centrifugo) GetConnectionToken(user string, exp int64) (string, error) {
@@ -20,11 +20,7 @@ func (c Centrifugo) GetConnectionToken(user string, exp int64) (string, error) {
 	if exp > 0 {
 		claims["exp"] = exp
 	}
-	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(c.token))
-	if err != nil {
-		return "", err
-	}
-	return t, nil
+	return c.tokenManager.NewCustomJWT(claims)
 }
 
 func (c Centrifugo) GetClient(user string, exp int64) *centrifuge.Client {
@@ -74,11 +70,7 @@ func (c Centrifugo) GetSubscriptionToken(channel string, user string, exp int64)
 	if exp > 0 {
 		claims["exp"] = exp
 	}
-	t, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(c.token))
-	if err != nil {
-		return "", err
-	}
-	return t, nil
+	return c.tokenManager.NewCustomJWT(claims)
 }
 
 func (c Centrifugo) GetSubscription(channel string, user string, exp int64) (*centrifuge.Subscription, error) {
@@ -121,9 +113,9 @@ func (c Centrifugo) GetSubscription(channel string, user string, exp int64) (*ce
 	return sub, nil
 }
 
-func New(cfg config.Centrifugo) Centrifugo {
+func New(tokenManager auth.TokenManager) Centrifugo {
 	return Centrifugo{
-		token:   cfg.Token,
-		clients: make(map[string]*centrifuge.Client),
+		tokenManager: tokenManager,
+		clients:      make(map[string]*centrifuge.Client),
 	}
 }

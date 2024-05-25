@@ -3,8 +3,9 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"time"
+
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -31,7 +32,7 @@ func (m TokenManager) NewJWT(user *model.User, expiresAt time.Time) (string, err
 		roles = new(model.Roles)
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	return m.NewCustomJWT(jwt.MapClaims{
 		"exp":         jwt.NewNumericDate(expiresAt),
 		"sub":         user.Id.String(),
 		isTeacher:     roles.IsTeacher,
@@ -39,7 +40,10 @@ func (m TokenManager) NewJWT(user *model.User, expiresAt time.Time) (string, err
 		isCoauthor:    roles.IsCoauthor,
 		canEditCourse: roles.IsAuthor || roles.IsCoauthor,
 	})
+}
 
+func (m TokenManager) NewCustomJWT(claims jwt.MapClaims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(m.signingKey))
 }
 
