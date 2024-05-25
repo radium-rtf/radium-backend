@@ -12,7 +12,6 @@ type (
 		DBModel
 
 		SenderId        uuid.UUID
-		ChatId          uuid.UUID
 		ContentId       uuid.UUID
 		Content         *Content `bun:"rel:belongs-to,join:content_id=id"`
 		ParentMessageId uuid.UUID

@@ -15,9 +15,11 @@ type DialogueUseCase struct {
 }
 
 func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*entity.Dialogue, error) {
-	dialogue, err := uc.dialogue.Get(ctx)
+	dialogue, err := uc.dialogue.Get(ctx, chatId)
 	return dialogue, err
 }
+
+// TODO: GetDialogueFromRecipients
 
 func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error) {
 	userId, ok := ctx.Value("userId").(uuid.UUID)
@@ -25,15 +27,17 @@ func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID
 		userId = uuid.Nil
 	}
 	chatToken, err := uc.centrifugo.GetSubscriptionToken(chatId.String(), userId.String(), 0)
-	if err != nil {
-		return "", err
-	}
-	return chatToken, nil
+	return chatToken, err
 }
 
 func (uc DialogueUseCase) CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error) {
-	dialogue, err := uc.dialogue.Get(ctx)
-	return dialogue, err
+	dialogue := entity.Dialogue{
+		Id:           uuid.New(),
+		FirstUserId:  userId,
+		SecondUserId: recipientId,
+	}
+	err := uc.dialogue.Create(ctx, &dialogue)
+	return &dialogue, err
 }
 
 func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, centrifugo centrifugo.Centrifugo) DialogueUseCase {

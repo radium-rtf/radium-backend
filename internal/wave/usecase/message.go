@@ -14,6 +14,7 @@ import (
 type MessageUseCase struct {
 	message    postgres2.Message
 	content    postgres2.Content
+	dialogue   postgres2.Dialogue
 	centrifugo centrifugo.Centrifugo
 }
 
@@ -59,19 +60,30 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 		return nil, err
 	}
 	message := model.Message{
+		Id:      uuid.New(),
 		ChatId:  chatId,
 		Content: content,
 	}
 	err = uc.message.Create(ctx, &entity.Message{
 		DBModel: entity.DBModel{
-			Id: uuid.New(),
+			Id: message.Id,
 		},
-		ChatId:    chatId,
 		ContentId: contentObject.Id,
 	})
+	uc.dialogue.LinkMessage(ctx, chatId, message.Id)
 	return &message, err
 }
 
-func NewMessageUseCase(messageRepo postgres2.Message, contentRepo postgres2.Content, centrifugo centrifugo.Centrifugo) MessageUseCase {
-	return MessageUseCase{message: messageRepo, content: contentRepo, centrifugo: centrifugo}
+func NewMessageUseCase(
+	messageRepo postgres2.Message,
+	contentRepo postgres2.Content,
+	dialogueRepo postgres2.Dialogue,
+	centrifugo centrifugo.Centrifugo,
+) MessageUseCase {
+	return MessageUseCase{
+		message:    messageRepo,
+		content:    contentRepo,
+		dialogue:   dialogueRepo,
+		centrifugo: centrifugo,
+	}
 }

@@ -26,11 +26,18 @@ func (r Message) Create(ctx context.Context, message *entity.Message) error {
 }
 
 func (r Message) GetMessagesFrom(ctx context.Context, chatId string) ([]*entity.Message, error) {
-	var messages []*entity.Message
-	err := r.db.NewSelect().Model(&messages).
-		Relation("Content").
-		Where("chat_id = ?", chatId).
+	var messageLinks []*entity.DialogueMessage
+	err := r.db.NewSelect().Model(&messageLinks).
+		Relation("Dialogue").
+		Relation("Message").
+		Relation("Message.Content").
+		Where("dialogue_id = ?", chatId).
 		Scan(ctx)
+	messages := make([]*entity.Message, 0, len(messageLinks))
+	for _, link := range messageLinks {
+		message := link.Message
+		messages = append(messages, message)
+	}
 	if errors.Is(sql.ErrNoRows, err) {
 		return nil, err
 	}

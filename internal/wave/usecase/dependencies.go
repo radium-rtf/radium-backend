@@ -35,7 +35,7 @@ func NewUseCases(deps Dependencies) UseCases {
 		Content:    NewContentUseCase(repos.Content),
 		Dialogue:   NewDialogueUseCase(repos.Dialogue, deps.Centrifugo),
 		Group:      NewGroupUseCase(repos.Group),
-		Message:    NewMessageUseCase(repos.Message, repos.Content, deps.Centrifugo),
+		Message:    NewMessageUseCase(repos.Message, repos.Content, repos.Dialogue, deps.Centrifugo),
 		User:       NewUserUseCase(deps.Centrifugo),
 	}
 }

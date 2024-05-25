@@ -46,6 +46,7 @@ func New(creator creator) http.HandlerFunc {
 
 		dialogue, err := creator.CreateDialogue(ctx, userId, recipientId)
 		if err != nil {
+			render.Status(r, http.StatusConflict)
 			resp.Error(r, w, err)
 			return
 		}
