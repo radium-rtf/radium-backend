@@ -15,8 +15,9 @@ func newDependencies(storage filestorage.Storage, cfg *config.Config, db *postgr
 	tokenManager := auth.NewManager(cfg.JWT.SigningKey)
 	centrifugo := centrifugo.New(tokenManager)
 	return usecase.Dependencies{
-		Repos:      repositories,
-		Storage:    storage,
-		Centrifugo: centrifugo,
+		Repos:        repositories,
+		Storage:      storage,
+		TokenManager: tokenManager,
+		Centrifugo:   centrifugo,
 	}
 }

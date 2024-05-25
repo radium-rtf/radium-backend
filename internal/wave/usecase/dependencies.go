@@ -1,15 +1,17 @@
 package usecase
 
 import (
+	"github.com/radium-rtf/radium-backend/internal/radium/lib/auth"
 	"github.com/radium-rtf/radium-backend/internal/wave/usecase/repo/postgres"
 	"github.com/radium-rtf/radium-backend/pkg/centrifugo"
 	"github.com/radium-rtf/radium-backend/pkg/filestorage"
 )
 
 type Dependencies struct {
-	Repos      postgres.Repositories
-	Storage    filestorage.Storage
-	Centrifugo centrifugo.Centrifugo
+	Repos        postgres.Repositories
+	Storage      filestorage.Storage
+	TokenManager auth.TokenManager
+	Centrifugo   centrifugo.Centrifugo
 }
 
 type UseCases struct {
