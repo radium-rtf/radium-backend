@@ -15,7 +15,30 @@ const docTemplatewave = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/dialogue": {
+        "/v1/chats": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "chats"
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/get.Chat"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/chats/create/dialogue": {
             "post": {
                 "security": [
                     {
@@ -26,7 +49,7 @@ const docTemplatewave = `{
                     "application/json"
                 ],
                 "tags": [
-                    "dialogue"
+                    "chats"
                 ],
                 "parameters": [
                     {
@@ -55,7 +78,7 @@ const docTemplatewave = `{
                 }
             }
         },
-        "/v1/dialogue/{chatId}": {
+        "/v1/chats/token/{chatId}": {
             "get": {
                 "security": [
                     {
@@ -63,39 +86,7 @@ const docTemplatewave = `{
                     }
                 ],
                 "tags": [
-                    "dialogue"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID группы/диалога",
-                        "name": "chatId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": " ",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Dialogue"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/dialogue/{chatId}/token": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "dialogue"
+                    "chats"
                 ],
                 "parameters": [
                     {
@@ -217,6 +208,20 @@ const docTemplatewave = `{
             ],
             "properties": {
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "get.Chat": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

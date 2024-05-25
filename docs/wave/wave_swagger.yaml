@@ -7,6 +7,15 @@ definitions:
     required:
     - userId
     type: object
+  get.Chat:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
   model.CentrifugoToken:
     properties:
       token:
@@ -63,7 +72,20 @@ info:
   title: wave
   version: "1.0"
 paths:
-  /v1/dialogue:
+  /v1/chats:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/get.Chat'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - chats
+  /v1/chats/create/dialogue:
     post:
       consumes:
       - application/json
@@ -86,27 +108,8 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - dialogue
-  /v1/dialogue/{chatId}:
-    get:
-      parameters:
-      - description: ID группы/диалога
-        in: path
-        name: chatId
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ' '
-          schema:
-            items:
-              $ref: '#/definitions/model.Dialogue'
-            type: array
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - dialogue
-  /v1/dialogue/{chatId}/token:
+      - chats
+  /v1/chats/token/{chatId}:
     get:
       parameters:
       - description: ID группы/диалога
@@ -124,7 +127,7 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - dialogue
+      - chats
   /v1/message:
     post:
       consumes:

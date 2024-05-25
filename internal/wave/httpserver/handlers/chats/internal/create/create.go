@@ -12,18 +12,19 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
 
-type creator interface {
-	CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error)
+type creatorDialogue interface {
+	CreateDialogue(ctx context.Context, userId, recipientId uuid.UUID) (*entity.Dialogue, error)
+	GetDialogueByUsers(ctx context.Context, firstUser, secondUser uuid.UUID) (*entity.Dialogue, error)
 }
 
-// @Tags dialogue
+// @Tags chats
 // @Security ApiKeyAuth
 // @Accept       json
 // @Param request body DialogueCreate true "Данные о реципиенте"
 // @Success      201   {object} model.Dialogue      "created"
 // @Success      409   {object} model.Dialogue      "already exists"
-// @Router       /v1/dialogue [post]
-func New(creator creator) http.HandlerFunc {
+// @Router       /v1/chats/create/dialogue [post]
+func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			request    DialogueCreate
@@ -44,9 +45,16 @@ func New(creator creator) http.HandlerFunc {
 
 		recipientId := request.GetId()
 
+		existingDialogue, err := creator.GetDialogueByUsers(ctx, userId, recipientId)
+		if err == nil {
+			c := model.NewDialogue(existingDialogue)
+			render.Status(r, http.StatusConflict)
+			render.JSON(w, r, c)
+			return
+		}
+
 		dialogue, err := creator.CreateDialogue(ctx, userId, recipientId)
 		if err != nil {
-			render.Status(r, http.StatusConflict)
 			resp.Error(r, w, err)
 			return
 		}

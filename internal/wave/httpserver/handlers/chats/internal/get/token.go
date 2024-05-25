@@ -7,21 +7,20 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
 
-type getter interface {
-	GetDialogue(ctx context.Context, chatId uuid.UUID) (*entity.Dialogue, error)
+type tokenGetter interface {
+	GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error)
 }
 
-// @Tags dialogue
+// @Tags chats
 // @Security ApiKeyAuth
 // @Param        chatId   path      string  true  "ID группы/диалога"
-// @Success      200   {object} []model.Dialogue        " "
-// @Router       /v1/dialogue/{chatId} [get]
-func New(getter getter) http.HandlerFunc {
+// @Success      200   {object} []model.CentrifugoToken        " "
+// @Router       /v1/chats/token/{chatId} [get]
+func NewToken(getter tokenGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			ctx = r.Context()
@@ -34,13 +33,13 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		dialogue, err := getter.GetDialogue(ctx, chatId)
+		token, err := getter.GetDialogueToken(ctx, chatId)
 		if err != nil {
 			resp.Error(r, w, err)
 			return
 		}
 
-		c := model.NewDialogue(dialogue)
+		c := model.NewCentrifugoToken(token)
 
 		render.Status(r, http.StatusOK)
 		render.JSON(w, r, c)

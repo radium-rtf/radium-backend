@@ -19,7 +19,15 @@ func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*e
 	return dialogue, err
 }
 
-// TODO: GetDialogueFromRecipients
+func (uc DialogueUseCase) GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error) {
+	dialogues, err := uc.dialogue.GetAllByUserId(ctx, userId)
+	return dialogues, err
+}
+
+func (uc DialogueUseCase) GetDialogueByUsers(ctx context.Context, firstUser, secondUser uuid.UUID) (*entity.Dialogue, error) {
+	dialogue, err := uc.dialogue.GetByUsers(ctx, firstUser, secondUser)
+	return dialogue, err
+}
 
 func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error) {
 	userId, ok := ctx.Value("userId").(uuid.UUID)
@@ -31,13 +39,16 @@ func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID
 }
 
 func (uc DialogueUseCase) CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error) {
-	dialogue := entity.Dialogue{
+	dialogue := &entity.Dialogue{
 		Id:           uuid.New(),
 		FirstUserId:  userId,
 		SecondUserId: recipientId,
 	}
-	err := uc.dialogue.Create(ctx, &dialogue)
-	return &dialogue, err
+	err := uc.dialogue.Create(ctx, dialogue)
+	if err != nil {
+		dialogue, _ = uc.dialogue.GetByUsers(ctx, userId, recipientId)
+	}
+	return dialogue, err
 }
 
 func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, centrifugo centrifugo.Centrifugo) DialogueUseCase {
