@@ -26,14 +26,9 @@ type Chat struct {
 func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			ctx        = r.Context()
-			userId, ok = r.Context().Value("userId").(uuid.UUID)
+			ctx    = r.Context()
+			userId = r.Context().Value("userId").(uuid.UUID)
 		)
-		if !ok {
-			userId = uuid.Nil
-			// resp.Error(r, w, resp.ErrUnauthorized)
-			// return
-		}
 
 		dialogues, err := getter.GetDialogues(ctx, userId)
 

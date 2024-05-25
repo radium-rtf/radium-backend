@@ -34,6 +34,7 @@ func (r Dialogue) GetByUsers(ctx context.Context, firstUserId, secondUserId uuid
 }
 
 func (r Dialogue) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error) {
+	// TODO: потом нужно будет доставать это из юзера через join(Relation("Dialogues"))
 	var dialogues []*entity.Dialogue
 	err := r.db.NewSelect().Model(&dialogues).
 		Where("first_user_id = ? OR second_user_id = ?", userId, userId).

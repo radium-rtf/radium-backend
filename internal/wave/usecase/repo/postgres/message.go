@@ -32,6 +32,7 @@ func (r Message) GetMessagesFrom(ctx context.Context, chatId string) ([]*entity.
 		Relation("Message").
 		Relation("Message.Content").
 		Where("dialogue_id = ?", chatId).
+		Order("message.created_at").
 		Scan(ctx)
 	messages := make([]*entity.Message, 0, len(messageLinks))
 	for _, link := range messageLinks {

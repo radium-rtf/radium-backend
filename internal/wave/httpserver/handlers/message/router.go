@@ -13,11 +13,11 @@ func New(r chi.Router, useCases usecase.UseCases) {
 	tokenManager := useCases.Deps.TokenManager
 
 	r.Route("/v1/message", func(r chi.Router) {
-		r.Use(auth.UserId(tokenManager))
+		r.Use(auth.Required(tokenManager))
 		r.Post("/", send.New(useCase))
 	})
 	r.Route("/v1/messages", func(r chi.Router) {
-		r.Use(auth.UserId(tokenManager))
+		r.Use(auth.Required(tokenManager))
 		r.Get("/{chatId}", get.New(useCase))
 	})
 }

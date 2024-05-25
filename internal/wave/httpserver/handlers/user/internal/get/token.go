@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
 
 type tokenGetter interface {
-	GetClientToken(ctx context.Context) (string, error)
+	GetClientToken(ctx context.Context, userId uuid.UUID) (string, error)
 }
 
 // @Tags user
@@ -20,11 +21,11 @@ type tokenGetter interface {
 func NewToken(getter tokenGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			ctx = r.Context()
-			// userId = r.Context().Value("userId").(uuid.UUID)
+			ctx    = r.Context()
+			userId = r.Context().Value("userId").(uuid.UUID)
 		)
 
-		token, err := getter.GetClientToken(ctx)
+		token, err := getter.GetClientToken(ctx, userId)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

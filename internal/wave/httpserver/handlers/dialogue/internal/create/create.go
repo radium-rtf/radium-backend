@@ -17,13 +17,13 @@ type creatorDialogue interface {
 	GetDialogueByUsers(ctx context.Context, firstUser, secondUser uuid.UUID) (*entity.Dialogue, error)
 }
 
-// @Tags chats
+// @Tags dialogue
 // @Security ApiKeyAuth
 // @Accept       json
 // @Param request body DialogueCreate true "Данные о реципиенте"
 // @Success      201   {object} model.Dialogue      "created"
 // @Success      409   {object} model.Dialogue      "already exists"
-// @Router       /v1/chats/create/dialogue [post]
+// @Router       /v1/dialogue/create [post]
 func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
@@ -43,7 +43,7 @@ func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 			return
 		}
 
-		recipientId := request.GetId()
+		recipientId := request.UserId
 
 		existingDialogue, err := creator.GetDialogueByUsers(ctx, userId, recipientId)
 		if err == nil {

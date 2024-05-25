@@ -29,11 +29,7 @@ func (uc DialogueUseCase) GetDialogueByUsers(ctx context.Context, firstUser, sec
 	return dialogue, err
 }
 
-func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error) {
-	userId, ok := ctx.Value("userId").(uuid.UUID)
-	if !ok {
-		userId = uuid.Nil
-	}
+func (uc DialogueUseCase) GetDialogueToken(ctx context.Context, chatId, userId uuid.UUID) (string, error) {
 	chatToken, err := uc.centrifugo.GetSubscriptionToken(chatId.String(), userId.String(), 0)
 	return chatToken, err
 }

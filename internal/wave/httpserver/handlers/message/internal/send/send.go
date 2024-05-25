@@ -35,7 +35,7 @@ func New(sender sender) http.HandlerFunc {
 			return
 		}
 
-		chatId, content := request.GetData()
+		chatId, content := request.ChatId, request.Content
 
 		message, err := sender.SendMessage(ctx, chatId, content)
 		if err != nil {

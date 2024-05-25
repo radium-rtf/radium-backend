@@ -85,7 +85,26 @@ paths:
       - ApiKeyAuth: []
       tags:
       - chats
-  /v1/chats/create/dialogue:
+  /v1/chats/token/{chatId}:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.CentrifugoToken'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - chats
+  /v1/dialogue/create:
     post:
       consumes:
       - application/json
@@ -108,26 +127,7 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - chats
-  /v1/chats/token/{chatId}:
-    get:
-      parameters:
-      - description: ID группы/диалога
-        in: path
-        name: chatId
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ' '
-          schema:
-            items:
-              $ref: '#/definitions/model.CentrifugoToken'
-            type: array
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - chats
+      - dialogue
   /v1/message:
     post:
       consumes:

@@ -9,7 +9,3 @@ type MessageSend struct {
 	ChatId  uuid.UUID     `json:"chatId" validate:"required"`
 	Content model.Content `json:"content" validate:"required"`
 }
-
-func (d MessageSend) GetData() (uuid.UUID, model.Content) {
-	return d.ChatId, d.Content
-}

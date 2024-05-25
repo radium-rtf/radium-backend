@@ -38,46 +38,6 @@ const docTemplatewave = `{
                 }
             }
         },
-        "/v1/chats/create/dialogue": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "chats"
-                ],
-                "parameters": [
-                    {
-                        "description": "Данные о реципиенте",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/create.DialogueCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Dialogue"
-                        }
-                    },
-                    "409": {
-                        "description": "already exists",
-                        "schema": {
-                            "$ref": "#/definitions/model.Dialogue"
-                        }
-                    }
-                }
-            }
-        },
         "/v1/chats/token/{chatId}": {
             "get": {
                 "security": [
@@ -105,6 +65,46 @@ const docTemplatewave = `{
                             "items": {
                                 "$ref": "#/definitions/model.CentrifugoToken"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/dialogue/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dialogue"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные о реципиенте",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.DialogueCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Dialogue"
+                        }
+                    },
+                    "409": {
+                        "description": "already exists",
+                        "schema": {
+                            "$ref": "#/definitions/model.Dialogue"
                         }
                     }
                 }

@@ -12,7 +12,7 @@ import (
 )
 
 type tokenGetter interface {
-	GetDialogueToken(ctx context.Context, chatId uuid.UUID) (string, error)
+	GetDialogueToken(ctx context.Context, chatId, userId uuid.UUID) (string, error)
 }
 
 // @Tags chats
@@ -23,8 +23,8 @@ type tokenGetter interface {
 func NewToken(getter tokenGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			ctx = r.Context()
-			// userId = r.Context().Value("userId").(uuid.UUID)
+			ctx    = r.Context()
+			userId = r.Context().Value("userId").(uuid.UUID)
 		)
 
 		chatId, err := uuid.Parse(chi.URLParam(r, "chatId"))
@@ -33,7 +33,7 @@ func NewToken(getter tokenGetter) http.HandlerFunc {
 			return
 		}
 
-		token, err := getter.GetDialogueToken(ctx, chatId)
+		token, err := getter.GetDialogueToken(ctx, userId, chatId)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

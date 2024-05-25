@@ -12,7 +12,7 @@ func New(r chi.Router, useCases usecase.UseCases) {
 	tokenManager := useCases.Deps.TokenManager
 
 	r.Route("/v1/user", func(r chi.Router) {
-		r.Use(auth.UserId(tokenManager))
+		r.Use(auth.Required(tokenManager))
 		r.Get("/token", get.NewToken(useCase))
 	})
 }
