@@ -7,5 +7,5 @@
   "allowed_origins": ["http://localhost:*"],
   "port": 6969,
   "allow_subscribe_for_client": true,
-  "allow_publish_for_subscriber": true
+  "allow_publish_for_client": true
 }

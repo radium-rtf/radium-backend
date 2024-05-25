@@ -33,19 +33,13 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, cont
 	if !ok {
 		userId = uuid.Nil
 	}
-	uc.centrifugo.GetClient(userId.String(), 0)
+	client := uc.centrifugo.GetClient(userId.String(), 0)
 	var err error
-	sub, err := uc.centrifugo.GetSubscription(chatId.String(), userId.String(), 0)
-	if err != nil {
-		return nil, err
-	}
-	sub.Subscribe()
-	// defer sub.Unsubscribe()
 
 	text := strings.ReplaceAll(content.Text, `"`, `\"`)
 
 	json_data := []byte(`{"value":"` + text + `", "userId": "` + userId.String() + `", "chatId": "` + chatId.String() + `"}`)
-	_, err = sub.Publish(ctx, json_data)
+	_, err = client.Publish(ctx, chatId.String(), json_data)
 	if err != nil {
 		return nil, err
 	}
