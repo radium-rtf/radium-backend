@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"strings"
+	"encoding/json"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
@@ -28,43 +28,49 @@ func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) 
 	return messages, err
 }
 
-func (uc MessageUseCase) SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error) {
-	userId, ok := ctx.Value("userId").(uuid.UUID)
-	if !ok {
-		userId = uuid.Nil
-	}
-	client := uc.centrifugo.GetClient(userId.String(), 0)
-	var err error
-
-	text := strings.ReplaceAll(content.Text, `"`, `\"`)
-
-	json_data := []byte(`{"value":"` + text + `", "userId": "` + userId.String() + `", "chatId": "` + chatId.String() + `"}`)
-	_, err = client.Publish(ctx, chatId.String(), json_data)
-	if err != nil {
-		return nil, err
-	}
+func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UUID, content model.Content) (*model.Message, error) {
 	contentObject := &entity.Content{
 		DBModel: entity.DBModel{
 			Id: uuid.New(),
 		},
 		Text: content.Text,
 	}
-	err = uc.content.Create(ctx, contentObject)
+	err := uc.content.Create(ctx, contentObject)
 	if err != nil {
 		return nil, err
 	}
-	message := model.Message{
-		Id:      uuid.New(),
-		ChatId:  chatId,
-		Content: content,
-	}
-	err = uc.message.Create(ctx, &entity.Message{
+	messageObject := &entity.Message{
 		DBModel: entity.DBModel{
-			Id: message.Id,
+			Id: uuid.New(),
 		},
+		SenderId:  userId,
 		ContentId: contentObject.Id,
+		Content:   contentObject,
+	}
+	err = uc.message.Create(ctx, messageObject)
+	if err != nil {
+		return nil, err
+	}
+	uc.dialogue.LinkMessage(ctx, chatId, messageObject.Id)
+
+	message := model.NewMessage(messageObject)
+	message.SetChat(model.Chat{
+		Id:   chatId,
+		Name: chatId.String(),
+		Type: "dialogue",
 	})
-	uc.dialogue.LinkMessage(ctx, chatId, message.Id)
+
+	client := uc.centrifugo.GetClient(userId.String(), 0)
+
+	jsonBytes, err := json.Marshal(message)
+	if err != nil {
+		return nil, err
+	}
+	_, err = client.Publish(ctx, chatId.String(), jsonBytes)
+	if err != nil {
+		return nil, err
+	}
+
 	return &message, err
 }
 

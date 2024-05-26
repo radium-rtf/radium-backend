@@ -12,7 +12,7 @@ import (
 )
 
 type sender interface {
-	SendMessage(ctx context.Context, chatId uuid.UUID, content model.Content) (*model.Message, error)
+	SendMessage(ctx context.Context, userId, chatId uuid.UUID, content model.Content) (*model.Message, error)
 }
 
 // @Tags message
@@ -26,7 +26,7 @@ func New(sender sender) http.HandlerFunc {
 		var (
 			request MessageSend
 			ctx     = r.Context()
-			// userId  = ctx.Value("userId").(uuid.UUID)
+			userId  = ctx.Value("userId").(uuid.UUID)
 		)
 
 		err := decode.Json(r.Body, &request)
@@ -37,7 +37,7 @@ func New(sender sender) http.HandlerFunc {
 
 		chatId, content := request.ChatId, request.Content
 
-		message, err := sender.SendMessage(ctx, chatId, content)
+		message, err := sender.SendMessage(ctx, userId, chatId, content)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

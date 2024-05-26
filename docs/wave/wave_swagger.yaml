@@ -7,18 +7,18 @@ definitions:
     required:
     - userId
     type: object
-  get.Chat:
+  model.CentrifugoToken:
+    properties:
+      token:
+        type: string
+    type: object
+  model.Chat:
     properties:
       id:
         type: string
       name:
         type: string
       type:
-        type: string
-    type: object
-  model.CentrifugoToken:
-    properties:
-      token:
         type: string
     type: object
   model.Content:
@@ -44,8 +44,8 @@ definitions:
     type: object
   model.Message:
     properties:
-      chatId:
-        type: string
+      chat:
+        $ref: '#/definitions/model.Chat'
       content:
         $ref: '#/definitions/model.Content'
       id:
@@ -79,7 +79,7 @@ paths:
           description: ' '
           schema:
             items:
-              $ref: '#/definitions/get.Chat'
+              $ref: '#/definitions/model.Chat'
             type: array
       security:
       - ApiKeyAuth: []

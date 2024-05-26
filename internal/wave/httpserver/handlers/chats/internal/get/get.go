@@ -7,21 +7,16 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
+	"github.com/radium-rtf/radium-backend/internal/wave/model"
 )
 
 type getter interface {
 	GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error)
 }
 
-type Chat struct {
-	Id   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-	Type string    `json:"type"`
-}
-
 // @Tags chats
 // @Security ApiKeyAuth
-// @Success      200   {object} []Chat        " "
+// @Success      200   {object} []model.Chat        " "
 // @Router       /v1/chats [get]
 func New(getter getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -38,9 +33,9 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		c := make([]Chat, 0, len(dialogues))
+		c := make([]model.Chat, 0, len(dialogues))
 		for _, d := range dialogues {
-			c = append(c, Chat{
+			c = append(c, model.Chat{
 				Id:   d.Id,
 				Name: d.FirstUserId.String() + " / " + d.SecondUserId.String(),
 				Type: "dialogue",

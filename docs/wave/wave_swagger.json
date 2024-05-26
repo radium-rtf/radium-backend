@@ -23,7 +23,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/get.Chat"
+                                "$ref": "#/definitions/model.Chat"
                             }
                         }
                     }
@@ -204,7 +204,15 @@
                 }
             }
         },
-        "get.Chat": {
+        "model.CentrifugoToken": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Chat": {
             "type": "object",
             "properties": {
                 "id": {
@@ -214,14 +222,6 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.CentrifugoToken": {
-            "type": "object",
-            "properties": {
-                "token": {
                     "type": "string"
                 }
             }
@@ -262,8 +262,8 @@
         "model.Message": {
             "type": "object",
             "properties": {
-                "chatId": {
-                    "type": "string"
+                "chat": {
+                    "$ref": "#/definitions/model.Chat"
                 },
                 "content": {
                     "$ref": "#/definitions/model.Content"

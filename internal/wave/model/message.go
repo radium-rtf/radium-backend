@@ -10,12 +10,18 @@ type (
 		Id uuid.UUID `json:"id"`
 
 		SenderId        uuid.UUID `json:"senderId"`
-		ChatId          uuid.UUID `json:"chatId"`
+		Chat            Chat      `json:"chat"`
 		Content         Content   `json:"content"`
 		ParentMessageId uuid.UUID `json:"parentMessageId"`
 		Type            string    `json:"type"`
 	}
 )
+
+func (m *Message) SetChat(chat Chat) *Message {
+	// TODO: сделать для каждого типа функцию?
+	m.Chat = chat
+	return m
+}
 
 func NewMessage(message *entity.Message) Message {
 	if message == nil {

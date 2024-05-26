@@ -31,7 +31,7 @@ const docTemplatewave = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/get.Chat"
+                                "$ref": "#/definitions/model.Chat"
                             }
                         }
                     }
@@ -212,7 +212,15 @@ const docTemplatewave = `{
                 }
             }
         },
-        "get.Chat": {
+        "model.CentrifugoToken": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Chat": {
             "type": "object",
             "properties": {
                 "id": {
@@ -222,14 +230,6 @@ const docTemplatewave = `{
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.CentrifugoToken": {
-            "type": "object",
-            "properties": {
-                "token": {
                     "type": "string"
                 }
             }
@@ -270,8 +270,8 @@ const docTemplatewave = `{
         "model.Message": {
             "type": "object",
             "properties": {
-                "chatId": {
-                    "type": "string"
+                "chat": {
+                    "$ref": "#/definitions/model.Chat"
                 },
                 "content": {
                     "$ref": "#/definitions/model.Content"
