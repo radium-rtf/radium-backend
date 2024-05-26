@@ -37,7 +37,7 @@ func New(getter getter) http.HandlerFunc {
 		for _, d := range dialogues {
 			c = append(c, model.Chat{
 				Id:   d.Id,
-				Name: d.FirstUserId.String() + " / " + d.SecondUserId.String(),
+				Name: d.Id.String(), // TODO: change name
 				Type: "dialogue",
 			})
 		}

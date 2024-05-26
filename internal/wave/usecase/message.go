@@ -56,7 +56,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 	message := model.NewMessage(messageObject)
 	message.SetChat(model.Chat{
 		Id:   chatId,
-		Name: chatId.String(),
+		Name: chatId.String(), // TODO: change name
 		Type: "dialogue",
 	})
 
