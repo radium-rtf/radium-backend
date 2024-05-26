@@ -18,8 +18,8 @@ type MessageUseCase struct {
 	centrifugo centrifugo.Centrifugo
 }
 
-func (uc MessageUseCase) GetMessage(ctx context.Context) (*entity.Message, error) {
-	message, err := uc.message.Get(ctx)
+func (uc MessageUseCase) GetMessage(ctx context.Context, messageId uuid.UUID) (*entity.Message, error) {
+	message, _, err := uc.message.Get(ctx, messageId)
 	return message, err
 }
 
@@ -70,7 +70,10 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 
 	client := uc.centrifugo.GetClient(userId.String(), 0)
 
-	jsonBytes, err := json.Marshal(message)
+	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
+		Event:   "create",
+		Message: message,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -94,4 +97,70 @@ func NewMessageUseCase(
 		dialogue:   dialogueRepo,
 		centrifugo: centrifugo,
 	}
+}
+
+func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid.UUID, content model.Content) (*model.Message, error) {
+	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
+	if err != nil {
+		return nil, err
+	}
+	contentObject := messageObject.Content
+	if content.Text != "" {
+		contentObject.Text = content.Text
+	}
+	err = uc.content.Update(ctx, contentObject)
+	if err != nil {
+		return nil, err
+	}
+	message := model.NewMessage(messageObject)
+	message.SetChat(*chatModel)
+
+	client := uc.centrifugo.GetClient(userId.String(), 0)
+
+	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
+		Event:   "edit",
+		Message: message,
+	})
+	if err != nil {
+		return nil, err
+	}
+	_, err = client.Publish(ctx, chatModel.Id.String(), jsonBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return message, err
+}
+
+func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uuid.UUID) (*model.Message, error) {
+	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
+	if err != nil {
+		return nil, err
+	}
+	err = uc.content.Delete(ctx, messageObject.ContentId)
+	if err != nil {
+		return nil, err
+	}
+	err = uc.message.Delete(ctx, messageId)
+	if err != nil {
+		return nil, err
+	}
+	message := model.NewMessage(messageObject)
+	message.SetChat(*chatModel)
+
+	client := uc.centrifugo.GetClient(userId.String(), 0)
+
+	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
+		Event:   "remove",
+		Message: message,
+	})
+	if err != nil {
+		return nil, err
+	}
+	_, err = client.Publish(ctx, chatModel.Id.String(), jsonBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return message, err
 }

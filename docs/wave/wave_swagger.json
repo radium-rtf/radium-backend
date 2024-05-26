@@ -134,6 +134,76 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "description": "Сообщение для удаления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.MessageRemove"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deleted",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "description": "Сообщение",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.MessageEdit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "edited",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
             }
         },
         "/v1/messages/{chatId}": {
@@ -246,7 +316,7 @@
                 "id": {
                     "type": "string"
                 },
-                "last_message": {
+                "lastMessage": {
                     "$ref": "#/definitions/model.Message"
                 },
                 "name": {
@@ -309,6 +379,32 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "modify.MessageEdit": {
+            "type": "object",
+            "required": [
+                "content",
+                "messageId"
+            ],
+            "properties": {
+                "content": {
+                    "$ref": "#/definitions/model.Content"
+                },
+                "messageId": {
+                    "type": "string"
+                }
+            }
+        },
+        "modify.MessageRemove": {
+            "type": "object",
+            "required": [
+                "messageId"
+            ],
+            "properties": {
+                "messageId": {
                     "type": "string"
                 }
             }

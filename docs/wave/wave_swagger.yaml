@@ -16,7 +16,7 @@ definitions:
     properties:
       id:
         type: string
-      last_message:
+      lastMessage:
         $ref: '#/definitions/model.Message'
       name:
         type: string
@@ -58,6 +58,23 @@ definitions:
         type: string
       type:
         type: string
+    type: object
+  modify.MessageEdit:
+    properties:
+      content:
+        $ref: '#/definitions/model.Content'
+      messageId:
+        type: string
+    required:
+    - content
+    - messageId
+    type: object
+  modify.MessageRemove:
+    properties:
+      messageId:
+        type: string
+    required:
+    - messageId
     type: object
   send.MessageSend:
     properties:
@@ -131,6 +148,48 @@ paths:
       tags:
       - dialogue
   /v1/message:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для удаления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageRemove'
+      responses:
+        "200":
+          description: deleted
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageEdit'
+      responses:
+        "200":
+          description: edited
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
     post:
       consumes:
       - application/json

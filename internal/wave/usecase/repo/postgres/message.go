@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
+	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
 )
@@ -24,12 +26,24 @@ func (r Message) Create(ctx context.Context, message *entity.Message) error {
 	})
 }
 
-// available sorters dict
+func (r Message) Delete(ctx context.Context, messageId uuid.UUID) error {
+	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewDelete().Model(&entity.DialogueMessage{MessageId: messageId}).
+			Where("message_id = ?", messageId).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewDelete().Model(&entity.Message{DBModel: entity.DBModel{Id: messageId}}).
+			Where("id = ?", messageId).
+			Exec(ctx)
+		return err
+	})
+}
+
 var sorters = map[string]string{
 	"date": "message.created_at",
 }
-
-// available orders dict
 var orders = map[string]string{
 	"asc":  "ASC",
 	"desc": "DESC",
@@ -71,7 +85,24 @@ func (r Message) GetMessagesFrom(
 	return messages, err
 }
 
-func (r Message) Get(ctx context.Context) (*entity.Message, error) {
+func (r Message) Get(ctx context.Context, id uuid.UUID) (*entity.Message, *model.Chat, error) {
 	message := new(entity.Message)
-	return message, nil
+	err := r.db.NewSelect().Model(message).
+		Relation("Content").
+		Where("\"message\".\"id\" = ?", id).
+		Scan(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	dialogueLink := new(entity.DialogueMessage)
+	err = r.db.NewSelect().Model(dialogueLink).
+		Relation("Dialogue").
+		Where("message_id = ?", id).
+		Scan(ctx)
+	if err == nil {
+		dialogue := dialogueLink.Dialogue
+		chat := model.NewChat(dialogue.Id, dialogue.Id.String(), "dialogue", nil)
+		return message, &chat, nil
+	}
+	return message, nil, err
 }
