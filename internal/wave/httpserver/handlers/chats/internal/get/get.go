@@ -10,15 +10,20 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 )
 
-type getter interface {
-	GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error)
-}
+type (
+	getter interface {
+		GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error)
+	}
+	messageGetter interface {
+		GetLastMessage(ctx context.Context, chatId uuid.UUID) (*entity.Message, error)
+	}
+)
 
 // @Tags chats
 // @Security ApiKeyAuth
 // @Success      200   {object} []model.Chat        " "
 // @Router       /v1/chats [get]
-func New(getter getter) http.HandlerFunc {
+func New(getter getter, messageGetter messageGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			ctx    = r.Context()
@@ -35,10 +40,20 @@ func New(getter getter) http.HandlerFunc {
 
 		c := make([]model.Chat, 0, len(dialogues))
 		for _, d := range dialogues {
+			msg, err := messageGetter.GetLastMessage(ctx, d.Id)
+
+			var message *model.Message
+			if err != nil {
+				message = nil
+			} else {
+				message = model.NewMessage(msg)
+			}
+
 			c = append(c, model.NewChat(
 				d.Id,
 				d.Id.String(), // TODO: change name
 				"dialogue",
+				message,
 			))
 		}
 

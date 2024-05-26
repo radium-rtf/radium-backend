@@ -10,7 +10,7 @@ type (
 		Id uuid.UUID `json:"id"`
 
 		SenderId        uuid.UUID `json:"senderId"`
-		Chat            Chat      `json:"chat"`
+		Chat            *Chat     `json:"chat,omitempty"`
 		Content         Content   `json:"content"`
 		ParentMessageId uuid.UUID `json:"parentMessageId"`
 		Type            string    `json:"type"`
@@ -19,7 +19,7 @@ type (
 
 func (m *Message) SetChat(chat Chat) *Message {
 	// TODO: сделать для каждого типа функцию?
-	m.Chat = chat
+	m.Chat = &chat
 	return m
 }
 

@@ -254,6 +254,9 @@ const docTemplatewave = `{
                 "id": {
                     "type": "string"
                 },
+                "last_message": {
+                    "$ref": "#/definitions/model.Message"
+                },
                 "name": {
                     "type": "string"
                 },

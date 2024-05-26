@@ -72,6 +72,7 @@ func New(getter getter) http.HandlerFunc {
 			chatId,
 			chatId.String(), // TODO: change name
 			"dialogue",
+			nil,
 		)
 		for _, m := range models {
 			m.SetChat(chat)

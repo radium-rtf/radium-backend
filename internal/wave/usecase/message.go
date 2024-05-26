@@ -30,6 +30,11 @@ func (uc MessageUseCase) GetMessagesFrom(
 	return messages, err
 }
 
+func (uc MessageUseCase) GetLastMessage(ctx context.Context, chatId uuid.UUID) (*entity.Message, error) {
+	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String(), 1, 1, "date", "desc")
+	return messages[0], err
+}
+
 func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UUID, content model.Content) (*model.Message, error) {
 	contentObject := &entity.Content{
 		DBModel: entity.DBModel{
@@ -60,6 +65,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 		chatId,
 		chatId.String(), // TODO: change name
 		"dialogue",
+		nil,
 	))
 
 	client := uc.centrifugo.GetClient(userId.String(), 0)

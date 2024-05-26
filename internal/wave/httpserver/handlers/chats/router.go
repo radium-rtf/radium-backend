@@ -9,11 +9,12 @@ import (
 
 func New(r chi.Router, useCases usecase.UseCases) {
 	useCase := useCases.Dialogue
+	messageUseCase := useCases.Message
 	tokenManager := useCases.Deps.TokenManager
 
 	r.Route("/v1/chats", func(r chi.Router) {
 		r.Use(auth.Required(tokenManager))
-		r.Get("/", get.New(useCase))
+		r.Get("/", get.New(useCase, messageUseCase))
 		r.Get("/token/{chatId}", get.NewToken(useCase))
 	})
 }
