@@ -22,7 +22,7 @@ type creatorDialogue interface {
 // @Accept       json
 // @Param request body DialogueCreate true "Данные о реципиенте"
 // @Success      201   {object} model.Dialogue      "created"
-// @Success      409   {object} model.Dialogue      "already exists"
+// @Failure      409   {object} model.Dialogue      "already exists"
 // @Router       /v1/dialogue/create [post]
 func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

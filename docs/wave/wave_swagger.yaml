@@ -156,6 +156,26 @@ paths:
         name: chatId
         required: true
         type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 50
+        description: Размер страницы
+        in: query
+        name: pageSize
+        type: integer
+      - default: date
+        description: Тип сортировки
+        in: query
+        name: sort
+        type: string
+      - default: desc
+        description: Порядок сортировки (asc или desc)
+        in: query
+        name: order
+        type: string
       responses:
         "200":
           description: ' '

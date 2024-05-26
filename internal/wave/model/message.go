@@ -23,13 +23,13 @@ func (m *Message) SetChat(chat Chat) *Message {
 	return m
 }
 
-func NewMessage(message *entity.Message) Message {
+func NewMessage(message *entity.Message) *Message {
 	if message == nil {
-		return Message{}
+		return &Message{}
 	}
 	content := NewContent(message.Content)
 
-	return Message{
+	return &Message{
 		Id:              message.Id,
 		SenderId:        message.SenderId,
 		Content:         content,
@@ -38,8 +38,8 @@ func NewMessage(message *entity.Message) Message {
 	}
 }
 
-func NewMessages(messages []*entity.Message) []Message {
-	result := make([]Message, 0, len(messages))
+func NewMessages(messages []*entity.Message) []*Message {
+	result := make([]*Message, 0, len(messages))
 	for _, message := range messages {
 		result = append(result, NewMessage(message))
 	}

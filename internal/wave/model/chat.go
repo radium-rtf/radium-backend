@@ -11,3 +11,11 @@ type (
 		Type string    `json:"type"`
 	}
 )
+
+func NewChat(Id uuid.UUID, Name, Type string) Chat {
+	return Chat{
+		Id:   Id,
+		Name: Name,
+		Type: Type,
+	}
+}

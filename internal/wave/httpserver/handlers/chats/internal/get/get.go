@@ -35,11 +35,11 @@ func New(getter getter) http.HandlerFunc {
 
 		c := make([]model.Chat, 0, len(dialogues))
 		for _, d := range dialogues {
-			c = append(c, model.Chat{
-				Id:   d.Id,
-				Name: d.Id.String(), // TODO: change name
-				Type: "dialogue",
-			})
+			c = append(c, model.NewChat(
+				d.Id,
+				d.Id.String(), // TODO: change name
+				"dialogue",
+			))
 		}
 
 		render.Status(r, http.StatusOK)

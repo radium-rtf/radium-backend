@@ -23,8 +23,10 @@ func (uc MessageUseCase) GetMessage(ctx context.Context) (*entity.Message, error
 	return message, err
 }
 
-func (uc MessageUseCase) GetMessagesFrom(ctx context.Context, chatId uuid.UUID) ([]*entity.Message, error) {
-	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String())
+func (uc MessageUseCase) GetMessagesFrom(
+	ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
+) ([]*entity.Message, error) {
+	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
 	return messages, err
 }
 
@@ -54,11 +56,11 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 	uc.dialogue.LinkMessage(ctx, chatId, messageObject.Id)
 
 	message := model.NewMessage(messageObject)
-	message.SetChat(model.Chat{
-		Id:   chatId,
-		Name: chatId.String(), // TODO: change name
-		Type: "dialogue",
-	})
+	message.SetChat(model.NewChat(
+		chatId,
+		chatId.String(), // TODO: change name
+		"dialogue",
+	))
 
 	client := uc.centrifugo.GetClient(userId.String(), 0)
 
@@ -71,7 +73,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 		return nil, err
 	}
 
-	return &message, err
+	return message, err
 }
 
 func NewMessageUseCase(

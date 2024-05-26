@@ -3,6 +3,7 @@ package get
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -13,12 +14,18 @@ import (
 )
 
 type getter interface {
-	GetMessagesFrom(ctx context.Context, chatId uuid.UUID) ([]*entity.Message, error)
+	GetMessagesFrom(
+		ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
+	) ([]*entity.Message, error)
 }
 
 // @Tags message
 // @Security ApiKeyAuth
 // @Param        chatId   path      string  true  "ID группы/диалога"
+// @Param        page     query     int     false "Номер страницы"  default(1)
+// @Param        pageSize query     int     false "Размер страницы" default(50)
+// @Param        sort     query     string  false "Тип сортировки" default(date)
+// @Param        order    query     string  false "Порядок сортировки (asc или desc)" default(desc)
 // @Success      200   {object} []model.Message        " "
 // @Router       /v1/messages/{chatId} [get]
 func New(getter getter) http.HandlerFunc {
@@ -34,15 +41,43 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		messages, err := getter.GetMessagesFrom(ctx, chatId)
+		page, err := strconv.Atoi(r.URL.Query().Get("page"))
+		if err != nil || page < 1 {
+			page = 1
+		}
+
+		pageSize, err := strconv.Atoi(r.URL.Query().Get("pageSize"))
+		if err != nil || pageSize < 1 {
+			pageSize = 50
+		}
+
+		sort := r.URL.Query().Get("sort")
+		if sort == "" {
+			sort = "date"
+		}
+
+		order := r.URL.Query().Get("order")
+		if order == "" {
+			order = "desc"
+		}
+
+		messages, err := getter.GetMessagesFrom(ctx, chatId, page, pageSize, sort, order)
 		if err != nil {
 			resp.Error(r, w, err)
 			return
 		}
 
-		c := model.NewMessages(messages)
+		models := model.NewMessages(messages)
+		chat := model.NewChat(
+			chatId,
+			chatId.String(), // TODO: change name
+			"dialogue",
+		)
+		for _, m := range models {
+			m.SetChat(chat)
+		}
 
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, c)
+		render.JSON(w, r, models)
 	}
 }
