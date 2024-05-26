@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
@@ -85,23 +86,13 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 	return message, err
 }
 
-func NewMessageUseCase(
-	messageRepo postgres2.Message,
-	contentRepo postgres2.Content,
-	dialogueRepo postgres2.Dialogue,
-	centrifugo centrifugo.Centrifugo,
-) MessageUseCase {
-	return MessageUseCase{
-		message:    messageRepo,
-		content:    contentRepo,
-		dialogue:   dialogueRepo,
-		centrifugo: centrifugo,
-	}
-}
-
 func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid.UUID, content model.Content) (*model.Message, error) {
 	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
 	if err != nil {
+		return nil, err
+	}
+	if messageObject.SenderId != userId {
+		err = fmt.Errorf("unauthorized")
 		return nil, err
 	}
 	contentObject := messageObject.Content
@@ -137,6 +128,10 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 	if err != nil {
 		return nil, err
 	}
+	if messageObject.SenderId != userId {
+		err = fmt.Errorf("unauthorized")
+		return nil, err
+	}
 	err = uc.content.Delete(ctx, messageObject.ContentId)
 	if err != nil {
 		return nil, err
@@ -163,4 +158,18 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 	}
 
 	return message, err
+}
+
+func NewMessageUseCase(
+	messageRepo postgres2.Message,
+	contentRepo postgres2.Content,
+	dialogueRepo postgres2.Dialogue,
+	centrifugo centrifugo.Centrifugo,
+) MessageUseCase {
+	return MessageUseCase{
+		message:    messageRepo,
+		content:    contentRepo,
+		dialogue:   dialogueRepo,
+		centrifugo: centrifugo,
+	}
 }
