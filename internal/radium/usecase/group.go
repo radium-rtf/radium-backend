@@ -39,8 +39,8 @@ func (uc GroupUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity2.Grou
 	return uc.group.GetById(ctx, id)
 }
 
-func (uc GroupUseCase) AddStudent(ctx context.Context, groupId uuid.UUID, studentId uuid.UUID) (*entity2.Group, error) {
-	return uc.group.AddStudent(ctx, groupId, studentId)
+func (uc GroupUseCase) AddCourse(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity2.Group, error) {
+	return uc.group.AddCourse(ctx, groupId, courseId)
 }
 
 func (uc GroupUseCase) Get(ctx context.Context) ([]*entity2.Group, error) {

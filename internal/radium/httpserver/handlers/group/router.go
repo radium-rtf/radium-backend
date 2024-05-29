@@ -2,7 +2,7 @@ package group
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/group/internal/addstudent"
+	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/group/internal/addcourse"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/group/internal/create"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/group/internal/get"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/group/internal/getbyid"
@@ -30,7 +30,7 @@ func New(r chi.Router, useCases usecase.UseCases) {
 				//r.Group(func(r chi.Router) {
 				//r.Use(role.Author(useCases.Deps.TokenManager))
 				r.Patch("/{groupId}", update.New(useCase))
-				r.Patch("/{groupId}/add/{studentId}", addstudent.New(useCase))
+				r.Post("/{groupId}/courses/{courseId}", addcourse.New(useCase))
 				//r.Delete("/{groupId}", destroy.New(useCase))
 				//})
 

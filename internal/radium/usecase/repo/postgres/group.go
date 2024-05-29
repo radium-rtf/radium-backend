@@ -68,14 +68,15 @@ func (r Group) Update(ctx context.Context, group *entity.Group) (*entity.Group, 
 	return group, err
 }
 
-func (r Group) AddStudent(ctx context.Context, groupId uuid.UUID, studentId uuid.UUID) (*entity.Group, error) {
+func (r Group) AddCourse(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error) {
 	group, err := r.get(ctx, columnValue{column: "id", value: groupId})
+	groupCourse := &entity.GroupCourse{CourseId: courseId, GroupId: groupId}
 
-	//err = r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-	//	_, err := tx.NewUpdate().Model(group).WherePK().OmitZero().Exec(ctx)
+	r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		tx.NewInsert().Model(&groupCourse).Exec(ctx)
 
-	//	return err
-	//})
+		return err
+	})
 
 	return group, err
 }
