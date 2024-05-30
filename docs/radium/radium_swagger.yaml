@@ -91,15 +91,15 @@ definitions:
       description:
         maxLength: 4096
         type: string
+      links:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
       logo:
         type: string
       name:
         maxLength: 64
         type: string
-      omitempty:
-        items:
-          $ref: '#/definitions/model.Link'
-        type: array
       shortDescription:
         maxLength: 512
         type: string
@@ -710,6 +710,8 @@ definitions:
     type: object
   model.Roles:
     properties:
+      isAdmin:
+        type: boolean
       isAuthor:
         type: boolean
       isCoauthor:
@@ -814,6 +816,11 @@ definitions:
         $ref: '#/definitions/model.User'
       withoutReview:
         type: integer
+    type: object
+  postadmin.Email:
+    properties:
+      email:
+        type: string
     type: object
   postauthor.Email:
     properties:
@@ -920,6 +927,23 @@ definitions:
       question:
         maxLength: 4096
         type: string
+    type: object
+  update.Group:
+    properties:
+      coursesIds:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 40
+        minLength: 1
+        type: string
+      studentsIds:
+        items:
+          type: string
+        type: array
+    required:
+    - name
     type: object
   update.MappingSection:
     properties:
@@ -1479,7 +1503,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/create.Group'
+          $ref: '#/definitions/update.Group'
       responses:
         "201":
           description: created
