@@ -3,10 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
-	"slices"
 )
 
 type RoleUseCase struct {
@@ -18,8 +19,16 @@ func NewRoleUseCase(role postgres2.Role, course postgres2.Course) RoleUseCase {
 	return RoleUseCase{role: role, course: course}
 }
 
+func (uc RoleUseCase) UpdateRole(ctx context.Context, user *entity.User) error {
+	return uc.role.UpdateRole(ctx, user)
+}
+
 func (uc RoleUseCase) AddTeacher(ctx context.Context, email string) error {
 	return uc.role.AddTeacher(ctx, email)
+}
+
+func (uc RoleUseCase) AddAdmin(ctx context.Context, email string) error {
+	return uc.role.AddAdmin(ctx, email)
 }
 
 func (uc RoleUseCase) AddAuthor(ctx context.Context, email string) error {

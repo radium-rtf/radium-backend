@@ -1,4 +1,4 @@
-package addcourse
+package addstudent
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 )
 
 type adder interface {
-	AddCourse(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error)
+	AddStudent(ctx context.Context, groupId uuid.UUID, userId uuid.UUID) (*entity.Group, error)
 }
 
 // @Tags group
@@ -26,7 +26,7 @@ func New(adder adder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			ctx     = r.Context()
-			request AddCourse
+			request AddStudent
 		)
 
 		groupId, err := uuid.Parse(chi.URLParam(r, "groupId"))
@@ -42,7 +42,7 @@ func New(adder adder) http.HandlerFunc {
 			return
 		}
 
-		group, err := adder.AddCourse(ctx, groupId, request.CourseId)
+		group, err := adder.AddStudent(ctx, groupId, request.UserId)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

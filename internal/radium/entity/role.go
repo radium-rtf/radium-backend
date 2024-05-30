@@ -12,6 +12,7 @@ type (
 		IsAuthor      bool
 		IsTeacher     bool
 		IsCoauthor    bool
+		IsAdmin       bool
 	}
 )
 
@@ -21,5 +22,6 @@ func GetAllRoles(userId uuid.UUID) *Roles {
 		IsAuthor:   true,
 		IsCoauthor: true,
 		IsTeacher:  true,
+		IsAdmin:    true,
 	}
 }

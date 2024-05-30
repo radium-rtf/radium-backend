@@ -68,17 +68,61 @@ func (r Group) Update(ctx context.Context, group *entity.Group) (*entity.Group, 
 	return group, err
 }
 
+func (r Group) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
+	var query = r.db.NewDelete().
+		Model(&entity.Group{}).
+		Where("id = ?", id)
+	if !isSoft {
+		query = query.ForceDelete()
+	}
+	_, err := query.Exec(ctx)
+	return err
+}
+
 func (r Group) AddCourse(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity.Group, error) {
 	group, err := r.get(ctx, columnValue{column: "id", value: groupId})
-	groupCourse := &entity.GroupCourse{CourseId: courseId, GroupId: groupId}
+
+	if err != nil {
+		return nil, err
+	}
+
+	groupCourse := &entity.GroupCourse{CourseId: courseId, GroupId: group.Id}
 
 	r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		tx.NewInsert().Model(&groupCourse).Exec(ctx)
-
-		return err
+		tx.NewInsert().Model(groupCourse).Exec(ctx)
+		return nil
 	})
 
-	return group, err
+	return r.GetById(ctx, group.Id)
+}
+
+func (r Group) AddStudent(ctx context.Context, groupId uuid.UUID, userId uuid.UUID) (*entity.Group, error) {
+	group, err := r.get(ctx, columnValue{column: "id", value: groupId})
+
+	if err != nil {
+		return nil, err
+	}
+
+	r.JoinStudent(ctx, userId, group.InviteCode)
+	return r.GetById(ctx, groupId)
+}
+
+func (r Group) AddTeacher(ctx context.Context, groupId uuid.UUID, userId uuid.UUID) error {
+	group, err := r.get(ctx, columnValue{column: "id", value: groupId})
+
+	if err != nil {
+		return err
+	}
+
+	var courses []*entity.Teacher
+	for _, course := range group.Courses {
+		t := &entity.Teacher{UserId: userId, GroupId: group.Id, CourseId: course.Id}
+		courses = append(courses, t)
+	}
+
+	r.db.NewInsert().Model(&courses).Exec(ctx)
+
+	return nil
 }
 
 func (r Group) GetById(ctx context.Context, id uuid.UUID) (*entity.Group, error) {

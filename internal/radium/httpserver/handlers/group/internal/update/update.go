@@ -37,14 +37,14 @@ func New(updater updater) http.HandlerFunc {
 			return
 		}
 
-		groupId, err := uuid.Parse(chi.URLParam(r, "groupId"))
+		id, err := uuid.Parse(chi.URLParam(r, "id"))
 
 		if err != nil {
 			resp.Error(r, w, err)
 			return
 		}
 
-		group := request.toGroup(groupId)
+		group := request.toGroup(id)
 		result, err := updater.UpdateGroup(ctx, group)
 
 		if err != nil {
