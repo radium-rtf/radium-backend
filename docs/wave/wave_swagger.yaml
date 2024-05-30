@@ -54,6 +54,8 @@ definitions:
         type: string
       parentMessageId:
         type: string
+      pinned:
+        type: boolean
       senderId:
         type: string
       type:
@@ -69,7 +71,7 @@ definitions:
     - content
     - messageId
     type: object
-  modify.MessageRemove:
+  modify.MessageGeneric:
     properties:
       messageId:
         type: string
@@ -157,7 +159,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/modify.MessageRemove'
+          $ref: '#/definitions/modify.MessageGeneric'
       responses:
         "200":
           description: deleted
@@ -205,6 +207,49 @@ paths:
           description: sent
           schema:
             $ref: '#/definitions/model.Message'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/message/pin:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для закрепления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageGeneric'
+      responses:
+        "200":
+          description: (un)pinned
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для закрепления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageGeneric'
+      responses:
+        "200":
+          description: (un)pinned
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
       security:
       - ApiKeyAuth: []
       tags:

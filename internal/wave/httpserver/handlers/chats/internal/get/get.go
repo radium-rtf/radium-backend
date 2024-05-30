@@ -15,7 +15,7 @@ type (
 		GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error)
 	}
 	messageGetter interface {
-		GetLastMessage(ctx context.Context, chatId uuid.UUID) (*entity.Message, error)
+		GetLastMessage(ctx context.Context, chatId uuid.UUID) (*model.Message, error)
 	}
 )
 
@@ -40,14 +40,7 @@ func New(getter getter, messageGetter messageGetter) http.HandlerFunc {
 
 		c := make([]model.Chat, 0, len(dialogues))
 		for _, d := range dialogues {
-			msg, err := messageGetter.GetLastMessage(ctx, d.Id)
-
-			var message *model.Message
-			if err != nil {
-				message = nil
-			} else {
-				message = model.NewMessage(msg)
-			}
+			message, _ := messageGetter.GetLastMessage(ctx, d.Id)
 
 			c = append(c, model.NewChat(
 				d.Id,

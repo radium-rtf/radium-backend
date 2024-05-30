@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
@@ -16,7 +15,7 @@ import (
 type getter interface {
 	GetMessagesFrom(
 		ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
-	) ([]*entity.Message, error)
+	) ([]*model.Message, error)
 }
 
 // @Tags message
@@ -67,18 +66,7 @@ func New(getter getter) http.HandlerFunc {
 			return
 		}
 
-		models := model.NewMessages(messages)
-		chat := model.NewChat(
-			chatId,
-			chatId.String(), // TODO: change name
-			"dialogue",
-			nil,
-		)
-		for _, m := range models {
-			m.SetChat(chat)
-		}
-
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, models)
+		render.JSON(w, r, messages)
 	}
 }

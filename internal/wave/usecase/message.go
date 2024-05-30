@@ -19,21 +19,46 @@ type MessageUseCase struct {
 	centrifugo centrifugo.Centrifugo
 }
 
-func (uc MessageUseCase) GetMessage(ctx context.Context, messageId uuid.UUID) (*entity.Message, error) {
-	message, _, err := uc.message.Get(ctx, messageId)
-	return message, err
-}
-
 func (uc MessageUseCase) GetMessagesFrom(
 	ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
-) ([]*entity.Message, error) {
-	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
+) ([]*model.Message, error) {
+	messageObjects, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
+	messages := model.NewMessages(messageObjects)
+	// TODO: get chat func
+	chat := model.NewChat(
+		chatId,
+		chatId.String(), // TODO: change name
+		"dialogue",
+		nil,
+	)
+	for _, m := range messages {
+		m.SetChat(chat)
+		isPinned, _ := uc.message.IsPinned(ctx, m.Id, chat.Type) // TODO: make it more efficient
+		m.SetPinned(isPinned)
+	}
 	return messages, err
 }
 
-func (uc MessageUseCase) GetLastMessage(ctx context.Context, chatId uuid.UUID) (*entity.Message, error) {
-	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String(), 1, 1, "date", "desc")
+func (uc MessageUseCase) GetLastMessage(ctx context.Context, chatId uuid.UUID) (*model.Message, error) {
+	messages, err := uc.GetMessagesFrom(ctx, chatId, 1, 1, "date", "desc")
 	return messages[0], err
+}
+
+func (uc MessageUseCase) publish(ctx context.Context, userId uuid.UUID, chatId uuid.UUID, event string, message *model.Message) error {
+	client := uc.centrifugo.GetClient(userId.String(), 0)
+
+	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
+		Event:   event,
+		Message: message,
+	})
+	if err != nil {
+		return err
+	}
+	_, err = client.Publish(ctx, chatId.String(), jsonBytes)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UUID, content model.Content) (*model.Message, error) {
@@ -69,19 +94,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 		nil,
 	))
 
-	client := uc.centrifugo.GetClient(userId.String(), 0)
-
-	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
-		Event:   "create",
-		Message: message,
-	})
-	if err != nil {
-		return nil, err
-	}
-	_, err = client.Publish(ctx, chatId.String(), jsonBytes)
-	if err != nil {
-		return nil, err
-	}
+	err = uc.publish(ctx, userId, chatId, "send", message)
 
 	return message, err
 }
@@ -105,20 +118,10 @@ func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid
 	}
 	message := model.NewMessage(messageObject)
 	message.SetChat(*chatModel)
+	pinned, _ := uc.message.IsPinned(ctx, messageId, chatModel.Type)
+	message.SetPinned(pinned)
 
-	client := uc.centrifugo.GetClient(userId.String(), 0)
-
-	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
-		Event:   "edit",
-		Message: message,
-	})
-	if err != nil {
-		return nil, err
-	}
-	_, err = client.Publish(ctx, chatModel.Id.String(), jsonBytes)
-	if err != nil {
-		return nil, err
-	}
+	err = uc.publish(ctx, userId, chatModel.Id, "edit", message)
 
 	return message, err
 }
@@ -143,19 +146,29 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 	message := model.NewMessage(messageObject)
 	message.SetChat(*chatModel)
 
-	client := uc.centrifugo.GetClient(userId.String(), 0)
+	err = uc.publish(ctx, userId, chatModel.Id, "remove", message)
 
-	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
-		Event:   "remove",
-		Message: message,
-	})
+	return message, err
+}
+
+func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.UUID, status bool) (*model.Message, error) {
+	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
 	if err != nil {
 		return nil, err
 	}
-	_, err = client.Publish(ctx, chatModel.Id.String(), jsonBytes)
+	if messageObject.SenderId != userId {
+		err = fmt.Errorf("unauthorized")
+		return nil, err
+	}
+	err = uc.message.Pin(ctx, messageId, chatModel.Id, chatModel.Type, status)
 	if err != nil {
 		return nil, err
 	}
+	message := model.NewMessage(messageObject)
+	message.SetChat(*chatModel)
+	message.SetPinned(status)
+
+	err = uc.publish(ctx, userId, chatModel.Id, "pin", message)
 
 	return message, err
 }

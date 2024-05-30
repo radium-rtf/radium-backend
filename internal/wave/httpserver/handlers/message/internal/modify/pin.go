@@ -11,18 +11,19 @@ import (
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
 
-type remover interface {
-	RemoveMessage(ctx context.Context, userId, messageId uuid.UUID) (*model.Message, error)
+type pinner interface {
+	PinMessage(ctx context.Context, userId, messageId uuid.UUID, status bool) (*model.Message, error)
 }
 
 // @Tags message
 // @Security ApiKeyAuth
 // @Accept       json
-// @Param request body MessageGeneric true "Сообщение для удаления"
-// @Success      200   {object} model.Message        "deleted"
+// @Param request body MessageGeneric true "Сообщение для закрепления"
+// @Success      200   {object} model.Message        "(un)pinned"
 // @Failure      404
-// @Router       /v1/message [delete]
-func NewRemove(remover remover) http.HandlerFunc {
+// @Router       /v1/message/pin [PATCH]
+// @Router       /v1/message/pin [DELETE]
+func NewPin(pinner pinner) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			request MessageGeneric
@@ -38,7 +39,13 @@ func NewRemove(remover remover) http.HandlerFunc {
 
 		messageId := request.MessageId
 
-		message, err := remover.RemoveMessage(ctx, userId, messageId)
+		var message *model.Message
+		if r.Method == http.MethodPatch {
+			message, err = pinner.PinMessage(ctx, userId, messageId, true)
+		} else {
+			message, err = pinner.PinMessage(ctx, userId, messageId, false)
+		}
+
 		if err != nil {
 			resp.Error(r, w, err)
 			render.Status(r, http.StatusNotFound)

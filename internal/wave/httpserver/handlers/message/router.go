@@ -18,6 +18,10 @@ func New(r chi.Router, useCases usecase.UseCases) {
 		r.Post("/", send.New(useCase))
 		r.Patch("/", modify.NewEdit(useCase))
 		r.Delete("/", modify.NewRemove(useCase))
+		r.Route("/pin", func(r chi.Router) {
+			r.Patch("/", modify.NewPin(useCase))
+			r.Delete("/", modify.NewPin(useCase))
+		})
 	})
 	r.Route("/v1/messages", func(r chi.Router) {
 		r.Use(auth.Required(tokenManager))

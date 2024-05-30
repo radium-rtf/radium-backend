@@ -162,7 +162,7 @@ const docTemplatewave = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/modify.MessageRemove"
+                            "$ref": "#/definitions/modify.MessageGeneric"
                         }
                     }
                 ],
@@ -204,6 +204,78 @@ const docTemplatewave = `{
                 "responses": {
                     "200": {
                         "description": "edited",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/v1/message/pin": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "description": "Сообщение для закрепления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.MessageGeneric"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "(un)pinned",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "description": "Сообщение для закрепления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.MessageGeneric"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "(un)pinned",
                         "schema": {
                             "$ref": "#/definitions/model.Message"
                         }
@@ -383,6 +455,9 @@ const docTemplatewave = `{
                 "parentMessageId": {
                     "type": "string"
                 },
+                "pinned": {
+                    "type": "boolean"
+                },
                 "senderId": {
                     "type": "string"
                 },
@@ -406,7 +481,7 @@ const docTemplatewave = `{
                 }
             }
         },
-        "modify.MessageRemove": {
+        "modify.MessageGeneric": {
             "type": "object",
             "required": [
                 "messageId"

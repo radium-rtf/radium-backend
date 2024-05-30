@@ -14,12 +14,18 @@ type (
 		Content         Content   `json:"content"`
 		ParentMessageId uuid.UUID `json:"parentMessageId"`
 		Type            string    `json:"type"`
+		Pinned          bool      `json:"pinned"`
 	}
 )
 
 func (m *Message) SetChat(chat Chat) *Message {
 	// TODO: сделать для каждого типа функцию?
 	m.Chat = &chat
+	return m
+}
+
+func (m *Message) SetPinned(pinned bool) *Message {
+	m.Pinned = pinned
 	return m
 }
 

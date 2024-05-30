@@ -10,6 +10,6 @@ type MessageEdit struct {
 	Content   model.Content `json:"content" validate:"required"`
 }
 
-type MessageRemove struct {
+type MessageGeneric struct {
 	MessageId uuid.UUID `json:"messageId" validate:"required"`
 }

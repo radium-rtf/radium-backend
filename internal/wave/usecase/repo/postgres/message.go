@@ -34,6 +34,12 @@ func (r Message) Delete(ctx context.Context, messageId uuid.UUID) error {
 		if err != nil {
 			return err
 		}
+		_, err = tx.NewDelete().Model(&entity.DialoguePinnedMessage{MessageId: messageId}).
+			Where("message_id = ?", messageId).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
 		_, err = tx.NewDelete().Model(&entity.Message{DBModel: entity.DBModel{Id: messageId}}).
 			Where("id = ?", messageId).
 			Exec(ctx)
@@ -50,7 +56,10 @@ var orders = map[string]string{
 }
 
 func (r Message) GetMessagesFrom(
-	ctx context.Context, chatId string, page, pageSize int, sort, order string,
+	ctx context.Context,
+	chatId string,
+	page, pageSize int,
+	sort, order string,
 ) ([]*entity.Message, error) {
 	sortParam, ok := sorters[sort]
 	if !ok {
@@ -85,6 +94,20 @@ func (r Message) GetMessagesFrom(
 	return messages, err
 }
 
+func (r Message) GetDialogueFromMessage(ctx context.Context, messageId uuid.UUID) *model.Chat {
+	dialogueLink := new(entity.DialogueMessage)
+	err := r.db.NewSelect().Model(dialogueLink).
+		Relation("Dialogue").
+		Where("message_id = ?", messageId).
+		Scan(ctx)
+	if err != nil {
+		return nil
+	}
+	dialogue := dialogueLink.Dialogue
+	chat := model.NewChat(dialogue.Id, dialogue.Id.String(), "dialogue", nil)
+	return &chat
+}
+
 func (r Message) Get(ctx context.Context, id uuid.UUID) (*entity.Message, *model.Chat, error) {
 	message := new(entity.Message)
 	err := r.db.NewSelect().Model(message).
@@ -94,15 +117,46 @@ func (r Message) Get(ctx context.Context, id uuid.UUID) (*entity.Message, *model
 	if err != nil {
 		return nil, nil, err
 	}
-	dialogueLink := new(entity.DialogueMessage)
-	err = r.db.NewSelect().Model(dialogueLink).
-		Relation("Dialogue").
-		Where("message_id = ?", id).
-		Scan(ctx)
-	if err == nil {
-		dialogue := dialogueLink.Dialogue
-		chat := model.NewChat(dialogue.Id, dialogue.Id.String(), "dialogue", nil)
-		return message, &chat, nil
+	chat := r.GetDialogueFromMessage(ctx, id)
+	if chat == nil {
+		return message, nil, fmt.Errorf("chat not found")
 	}
-	return message, nil, err
+	return message, chat, err
+}
+
+func (r Message) Pin(ctx context.Context, messageId, chatId uuid.UUID, chatType string, status bool) error {
+	dialoguePinned := new(entity.DialoguePinnedMessage)
+
+	if chatType != "dialogue" && chatType != "" { // TODO: разделить получше
+		return fmt.Errorf("unsupported chat type: %s", chatType)
+	}
+
+	var err error
+	if status {
+		_, err = r.db.NewInsert().Model(&entity.DialoguePinnedMessage{
+			DialogueId: chatId,
+			MessageId:  messageId,
+		}).Exec(ctx)
+	} else {
+		_, err = r.db.NewDelete().Model(dialoguePinned).
+			Where("message_id = ?", messageId).
+			Exec(ctx)
+	}
+
+	return err
+}
+
+func (r Message) IsPinned(ctx context.Context, messageId uuid.UUID, chatType string) (bool, error) {
+	if chatType != "dialogue" && chatType != "" { // TODO: разделить получше
+		return false, fmt.Errorf("unsupported chat type: %s", chatType)
+	}
+
+	dialoguePinned := new(entity.DialoguePinnedMessage)
+	err := r.db.NewSelect().Model(dialoguePinned).
+		Where("message_id = ?", messageId).
+		Scan(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
