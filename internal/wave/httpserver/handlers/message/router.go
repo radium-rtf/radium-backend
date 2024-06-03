@@ -25,6 +25,9 @@ func New(r chi.Router, useCases usecase.UseCases) {
 	})
 	r.Route("/v1/messages", func(r chi.Router) {
 		r.Use(auth.Required(tokenManager))
-		r.Get("/{chatId}", get.New(useCase))
+		r.Route("/{chatId}", func(r chi.Router) {
+			r.Get("/", get.New(useCase))
+			r.Get("/pins", get.NewPins(useCase))
+		})
 	})
 }

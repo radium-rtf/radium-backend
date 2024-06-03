@@ -135,6 +135,20 @@ func (r Message) IsPinned(ctx context.Context, messageId uuid.UUID) (bool, error
 	return true, nil
 }
 
+func (r Message) GetPinnedMessages(ctx context.Context, chatId uuid.UUID) ([]*entity.Message, error) {
+	pinnedMessages := make([]*entity.Message, 0)
+	err := r.db.NewSelect().Model(&pinnedMessages).
+		Relation("Content").
+		Join("JOIN wave.chat_message ON wave.chat_message.message_id = message.id").
+		Where("wave.chat_message.chat_id = ? AND wave.chat_message.is_pinned = ?", chatId, true).
+		Order("message.created_at DESC").
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return pinnedMessages, nil
+}
+
 func (r Message) LinkToChat(ctx context.Context, messageId uuid.UUID, chatId uuid.UUID) error {
 	chatMessage := entity.ChatMessage{
 		ChatId:    chatId,

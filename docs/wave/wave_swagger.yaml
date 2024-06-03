@@ -320,6 +320,25 @@ paths:
       - ApiKeyAuth: []
       tags:
       - message
+  /v1/messages/{chatId}/pins:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
   /v1/user/token:
     get:
       responses:

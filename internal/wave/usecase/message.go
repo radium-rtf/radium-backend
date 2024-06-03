@@ -162,6 +162,15 @@ func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.
 	return message, err
 }
 
+func (uc MessageUseCase) GetPinnedMessages(ctx context.Context, chatId uuid.UUID) ([]*model.Message, error) {
+	messageObjects, err := uc.message.GetPinnedMessages(ctx, chatId)
+	messages := model.NewMessages(messageObjects)
+	for _, m := range messages {
+		m.SetPinned(true)
+	}
+	return messages, err
+}
+
 func NewMessageUseCase(
 	messageRepo postgres2.Message,
 	contentRepo postgres2.Content,

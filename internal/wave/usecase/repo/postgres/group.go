@@ -25,24 +25,6 @@ func (r Group) Get(ctx context.Context, groupId uuid.UUID) (*entity.Group, error
 	return &group, err
 }
 
-func (r Group) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.Group, error) {
-	// TODO: потом нужно будет доставать это из юзера через join(Relation("Group"))
-	var groupLinks []*entity.GroupMember
-	err := r.db.NewSelect().Model(&groupLinks).
-		Relation("Group").
-		Where("user_id = ?", userId).
-		Scan(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	groups := make([]*entity.Group, 0, len(groupLinks))
-	for _, link := range groupLinks {
-		groups = append(groups, link.Group)
-	}
-	return groups, err
-}
-
 func (r Group) Create(ctx context.Context, group *entity.Group) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().Model(group).Exec(ctx)

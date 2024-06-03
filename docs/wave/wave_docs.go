@@ -380,6 +380,38 @@ const docTemplatewave = `{
                 }
             }
         },
+        "/v1/messages/{chatId}/pins": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "message"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID группы/диалога",
+                        "name": "chatId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Message"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/token": {
             "get": {
                 "security": [

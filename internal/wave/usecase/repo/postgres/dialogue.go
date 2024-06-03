@@ -33,15 +33,6 @@ func (r Dialogue) GetByUsers(ctx context.Context, firstUserId, secondUserId uuid
 	return &dialogue, err
 }
 
-func (r Dialogue) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error) {
-	// TODO: потом нужно будет доставать это из юзера через join(Relation("Dialogues"))
-	var dialogues []*entity.Dialogue
-	err := r.db.NewSelect().Model(&dialogues).
-		Where("first_user_id = ? OR second_user_id = ?", userId, userId).
-		Scan(ctx)
-	return dialogues, err
-}
-
 func (r Dialogue) Create(ctx context.Context, dialogue *entity.Dialogue) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().Model(dialogue).Exec(ctx)

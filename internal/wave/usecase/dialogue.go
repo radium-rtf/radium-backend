@@ -18,11 +18,6 @@ func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*e
 	return dialogue, err
 }
 
-func (uc DialogueUseCase) GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error) {
-	dialogues, err := uc.dialogue.GetAllByUserId(ctx, userId)
-	return dialogues, err
-}
-
 func (uc DialogueUseCase) GetDialogueByUsers(ctx context.Context, firstUser, secondUser uuid.UUID) (*entity.Dialogue, error) {
 	dialogue, err := uc.dialogue.GetByUsers(ctx, firstUser, secondUser)
 	return dialogue, err

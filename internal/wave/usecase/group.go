@@ -18,11 +18,6 @@ func (uc GroupUseCase) GetGroup(ctx context.Context, chatId uuid.UUID) (*entity.
 	return group, err
 }
 
-func (uc GroupUseCase) GetGroups(ctx context.Context, userId uuid.UUID) ([]*entity.Group, error) {
-	groups, err := uc.group.GetAllByUserId(ctx, userId)
-	return groups, err
-}
-
 func (uc GroupUseCase) CreateGroup(ctx context.Context, userId uuid.UUID, name string) (*entity.Group, error) {
 	groupId := uuid.New()
 	group := &entity.Group{
