@@ -110,6 +110,40 @@ const docTemplatewave = `{
                 }
             }
         },
+        "/v1/group/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные о группе",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.GroupCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Dialogue"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/message": {
             "post": {
                 "security": [
@@ -378,6 +412,17 @@ const docTemplatewave = `{
             ],
             "properties": {
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.GroupCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }

@@ -15,6 +15,8 @@ type (
 
 		Dialogue *Dialogue `bun:"rel:belongs-to,join:id=id"`
 		Group    *Group    `bun:"rel:belongs-to,join:id=id"`
+
+		Messages []*Message `bun:"m2m:wave.chat_message,join:Chat=Message"`
 	}
 
 	ChatMessage struct {

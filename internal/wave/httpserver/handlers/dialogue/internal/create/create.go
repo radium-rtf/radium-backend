@@ -27,15 +27,10 @@ type creatorDialogue interface {
 func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			request    DialogueCreate
-			ctx        = r.Context()
-			userId, ok = ctx.Value("userId").(uuid.UUID)
+			request DialogueCreate
+			ctx     = r.Context()
+			userId  = ctx.Value("userId").(uuid.UUID)
 		)
-		if !ok {
-			// resp.Error(r, w, resp.ErrUnauthorized)
-			// return
-			userId = uuid.Nil
-		}
 
 		err := decode.Json(r.Body, &request)
 		if err != nil {

@@ -6,13 +6,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/wave/usecase/repo/postgres"
-	"github.com/radium-rtf/radium-backend/pkg/centrifugo"
 )
 
 type DialogueUseCase struct {
-	dialogue   postgres2.Dialogue
-	chat       postgres2.Chat
-	centrifugo centrifugo.Centrifugo
+	dialogue postgres2.Dialogue
+	chat     postgres2.Chat
 }
 
 func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*entity.Dialogue, error) {
@@ -50,6 +48,6 @@ func (uc DialogueUseCase) CreateDialogue(ctx context.Context, userId uuid.UUID, 
 	return dialogue, err
 }
 
-func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, chatRepo postgres2.Chat, centrifugo centrifugo.Centrifugo) DialogueUseCase {
-	return DialogueUseCase{dialogue: dialogueRepo, chat: chatRepo, centrifugo: centrifugo}
+func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, chatRepo postgres2.Chat) DialogueUseCase {
+	return DialogueUseCase{dialogue: dialogueRepo, chat: chatRepo}
 }

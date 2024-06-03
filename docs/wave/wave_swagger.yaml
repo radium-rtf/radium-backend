@@ -7,6 +7,13 @@ definitions:
     required:
     - userId
     type: object
+  create.GroupCreate:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   model.CentrifugoToken:
     properties:
       token:
@@ -149,6 +156,26 @@ paths:
       - ApiKeyAuth: []
       tags:
       - dialogue
+  /v1/group/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о группе
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.GroupCreate'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
   /v1/message:
     delete:
       consumes:

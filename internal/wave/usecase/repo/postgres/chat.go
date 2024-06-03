@@ -42,11 +42,28 @@ func (r Chat) GetByMessageId(ctx context.Context, messageId uuid.UUID) (*entity.
 }
 
 func (r Chat) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.Chat, error) {
-	var chats []*entity.Chat
-	err := r.db.NewSelect().Model(&chats).
+	var dialogueChats []*entity.Chat
+	err := r.db.NewSelect().Model(&dialogueChats).
 		Relation("Dialogue", func(q *bun.SelectQuery) *bun.SelectQuery {
 			return q.Where("dialogue.first_user_id = ? OR dialogue.second_user_id = ?", userId, userId)
 		}).
 		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var groupChats []*entity.Chat
+	err = r.db.NewSelect().Model(&groupChats).
+		Relation("Group", func(q *bun.SelectQuery) *bun.SelectQuery {
+			return q.Where("\"group\".\"id\" IN (?)",
+				r.db.NewSelect().
+					Model((*entity.GroupMember)(nil)).
+					Column("group_id").
+					Where("user_id = ?", userId),
+			)
+		}).
+		Scan(ctx)
+
+	chats := append(dialogueChats, groupChats...)
 	return chats, err
 }
