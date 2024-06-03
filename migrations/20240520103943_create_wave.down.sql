@@ -2,19 +2,19 @@ SET statement_timeout = 0;
 
 --bun:split
 
+DROP TABLE IF EXISTS wave.chat_message;
+
+--bun:split
+
+DROP TABLE IF EXISTS wave.chats;
+
+--bun:split
+
 DROP TABLE IF EXISTS wave.read_by;
 
 --bun:split
 
 DROP TABLE IF EXISTS wave.reactions;
-
---bun:split
-
-DROP TABLE IF EXISTS wave.dialogue_message;
-
---bun:split
-
-DROP TABLE IF EXISTS wave.dialogue_pinned;
 
 --bun:split
 

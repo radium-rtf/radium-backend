@@ -48,15 +48,3 @@ func (r Dialogue) Create(ctx context.Context, dialogue *entity.Dialogue) error {
 		return err
 	})
 }
-
-func (r Dialogue) LinkMessage(ctx context.Context, dialogueId uuid.UUID, messageId uuid.UUID) error {
-	dialogueMessage := entity.DialogueMessage{
-		DialogueId: dialogueId,
-		MessageId:  messageId,
-	}
-
-	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		_, err := tx.NewInsert().Model(&dialogueMessage).Exec(ctx)
-		return err
-	})
-}

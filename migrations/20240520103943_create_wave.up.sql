@@ -76,20 +76,20 @@ CREATE TABLE wave.dialogue_settings (
 
 --bun:split
 
-CREATE TABLE wave.dialogue_message (
-    dialogue_id UUID NOT NULL,
-    message_id UUID NOT NULL,
-    PRIMARY KEY (dialogue_id, message_id),
-    FOREIGN KEY (dialogue_id) REFERENCES wave.dialogues (id),
-    FOREIGN KEY (message_id) REFERENCES wave.messages (id)
+CREATE TABLE wave.chats (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "type" TEXT NOT NULL
 );
+
 
 --bun:split
 
-CREATE TABLE wave.dialogue_pinned (
-    dialogue_id UUID NOT NULL,
+CREATE TABLE wave.chat_message (
+    chat_id UUID NOT NULL,
     message_id UUID NOT NULL,
-    PRIMARY KEY (dialogue_id, message_id),
-    FOREIGN KEY (dialogue_id) REFERENCES wave.dialogues (id),
+    is_pinned BOOLEAN NOT NULL,
+    PRIMARY KEY (chat_id, message_id),
+    FOREIGN KEY (chat_id) REFERENCES wave.chats (id),
     FOREIGN KEY (message_id) REFERENCES wave.messages (id)
 );

@@ -15,7 +15,6 @@ import (
 type MessageUseCase struct {
 	message    postgres2.Message
 	content    postgres2.Content
-	dialogue   postgres2.Dialogue
 	centrifugo centrifugo.Centrifugo
 }
 
@@ -24,16 +23,8 @@ func (uc MessageUseCase) GetMessagesFrom(
 ) ([]*model.Message, error) {
 	messageObjects, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
 	messages := model.NewMessages(messageObjects)
-	// TODO: get chat func
-	chat := model.NewChat(
-		chatId,
-		chatId.String(), // TODO: change name
-		"dialogue",
-		nil,
-	)
 	for _, m := range messages {
-		m.SetChat(chat)
-		isPinned, _ := uc.message.IsPinned(ctx, m.Id, chat.Type) // TODO: make it more efficient
+		isPinned, _ := uc.message.IsPinned(ctx, m.Id) // TODO: make it more efficient
 		m.SetPinned(isPinned)
 	}
 	return messages, err
@@ -41,6 +32,9 @@ func (uc MessageUseCase) GetMessagesFrom(
 
 func (uc MessageUseCase) GetLastMessage(ctx context.Context, chatId uuid.UUID) (*model.Message, error) {
 	messages, err := uc.GetMessagesFrom(ctx, chatId, 1, 1, "date", "desc")
+	if len(messages) == 0 {
+		return nil, err
+	}
 	return messages[0], err
 }
 
@@ -84,15 +78,10 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 	if err != nil {
 		return nil, err
 	}
-	uc.dialogue.LinkMessage(ctx, chatId, messageObject.Id)
+	uc.message.LinkToChat(ctx, messageObject.Id, chatId)
 
 	message := model.NewMessage(messageObject)
-	message.SetChat(model.NewChat(
-		chatId,
-		chatId.String(), // TODO: change name
-		"dialogue",
-		nil,
-	))
+	message.SetChat(*model.NewChat(uc.message.GetChatFromMessage(ctx, messageObject.Id), nil))
 
 	err = uc.publish(ctx, userId, chatId, "send", message)
 
@@ -100,7 +89,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UU
 }
 
 func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid.UUID, content model.Content) (*model.Message, error) {
-	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
+	messageObject, chatObject, err := uc.message.Get(ctx, messageId)
 	if err != nil {
 		return nil, err
 	}
@@ -117,17 +106,17 @@ func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*chatModel)
-	pinned, _ := uc.message.IsPinned(ctx, messageId, chatModel.Type)
+	message.SetChat(*model.NewChat(chatObject, nil))
+	pinned, _ := uc.message.IsPinned(ctx, messageId)
 	message.SetPinned(pinned)
 
-	err = uc.publish(ctx, userId, chatModel.Id, "edit", message)
+	err = uc.publish(ctx, userId, message.Chat.Id, "edit", message)
 
 	return message, err
 }
 
 func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uuid.UUID) (*model.Message, error) {
-	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
+	messageObject, chatObject, err := uc.message.Get(ctx, messageId)
 	if err != nil {
 		return nil, err
 	}
@@ -144,15 +133,15 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*chatModel)
+	message.SetChat(*model.NewChat(chatObject, nil))
 
-	err = uc.publish(ctx, userId, chatModel.Id, "remove", message)
+	err = uc.publish(ctx, userId, message.Chat.Id, "remove", message)
 
 	return message, err
 }
 
 func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.UUID, status bool) (*model.Message, error) {
-	messageObject, chatModel, err := uc.message.Get(ctx, messageId)
+	messageObject, chatObject, err := uc.message.Get(ctx, messageId)
 	if err != nil {
 		return nil, err
 	}
@@ -160,15 +149,15 @@ func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.
 		err = fmt.Errorf("unauthorized")
 		return nil, err
 	}
-	err = uc.message.Pin(ctx, messageId, chatModel.Id, chatModel.Type, status)
+	err = uc.message.Pin(ctx, messageId, chatObject.Id, chatObject.Type, status)
 	if err != nil {
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*chatModel)
+	message.SetChat(*model.NewChat(chatObject, nil))
 	message.SetPinned(status)
 
-	err = uc.publish(ctx, userId, chatModel.Id, "pin", message)
+	err = uc.publish(ctx, userId, message.Chat.Id, "pin", message)
 
 	return message, err
 }
@@ -176,13 +165,11 @@ func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.
 func NewMessageUseCase(
 	messageRepo postgres2.Message,
 	contentRepo postgres2.Content,
-	dialogueRepo postgres2.Dialogue,
 	centrifugo centrifugo.Centrifugo,
 ) MessageUseCase {
 	return MessageUseCase{
 		message:    messageRepo,
 		content:    contentRepo,
-		dialogue:   dialogueRepo,
 		centrifugo: centrifugo,
 	}
 }

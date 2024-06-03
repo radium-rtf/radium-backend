@@ -45,24 +45,4 @@ type (
 		bun.BaseModel `bun:"table:wave.group_settings"`
 		DBModel
 	}
-
-	GroupMessage struct {
-		bun.BaseModel `bun:"table:wave.group_message"`
-
-		GroupId uuid.UUID `bun:",pk"`
-		Group   *Group    `bun:"rel:belongs-to,join:group_id=id"`
-
-		MessageId uuid.UUID `bun:",pk"`
-		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
-	}
-
-	GroupPinnedMessage struct {
-		bun.BaseModel `bun:"table:wave.group_pinned"`
-
-		GroupId uuid.UUID `bun:",pk"`
-		Group   *Group    `bun:"rel:belongs-to,join:group_id=id"`
-
-		MessageId uuid.UUID `bun:",pk"`
-		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
-	}
 )

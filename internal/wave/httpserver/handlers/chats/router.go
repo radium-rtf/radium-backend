@@ -8,7 +8,7 @@ import (
 )
 
 func New(r chi.Router, useCases usecase.UseCases) {
-	useCase := useCases.Dialogue
+	useCase := useCases.Chat
 	messageUseCase := useCases.Message
 	tokenManager := useCases.Deps.TokenManager
 

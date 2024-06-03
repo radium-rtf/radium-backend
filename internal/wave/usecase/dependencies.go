@@ -16,6 +16,7 @@ type Dependencies struct {
 
 type UseCases struct {
 	Channel    ChannelUseCase
+	Chat       ChatUseCase
 	Conference ConferenceUseCase
 	Content    ContentUseCase
 	Dialogue   DialogueUseCase
@@ -33,11 +34,12 @@ func NewUseCases(deps Dependencies) UseCases {
 		Deps: deps,
 
 		Channel:    NewChannelUseCase(repos.Channel),
+		Chat:       NewChatUseCase(repos.Chat, deps.Centrifugo),
 		Conference: NewConferenceUseCase(repos.Conference),
 		Content:    NewContentUseCase(repos.Content),
-		Dialogue:   NewDialogueUseCase(repos.Dialogue, deps.Centrifugo),
+		Dialogue:   NewDialogueUseCase(repos.Dialogue, repos.Chat, deps.Centrifugo),
 		Group:      NewGroupUseCase(repos.Group),
-		Message:    NewMessageUseCase(repos.Message, repos.Content, repos.Dialogue, deps.Centrifugo),
+		Message:    NewMessageUseCase(repos.Message, repos.Content, deps.Centrifugo),
 		User:       NewUserUseCase(deps.Centrifugo),
 	}
 }

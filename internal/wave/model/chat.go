@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 )
 
 type (
@@ -13,14 +14,14 @@ type (
 	}
 )
 
-func NewChat(Id uuid.UUID, Name, Type string, LastMessage *Message) Chat {
-	chat := Chat{
-		Id:   Id,
-		Name: Name,
-		Type: Type,
+func NewChat(chat *entity.Chat, LastMessage *Message) *Chat {
+	chatModel := Chat{
+		Id:   chat.Id,
+		Name: chat.Name,
+		Type: chat.Type,
 	}
 	if LastMessage != nil {
-		chat.LastMessage = LastMessage
+		chatModel.LastMessage = LastMessage
 	}
-	return chat
+	return &chatModel
 }

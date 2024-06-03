@@ -12,7 +12,7 @@ import (
 
 type (
 	getter interface {
-		GetDialogues(ctx context.Context, userId uuid.UUID) ([]*entity.Dialogue, error)
+		GetChats(ctx context.Context, userId uuid.UUID) ([]*entity.Chat, error)
 	}
 	messageGetter interface {
 		GetLastMessage(ctx context.Context, chatId uuid.UUID) (*model.Message, error)
@@ -30,7 +30,7 @@ func New(getter getter, messageGetter messageGetter) http.HandlerFunc {
 			userId = r.Context().Value("userId").(uuid.UUID)
 		)
 
-		dialogues, err := getter.GetDialogues(ctx, userId)
+		chats, err := getter.GetChats(ctx, userId)
 
 		if err != nil {
 			render.Status(r, http.StatusInternalServerError)
@@ -38,19 +38,14 @@ func New(getter getter, messageGetter messageGetter) http.HandlerFunc {
 			return
 		}
 
-		c := make([]model.Chat, 0, len(dialogues))
-		for _, d := range dialogues {
-			message, _ := messageGetter.GetLastMessage(ctx, d.Id)
+		models := make([]model.Chat, 0, len(chats))
+		for _, c := range chats {
+			message, _ := messageGetter.GetLastMessage(ctx, c.Id)
 
-			c = append(c, model.NewChat(
-				d.Id,
-				d.Id.String(), // TODO: change name
-				"dialogue",
-				message,
-			))
+			models = append(models, *model.NewChat(c, message))
 		}
 
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, c)
+		render.JSON(w, r, models)
 	}
 }
