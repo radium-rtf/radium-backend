@@ -23,24 +23,20 @@ func (uc DialogueUseCase) GetDialogueByUsers(ctx context.Context, firstUser, sec
 	return dialogue, err
 }
 
-func (uc DialogueUseCase) CreateDialogue(ctx context.Context, userId uuid.UUID, recipientId uuid.UUID) (*entity.Dialogue, error) {
-	dialogue := &entity.Dialogue{
-		Id:           uuid.New(),
-		FirstUserId:  userId,
-		SecondUserId: recipientId,
-	}
+func (uc DialogueUseCase) CreateDialogue(ctx context.Context, dialogue *entity.Dialogue) error {
 	err := uc.dialogue.Create(ctx, dialogue)
 	if err != nil {
-		dialogue, _ = uc.dialogue.GetByUsers(ctx, userId, recipientId)
-		return dialogue, err
+		return err
 	}
+	userId := dialogue.FirstUserId
+	recipientId := dialogue.SecondUserId
 	chat := &entity.Chat{
 		Id:   dialogue.Id,
 		Name: userId.String() + " / " + recipientId.String(),
 		Type: "dialogue",
 	}
 	err = uc.chat.Create(ctx, chat)
-	return dialogue, err
+	return err
 }
 
 func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, chatRepo postgres2.Chat) DialogueUseCase {

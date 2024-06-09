@@ -13,7 +13,7 @@ import (
 )
 
 type creatorGroup interface {
-	CreateGroup(ctx context.Context, userId uuid.UUID, name string) (*entity.Group, error)
+	CreateGroup(ctx context.Context, group *entity.Group) error
 	AddMember(ctx context.Context, groupId, userId uuid.UUID, admin bool) error
 }
 
@@ -37,7 +37,15 @@ func NewGroup(creator creatorGroup) http.HandlerFunc {
 			return
 		}
 
-		group, err := creator.CreateGroup(ctx, userId, request.Name)
+		group := &entity.Group{
+			DBModel: entity.DBModel{
+				Id: uuid.New(),
+			},
+			Name:    request.Name,
+			OwnerId: userId,
+		}
+
+		err = creator.CreateGroup(ctx, group)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

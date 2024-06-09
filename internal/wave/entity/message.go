@@ -19,6 +19,8 @@ type (
 		ReadBy          []*ReadBy   `bun:"rel:has-many"`
 		Reactions       []*Reaction `bun:"rel:has-many"`
 		Type            string
+
+		IsPinned bool `bun:",notnull"`
 	}
 
 	ReadBy struct {

@@ -24,6 +24,7 @@ CREATE TABLE wave.messages (
     sender_id UUID NOT NULL,
     content_id UUID NOT NULL,
     parent_message_id UUID,
+    is_pinned BOOLEAN NOT NULL,
     type TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -76,10 +77,12 @@ CREATE TABLE wave.dialogue_settings (
 
 --bun:split
 
+CREATE TYPE wave.chat_type AS ENUM ('dialogue', 'group', 'channel');
+
 CREATE TABLE wave.chats (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
-    "type" TEXT NOT NULL
+    "type" wave.chat_type NOT NULL
 );
 
 
@@ -88,7 +91,6 @@ CREATE TABLE wave.chats (
 CREATE TABLE wave.chat_message (
     chat_id UUID NOT NULL,
     message_id UUID NOT NULL,
-    is_pinned BOOLEAN NOT NULL,
     PRIMARY KEY (chat_id, message_id),
     FOREIGN KEY (chat_id) REFERENCES wave.chats (id),
     FOREIGN KEY (message_id) REFERENCES wave.messages (id)

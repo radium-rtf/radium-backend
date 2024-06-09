@@ -30,12 +30,6 @@ func (r Message) Delete(ctx context.Context, messageId uuid.UUID) error {
 		_, err := tx.NewDelete().Model(&entity.ChatMessage{MessageId: messageId}).
 			Where("message_id = ?", messageId).
 			Exec(ctx)
-		if err != nil {
-			return err
-		}
-		_, err = tx.NewDelete().Model(&entity.Message{DBModel: entity.DBModel{Id: messageId}}).
-			Where("id = ?", messageId).
-			Exec(ctx)
 		return err
 	})
 }
@@ -114,25 +108,14 @@ func (r Message) Get(ctx context.Context, id uuid.UUID) (*entity.Message, *entit
 }
 
 func (r Message) Pin(ctx context.Context, messageId, chatId uuid.UUID, chatType string, status bool) error {
-	dialogueMessage := new(entity.ChatMessage)
+	message := new(entity.Message)
 
-	_, err := r.db.NewUpdate().Model(dialogueMessage).
+	_, err := r.db.NewUpdate().Model(message).
 		Set("is_pinned = ?", status).
-		Where("message_id = ? AND chat_id = ?", messageId, chatId).
+		Where("id = ?", messageId, chatId).
 		Exec(ctx)
 
 	return err
-}
-
-func (r Message) IsPinned(ctx context.Context, messageId uuid.UUID) (bool, error) {
-	dialoguePinned := new(entity.ChatMessage)
-	err := r.db.NewSelect().Model(dialoguePinned).
-		Where("message_id = ? AND is_pinned = ?", messageId, true).
-		Scan(ctx)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
 }
 
 func (r Message) GetPinnedMessages(ctx context.Context, chatId uuid.UUID) ([]*entity.Message, error) {
@@ -140,7 +123,7 @@ func (r Message) GetPinnedMessages(ctx context.Context, chatId uuid.UUID) ([]*en
 	err := r.db.NewSelect().Model(&pinnedMessages).
 		Relation("Content").
 		Join("JOIN wave.chat_message ON wave.chat_message.message_id = message.id").
-		Where("wave.chat_message.chat_id = ? AND wave.chat_message.is_pinned = ?", chatId, true).
+		Where("wave.chat_message.chat_id = ? AND message.is_pinned = ?", chatId, true).
 		Order("message.created_at DESC").
 		Scan(ctx)
 	if err != nil {
@@ -154,9 +137,6 @@ func (r Message) LinkToChat(ctx context.Context, messageId uuid.UUID, chatId uui
 		ChatId:    chatId,
 		MessageId: messageId,
 	}
-
-	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
-		_, err := tx.NewInsert().Model(&chatMessage).Exec(ctx)
-		return err
-	})
+	_, err := r.db.NewInsert().Model(&chatMessage).Exec(ctx)
+	return err
 }

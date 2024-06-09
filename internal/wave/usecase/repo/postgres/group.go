@@ -57,13 +57,12 @@ func (r Group) AddMember(ctx context.Context, groupId, userId uuid.UUID, admin b
 	})
 }
 
-func (r Group) UpdateMember(ctx context.Context, groupId, userId uuid.UUID, admin bool, role string) error {
+func (r Group) UpdateMember(ctx context.Context, groupId, userId uuid.UUID, admin bool) error {
 	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewUpdate().Model(&entity.GroupMember{
 			GroupId: groupId,
 			UserId:  userId,
 			Admin:   admin,
-			Role:    role,
 		}).Where("group_id = ? AND user_id = ?", groupId, userId).Exec(ctx)
 		return err
 	})

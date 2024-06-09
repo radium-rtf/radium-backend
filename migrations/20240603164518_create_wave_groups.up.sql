@@ -19,7 +19,6 @@ CREATE TABLE wave.group_member (
     group_id UUID,
     user_id UUID,
     admin BOOLEAN NOT NULL,
-    role TEXT,
     PRIMARY KEY (group_id, user_id),
     FOREIGN KEY (group_id) REFERENCES wave.groups (id)
     -- FOREIGN KEY (user_id) REFERENCES radium.users (id)

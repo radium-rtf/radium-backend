@@ -28,7 +28,7 @@ type (
 		UserId uuid.UUID    `bun:",pk"`
 		User   *radium.User `bun:"rel:belongs-to,join:user_id=id"`
 		Admin  bool
-		Role   string
+		// Role   string
 	}
 
 	GroupSettings struct {

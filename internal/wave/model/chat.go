@@ -14,14 +14,22 @@ type (
 	}
 )
 
-func NewChat(chat *entity.Chat, LastMessage *Message) *Chat {
-	chatModel := Chat{
-		Id:   chat.Id,
-		Name: chat.Name,
-		Type: chat.Type,
+func getLastMessage(messages []*entity.Message) *entity.Message {
+	if len(messages) > 0 {
+		return messages[0]
 	}
-	if LastMessage != nil {
-		chatModel.LastMessage = LastMessage
+	return nil
+}
+
+func NewChat(chat *entity.Chat) *Chat {
+	if chat == nil {
+		return nil
+	}
+	chatModel := Chat{
+		Id:          chat.Id,
+		Name:        chat.Name,
+		Type:        chat.Type,
+		LastMessage: NewMessage(getLastMessage(chat.Messages)),
 	}
 	return &chatModel
 }

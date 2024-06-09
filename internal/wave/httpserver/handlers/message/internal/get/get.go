@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"github.com/radium-rtf/radium-backend/internal/wave/entity"
 	"github.com/radium-rtf/radium-backend/internal/wave/model"
 	"github.com/radium-rtf/radium-backend/pkg/resp"
 )
@@ -15,7 +16,7 @@ import (
 type getter interface {
 	GetMessagesFrom(
 		ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
-	) ([]*model.Message, error)
+	) ([]*entity.Message, error)
 }
 
 // @Tags message
@@ -60,7 +61,8 @@ func New(getter getter) http.HandlerFunc {
 			order = "desc"
 		}
 
-		messages, err := getter.GetMessagesFrom(ctx, chatId, page, pageSize, sort, order)
+		messageObjects, err := getter.GetMessagesFrom(ctx, chatId, page, pageSize, sort, order)
+		messages := model.NewMessages(messageObjects)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

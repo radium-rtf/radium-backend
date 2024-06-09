@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS wave.chat_message;
 
 DROP TABLE IF EXISTS wave.chats;
 
+DROP TYPE IF EXISTS wave.chat_type;
+
 --bun:split
 
 DROP TABLE IF EXISTS wave.read_by;

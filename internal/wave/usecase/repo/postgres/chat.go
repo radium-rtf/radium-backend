@@ -44,6 +44,9 @@ func (r Chat) GetByMessageId(ctx context.Context, messageId uuid.UUID) (*entity.
 func (r Chat) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.Chat, error) {
 	var dialogueChats []*entity.Chat
 	err := r.db.NewSelect().Model(&dialogueChats).
+		Relation("Messages", func(q *bun.SelectQuery) *bun.SelectQuery {
+			return q.Relation("Content").OrderExpr("created_at DESC").Limit(1)
+		}).
 		Relation("Dialogue", func(q *bun.SelectQuery) *bun.SelectQuery {
 			return q.Where("dialogue.first_user_id = ? OR dialogue.second_user_id = ?", userId, userId)
 		}).
@@ -54,6 +57,9 @@ func (r Chat) GetAllByUserId(ctx context.Context, userId uuid.UUID) ([]*entity.C
 
 	var groupChats []*entity.Chat
 	err = r.db.NewSelect().Model(&groupChats).
+		Relation("Messages", func(q *bun.SelectQuery) *bun.SelectQuery {
+			return q.Relation("Content").OrderExpr("created_at DESC").Limit(1)
+		}).
 		Relation("Group", func(q *bun.SelectQuery) *bun.SelectQuery {
 			return q.Where("\"group\".\"id\" IN (?)",
 				r.db.NewSelect().

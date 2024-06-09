@@ -27,7 +27,5 @@ type (
 
 		MessageId uuid.UUID `bun:",pk"`
 		Message   *Message  `bun:"rel:belongs-to,join:message_id=id"`
-
-		IsPinned bool `bun:",notnull"`
 	}
 )

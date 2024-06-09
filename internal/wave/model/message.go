@@ -18,20 +18,9 @@ type (
 	}
 )
 
-func (m *Message) SetChat(chat Chat) *Message {
-	// TODO: сделать для каждого типа функцию?
-	m.Chat = &chat
-	return m
-}
-
-func (m *Message) SetPinned(pinned bool) *Message {
-	m.Pinned = pinned
-	return m
-}
-
 func NewMessage(message *entity.Message) *Message {
 	if message == nil {
-		return &Message{}
+		return nil
 	}
 	content := NewContent(message.Content)
 
@@ -41,6 +30,7 @@ func NewMessage(message *entity.Message) *Message {
 		Content:         content,
 		ParentMessageId: message.ParentMessageId,
 		Type:            message.Type,
+		Pinned:          message.IsPinned,
 	}
 }
 

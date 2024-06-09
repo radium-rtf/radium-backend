@@ -20,22 +20,9 @@ type MessageUseCase struct {
 
 func (uc MessageUseCase) GetMessagesFrom(
 	ctx context.Context, chatId uuid.UUID, page, pageSize int, sort, order string,
-) ([]*model.Message, error) {
-	messageObjects, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
-	messages := model.NewMessages(messageObjects)
-	for _, m := range messages {
-		isPinned, _ := uc.message.IsPinned(ctx, m.Id) // TODO: make it more efficient
-		m.SetPinned(isPinned)
-	}
+) ([]*entity.Message, error) {
+	messages, err := uc.message.GetMessagesFrom(ctx, chatId.String(), page, pageSize, sort, order)
 	return messages, err
-}
-
-func (uc MessageUseCase) GetLastMessage(ctx context.Context, chatId uuid.UUID) (*model.Message, error) {
-	messages, err := uc.GetMessagesFrom(ctx, chatId, 1, 1, "date", "desc")
-	if len(messages) == 0 {
-		return nil, err
-	}
-	return messages[0], err
 }
 
 func (uc MessageUseCase) publish(ctx context.Context, userId uuid.UUID, chatId uuid.UUID, event string, message *model.Message) error {
@@ -55,37 +42,23 @@ func (uc MessageUseCase) publish(ctx context.Context, userId uuid.UUID, chatId u
 	return nil
 }
 
-func (uc MessageUseCase) SendMessage(ctx context.Context, userId, chatId uuid.UUID, content model.Content) (*model.Message, error) {
-	contentObject := &entity.Content{
-		DBModel: entity.DBModel{
-			Id: uuid.New(),
-		},
-		Text: content.Text,
-	}
-	err := uc.content.Create(ctx, contentObject)
+func (uc MessageUseCase) SendMessage(ctx context.Context, message *entity.Message, chatId uuid.UUID) (*model.Message, error) {
+	err := uc.content.Create(ctx, message.Content)
 	if err != nil {
 		return nil, err
 	}
-	messageObject := &entity.Message{
-		DBModel: entity.DBModel{
-			Id: uuid.New(),
-		},
-		SenderId:  userId,
-		ContentId: contentObject.Id,
-		Content:   contentObject,
-	}
-	err = uc.message.Create(ctx, messageObject)
+	err = uc.message.Create(ctx, message)
 	if err != nil {
 		return nil, err
 	}
-	uc.message.LinkToChat(ctx, messageObject.Id, chatId)
+	uc.message.LinkToChat(ctx, message.Id, chatId)
 
-	message := model.NewMessage(messageObject)
-	message.SetChat(*model.NewChat(uc.message.GetChatFromMessage(ctx, messageObject.Id), nil))
+	messageModel := model.NewMessage(message)
+	messageModel.Chat = model.NewChat(uc.message.GetChatFromMessage(ctx, message.Id))
 
-	err = uc.publish(ctx, userId, chatId, "send", message)
+	err = uc.publish(ctx, message.SenderId, chatId, "send", messageModel)
 
-	return message, err
+	return messageModel, err
 }
 
 func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid.UUID, content model.Content) (*model.Message, error) {
@@ -106,9 +79,7 @@ func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*model.NewChat(chatObject, nil))
-	pinned, _ := uc.message.IsPinned(ctx, messageId)
-	message.SetPinned(pinned)
+	message.Chat = model.NewChat(chatObject)
 
 	err = uc.publish(ctx, userId, message.Chat.Id, "edit", message)
 
@@ -133,7 +104,7 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*model.NewChat(chatObject, nil))
+	message.Chat = model.NewChat(chatObject)
 
 	err = uc.publish(ctx, userId, message.Chat.Id, "remove", message)
 
@@ -154,8 +125,8 @@ func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.
 		return nil, err
 	}
 	message := model.NewMessage(messageObject)
-	message.SetChat(*model.NewChat(chatObject, nil))
-	message.SetPinned(status)
+	message.Chat = model.NewChat(chatObject)
+	message.Pinned = status
 
 	err = uc.publish(ctx, userId, message.Chat.Id, "pin", message)
 
@@ -166,7 +137,7 @@ func (uc MessageUseCase) GetPinnedMessages(ctx context.Context, chatId uuid.UUID
 	messageObjects, err := uc.message.GetPinnedMessages(ctx, chatId)
 	messages := model.NewMessages(messageObjects)
 	for _, m := range messages {
-		m.SetPinned(true)
+		m.Pinned = true
 	}
 	return messages, err
 }

@@ -13,7 +13,7 @@ import (
 )
 
 type creatorDialogue interface {
-	CreateDialogue(ctx context.Context, userId, recipientId uuid.UUID) (*entity.Dialogue, error)
+	CreateDialogue(ctx context.Context, dialogue *entity.Dialogue) error
 	GetDialogueByUsers(ctx context.Context, firstUser, secondUser uuid.UUID) (*entity.Dialogue, error)
 }
 
@@ -48,7 +48,12 @@ func NewDialogue(creator creatorDialogue) http.HandlerFunc {
 			return
 		}
 
-		dialogue, err := creator.CreateDialogue(ctx, userId, recipientId)
+		dialogue := &entity.Dialogue{
+			Id:           uuid.New(),
+			FirstUserId:  userId,
+			SecondUserId: recipientId,
+		}
+		err = creator.CreateDialogue(ctx, dialogue)
 		if err != nil {
 			resp.Error(r, w, err)
 			return

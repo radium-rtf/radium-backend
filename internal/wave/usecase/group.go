@@ -18,26 +18,18 @@ func (uc GroupUseCase) GetGroup(ctx context.Context, chatId uuid.UUID) (*entity.
 	return group, err
 }
 
-func (uc GroupUseCase) CreateGroup(ctx context.Context, userId uuid.UUID, name string) (*entity.Group, error) {
-	groupId := uuid.New()
-	group := &entity.Group{
-		DBModel: entity.DBModel{
-			Id: groupId,
-		},
-		Name:    name,
-		OwnerId: userId,
-	}
+func (uc GroupUseCase) CreateGroup(ctx context.Context, group *entity.Group) error {
 	err := uc.group.Create(ctx, group)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	chat := &entity.Chat{
 		Id:   group.Id,
-		Name: "Group " + groupId.String(),
+		Name: "Group " + group.Id.String(),
 		Type: "group",
 	}
 	err = uc.chat.Create(ctx, chat)
-	return group, err
+	return err
 }
 
 func (uc GroupUseCase) AddMember(ctx context.Context, groupId, userId uuid.UUID, admin bool) error {
