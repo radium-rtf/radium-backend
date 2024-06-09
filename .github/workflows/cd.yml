@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 env:
-  HOST: radium@158.160.31.32
+  HOST: radium@158.160.89.44
   DEPLOY_DIRECTORY: /home/radium/radium-backend
   ENV_FILE_PATH: /home/radium/radium-backend/config.env
 
