@@ -24,6 +24,13 @@ func (r Chat) Create(ctx context.Context, chat *entity.Chat) error {
 	})
 }
 
+func (r Chat) Update(ctx context.Context, chat *entity.Chat) error {
+	return r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.NewUpdate().Model(chat).Where("id = ?", chat.Id).Exec(ctx)
+		return err
+	})
+}
+
 func (r Chat) Get(ctx context.Context, chatId uuid.UUID) (*entity.Chat, error) {
 	var chat entity.Chat
 	err := r.db.NewSelect().Model(&chat).

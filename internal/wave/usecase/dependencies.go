@@ -30,15 +30,17 @@ type UseCases struct {
 func NewUseCases(deps Dependencies) UseCases {
 	repos := deps.Repos
 
+	chatUseCase := NewChatUseCase(repos.Chat, deps.Centrifugo)
+
 	return UseCases{
 		Deps: deps,
 
 		Channel:    NewChannelUseCase(repos.Channel),
-		Chat:       NewChatUseCase(repos.Chat, deps.Centrifugo),
+		Chat:       chatUseCase,
 		Conference: NewConferenceUseCase(repos.Conference),
 		Content:    NewContentUseCase(repos.Content),
-		Dialogue:   NewDialogueUseCase(repos.Dialogue, repos.Chat),
-		Group:      NewGroupUseCase(repos.Group, repos.Chat),
+		Dialogue:   NewDialogueUseCase(repos.Dialogue, chatUseCase),
+		Group:      NewGroupUseCase(repos.Group, chatUseCase),
 		Message:    NewMessageUseCase(repos.Message, repos.Content, deps.Centrifugo),
 		User:       NewUserUseCase(deps.Centrifugo),
 	}

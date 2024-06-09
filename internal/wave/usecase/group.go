@@ -10,7 +10,7 @@ import (
 
 type GroupUseCase struct {
 	group postgres2.Group
-	chat  postgres2.Chat
+	chat  ChatUseCase
 }
 
 func (uc GroupUseCase) GetGroup(ctx context.Context, chatId uuid.UUID) (*entity.Group, error) {
@@ -23,12 +23,7 @@ func (uc GroupUseCase) CreateGroup(ctx context.Context, group *entity.Group) err
 	if err != nil {
 		return err
 	}
-	chat := &entity.Chat{
-		Id:   group.Id,
-		Name: "Group " + group.Id.String(),
-		Type: "group",
-	}
-	err = uc.chat.Create(ctx, chat)
+	err = uc.chat.CreateFromGroup(ctx, group)
 	return err
 }
 
@@ -36,6 +31,6 @@ func (uc GroupUseCase) AddMember(ctx context.Context, groupId, userId uuid.UUID,
 	return uc.group.AddMember(ctx, groupId, userId, admin)
 }
 
-func NewGroupUseCase(groupRepo postgres2.Group, chatRepo postgres2.Chat) GroupUseCase {
-	return GroupUseCase{group: groupRepo, chat: chatRepo}
+func NewGroupUseCase(groupRepo postgres2.Group, chatUC ChatUseCase) GroupUseCase {
+	return GroupUseCase{group: groupRepo, chat: chatUC}
 }

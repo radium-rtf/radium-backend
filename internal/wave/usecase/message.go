@@ -25,21 +25,25 @@ func (uc MessageUseCase) GetMessagesFrom(
 	return messages, err
 }
 
-func (uc MessageUseCase) publish(ctx context.Context, userId uuid.UUID, chatId uuid.UUID, event string, message *model.Message) error {
+func (uc MessageUseCase) publish(ctx context.Context, userId uuid.UUID, event string, message *model.Message) error {
 	client := uc.centrifugo.GetClient(userId.String(), 0)
 
 	jsonBytes, err := json.Marshal(model.CentrifugoEvent{
-		Event:   event,
-		Message: message,
+		Event:    event,
+		ChatId:   message.Chat.Id,
+		ChatType: message.Chat.Type,
+		Message:  message,
 	})
+
 	if err != nil {
 		return err
 	}
-	_, err = client.Publish(ctx, chatId.String(), jsonBytes)
+	_, err = client.Publish(ctx, message.Chat.Id.String(), jsonBytes)
 	if err != nil {
 		return err
 	}
-	return nil
+	_, err = client.Publish(ctx, userId.String(), jsonBytes)
+	return err
 }
 
 func (uc MessageUseCase) SendMessage(ctx context.Context, message *entity.Message, chatId uuid.UUID) (*model.Message, error) {
@@ -56,7 +60,7 @@ func (uc MessageUseCase) SendMessage(ctx context.Context, message *entity.Messag
 	messageModel := model.NewMessage(message)
 	messageModel.Chat = model.NewChat(uc.message.GetChatFromMessage(ctx, message.Id))
 
-	err = uc.publish(ctx, message.SenderId, chatId, "send", messageModel)
+	err = uc.publish(ctx, message.SenderId, "send", messageModel)
 
 	return messageModel, err
 }
@@ -81,7 +85,7 @@ func (uc MessageUseCase) EditMessage(ctx context.Context, userId, messageId uuid
 	message := model.NewMessage(messageObject)
 	message.Chat = model.NewChat(chatObject)
 
-	err = uc.publish(ctx, userId, message.Chat.Id, "edit", message)
+	err = uc.publish(ctx, userId, "edit", message)
 
 	return message, err
 }
@@ -106,7 +110,7 @@ func (uc MessageUseCase) RemoveMessage(ctx context.Context, userId, messageId uu
 	message := model.NewMessage(messageObject)
 	message.Chat = model.NewChat(chatObject)
 
-	err = uc.publish(ctx, userId, message.Chat.Id, "remove", message)
+	err = uc.publish(ctx, userId, "remove", message)
 
 	return message, err
 }
@@ -128,7 +132,7 @@ func (uc MessageUseCase) PinMessage(ctx context.Context, userId, messageId uuid.
 	message.Chat = model.NewChat(chatObject)
 	message.Pinned = status
 
-	err = uc.publish(ctx, userId, message.Chat.Id, "pin", message)
+	err = uc.publish(ctx, userId, "pin", message)
 
 	return message, err
 }

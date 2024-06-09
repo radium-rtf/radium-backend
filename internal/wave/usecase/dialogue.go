@@ -10,7 +10,7 @@ import (
 
 type DialogueUseCase struct {
 	dialogue postgres2.Dialogue
-	chat     postgres2.Chat
+	chat     ChatUseCase
 }
 
 func (uc DialogueUseCase) GetDialogue(ctx context.Context, chatId uuid.UUID) (*entity.Dialogue, error) {
@@ -28,17 +28,10 @@ func (uc DialogueUseCase) CreateDialogue(ctx context.Context, dialogue *entity.D
 	if err != nil {
 		return err
 	}
-	userId := dialogue.FirstUserId
-	recipientId := dialogue.SecondUserId
-	chat := &entity.Chat{
-		Id:   dialogue.Id,
-		Name: userId.String() + " / " + recipientId.String(),
-		Type: "dialogue",
-	}
-	err = uc.chat.Create(ctx, chat)
+	err = uc.chat.CreateFromDialogue(ctx, dialogue)
 	return err
 }
 
-func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, chatRepo postgres2.Chat) DialogueUseCase {
-	return DialogueUseCase{dialogue: dialogueRepo, chat: chatRepo}
+func NewDialogueUseCase(dialogueRepo postgres2.Dialogue, chatUC ChatUseCase) DialogueUseCase {
+	return DialogueUseCase{dialogue: dialogueRepo, chat: chatUC}
 }
