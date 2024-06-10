@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
@@ -18,8 +19,21 @@ func NewRoleRepo(pg *postgres.Postgres) Role {
 	return Role{db: pg.DB, user: NewUserRepo(pg)}
 }
 
+func (r Role) UpdateRole(ctx context.Context, user *entity.User) error {
+	r.db.NewUpdate().
+		Model(user.Roles).
+		Exec(ctx)
+
+	return nil
+}
+
 func (r Role) AddTeacher(ctx context.Context, email string) error {
 	set := columnValue{column: "is_teacher", value: true}
+	return r.setRole(ctx, set, email)
+}
+
+func (r Role) AddAdmin(ctx context.Context, email string) error {
+	set := columnValue{column: "is_admin", value: true}
 	return r.setRole(ctx, set, email)
 }
 

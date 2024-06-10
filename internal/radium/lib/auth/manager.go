@@ -3,8 +3,9 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	"time"
+
+	"github.com/radium-rtf/radium-backend/internal/radium/model"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ const (
 	isTeacher     = "isTeacher"
 	isAuthor      = "isAuthor"
 	isCoauthor    = "isCoauthor"
+	isAdmin       = "isAdmin"
 	canEditCourse = "canEditCourse"
 )
 
@@ -37,6 +39,7 @@ func (m TokenManager) NewJWT(user *model.User, expiresAt time.Time) (string, err
 		isTeacher:     roles.IsTeacher,
 		isAuthor:      roles.IsAuthor,
 		isCoauthor:    roles.IsCoauthor,
+		isAdmin:       roles.IsAdmin,
 		canEditCourse: roles.IsAuthor || roles.IsCoauthor,
 	})
 
@@ -118,6 +121,14 @@ func (m TokenManager) ExtractIsTeacher(tokenHeader []string) (bool, error) {
 
 func (m TokenManager) ExtractIsAuthor(tokenHeader []string) (bool, error) {
 	claim, err := m.extractClaim(tokenHeader, isAuthor)
+	if err != nil {
+		return false, err
+	}
+	return claim.(bool), nil
+}
+
+func (m TokenManager) ExtractIsAdmin(tokenHeader []string) (bool, error) {
+	claim, err := m.extractClaim(tokenHeader, isAdmin)
 	if err != nil {
 		return false, err
 	}

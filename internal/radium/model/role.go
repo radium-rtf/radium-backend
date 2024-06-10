@@ -9,6 +9,7 @@ type (
 		IsAuthor   bool `json:"isAuthor"`
 		IsTeacher  bool `json:"isTeacher"`
 		IsCoauthor bool `json:"isCoauthor"`
+		IsAdmin    bool `json:"isAdmin"`
 	}
 )
 
@@ -20,5 +21,6 @@ func NewRoles(roles *entity.Roles) *Roles {
 		IsTeacher:  roles.IsTeacher,
 		IsAuthor:   roles.IsAuthor,
 		IsCoauthor: roles.IsCoauthor,
+		IsAdmin:    roles.IsAdmin,
 	}
 }

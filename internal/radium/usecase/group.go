@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
+
 	"github.com/google/uuid"
 	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/radium-rtf/radium-backend/internal/radium/model"
 	postgres2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/postgres"
-	"slices"
 )
 
 type GroupUseCase struct {
@@ -22,6 +23,19 @@ func NewGroupUseCase(groupRepo postgres2.Group, course postgres2.Course, answer 
 	return GroupUseCase{group: groupRepo, course: course, answer: answer, teacher: teacher}
 }
 
+func (uc GroupUseCase) Delete(ctx context.Context, id uuid.UUID, isSoft bool) error {
+	_, err := uc.group.GetById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return uc.group.Delete(ctx, id, isSoft)
+}
+
+func (uc GroupUseCase) UpdateGroup(ctx context.Context, group *entity2.Group) (*entity2.Group, error) {
+	return uc.group.Update(ctx, group)
+}
+
 func (uc GroupUseCase) Create(ctx context.Context, group *entity2.Group) (*entity2.Group, error) {
 	return uc.group.Create(ctx, group)
 }
@@ -32,6 +46,18 @@ func (uc GroupUseCase) Join(ctx context.Context, studentId uuid.UUID, code strin
 
 func (uc GroupUseCase) GetById(ctx context.Context, id uuid.UUID) (*entity2.Group, error) {
 	return uc.group.GetById(ctx, id)
+}
+
+func (uc GroupUseCase) AddCourse(ctx context.Context, groupId uuid.UUID, courseId uuid.UUID) (*entity2.Group, error) {
+	return uc.group.AddCourse(ctx, groupId, courseId)
+}
+
+func (uc GroupUseCase) AddStudent(ctx context.Context, groupId uuid.UUID, userId uuid.UUID) (*entity2.Group, error) {
+	return uc.group.AddStudent(ctx, groupId, userId)
+}
+
+func (uc GroupUseCase) AddTeacher(ctx context.Context, groupId uuid.UUID, userId uuid.UUID) error {
+	return uc.group.AddTeacher(ctx, groupId, userId)
 }
 
 func (uc GroupUseCase) Get(ctx context.Context) ([]*entity2.Group, error) {

@@ -695,7 +695,7 @@ const docTemplateradium = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.Group"
+                            "$ref": "#/definitions/update.Group"
                         }
                     }
                 ],
@@ -1822,18 +1822,18 @@ const docTemplateradium = `{
                     "type": "string",
                     "maxLength": 4096
                 },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
+                },
                 "logo": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 64
-                },
-                "omitempty": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Link"
-                    }
                 },
                 "shortDescription": {
                     "type": "string",
@@ -2740,6 +2740,9 @@ const docTemplateradium = `{
         "model.Roles": {
             "type": "object",
             "properties": {
+                "isAdmin": {
+                    "type": "boolean"
+                },
                 "isAuthor": {
                     "type": "boolean"
                 },
@@ -2901,6 +2904,14 @@ const docTemplateradium = `{
                 }
             }
         },
+        "postadmin.Email": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "postauthor.Email": {
             "type": "object",
             "properties": {
@@ -3056,6 +3067,31 @@ const docTemplateradium = `{
                 "question": {
                     "type": "string",
                     "maxLength": 4096
+                }
+            }
+        },
+        "update.Group": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "coursesIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "minLength": 1
+                },
+                "studentsIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
