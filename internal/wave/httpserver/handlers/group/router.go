@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/middleware/auth"
 	"github.com/radium-rtf/radium-backend/internal/wave/httpserver/handlers/group/internal/create"
+	"github.com/radium-rtf/radium-backend/internal/wave/httpserver/handlers/group/internal/get"
 	"github.com/radium-rtf/radium-backend/internal/wave/httpserver/handlers/group/internal/modify"
 	"github.com/radium-rtf/radium-backend/internal/wave/usecase"
 )
@@ -19,5 +20,6 @@ func New(r chi.Router, useCases usecase.UseCases) {
 			r.Post("/", modify.NewAdd(useCase))
 			r.Delete("/", modify.NewRemove(useCase))
 		})
+		r.Get("/{chatId}", get.New(useCase))
 	})
 }

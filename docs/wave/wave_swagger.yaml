@@ -164,6 +164,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - chats
+  /v1/dialogue/{chatId}:
+    get:
+      parameters:
+      - description: ID диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dialogue
   /v1/dialogue/create:
     post:
       consumes:
@@ -188,6 +205,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - dialogue
+  /v1/group/{chatId}:
+    get:
+      parameters:
+      - description: ID группы
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
   /v1/group/create:
     post:
       consumes:

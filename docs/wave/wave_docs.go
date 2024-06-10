@@ -110,6 +110,35 @@ const docTemplatewave = `{
                 }
             }
         },
+        "/v1/dialogue/{chatId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "dialogue"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID диалога",
+                        "name": "chatId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.Dialogue"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/group/create": {
             "post": {
                 "security": [
@@ -203,6 +232,35 @@ const docTemplatewave = `{
                 "responses": {
                     "200": {
                         "description": "removed",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/{chatId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID группы",
+                        "name": "chatId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
                         "schema": {
                             "$ref": "#/definitions/model.Group"
                         }
