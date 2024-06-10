@@ -91,6 +91,8 @@ definitions:
         type: string
       content:
         $ref: '#/definitions/model.Content'
+      parent_message_id:
+        type: string
     required:
     - chatId
     - content

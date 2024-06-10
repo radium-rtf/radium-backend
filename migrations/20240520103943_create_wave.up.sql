@@ -19,13 +19,15 @@ CREATE TABLE wave.contents (
 
 --bun:split
 
+CREATE TYPE wave.message_type AS ENUM ('regular', 'post');
+
 CREATE TABLE wave.messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     sender_id UUID NOT NULL,
     content_id UUID NOT NULL,
     parent_message_id UUID,
     is_pinned BOOLEAN NOT NULL,
-    type TEXT NOT NULL,
+    type wave.message_type NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     deleted_at TIMESTAMPTZ,

@@ -22,6 +22,8 @@ DROP TABLE IF EXISTS wave.reactions;
 
 DROP TABLE IF EXISTS wave.messages;
 
+DROP TYPE IF EXISTS wave.message_type;
+
 --bun:split
 
 DROP TABLE IF EXISTS wave.contents;

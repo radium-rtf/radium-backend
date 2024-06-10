@@ -14,7 +14,7 @@ type (
 		SenderId        uuid.UUID
 		ContentId       uuid.UUID
 		Content         *Content `bun:"rel:belongs-to,join:content_id=id"`
-		ParentMessageId uuid.UUID
+		ParentMessageId *uuid.UUID
 		ParentMessage   *Message    `bun:"rel:belongs-to,join:parent_message_id=id"`
 		ReadBy          []*ReadBy   `bun:"rel:has-many"`
 		Reactions       []*Reaction `bun:"rel:has-many"`

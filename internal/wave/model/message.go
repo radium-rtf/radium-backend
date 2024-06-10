@@ -9,12 +9,12 @@ type (
 	Message struct {
 		Id uuid.UUID `json:"id"`
 
-		SenderId        uuid.UUID `json:"senderId"`
-		Chat            *Chat     `json:"chat,omitempty"`
-		Content         Content   `json:"content"`
-		ParentMessageId uuid.UUID `json:"parentMessageId"`
-		Type            string    `json:"type"`
-		Pinned          bool      `json:"pinned"`
+		SenderId        uuid.UUID  `json:"senderId"`
+		Chat            *Chat      `json:"chat,omitempty"`
+		Content         Content    `json:"content"`
+		ParentMessageId *uuid.UUID `json:"parentMessageId"`
+		Type            string     `json:"type"`
+		Pinned          bool       `json:"pinned"`
 	}
 )
 

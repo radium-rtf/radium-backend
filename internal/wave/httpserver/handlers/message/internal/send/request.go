@@ -6,6 +6,7 @@ import (
 )
 
 type MessageSend struct {
-	ChatId  uuid.UUID     `json:"chatId" validate:"required"`
-	Content model.Content `json:"content" validate:"required"`
+	ChatId          uuid.UUID     `json:"chatId" validate:"required"`
+	Content         model.Content `json:"content" validate:"required"`
+	ParentMessageId *uuid.UUID    `json:"parent_message_id"`
 }

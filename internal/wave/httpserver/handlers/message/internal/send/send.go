@@ -36,7 +36,9 @@ func New(sender sender) http.HandlerFunc {
 			return
 		}
 
-		chatId, content := request.ChatId, request.Content
+		chatId := request.ChatId
+		content := request.Content
+		parentMessageId := request.ParentMessageId
 
 		contentObject := &entity.Content{
 			DBModel: entity.DBModel{
@@ -48,9 +50,11 @@ func New(sender sender) http.HandlerFunc {
 			DBModel: entity.DBModel{
 				Id: uuid.New(),
 			},
-			SenderId:  userId,
-			ContentId: contentObject.Id,
-			Content:   contentObject,
+			SenderId:        userId,
+			ContentId:       contentObject.Id,
+			Content:         contentObject,
+			ParentMessageId: parentMessageId,
+			Type:            "regular",
 		}
 
 		message, err := sender.SendMessage(ctx, messageObject, chatId)

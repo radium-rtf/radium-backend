@@ -581,6 +581,9 @@ const docTemplatewave = `{
                 },
                 "content": {
                     "$ref": "#/definitions/model.Content"
+                },
+                "parent_message_id": {
+                    "type": "string"
                 }
             }
         }
