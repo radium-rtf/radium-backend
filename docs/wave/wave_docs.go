@@ -138,7 +138,73 @@ const docTemplatewave = `{
                     "201": {
                         "description": "created",
                         "schema": {
-                            "$ref": "#/definitions/model.Dialogue"
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/member": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные о юзере",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.GroupMember"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "added",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные о юзере",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.GroupMember"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "removed",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
                         }
                     }
                 }
@@ -517,6 +583,37 @@ const docTemplatewave = `{
                 }
             }
         },
+        "model.Group": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "settings": {
+                    "$ref": "#/definitions/model.GroupSettings"
+                }
+            }
+        },
+        "model.GroupSettings": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Message": {
             "type": "object",
             "properties": {
@@ -539,6 +636,21 @@ const docTemplatewave = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "modify.GroupMember": {
+            "type": "object",
+            "required": [
+                "chatId",
+                "userId"
+            ],
+            "properties": {
+                "chatId": {
+                    "type": "string"
+                },
+                "userId": {
                     "type": "string"
                 }
             }
@@ -582,7 +694,7 @@ const docTemplatewave = `{
                 "content": {
                     "$ref": "#/definitions/model.Content"
                 },
-                "parent_message_id": {
+                "parentMessageId": {
                     "type": "string"
                 }
             }

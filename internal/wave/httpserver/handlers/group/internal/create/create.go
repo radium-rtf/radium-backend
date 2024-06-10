@@ -21,7 +21,7 @@ type creatorGroup interface {
 // @Security ApiKeyAuth
 // @Accept       json
 // @Param request body GroupCreate true "Данные о группе"
-// @Success      201   {object} model.Dialogue      "created"
+// @Success      201   {object} model.Group      "created"
 // @Router       /v1/group/create [post]
 func NewGroup(creator creatorGroup) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +58,7 @@ func NewGroup(creator creatorGroup) http.HandlerFunc {
 		}
 
 		c := model.NewGroup(group)
+		c.Members = append(c.Members, userId)
 		render.Status(r, http.StatusCreated)
 		render.JSON(w, r, c)
 	}

@@ -31,6 +31,10 @@ func (uc GroupUseCase) AddMember(ctx context.Context, groupId, userId uuid.UUID,
 	return uc.group.AddMember(ctx, groupId, userId, admin)
 }
 
+func (uc GroupUseCase) RemoveMember(ctx context.Context, groupId, userId uuid.UUID) error {
+	return uc.group.RemoveMember(ctx, groupId, userId)
+}
+
 func NewGroupUseCase(groupRepo postgres2.Group, chatUC ChatUseCase) GroupUseCase {
 	return GroupUseCase{group: groupRepo, chat: chatUC}
 }

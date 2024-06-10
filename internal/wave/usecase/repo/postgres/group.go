@@ -20,6 +20,7 @@ func NewGroupRepo(pg *postgres.Postgres) Group {
 func (r Group) Get(ctx context.Context, groupId uuid.UUID) (*entity.Group, error) {
 	var group entity.Group
 	err := r.db.NewSelect().Model(&group).
+		Relation("Members").
 		Where("id = ?", groupId).
 		Scan(ctx)
 	return &group, err

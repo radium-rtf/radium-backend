@@ -51,6 +51,26 @@ definitions:
       id:
         type: string
     type: object
+  model.Group:
+    properties:
+      avatar_url:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/model.GroupSettings'
+    type: object
+  model.GroupSettings:
+    properties:
+      id:
+        type: string
+    type: object
   model.Message:
     properties:
       chat:
@@ -67,6 +87,16 @@ definitions:
         type: string
       type:
         type: string
+    type: object
+  modify.GroupMember:
+    properties:
+      chatId:
+        type: string
+      userId:
+        type: string
+    required:
+    - chatId
+    - userId
     type: object
   modify.MessageEdit:
     properties:
@@ -91,7 +121,7 @@ definitions:
         type: string
       content:
         $ref: '#/definitions/model.Content'
-      parent_message_id:
+      parentMessageId:
         type: string
     required:
     - chatId
@@ -173,7 +203,46 @@ paths:
         "201":
           description: created
           schema:
-            $ref: '#/definitions/model.Dialogue'
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/member:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о юзере
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.GroupMember'
+      responses:
+        "200":
+          description: removed
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о юзере
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.GroupMember'
+      responses:
+        "200":
+          description: added
+          schema:
+            $ref: '#/definitions/model.Group'
       security:
       - ApiKeyAuth: []
       tags:
