@@ -6,6 +6,7 @@ import (
 
 type Repositories struct {
 	Channel    Channel
+	Chat       Chat
 	Conference Conference
 	Content    Content
 	Dialogue   Dialogue
@@ -16,6 +17,7 @@ type Repositories struct {
 func NewRepositories(pg *postgres.Postgres) Repositories {
 	return Repositories{
 		Channel:    NewChannelRepo(pg),
+		Chat:       NewChatRepo(pg),
 		Conference: NewConferenceRepo(pg),
 		Content:    NewContentRepo(pg),
 		Dialogue:   NewDialogueRepo(pg),

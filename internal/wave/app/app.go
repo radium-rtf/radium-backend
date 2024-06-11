@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/radium-rtf/radium-backend/internal/wave/usecase"
 	"github.com/radium-rtf/radium-backend/pkg/httpserver"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 
@@ -17,7 +18,8 @@ import (
 )
 
 type App struct {
-	httpServer *httpserver.Server
+	httpServer   *httpserver.Server
+	dependencies usecase.Dependencies
 }
 
 func NewApp(cfg *config.Config, db *postgres.Postgres) App {
@@ -27,7 +29,7 @@ func NewApp(cfg *config.Config, db *postgres.Postgres) App {
 
 	httpServer := newHttpServer(cfg.Wave.HTTP, dependencies)
 
-	return App{httpServer: httpServer}
+	return App{httpServer: httpServer, dependencies: dependencies}
 }
 
 func (app App) Run() error {
@@ -49,6 +51,7 @@ func (app App) Run() error {
 
 func (app App) Shutdown() error {
 	err := app.httpServer.Shutdown()
+
 	if err != nil {
 		log.Println(fmt.Errorf("wave - app - Run - httpServer.Shutdown: %w", err))
 	}

@@ -13,6 +13,7 @@ services:
     depends_on:
       - minio
       - postgres
+      - centrifugo
 
   minio:
     container_name: minio
@@ -60,6 +61,19 @@ services:
     image: integration-wave
     depends_on:
       - server
+
+  centrifugo:
+    container_name: centrifugo
+    image: centrifugo/centrifugo:v5
+    volumes:
+      - ./config/centrifugo.json:/centrifugo/config.json
+    command: centrifugo -c config.json
+    ports:
+      - "6969:6969"
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
 
 volumes:
   radium_pg:

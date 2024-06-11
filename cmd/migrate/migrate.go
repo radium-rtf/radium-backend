@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	bunmigrate "github.com/uptrace/bun/migrate"
 	"github.com/urfave/cli/v2"
-	"strings"
 )
 
 type migrator struct {

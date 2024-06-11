@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/google/uuid"
-	radium "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	"github.com/uptrace/bun"
 )
 
@@ -12,7 +11,7 @@ type (
 		DBModel
 
 		FileId uuid.UUID
-		File   *radium.File `bun:"rel:belongs-to,join:file_id=id"`
+		// File   *radium.File `bun:"rel:belongs-to,join:file_id=id"`
 
 		Text string
 		Type string
