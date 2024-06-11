@@ -2,7 +2,7 @@ package update
 
 import (
 	"github.com/google/uuid"
-	entity2 "github.com/radium-rtf/radium-backend/internal/radium/entity"
+	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 )
 
 type Course struct {
@@ -14,9 +14,9 @@ type Course struct {
 	Slug             string `json:"slug,omitempty" validate:"max=64,slug"`
 }
 
-func (c Course) toCourse(id uuid.UUID) *entity2.Course {
-	return &entity2.Course{
-		DBModel:          entity2.DBModel{Id: id},
+func (c Course) toCourse(id uuid.UUID) *entity.Course {
+	return &entity.Course{
+		DBModel:          entity.DBModel{Id: id},
 		Name:             c.Name,
 		ShortDescription: c.ShortDescription,
 		Description:      c.Description,

@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
+	"fmt"
 	"github.com/google/uuid"
 	entity "github.com/radium-rtf/radium-backend/internal/radium/entity"
 	repoerr2 "github.com/radium-rtf/radium-backend/internal/radium/usecase/repo/repoerr"
 	"github.com/radium-rtf/radium-backend/pkg/postgres"
 	"github.com/uptrace/bun"
-	"time"
 )
 
 type User struct {
@@ -44,6 +45,7 @@ func (r User) Create(ctx context.Context, user *entity.User) error {
 func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) {
 	var user = new(entity.User)
 	err := r.db.NewSelect().Model(user).
+		Relation("Contact").
 		Relation("Roles").
 		Where(value.column+" = ?", value.value).
 		Limit(1).
@@ -57,7 +59,7 @@ func (r User) get(ctx context.Context, value columnValue) (*entity.User, error) 
 func (r User) GetFull(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 	var user = new(entity.User)
 	err := r.db.NewSelect().Model(user).
-		Where("\"user\".\"id\" = ?", id).
+		Relation("Contact").
 		Relation("Roles").
 		Relation("Author.Modules.Pages.Sections.UsersAnswers.Review").
 		Relation("Author.Modules.Pages.Sections.UsersAnswers.File").
@@ -98,6 +100,7 @@ func (r User) GetById(ctx context.Context, id uuid.UUID) (*entity.User, error) {
 func (r User) GetByIds(ctx context.Context, ids []uuid.UUID) ([]*entity.User, error) {
 	var users []*entity.User
 	err := r.db.NewSelect().Model(&users).Relation("Roles").
+		Relation("Contact").
 		Where("id in (?)", bun.In(ids)).
 		Scan(ctx)
 	if errors.Is(sql.ErrNoRows, err) {
@@ -142,6 +145,7 @@ func (r User) updateColumn(ctx context.Context, value columnValue, where columnV
 	if rowsAffected == 0 {
 		return repoerr2.NotFound
 	}
+
 	return err
 }
 
@@ -152,21 +156,45 @@ func (r User) UpdatePassword(ctx context.Context, id uuid.UUID, password string)
 }
 
 func (r User) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
-	exec, err := r.db.NewUpdate().
-		Model(user).
-		WherePK().
-		OmitZero().
-		Exec(ctx)
+
+	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+
+		if user.Contact != nil {
+			_, err := tx.NewInsert().
+				Model(user.Contact).
+				On("conflict (user_id) do update").
+				Set("name = EXCLUDED.name, link = EXCLUDED.link").
+				Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		exec, err := tx.NewUpdate().
+			Model(user).
+			WherePK().
+			OmitZero().
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := exec.RowsAffected()
+
+		if rowsAffected == 0 {
+			return repoerr2.NotFound
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	rowsAffected, _ := exec.RowsAffected()
-	if rowsAffected == 0 {
-		return nil, repoerr2.NotFound
-	}
+	updatedUser, err := r.GetById(ctx, user.Id)
 
-	return r.GetById(ctx, user.Id)
+	return updatedUser, err
 }
 
 func (r User) CreateUnverifiedUser(ctx context.Context, user *entity.UnverifiedUser) error {
@@ -212,4 +240,23 @@ func (r User) SaveLastVisitedPage(ctx context.Context, page *entity.Page, userId
 		Exec(ctx)
 
 	return err
+}
+
+func (r User) Search(ctx context.Context, query string, limit int) ([]*entity.User, error) {
+	var (
+		users   []*entity.User
+		tsquery = fmt.Sprintf("(CONCAT(CAST('%v'::tsquery as text), ':*'))::tsquery", query)
+	)
+
+	where := `tsvector_name @@ ? or tsvector_email @@ ?`
+	order := `(tsvector_name <=> ?) + (tsvector_email <=> ?)`
+
+	err := r.db.NewSelect().
+		Model(&users).
+		Where(where, bun.Safe(tsquery), bun.Safe(tsquery)).
+		OrderExpr(order, bun.Safe(tsquery), bun.Safe(tsquery)).
+		Limit(limit).
+		Scan(ctx)
+
+	return users, err
 }

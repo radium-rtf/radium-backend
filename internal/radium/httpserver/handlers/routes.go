@@ -16,6 +16,7 @@ import (
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/role"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/section"
 	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/teacher"
+	"github.com/radium-rtf/radium-backend/internal/radium/httpserver/handlers/user"
 	"github.com/radium-rtf/radium-backend/internal/radium/usecase"
 )
 
@@ -33,6 +34,7 @@ func routes(h chi.Router, useCases usecase.UseCases) {
 
 	auth.New(h, useCases)
 	account.New(h, useCases)
+	user.New(h, useCases)
 	role.New(h, useCases)
 
 	file.New(h, useCases)

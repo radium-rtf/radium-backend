@@ -1,9 +1,462 @@
 basePath: /
+definitions:
+  create.DialogueCreate:
+    properties:
+      userId:
+        type: string
+    required:
+    - userId
+    type: object
+  create.GroupCreate:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  model.CentrifugoToken:
+    properties:
+      token:
+        type: string
+    type: object
+  model.Chat:
+    properties:
+      id:
+        type: string
+      lastMessage:
+        $ref: '#/definitions/model.Message'
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  model.Content:
+    properties:
+      text:
+        type: string
+    type: object
+  model.Dialogue:
+    properties:
+      firstUserId:
+        type: string
+      id:
+        type: string
+      secondUserId:
+        type: string
+      settings:
+        $ref: '#/definitions/model.DialogueSettings'
+    type: object
+  model.DialogueSettings:
+    properties:
+      id:
+        type: string
+    type: object
+  model.Group:
+    properties:
+      avatar_url:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/model.GroupSettings'
+    type: object
+  model.GroupSettings:
+    properties:
+      id:
+        type: string
+    type: object
+  model.Message:
+    properties:
+      chat:
+        $ref: '#/definitions/model.Chat'
+      content:
+        $ref: '#/definitions/model.Content'
+      id:
+        type: string
+      parentMessageId:
+        type: string
+      pinned:
+        type: boolean
+      senderId:
+        type: string
+      type:
+        type: string
+    type: object
+  modify.GroupMember:
+    properties:
+      chatId:
+        type: string
+      userId:
+        type: string
+    required:
+    - chatId
+    - userId
+    type: object
+  modify.MessageEdit:
+    properties:
+      content:
+        $ref: '#/definitions/model.Content'
+      messageId:
+        type: string
+    required:
+    - content
+    - messageId
+    type: object
+  modify.MessageGeneric:
+    properties:
+      messageId:
+        type: string
+    required:
+    - messageId
+    type: object
+  send.MessageSend:
+    properties:
+      chatId:
+        type: string
+      content:
+        $ref: '#/definitions/model.Content'
+      parentMessageId:
+        type: string
+    required:
+    - chatId
+    - content
+    type: object
 info:
   contact: {}
   title: wave
   version: "1.0"
-paths: {}
+paths:
+  /v1/chats:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Chat'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - chats
+  /v1/chats/token/{chatId}:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.CentrifugoToken'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - chats
+  /v1/dialogue/{chatId}:
+    get:
+      parameters:
+      - description: ID диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dialogue
+  /v1/dialogue/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о реципиенте
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.DialogueCreate'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+        "409":
+          description: already exists
+          schema:
+            $ref: '#/definitions/model.Dialogue'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dialogue
+  /v1/group/{chatId}:
+    get:
+      parameters:
+      - description: ID группы
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о группе
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.GroupCreate'
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/member:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о юзере
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.GroupMember'
+      responses:
+        "200":
+          description: removed
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о юзере
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.GroupMember'
+      responses:
+        "200":
+          description: added
+          schema:
+            $ref: '#/definitions/model.Group'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/message:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для удаления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageGeneric'
+      responses:
+        "200":
+          description: deleted
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageEdit'
+      responses:
+        "200":
+          description: edited
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение и направление
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/send.MessageSend'
+      responses:
+        "201":
+          description: sent
+          schema:
+            $ref: '#/definitions/model.Message'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/message/pin:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для закрепления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageGeneric'
+      responses:
+        "200":
+          description: (un)pinned
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для закрепления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modify.MessageGeneric'
+      responses:
+        "200":
+          description: (un)pinned
+          schema:
+            $ref: '#/definitions/model.Message'
+        "404":
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/messages/{chatId}:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 50
+        description: Размер страницы
+        in: query
+        name: pageSize
+        type: integer
+      - default: date
+        description: Тип сортировки
+        in: query
+        name: sort
+        type: string
+      - default: desc
+        description: Порядок сортировки (asc или desc)
+        in: query
+        name: order
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/messages/{chatId}/pins:
+    get:
+      parameters:
+      - description: ID группы/диалога
+        in: path
+        name: chatId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - message
+  /v1/user/token:
+    get:
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.CentrifugoToken'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - user
 securityDefinitions:
   ApiKeyAuth:
     in: header
