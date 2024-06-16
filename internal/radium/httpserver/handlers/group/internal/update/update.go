@@ -20,8 +20,8 @@ type updater interface {
 // @Tags group
 // @Security ApiKeyAuth
 // @Param       request body Group true " "
-// @Success      201   {string} model.Group "created"
-// @Router       /v1/group [post]
+// @Success      201   {string} model.Group "patched"
+// @Router       /v1/group/{id} [patch]
 func New(updater updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

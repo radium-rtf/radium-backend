@@ -15,11 +15,11 @@ type updater interface {
 	UpdateRole(ctx context.Context, user *entity.User) error
 }
 
-// @Tags group
+// @Tags role
 // @Security ApiKeyAuth
-// @Param        id   path      string  true  "groupId"
-// @Success      200   {string}  model.Group         " "
-// @Router       /v1/group/{id} [get]
+// @Param        id   path      string  true  "userId"
+// @Success      200   {string}  model.User         " "
+// @Router       /v1/role/{id} [patch]
 func New(updater updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

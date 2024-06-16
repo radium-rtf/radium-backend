@@ -14,13 +14,13 @@ type deleter interface {
 	Delete(ctx context.Context, id uuid.UUID, isSoft bool) error
 }
 
-// @Tags course
+// @Tags group
 // @Security ApiKeyAuth
 // @Accept json
 // @Param        id   path      string  true  "id"
 // @Param   is_soft     query     boolean    false  "по умолчанию soft"
 // @Success 200
-// @Router /v1/course/{id} [delete]
+// @Router /v1/group/{id} [delete]
 func New(deleter deleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

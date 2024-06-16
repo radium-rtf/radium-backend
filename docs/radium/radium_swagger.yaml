@@ -1,5 +1,20 @@
 basePath: /
 definitions:
+  addcourse.AddCourse:
+    properties:
+      courseId:
+        type: string
+    type: object
+  addstudent.AddStudent:
+    properties:
+      userId:
+        type: string
+    type: object
+  addteacher.AddTeacher:
+    properties:
+      userId:
+        type: string
+    type: object
   answer.Answer:
     properties:
       answer:
@@ -1503,7 +1518,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/update.Group'
+          $ref: '#/definitions/create.Group'
       responses:
         "201":
           description: created
@@ -1513,7 +1528,81 @@ paths:
       - ApiKeyAuth: []
       tags:
       - group
+  /v1/group/{groupId}/courses:
+    patch:
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/addcourse.AddCourse'
+      responses:
+        "201":
+          description: patched
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/{groupId}/students:
+    patch:
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/addstudent.AddStudent'
+      responses:
+        "201":
+          description: patched
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+  /v1/group/{groupId}/teachers:
+    patch:
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/addteacher.AddTeacher'
+      responses:
+        "201":
+          description: patched
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
   /v1/group/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: по умолчанию soft
+        in: query
+        name: is_soft
+        type: boolean
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
     get:
       parameters:
       - description: groupId
@@ -1524,6 +1613,23 @@ paths:
       responses:
         "200":
           description: ' '
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - group
+    patch:
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/update.Group'
+      responses:
+        "201":
+          description: patched
           schema:
             type: string
       security:
@@ -1849,6 +1955,41 @@ paths:
       - ApiKeyAuth: []
       tags:
       - review
+  /v1/role/{id}:
+    patch:
+      parameters:
+      - description: userId
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ' '
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
+  /v1/role/admin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: почта будущего админа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/postadmin.Email'
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - role
   /v1/role/author:
     post:
       consumes:

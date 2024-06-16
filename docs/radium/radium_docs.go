@@ -695,7 +695,7 @@ const docTemplateradium = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/update.Group"
+                            "$ref": "#/definitions/create.Group"
                         }
                     }
                 ],
@@ -774,6 +774,99 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/group/{groupId}/courses": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addcourse.AddCourse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "patched",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/{groupId}/students": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addstudent.AddStudent"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "patched",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/{groupId}/teachers": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addteacher.AddTeacher"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "patched",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/group/{id}": {
             "get": {
                 "security": [
@@ -796,6 +889,68 @@ const docTemplateradium = `{
                 "responses": {
                     "200": {
                         "description": " ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "по умолчанию soft",
+                        "name": "is_soft",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ],
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/update.Group"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "patched",
                         "schema": {
                             "type": "string"
                         }
@@ -1274,6 +1429,37 @@ const docTemplateradium = `{
                 }
             }
         },
+        "/v1/role/admin": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "parameters": [
+                    {
+                        "description": "почта будущего админа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/postadmin.Email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
         "/v1/role/author": {
             "post": {
                 "security": [
@@ -1399,6 +1585,35 @@ const docTemplateradium = `{
                 "responses": {
                     "201": {
                         "description": "Created"
+                    }
+                }
+            }
+        },
+        "/v1/role/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "role"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "userId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -1686,6 +1901,30 @@ const docTemplateradium = `{
         }
     },
     "definitions": {
+        "addcourse.AddCourse": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                }
+            }
+        },
+        "addstudent.AddStudent": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "addteacher.AddTeacher": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "answer.Answer": {
             "type": "object",
             "properties": {

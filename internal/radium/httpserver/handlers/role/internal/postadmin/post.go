@@ -16,9 +16,9 @@ type creator interface {
 // @Tags role
 // @Security ApiKeyAuth
 // @Accept json
-// @Param request body Email true "почта будущего преподавателя"
+// @Param request body Email true "почта будущего админа"
 // @Success 201
-// @Router /v1/role/teacher [post]
+// @Router /v1/role/admin [post]
 func New(creator creator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

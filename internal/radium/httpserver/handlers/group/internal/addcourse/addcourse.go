@@ -19,9 +19,9 @@ type adder interface {
 
 // @Tags group
 // @Security ApiKeyAuth
-// @Param        id   path      string  true  "groupId"
-// @Success      200   {string}  model.Group         " "
-// @Router       /v1/group/{id} [get]
+// @Param       request body AddCourse true " "
+// @Success      201   {string} model.Group "patched"
+// @Router       /v1/group/{groupId}/courses [patch]
 func New(adder adder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
